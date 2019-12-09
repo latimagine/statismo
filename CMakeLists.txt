@@ -83,11 +83,67 @@ foreach(p LIB BIN INCLUDE CMAKE)
 endforeach()
 
 # ----------------------------------------
+# Sanity
+# ----------------------------------------
+
+# Formating
+set(CLANG_FORMAT_BIN_NAME clang-format-6.0)
+set(CLANG_FORMAT_EXCLUDE_PATTERNS  "build*" ${PROJECT_BINARY_DIR})
+find_package(ClangFormat)
+
+# Extra compiler options for warnings
+string(
+    APPEND STATISMO_COMPILE_OPTIONS
+    "$<IF:$<CXX_COMPILER_ID:MSVC>,"
+        "/W4;$<$<CONFIG:RELEASE>:/O2>,"
+        "-Wall;-Wextra;-Werror;"
+            "$<$<CONFIG:RELEASE>:-O3>;"
+    ">"
+)
+
+# Clang tidy
+
+#
+# sudo ln -s /usr/bin/clang-tidy-6.0 /usr/bin/clang-tidy
+#
+if (BUILD_WITH_TIDY)
+  find_program(
+    CLANG_TIDY_EXE
+    NAMES "clang-tidy"
+    DOC "Path to clang-tidy executable"
+  )
+
+  if(NOT CLANG_TIDY_EXE)
+    message(FATAL_ERROR "clang-tidy not found")
+  else()
+    message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
+    set(WITH_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=-*,cert-*,bugprone-*,cppcoreguidelines-*,google-*,hicpp-*,misc-*,\
+    modernize-*,performance-*,readability-*,-google-readability-namespace-comments,-cert-dcl58-cpp,\
+    -hicpp-special-member-functions,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,\
+    -cppcoreguidelines-owning-memory,-readability-implicit-bool-conversion,-hicpp-no-array-decay,\
+    -cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-build-using-namespace,\
+    -cppcoreguidelines-pro-bounds-constant-array-index")
+  endif()
+endif()
+
+# ----------------------------------------
 # Tests configuration
 # ----------------------------------------
 
-enable_testing()
-include(CTest)
+if (BUILD_TESTS)
+  include_directories(${PROJECT_SOURCE_DIR}/helpers/tests)
+  enable_testing()
+
+  if (UNIX)
+    find_program(MEMORYCHECK_COMMAND valgrind)
+    if(MEMORYCHECK_COMMAND)
+      set(MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
+      file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE)
+    endif()
+  endif()
+  include(CTest)
+
+endif()
 
 # ----------------------------------------
 # Dependencies
@@ -214,18 +270,10 @@ export(TARGETS ${_targets}
 # (this registers the build-tree with a global CMake-registry)
 export(PACKAGE statismo)
 
-set(CONF_INCLUDE_DIRS
-  "${statismo_SOURCE_DIR}/modules/core/include"
-)
 set(statismo_LIBRARIES statismo::statismo_core)
 
 if(VTK_SUPPORT)
-  set(CONF_INCLUDE_DIRS "${CONF_INCLUDE_DIRS}" "${statismo_SOURCE_DIR}/modules/VTK/include")
   set(statismo_LIBRARIES ${statismo_LIBRARIES} statismo::statismo_VTK)
-endif()
-
-if(ITK_SUPPORT)
-  set(CONF_INCLUDE_DIRS "${CONF_INCLUDE_DIRS}" "${statismo_SOURCE_DIR}/modules/ITK/include")
 endif()
 
 write_basic_package_version_file(
@@ -242,22 +290,6 @@ configure_package_config_file(
 # ----------------------------------------
 # Install tree targets export
 # ----------------------------------------
-
-file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}"
-   "${INSTALL_INCLUDE_DIR}")
-
-set(CONF_INCLUDE_DIRS
-  "\${statismo_CMAKE_DIR}/${REL_INCLUDE_DIR}/statismo/core"
-)
-
-if(VTK_SUPPORT)
-  set(CONF_INCLUDE_DIRS "${CONF_INCLUDE_DIRS}" "\${statismo_CMAKE_DIR}/${REL_INCLUDE_DIR}/statismo/VTK")
-endif()
-
-if(ITK_SUPPORT)
-  set(CONF_INCLUDE_DIRS "${CONF_INCLUDE_DIRS}" "\${statismo_CMAKE_DIR}/${REL_INCLUDE_DIR}/statismo/ITK")
-endif()
-
 configure_package_config_file(
     ${statismo_SOURCE_DIR}/cmake/statismoConfig.cmake.in
     ${statismo_BINARY_DIR}/cmake/statismoConfig.cmake

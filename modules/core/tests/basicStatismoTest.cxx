@@ -35,72 +35,72 @@
  *
  */
 
+#include "StatismoUnitTest.h"
+#include "statismo/core/Exceptions.h"
+
+#include "statismo/core/DataManager.h"
+#include "statismo/core/PCAModelBuilder.h"
+#include "statismo/core/StatisticalModel.h"
+#include "statismo/core/IO.h"
+#include "statismo/core/TrivialVectorialRepresenter.h"
+
 #include <memory>
 
-#include "DataManager.h"
-#include "PCAModelBuilder.h"
-#include "StatisticalModel.h"
-#include "StatismoIO.h"
-#include "TrivialVectorialRepresenter.h"
+namespace
+{
+int
+Test1()
+{
+  using RepresenterType = statismo::TrivialVectorialRepresenter;
+  using ModelBuilderType = statismo::PCAModelBuilder<statismo::VectorType>;
+  using StatisticalModelType = statismo::StatisticalModel<statismo::VectorType>;
+  using DataManagerType = statismo::BasicDataManager<statismo::VectorType>;
 
-typedef statismo::TrivialVectorialRepresenter RepresenterType;
+  const unsigned                   Dim = 3;
+  std::unique_ptr<RepresenterType> representer(RepresenterType::Create(Dim));
+  std::unique_ptr<DataManagerType> dataManager(DataManagerType::Create(representer.get()));
 
+  // we create three simple datasets
+  statismo::VectorType dataset1(Dim), dataset2(Dim), dataset3(Dim);
+  dataset1 << 1, 0, 0;
+  dataset2 << 0, 2, 0;
+  dataset3 << 0, 0, 4;
+
+  dataManager->AddDataset(dataset1, "dataset1");
+  dataManager->AddDataset(dataset2, "dataset1");
+  dataManager->AddDataset(dataset3, "dataset1");
+
+
+  statismo::UniquePtrType<ModelBuilderType>     pcaModelBuilder(ModelBuilderType::Create());
+  statismo::UniquePtrType<StatisticalModelType> model(pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0.01));
+
+  STATISMO_ASSERT_EQ(model->GetNumberOfPrincipalComponents(), 2U);
+
+  statismo::IO<statismo::VectorType>::SaveStatisticalModel(model.get(), "test.h5");
+
+  auto                                          newRepresenter = RepresenterType::SafeCreate();
+  statismo::UniquePtrType<StatisticalModelType> loadedModel(
+    statismo::IO<statismo::VectorType>::LoadStatisticalModel(newRepresenter.get(), "test.h5"));
+
+  STATISMO_ASSERT_EQ(model->GetNumberOfPrincipalComponents(), loadedModel->GetNumberOfPrincipalComponents());
+
+  return EXIT_SUCCESS;
+}
+} // namespace
 
 /**
- * This basic test case, covers the model creation pipeline and tests whether a model can be successfully
+ * This basic test case covers the model creation pipeline and tests whether a model can be successfully
  * saved to disk. If the test runs correctly, it merely means that statismo has been setup correclty and hdf5
  * works.
  *
  * Real unit tests that test the functionality of statismo are provided in the statismoTests directory (these tests
  * require VTK to be installed and the statismo python wrapping to be working).
  */
-int basicStatismoTest(int argc, char* argv[]) {
+int basicStatismoTest([[maybe_unused]] int argc, [[maybe_unused]] char * argv[])
+{
+  auto res = statismo::Translate([]() {
+    return statismo::test::RunAllTests("basicStatismoTest", { { "Test1", Test1 } });
+  });
 
-    typedef statismo::PCAModelBuilder<statismo::VectorType> ModelBuilderType;
-    typedef statismo::StatisticalModel<statismo::VectorType> StatisticalModelType;
-    typedef statismo::DataManager<statismo::VectorType> DataManagerType;
-
-
-    try {
-        const unsigned Dim = 3;
-        std::unique_ptr<RepresenterType> representer(RepresenterType::Create(Dim));
-        std::unique_ptr<DataManagerType> dataManager(DataManagerType::Create(representer.get()));
-
-        // we create three simple datasets
-        statismo::VectorType dataset1(Dim), dataset2(Dim), dataset3(Dim);
-        dataset1 << 1,0,0;
-        dataset2 << 0,2,0;
-        dataset3 << 0,0,4;
-
-        dataManager->AddDataset(dataset1, "dataset1");
-        dataManager->AddDataset(dataset2, "dataset1");
-        dataManager->AddDataset(dataset3, "dataset1");
-
-
-        std::unique_ptr<ModelBuilderType> pcaModelBuilder(ModelBuilderType::Create());
-        std::unique_ptr<StatisticalModelType> model(pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0.01));
-
-        // As we have added 3 linearly independent samples, we get 2 principal components.
-        if (model->GetNumberOfPrincipalComponents() != 2) {
-            return EXIT_FAILURE;
-        }
-
-        statismo::IO<statismo::VectorType>::SaveStatisticalModel(model.get(), "test.h5");
-
-        RepresenterType* newRepresenter = RepresenterType::Create();
-        std::unique_ptr<StatisticalModelType> loadedModel(
-                statismo::IO<statismo::VectorType>::LoadStatisticalModel(newRepresenter, "test.h5"));
-        if (model->GetNumberOfPrincipalComponents() != loadedModel->GetNumberOfPrincipalComponents()) {
-            return EXIT_FAILURE;
-        }
-
-
-    } catch (statismo::StatisticalModelException& e) {
-        std::cout << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
-
+  return !CheckResultAndAssert(res, EXIT_SUCCESS);
 }
-
-

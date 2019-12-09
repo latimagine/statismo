@@ -37,7 +37,7 @@
 
 #!/bin/sh
 
-export DATADIR=$PWD/../../../data
+export DATADIR=$PWD/../../../data/
 export RESDIR=/tmp/results
 mkdir $RESDIR
 
@@ -56,7 +56,6 @@ mkdir $RESDIR
 # build a deformation model of the displacement fields that relate hand-0 with all the other examples
 ./itkBuildDeformationModel 2 $DATADIR/hand_dfs/ $RESDIR/itkDeformationModel.h5
 
-
 # Fitting of the deformation model. For the fixed image we need to take image hand-0, as this was used as the fixed image
 # for the registration of the images (which resulted in the displacement fields).
 ./itkDeformationModelFitting $RESDIR/itkDeformationModel.h5 $DATADIR/hand_images/hand-0.vtk $DATADIR/hand_images/hand-1.vtk $RESDIR/fittet-hand-df.vtk
@@ -66,3 +65,4 @@ mkdir $RESDIR
 
 # Perform hybrid, Gaussian process registration
 ./itkLowRankGaussianProcessImageToImageRegistration $DATADIR/hand_images/hand-1.vtk $DATADIR/hand_landmarks/hand-1.fcsv $DATADIR/hand_images/hand-2.vtk $DATADIR/hand_landmarks/hand-2.fcsv $RESDIR/registered.vtk $RESDIR/deformationfield-hybridgp.vtk MeanSquares 70 100 0.1 100 100
+
