@@ -78,7 +78,7 @@ OpenPath(H5::H5File & file, const std::string & path, bool createPath)
 
   // take the first part of the path
   std::size_t curpos = 1;
-  std::size_t nextpos = path.find_first_of("/", curpos);
+  std::size_t nextpos = path.find_first_of('/', curpos);
   auto        g = file.openGroup("/");
   auto        name = path.substr(curpos, nextpos - 1);
 
@@ -102,7 +102,7 @@ OpenPath(H5::H5File & file, const std::string & path, bool createPath)
     }
 
     curpos = nextpos + 1;
-    nextpos = path.find_first_of("/", curpos);
+    nextpos = path.find_first_of('/', curpos);
     if (nextpos != std::string::npos)
     {
       name = path.substr(curpos, nextpos - curpos);
@@ -127,7 +127,7 @@ ReadMatrix(const H5::H5Location & fg, const char * name, unsigned maxNumColumns,
 {
   auto    ds = fg.openDataSet(name);
   hsize_t dims[2];
-  ds.getSpace().getSimpleExtentDims(dims, NULL);
+  ds.getSpace().getSimpleExtentDims(dims, nullptr);
 
   auto nRows = dims[0]; // take the number of rows defined in the hdf5 file
   auto nCols = std::min(dims[1], static_cast<hsize_t>(maxNumColumns)); // take the number of cols provided by the user
@@ -175,7 +175,7 @@ ReadVector(const H5::H5Location & fg, const char * name, unsigned maxNumElements
 {
   H5::DataSet ds = fg.openDataSet(name);
   hsize_t     dims[1];
-  ds.getSpace().getSimpleExtentDims(dims, NULL);
+  ds.getSpace().getSimpleExtentDims(dims, nullptr);
 
   hsize_t nElements =
     std::min(dims[0], static_cast<hsize_t>(maxNumElements)); // take the number of rows defined in the hdf5 file
@@ -309,7 +309,7 @@ GetFileFromHDF5(const H5::H5Location & fg, const char * name, const char * filen
 {
   H5::DataSet ds = fg.openDataSet(name);
   hsize_t     dims[1];
-  ds.getSpace().getSimpleExtentDims(dims, NULL);
+  ds.getSpace().getSimpleExtentDims(dims, nullptr);
   std::vector<char> buffer(dims[0]);
   if (!buffer.empty())
   {

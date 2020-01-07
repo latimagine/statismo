@@ -72,13 +72,13 @@ public:
    * \param scores A matrix holding the scores
    * \param builderInfos A list of BuilderInfo objects
    */
-  ModelInfo(const MatrixType & scores, const BuilderInfoList & builderInfos);
+  ModelInfo(MatrixType scores, BuilderInfoList builderInfos);
 
   /**
    * Create a ModelInfo object without specifying any BuilderInfos
    * \param scores A matrix holding the scores
    */
-  explicit ModelInfo(const MatrixType & scores);
+  explicit ModelInfo(MatrixType scores);
 
   /**
    * Returns a list with BuilderInfos
@@ -107,7 +107,7 @@ public:
 
 private:
   BuilderInfo
-  LoadDataInfoOldStatismoFormat(const H5::H5Location & publicFg) const;
+  LoadDataInfoOldStatismoFormat(const H5::H5Location & publicModelGroup) const;
 
   MatrixType      m_scores;
   BuilderInfoList m_builderInfo;
@@ -132,12 +132,12 @@ public:
   /**
    * Creates a new BuilderInfo object with the given information
    */
-  BuilderInfo(const std::string &       modelBuilderName,
-              const std::string &       buildTime,
-              const DataInfoList &      di,
-              const ParameterInfoList & pi);
+  BuilderInfo(std::string       modelBuilderName,
+              std::string       buildTime,
+              DataInfoList     di,
+              ParameterInfoList pi);
 
-  BuilderInfo(const std::string & modelBuilderName, const DataInfoList & di, const ParameterInfoList & pi);
+  BuilderInfo(std::string modelBuilderName, DataInfoList di, ParameterInfoList pi);
 
   /**
    * Create a new, empty BilderInfo object
@@ -148,13 +148,13 @@ public:
    * Saves the builder info to the given group in the HDF5 file
    */
   void
-  Save(const H5::H5Location & publicFg) const;
+  Save(const H5::H5Location & modelBuilderGroup) const;
 
   /**
    * Loads the builder info from the given group in the HDF5 file.
    */
   void
-  Load(const H5::H5Location & publicFg);
+  Load(const H5::H5Location & modelBuilderGroup);
 
   /**
    * Returns the data info
