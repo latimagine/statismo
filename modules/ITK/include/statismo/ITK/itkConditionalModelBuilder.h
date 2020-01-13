@@ -36,18 +36,18 @@
  */
 
 
-#ifndef __STATIMO_ITK_MODEL_BUILDER_H_
-#define __STATIMO_ITK_MODEL_BUILDER_H_
+#ifndef __STATIMO_ITK_CONDITONAL_MODEL_BUILDER_H_
+#define __STATIMO_ITK_CONDITONAL_MODEL_BUILDER_H_
+
+#include "statismo/core/ImplWrapper.h"
+#include "statismo/core/ConditionalModelBuilder.h"
+#include "statismo/ITK/itkDataManager.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkConfig.h"
+#include "statismo/ITK/itkUtils.h"
 
 #include <itkObject.h>
 #include <itkObjectFactory.h>
-
-#include "statismo/ITK/itkDataManager.h"
-#include "statismo/ITK/itkStatisticalModel.h"
-#include "statismo/core/ConditionalModelBuilder.h"
-#include "statismo/ITK/itkConfig.h"
-#include "statismo/core/ImplWrapper.h"
-#include "statismo/ITK/Utils.h"
 
 #include <functional>
 
@@ -55,32 +55,27 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for the statismo::PCAModelBuilder class.
- * \see statismo::PCAModelBuilder for detailed documentation.
+ * \brief ITK Wrapper for statismo::ConditionalModelBuilder class.
+ * \see statismo::ConditionalModelBuilder for detailed documentation.
  */
-template <class Representer>
+template <typename Representer>
 class ConditionalModelBuilder
   : public Object
   , public statismo::ImplWrapper<statismo::ConditionalModelBuilder<Representer>, statismo::SafeInitializer>
 {
 public:
-  typedef ConditionalModelBuilder  Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = ConditionalModelBuilder;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkNewMacro(Self);
   itkTypeMacro(ConditionalModelBuilder, Object);
 
-  typedef statismo::DataManager<Representer>                    DataManagerType;
-  typedef typename DataManagerType::SampleDataStructureListType SampleDataStructureListType;
+  using DataManagerType = statismo::DataManager<Representer>;
+  using SampleDataStructureListType = typename DataManagerType::SampleDataStructureListType;
   using ImplType =
     typename statismo::ImplWrapper<statismo::ConditionalModelBuilder<Representer>, statismo::SafeInitializer>::ImplType;
-
-  ConditionalModelBuilder() {}
-
-  virtual ~ConditionalModelBuilder() {}
-
 
   typename StatisticalModel<Representer>::Pointer
   BuildNewModel(
@@ -90,7 +85,7 @@ public:
     float                                                                                        noiseVariance,
     double                                                                                       modelVarianceRetained)
   {
-    auto model_statismo = this->CallForwardImplTrans(ExceptionHandler{ *this },
+    auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                                      &ImplType::BuildNewModel,
                                                      SampleDataStructureList,
                                                      surrogateTypes,
@@ -98,13 +93,12 @@ public:
                                                      noiseVariance,
                                                      modelVarianceRetained);
 
-    typename StatisticalModel<Representer>::Pointer model_itk = StatisticalModel<Representer>::New();
-    model_itk->SetStatismoImplObj(std::move(model_statismo));
-    return model_itk;
+    auto modelItk = StatisticalModel<Representer>::New();
+    modelItk->SetStatismoImplObj(std::move(statismoModel));
+    return modelItk;
   }
 };
 
-
 } // namespace itk
 
-#endif /* ITKMODELBUILDER_H_ */
+#endif

@@ -115,7 +115,7 @@ public:
 
   /// Delete basic implementation
   virtual void
-  Delete() const
+  Delete()
   {
     delete this;
   }

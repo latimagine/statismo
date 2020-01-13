@@ -39,16 +39,15 @@
 #ifndef __STATIMO_ITK_MODEL_BUILDER_H_
 #define __STATIMO_ITK_MODEL_BUILDER_H_
 
-#include <itkObject.h>
-#include <itkObjectFactory.h>
-
+#include "statismo/core/PCAModelBuilder.h"
+#include "statismo/core/ImplWrapper.h"
 #include "statismo/ITK/itkDataManager.h"
 #include "statismo/ITK/itkStatisticalModel.h"
-
-#include "statismo/core/PCAModelBuilder.h"
 #include "statismo/ITK/itkConfig.h"
-#include "statismo/core/ImplWrapper.h"
 #include "statismo/ITK/itkUtils.h"
+
+#include <itkObject.h>
+#include <itkObjectFactory.h>
 
 #include <utility>
 #include <functional>
@@ -57,7 +56,7 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for the statismo::PCAModelBuilder class.
+ * \brief ITK Wrapper for statismo::PCAModelBuilder class.
  * \see statismo::PCAModelBuilder for detailed documentation.
  */
 template <class Representer>
@@ -66,25 +65,22 @@ class PCAModelBuilder
   , public statismo::ImplWrapper<statismo::PCAModelBuilder<Representer>, statismo::SafeInitializer>
 {
 public:
-  typedef PCAModelBuilder          Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-
+  using Self = PCAModelBuilder;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   using ImplType =
     typename statismo::ImplWrapper<statismo::PCAModelBuilder<Representer>, statismo::SafeInitializer>::ImplType;
 
   itkNewMacro(Self);
   itkTypeMacro(PCAModelBuilder, Object);
 
-  typedef statismo::DataManager<Representer>         DataManagerType;
-  typedef typename DataManagerType::DataItemListType DataItemListType;
+  using DataManagerType = statismo::DataManager<Representer>;
+  using DataItemListType = typename DataManagerType::DataItemListType;
+  using EigenValueMethod = typename ImplType::EigenValueMethod;
 
-  typedef typename ImplType::EigenValueMethod EigenValueMethod;
-
-  PCAModelBuilder() {}
-
-  virtual ~PCAModelBuilder() {}
+  PCAModelBuilder() = default;
+  virtual ~PCAModelBuilder() = default;
 
   typename StatisticalModel<Representer>::Pointer
   BuildNewModel(DataItemListType DataItemList,
@@ -92,16 +88,15 @@ public:
                 bool             computeScores = true,
                 EigenValueMethod method = ImplType::JacobiSVD)
   {
-    auto model_statismo = this->CallForwardImplTrans(
-      ExceptionHandler{ *this }, &ImplType::BuildNewModel, DataItemList, noiseVariance, computeScores, method);
+    auto statismoModel = this->CallForwardImplTrans(
+      statismo::itk::ExceptionHandler{ *this }, &ImplType::BuildNewModel, DataItemList, noiseVariance, computeScores, method);
 
-    typename StatisticalModel<Representer>::Pointer model_itk = StatisticalModel<Representer>::New();
-    model_itk->SetStatismoImplObj(std::move(model_statismo));
-    return model_itk;
+    auto itkModel = StatisticalModel<Representer>::New();
+    itkModel->SetStatismoImplObj(std::move(statismoModel));
+    return itkModel;
   }
 };
 
-
 } // namespace itk
 
-#endif /* ITKMODELBUILDER_H_ */
+#endif

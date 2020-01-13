@@ -178,7 +178,7 @@ public:
 
   /** Delete the representer object */
   virtual void
-  Delete() const = 0;
+  Delete() = 0;
 
   /**
    * \name Adapter methods
@@ -311,7 +311,7 @@ public:
 
   /// Delete basic implementation
   virtual void
-  Delete() const override
+  Delete() override
   {
     delete this;
   }

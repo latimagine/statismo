@@ -37,15 +37,17 @@
 #define __STATIMO_ITK_UTILS_H_
 
 #include <itkObject.h>
+#include <itkDirectory.h>
 
 #include <string>
 #include <sstream>
+#include <vector>
 
-namespace itk
+namespace statismo::itk
 {
 struct ExceptionHandler
 {
-  explicit ExceptionHandler(const Object & o)
+  explicit ExceptionHandler(const ::itk::Object & o)
     : m_obj{ o }
   {}
 
@@ -59,9 +61,26 @@ struct ExceptionHandler
   }
 
 private:
-  const Object & m_obj;
+  const ::itk::Object & m_obj;
 };
 
-} // namespace itk
+inline std::vector<std::string>
+GetDirFiles(const std::string& dir, const std::string & extension = ".*")
+{
+  auto directory = ::itk::Directory::New();
+  directory->Load(dir.c_str());
+
+  std::vector<std::string> files;
+  for (unsigned i = 0; i < directory->GetNumberOfFiles(); i++)
+  {
+    const char * filename = directory->GetFile(i);
+    if (extension == ".*" || std::string(filename).find(extension) != std::string::npos)
+      files.push_back(filename);
+  }
+
+  return files;
+}
+
+}
 
 #endif

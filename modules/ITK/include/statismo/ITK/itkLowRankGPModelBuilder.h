@@ -38,22 +38,22 @@
 #ifndef __STATIMO_ITK_LOW_RANK_MODEL_BUILDER_H_
 #define __STATIMO_ITK_LOW_RANK_MODEL_BUILDER_H_
 
-#include <itkObject.h>
-#include <itkObjectFactory.h>
-
-#include "statismo/ITK/itkStatisticalModel.h"
 #include "statismo/core/Kernels.h"
 #include "statismo/core/LowRankGPModelBuilder.h"
 #include "statismo/core/Representer.h"
-#include "statismo/ITK/itkConfig.h"
 #include "statismo/core/ImplWrapper.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkConfig.h"
 #include "statismo/ITK/itkUtils.h"
+
+#include <itkObject.h>
+#include <itkObjectFactory.h>
 
 namespace itk
 {
 
 /**
- * \brief ITK Wrapper for the statismo::LowRankGPModelBuilder class.
+ * \brief ITK Wrapper for statismo::LowRankGPModelBuilder class.
  * \see statismo::LowRankGPModelBuilder for detailed documentation.
  */
 
@@ -63,30 +63,27 @@ class LowRankGPModelBuilder
   , public statismo::ImplWrapper<statismo::LowRankGPModelBuilder<T>>
 {
 public:
-  typedef LowRankGPModelBuilder    Self;
-  typedef statismo::Representer<T> RepresenterType;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-
+  using Self = LowRankGPModelBuilder;
+  using RepresenterType = statismo::Representer<T>;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   using ImplType = typename statismo::ImplWrapper<statismo::LowRankGPModelBuilder<T>>::ImplType;
 
   itkNewMacro(Self);
   itkTypeMacro(LowRankGPModelBuilder, Object);
 
-  typedef itk::StatisticalModel<T>                                          StatisticalModelType;
-  typedef statismo::MatrixValuedKernel<typename RepresenterType::PointType> MatrixValuedKernelType;
+  using StatisticalModelType = itk::StatisticalModel<T>;
+  using MatrixValuedKernelType = statismo::MatrixValuedKernel<typename RepresenterType::PointType>;
 
-  LowRankGPModelBuilder() {}
-
+  LowRankGPModelBuilder() = default;
+  virtual ~LowRankGPModelBuilder() = default;
 
   void
   SetRepresenter(const RepresenterType * representer)
   {
     this->SetStatismoImplObj(ImplType::SafeCreate(representer));
   }
-
-  virtual ~LowRankGPModelBuilder() {}
 
   typename StatisticalModelType::Pointer
   BuildNewZeroMeanModel(const MatrixValuedKernelType & kernel,
@@ -98,17 +95,17 @@ public:
       itkExceptionMacro(<< "Model not properly initialized. Maybe you forgot to call SetRepresenter");
     }
 
-    typename StatisticalModel<T>::Pointer model_itk = StatisticalModel<T>::New();
+    auto itkModel = StatisticalModel<T>::New();
     try
     {
-      model_itk->SetStatismoImplObj(this->m_impl->BuildNewZeroMeanModel(kernel, numComponents, numPointsForNystrom));
+      itkModel->SetStatismoImplObj(this->m_impl->BuildNewZeroMeanModel(kernel, numComponents, numPointsForNystrom));
     }
-    catch (statismo::StatisticalModelException & s)
+    catch (const statismo::StatisticalModelException & s)
     {
       itkExceptionMacro(<< s.what());
     }
 
-    return model_itk;
+    return itkModel;
   }
 
   typename StatisticalModelType::Pointer
@@ -122,19 +119,20 @@ public:
       itkExceptionMacro(<< "Model not properly initialized. Maybe you forgot to call SetRepresenter");
     }
 
-    typename StatisticalModel<T>::Pointer model_itk = StatisticalModel<T>::New();
+    auto itkModel = StatisticalModel<T>::New();
     try
     {
-      model_itk->SetStatismoImplObj(this->m_impl->BuildNewModel(mean, kernel, numComponents, numPointsForNystrom));
+      itkModel->SetStatismoImplObj(this->m_impl->BuildNewModel(mean, kernel, numComponents, numPointsForNystrom));
     }
-    catch (statismo::StatisticalModelException & s)
+    catch (const statismo::StatisticalModelException & s)
     {
       itkExceptionMacro(<< s.what());
     }
-    return model_itk;
+
+    return itkModel;
   }
 };
 
 } // namespace itk
 
-#endif /* ITKLOWRANKMODELBUILDER_H_ */
+#endif

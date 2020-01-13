@@ -112,7 +112,7 @@ public:
    * way using the c++ delete keyword.
    */
   void
-  Delete() const
+  Delete()
   {
     delete this;
   }

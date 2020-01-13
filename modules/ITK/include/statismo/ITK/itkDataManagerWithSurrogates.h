@@ -39,24 +39,24 @@
 #ifndef __STATIMO_ITK_DATAMANAGER_WITH_SURROGATES_H_
 #define __STATIMO_ITK_DATAMANAGER_WITH_SURROGATES_H_
 
-#include <functional>
-#include <utility>
+#include "statismo/core/DataManagerWithSurrogates.h"
+#include "statismo/core/ImplWrapper.h"
+#include "statismo/ITK/itkConfig.h"
+#include "statismo/ITK/itkUtils.h"
 
 #include <itkObject.h>
 #include <itkObjectFactory.h>
 
-#include "statismo/core/DataManagerWithSurrogates.h"
-#include "statismo/ITK/itkConfig.h"
-#include "statismo/core/ImplWrapper.h"
-#include "statismo/ITK/itkUtils.h"
+#include <functional>
+#include <utility>
 
 namespace itk
 {
 
 
 /**
- * \brief ITK Wrapper for the statismo::DataManager class.
- * \see statismo::DataManager for detailed documentation.
+ * \brief ITK Wrapper for statismo::DataManagerWithSurrogates class.
+ * \see statismo::DataManagerWithSurrogates for detailed documentation.
  */
 template <class Representer>
 class DataManagerWithSurrogates
@@ -64,20 +64,14 @@ class DataManagerWithSurrogates
   , public statismo::ImplWrapper<statismo::DataManagerWithSurrogates<Representer>>
 {
 public:
-  typedef DataManagerWithSurrogates          Self;
-  typedef statismo::DataManager<Representer> Superclass;
-  typedef SmartPointer<Self>                 Pointer;
-  typedef SmartPointer<const Self>           ConstPointer;
-
+  using Self = DataManagerWithSurrogates;
+  using Superclass = statismo::DataManager<Representer>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   using ImplType = typename statismo::ImplWrapper<statismo::DataManagerWithSurrogates<Representer>>::ImplType;
 
   itkNewMacro(Self);
   itkTypeMacro(DataManagerWithSurrogates, Object);
-
-
-  DataManagerWithSurrogates() {}
-
-  virtual ~DataManagerWithSurrogates() {}
 
   void
   SetRepresenterAndSurrogateFilename(const Representer * representer, const char * surrogTypeFilename)
@@ -98,11 +92,11 @@ public:
                            const char *                                  surrogateFilename)
   {
     this->CallForwardImplTrans(
-      ExceptionHandler{ *this }, &ImplType::AddDasetWithSurrogates, ds, datasetURI, surrogateFilename);
+      statismo::itk::ExceptionHandler{ *this }, &ImplType::AddDasetWithSurrogates, ds, datasetURI, surrogateFilename);
   }
 };
 
 
 } // namespace itk
 
-#endif /* ITK_DATAMANAGER_WITH_SURROGATES_H_ */
+#endif
