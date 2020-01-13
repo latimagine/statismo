@@ -91,7 +91,8 @@ StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutpu
 {
   itkDebugMacro(<< "Setting Identity");
 
-  for (unsigned i = 0; i < this->GetNumberOfParameters(); i++) {
+  for (unsigned i = 0; i < this->GetNumberOfParameters(); i++)
+  {
     this->m_coeffVector[i] = 0;
   }
 

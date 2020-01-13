@@ -48,25 +48,25 @@
 #include <itkMeshFileReader.h>
 
 
-
 #include <iostream>
 
 /*
  * This example shows the ITK Wrapping of statismo can be used to build a shape model.
  */
 
-namespace {
-  constexpr unsigned                       Dimensions = 3;
-using MeshType = itk::Mesh<float, Dimensions> ;
-using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions> ;
+namespace
+{
+constexpr unsigned Dimensions = 3;
+using MeshType = itk::Mesh<float, Dimensions>;
+using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
 
 void
 _DoRunExample(const char * referenceFilename, const char * dir, const char * modelname)
 {
-  using ModelBuilderType = itk::PCAModelBuilder<MeshType>             ;
-  using ReducedVarianceModelBuilderType = itk::ReducedVarianceModelBuilder<MeshType> ;
-  using DataManagerType = itk::DataManager<MeshType>                 ;
-  using MeshReaderType = itk::MeshFileReader<MeshType> ;
+  using ModelBuilderType = itk::PCAModelBuilder<MeshType>;
+  using ReducedVarianceModelBuilderType = itk::ReducedVarianceModelBuilder<MeshType>;
+  using DataManagerType = itk::DataManager<MeshType>;
+  using MeshReaderType = itk::MeshFileReader<MeshType>;
 
   auto representer = RepresenterType::New();
   auto refReader = MeshReaderType::New();
@@ -78,19 +78,19 @@ _DoRunExample(const char * referenceFilename, const char * dir, const char * mod
   auto dataManager = DataManagerType::New();
   dataManager->SetRepresenter(representer);
 
-  for (const auto& file : filenames)
+  for (const auto & file : filenames)
   {
     auto fullpath = std::string(dir) + "/" + file;
     auto reader = MeshReaderType::New();
     reader->SetFileName(fullpath.c_str());
     reader->Update();
-  
+
     MeshType::Pointer mesh = reader->GetOutput();
     dataManager->AddDataset(mesh, fullpath.c_str());
   }
 
-  auto              pcaModelBuilder = ModelBuilderType::New();
-  auto          model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0);
+  auto pcaModelBuilder = ModelBuilderType::New();
+  auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0);
   auto reducedVarianceModelBuilder = ReducedVarianceModelBuilderType::New();
   auto reducedModel = reducedVarianceModelBuilder->BuildNewModelWithVariance(model, 0.75);
 
@@ -100,7 +100,7 @@ _DoRunExample(const char * referenceFilename, const char * dir, const char * mod
   itk::StatismoIO<MeshType>::SaveStatisticalModel(reducedModel, modelname);
 }
 
-}
+} // namespace
 
 int
 main(int argc, char * argv[])

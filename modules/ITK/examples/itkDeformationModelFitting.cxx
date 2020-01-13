@@ -52,33 +52,34 @@
 #include <itkMeanSquaresImageToImageMetric.h>
 #include <itkNormalizedCorrelationImageToImageMetric.h>
 
-namespace {
+namespace
+{
 
-const unsigned                                                                               Dimensions = 2;
-using ImageType = itk::Image<uint16_t, Dimensions>                                           ;
-using VectorImageType = itk::Image<itk::Vector<float, ImageType::ImageDimension>, ImageType::ImageDimension> ;
-using RepresenterType = itk::StandardImageRepresenter<itk::Vector<float, Dimensions>, Dimensions> ;
-using ImageReaderType = itk::ImageFileReader<ImageType> ;
+const unsigned Dimensions = 2;
+using ImageType = itk::Image<uint16_t, Dimensions>;
+using VectorImageType = itk::Image<itk::Vector<float, ImageType::ImageDimension>, ImageType::ImageDimension>;
+using RepresenterType = itk::StandardImageRepresenter<itk::Vector<float, Dimensions>, Dimensions>;
+using ImageReaderType = itk::ImageFileReader<ImageType>;
 // using = itk::MeanSquaresImageToImageMetric<ImageType, ImageType> MetricType;
-using MetricType = itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType>                          ;
-using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, Dimensions> ;
-using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>                                      ;
-using RegistrationFilterType = itk::ImageRegistrationMethod<ImageType, ImageType> ;
-using OptimizerType = itk::LBFGSOptimizer ;
-using StatisticalModelType = itk::StatisticalModel<VectorImageType> ;
+using MetricType = itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType>;
+using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, Dimensions>;
+using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+using RegistrationFilterType = itk::ImageRegistrationMethod<ImageType, ImageType>;
+using OptimizerType = itk::LBFGSOptimizer;
+using StatisticalModelType = itk::StatisticalModel<VectorImageType>;
 
 
 class _IterationStatusObserver : public itk::Command
 {
 public:
-  using Self = _IterationStatusObserver ;
-  using Superclass = itk::Command            ;
-  using Pointer = itk::SmartPointer<Self> ;
+  using Self = _IterationStatusObserver;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
 
   itkNewMacro(Self);
 
-  using OptimizerType = itk::LBFGSOptimizer ;
-  using OptimizerPointer = const OptimizerType * ;
+  using OptimizerType = itk::LBFGSOptimizer;
+  using OptimizerPointer = const OptimizerType *;
 
   void
   Execute(itk::Object * caller, const itk::EventObject & event) override
@@ -102,10 +103,10 @@ public:
   }
 
 private:
-  int m_iterIdx{0};
+  int m_iterIdx{ 0 };
 };
 
-}
+} // namespace
 
 /*
  * The fixedImage needs to correspond to the image that was used to obtain the displacement fields of the model
@@ -135,7 +136,7 @@ main(int argc, char * argv[])
   targetReader->Update();
   ImageType::Pointer targetImage = targetReader->GetOutput();
 
-  auto    representer = RepresenterType::New();
+  auto representer = RepresenterType::New();
   auto model = StatisticalModelType::New();
   model = itk::StatismoIO<VectorImageType>::LoadStatisticalModel(representer, modelname);
 
@@ -150,10 +151,10 @@ main(int argc, char * argv[])
   optimizer->SetMaximumNumberOfFunctionEvaluations(100);
 
   using ObserverType = _IterationStatusObserver;
-  auto        observer = ObserverType::New();
+  auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 
-  auto     metric = MetricType::New();
+  auto metric = MetricType::New();
   auto interpolator = InterpolatorType::New();
 
   auto registration = RegistrationFilterType::New();

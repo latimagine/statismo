@@ -132,10 +132,7 @@ public:
   /**
    * Creates a new BuilderInfo object with the given information
    */
-  BuilderInfo(std::string       modelBuilderName,
-              std::string       buildTime,
-              DataInfoList     di,
-              ParameterInfoList pi);
+  BuilderInfo(std::string modelBuilderName, std::string buildTime, DataInfoList di, ParameterInfoList pi);
 
   BuilderInfo(std::string modelBuilderName, DataInfoList di, ParameterInfoList pi);
 

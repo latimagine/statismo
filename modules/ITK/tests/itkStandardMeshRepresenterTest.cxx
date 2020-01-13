@@ -41,10 +41,11 @@
 
 #include <itkMeshFileReader.h>
 
-namespace {
+namespace
+{
 
-constexpr unsigned                                          Dimensions = 3;
-using MeshType = itk::Mesh<float, Dimensions>                    ;
+constexpr unsigned Dimensions = 3;
+using MeshType = itk::Mesh<float, Dimensions>;
 
 std::string _s_dataDir;
 
@@ -58,23 +59,24 @@ _LoadMesh(const std::string & filename)
   mesh->DisconnectPipeline();
   return mesh;
 }
-}
+} // namespace
 
 int
-TestRepresenterForMesh() {
+TestRepresenterForMesh()
+{
 
-  using RepresenterType =  itk::StandardMeshRepresenter<float, Dimensions> ;
-using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType> ;
+  using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
   auto referenceFilename = _s_dataDir + "/hand_polydata/hand-0.vtk";
   auto testDatasetFilename = _s_dataDir + "/hand_polydata/hand-1.vtk";
 
   auto representer = RepresenterType::New();
-  auto      reference = _LoadMesh(referenceFilename);
+  auto reference = _LoadMesh(referenceFilename);
   representer->SetReference(reference);
 
   // choose a test dataset, a point and its associate pixel value
 
-  auto testDataset = _LoadMesh(testDatasetFilename);
+  auto                testDataset = _LoadMesh(testDatasetFilename);
   unsigned            testPtId = 0;
   MeshType::PointType testPt;
   reference->GetPoint(testPtId, &testPt);

@@ -65,10 +65,10 @@ class ReducedVarianceModelBuilder
   , public statismo::ImplWrapper<statismo::ReducedVarianceModelBuilder<Representer>, statismo::SafeInitializer>
 {
 public:
-  using Self = ReducedVarianceModelBuilder ;
-  using Superclass =  Object                      ;
-  using Pointer = SmartPointer<Self>          ;
-  using ConstPointer = SmartPointer<const Self>    ;
+  using Self = ReducedVarianceModelBuilder;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   using ImplType = typename statismo::ImplWrapper<statismo::ReducedVarianceModelBuilder<Representer>,
                                                   statismo::SafeInitializer>::ImplType;
 
@@ -82,12 +82,12 @@ public:
   typename StatisticalModel<Representer>::Pointer
   BuildNewModelWithLeadingComponents(const StatisticalModel<Representer> * model, unsigned numberOfPrincipalComponents)
   {
-    const auto* statismoModel = model->GetStatismoImplObj();
+    const auto * statismoModel = model->GetStatismoImplObj();
 
     auto newStatismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
-                                                         &ImplType::BuildNewModelWithLeadingComponents,
-                                                         statismoModel,
-                                                         numberOfPrincipalComponents);
+                                                       &ImplType::BuildNewModelWithLeadingComponents,
+                                                       statismoModel,
+                                                       numberOfPrincipalComponents);
     auto itkModel = StatisticalModel<Representer>::New();
     itkModel->SetStatismoImplObj(std::move(newStatismoModel));
     return itkModel;
@@ -97,7 +97,7 @@ public:
   BuildNewModelWithVariance(const StatisticalModel<Representer> * model, double totalVariance)
   {
     const auto * statismoModel = model->GetStatismoImplObj();
-    auto                                            newStatismoModel = this->CallForwardImplTrans(
+    auto         newStatismoModel = this->CallForwardImplTrans(
       statismo::itk::ExceptionHandler{ *this }, &ImplType::BuildNewModelWithVariance, statismoModel, totalVariance);
 
     auto itkModel = StatisticalModel<Representer>::New();
@@ -109,7 +109,7 @@ public:
   BuildNewModelFromModel(const StatisticalModel<Representer> * model, double totalVariance)
   {
     auto * statismoModel = model->GetStatismoImplObj();
-    auto                                      newStatismoModel = this->CallForwardImplTrans(
+    auto   newStatismoModel = this->CallForwardImplTrans(
       statismo::itk::ExceptionHandler{ *this }, &ImplType::BuildNewModelFromModel, statismoModel, totalVariance);
 
     auto itkModel = StatisticalModel<Representer>::New();

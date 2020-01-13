@@ -51,14 +51,15 @@
  * This example shows the ITK Wrapping of statismo can be used to build a deformation model.
  */
 
-namespace {
-using ImageType3D = itk::Image<float, 3>                                    ;
-using VectorImageType3D = itk::Image<itk::Vector<float, 3>, 3>                    ;
-using RepresenterType3D = itk::StandardImageRepresenter<itk::Vector<float, 3>, 3> ;
+namespace
+{
+using ImageType3D = itk::Image<float, 3>;
+using VectorImageType3D = itk::Image<itk::Vector<float, 3>, 3>;
+using RepresenterType3D = itk::StandardImageRepresenter<itk::Vector<float, 3>, 3>;
 
-using ImageType2D = itk::Image<float, 2>                                    ;
-using VectorImageType2D = itk::Image<itk::Vector<float, 2>, 2>                    ;
-using RepresenterType2D = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2> ;
+using ImageType2D = itk::Image<float, 2>;
+using VectorImageType2D = itk::Image<itk::Vector<float, 2>, 2>;
+using RepresenterType2D = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2>;
 
 /**
  * A scalar valued gaussian kernel.
@@ -67,8 +68,8 @@ template <class TPoint>
 class _GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
-  using CoordRepType = typename TPoint::CoordRepType ;
-  using VectorType = vnl_vector<CoordRepType>      ;
+  using CoordRepType = typename TPoint::CoordRepType;
+  using VectorType = vnl_vector<CoordRepType>;
 
   explicit _GaussianKernel(double sigma)
     : m_sigma(sigma)
@@ -102,9 +103,9 @@ template <class RepresenterType, class ImageType>
 void
 _DoRunExample(const char * referenceFilename, double gaussianKernelSigma, const char * modelname)
 {
-  using ModelBuilderType = itk::LowRankGPModelBuilder<ImageType> ;
-  using ImageFileReaderType = itk::ImageFileReader<ImageType>       ;
-  using PointType = typename ImageType::PointType         ;
+  using ModelBuilderType = itk::LowRankGPModelBuilder<ImageType>;
+  using ImageFileReaderType = itk::ImageFileReader<ImageType>;
+  using PointType = typename ImageType::PointType;
 
   // we take an arbitrary dataset as the reference, as they have all the same resolution anyway
   auto refReader = ImageFileReaderType::New();
@@ -116,16 +117,15 @@ _DoRunExample(const char * referenceFilename, double gaussianKernelSigma, const 
 
   auto gk = _GaussianKernel<PointType>(gaussianKernelSigma); // a gk with sigma 100
   // make the kernel matrix valued and scale it by a factor of 100
-  const auto& mvGk =
-    statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
-  const auto& scaledGk = statismo::ScaledKernel<PointType>(&mvGk, 100.0);
+  const auto & mvGk = statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
+  const auto & scaledGk = statismo::ScaledKernel<PointType>(&mvGk, 100.0);
 
   auto gpModelBuilder = ModelBuilderType::New();
   gpModelBuilder->SetRepresenter(representer);
   auto model = gpModelBuilder->BuildNewZeroMeanModel(scaledGk, 100);
   itk::StatismoIO<ImageType>::SaveStatisticalModel(model, modelname);
 }
-}
+} // namespace
 
 int
 main(int argc, char * argv[])

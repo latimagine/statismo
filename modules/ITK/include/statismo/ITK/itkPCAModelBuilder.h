@@ -88,8 +88,12 @@ public:
                 bool             computeScores = true,
                 EigenValueMethod method = ImplType::JacobiSVD)
   {
-    auto statismoModel = this->CallForwardImplTrans(
-      statismo::itk::ExceptionHandler{ *this }, &ImplType::BuildNewModel, DataItemList, noiseVariance, computeScores, method);
+    auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                    &ImplType::BuildNewModel,
+                                                    DataItemList,
+                                                    noiseVariance,
+                                                    computeScores,
+                                                    method);
 
     auto itkModel = StatisticalModel<Representer>::New();
     itkModel->SetStatismoImplObj(std::move(statismoModel));

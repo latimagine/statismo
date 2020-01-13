@@ -57,9 +57,9 @@ template <typename T, auto N>
 struct RepresenterTraits<::itk::Mesh<T, N>>
 {
   using MeshType = ::itk::Mesh<T, N>;
-  using DatasetPointerType = typename MeshType::Pointer ;
+  using DatasetPointerType = typename MeshType::Pointer;
   using DatasetConstPointerType = typename MeshType::Pointer;
-  using PointType = typename MeshType::PointType ;
+  using PointType = typename MeshType::PointType;
   using ValueType = typename MeshType::PointType;
 
   static constexpr unsigned Dimension = N;
@@ -91,14 +91,14 @@ public:
   friend Base;
   friend typename Base::ObjectFactoryType;
 
-  using MeshType = itk::Mesh<TPixel, MeshDimension>                      ;
-  using RepresenterBaseType =  typename statismo::Representer<MeshType>              ;
-  using DomainType =  typename RepresenterBaseType::DomainType              ;
-  using PointType =  typename RepresenterBaseType::PointType               ;
-  using ValueType =  typename RepresenterBaseType::ValueType               ;
-  using DatasetPointerType  =  typename RepresenterBaseType::DatasetPointerType      ;
-  using DatasetConstPointerType =  typename RepresenterBaseType::DatasetConstPointerType ;
-  using PointsContainerType =  typename MeshType::PointsContainer                    ;
+  using MeshType = itk::Mesh<TPixel, MeshDimension>;
+  using RepresenterBaseType = typename statismo::Representer<MeshType>;
+  using DomainType = typename RepresenterBaseType::DomainType;
+  using PointType = typename RepresenterBaseType::PointType;
+  using ValueType = typename RepresenterBaseType::ValueType;
+  using DatasetPointerType = typename RepresenterBaseType::DatasetPointerType;
+  using DatasetConstPointerType = typename RepresenterBaseType::DatasetConstPointerType;
+  using PointsContainerType = typename MeshType::PointsContainer;
 
   /// The type of the data set to be used
   using DatasetType = MeshType;
@@ -111,7 +111,7 @@ public:
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(StandardMeshRepresenter, Object);
-  
+
   StandardMeshRepresenter();
   virtual ~StandardMeshRepresenter();
 
@@ -121,7 +121,7 @@ public:
     this->UnRegister();
   }
 
-  virtual void DeleteDataset(DatasetPointerType) const override {
+  virtual void DeleteDataset(DatasetPointerType) const override{
     // no op
   };
   virtual DatasetPointerType

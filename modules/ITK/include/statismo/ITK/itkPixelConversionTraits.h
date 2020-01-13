@@ -51,81 +51,84 @@ namespace itk
 // \note These traits are used to allow a conversion from the generic pixel type to a statismo vector.
 // \warning Currently only scalar types are supported.
 
-namespace details {
-  template <typename T, typename = void>
-  struct PixelConversionTraitImpl;
+namespace details
+{
+template <typename T, typename = void>
+struct PixelConversionTraitImpl;
 
-  template <typename T>
-  struct PixelConversionTraitImpl<T, std::enable_if_t<std::is_scalar_v<T>>> {
-    static statismo::VectorType
-    ToVector(T pixel)
-    {
-      statismo::VectorType v(1);
-      v << pixel;
-      return v;
-    }
-
-    static T
-    FromVector(const statismo::VectorType & v)
-    {
-      assert(v.size() == 1);
-      return v(0);
-    }
-
-    static constexpr unsigned
-    GetDataType()
-    {
-      return statismo::GetDataTypeId<T>();
-    }
-
-    static constexpr unsigned
-    GetPixelDimension()
-    {
-      return 1;
-    }
-  };
-
-  template <typename U, auto N>
-  struct PixelConversionTraitImpl<itk::Vector<U, N>, std::enable_if_t<std::is_scalar_v<U>>>
+template <typename T>
+struct PixelConversionTraitImpl<T, std::enable_if_t<std::is_scalar_v<T>>>
+{
+  static statismo::VectorType
+  ToVector(T pixel)
   {
-    static statismo::VectorType
-    ToVector(const itk::Vector<U, N>& pixel)
-    {
-      statismo::VectorType v(N);
-      for (std::size_t i = 0; i < N; ++i) {
-        v(i) = pixel[i];
-      }
-      return v;
-    }
-    static auto
-    FromVector(const statismo::VectorType & v)
-    {
-      assert(v.size() == N);
-      itk::Vector<U, N> itkVec;
-      for (std::size_t i = 0; i < N; ++i) {
-        itkVec[i] = v(i);
-      }
-      return itkVec;
-    }
-    static constexpr unsigned
-    GetDataType()
-    {
-      return statismo::GetDataTypeId<U>();
-    }
-    static constexpr unsigned
-    GetPixelDimension()
-    {
-      return N;
-    }
-};
-}
+    statismo::VectorType v(1);
+    v << pixel;
+    return v;
+  }
 
-// We use an internal impl to avoid exposing 
+  static T
+  FromVector(const statismo::VectorType & v)
+  {
+    assert(v.size() == 1);
+    return v(0);
+  }
+
+  static constexpr unsigned
+  GetDataType()
+  {
+    return statismo::GetDataTypeId<T>();
+  }
+
+  static constexpr unsigned
+  GetPixelDimension()
+  {
+    return 1;
+  }
+};
+
+template <typename U, auto N>
+struct PixelConversionTraitImpl<itk::Vector<U, N>, std::enable_if_t<std::is_scalar_v<U>>>
+{
+  static statismo::VectorType
+  ToVector(const itk::Vector<U, N> & pixel)
+  {
+    statismo::VectorType v(N);
+    for (std::size_t i = 0; i < N; ++i)
+    {
+      v(i) = pixel[i];
+    }
+    return v;
+  }
+  static auto
+  FromVector(const statismo::VectorType & v)
+  {
+    assert(v.size() == N);
+    itk::Vector<U, N> itkVec;
+    for (std::size_t i = 0; i < N; ++i)
+    {
+      itkVec[i] = v(i);
+    }
+    return itkVec;
+  }
+  static constexpr unsigned
+  GetDataType()
+  {
+    return statismo::GetDataTypeId<U>();
+  }
+  static constexpr unsigned
+  GetPixelDimension()
+  {
+    return N;
+  }
+};
+} // namespace details
+
+// We use an internal impl to avoid exposing
 // the second dummy parameters to api user
 template <typename T>
 struct PixelConversionTrait : details::PixelConversionTraitImpl<T>
-{
-};
+{};
 } // namespace itk
 
 #endif

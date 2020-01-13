@@ -52,24 +52,25 @@
 #include <itkMeshFileReader.h>
 #include <itkPointSetToPointSetRegistrationMethod.h>
 
-namespace {
-constexpr unsigned                       Dimensions = 3;
-using MeshType = itk::Mesh<float, Dimensions> ;
-using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions> ;
-using MeshReaderType = itk::MeshFileReader<MeshType>                         ;
-using MetricType = itk::EuclideanDistancePointMetric<MeshType, MeshType> ;
+namespace
+{
+constexpr unsigned Dimensions = 3;
+using MeshType = itk::Mesh<float, Dimensions>;
+using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+using MeshReaderType = itk::MeshFileReader<MeshType>;
+using MetricType = itk::EuclideanDistancePointMetric<MeshType, MeshType>;
 // As a transform, we use the StatisticalShapeModelTransform, that comes with statismo
-using TransformType = itk::StatisticalShapeModelTransform<MeshType, double, Dimensions> ;
-using RegistrationFilterType = itk::PointSetToPointSetRegistrationMethod<MeshType, MeshType> ;
-using OptimizerType = itk::LevenbergMarquardtOptimizer ;
-using StatisticalModelType = itk::StatisticalModel<MeshType> ;
+using TransformType = itk::StatisticalShapeModelTransform<MeshType, double, Dimensions>;
+using RegistrationFilterType = itk::PointSetToPointSetRegistrationMethod<MeshType, MeshType>;
+using OptimizerType = itk::LevenbergMarquardtOptimizer;
+using StatisticalModelType = itk::StatisticalModel<MeshType>;
 
 class _IterationStatusObserver : public itk::Command
 {
 public:
-  using Self = _IterationStatusObserver ;
-  using Superclass = itk::Command            ;
-  using Pointer = itk::SmartPointer<Self> ;
+  using Self = _IterationStatusObserver;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
 
   itkNewMacro(Self);
 
@@ -96,10 +97,10 @@ public:
   }
 
 private:
-  int m_iterdx{0};
+  int m_iterdx{ 0 };
 };
 
-}
+} // namespace
 
 int
 main(int argc, char * argv[])
@@ -115,8 +116,8 @@ main(int argc, char * argv[])
   const char * outputmeshname = argv[3];
 
   // load the model
-  auto    representer = RepresenterType::New();
-  auto model = itk::StatismoIO<MeshType>::LoadStatisticalModel(representer, modelname);
+  auto              representer = RepresenterType::New();
+  auto              model = itk::StatismoIO<MeshType>::LoadStatisticalModel(representer, modelname);
   MeshType::Pointer fixedPointSet = model->GetRepresenter()->GetReference();
   std::cout << "model succesully loaded " << std::endl;
 
@@ -140,8 +141,8 @@ main(int argc, char * argv[])
   optimizer->SetValueTolerance(1e-5);
   optimizer->SetEpsilonFunction(1e-6);
 
-  using ObserverType = _IterationStatusObserver ;
-  auto        observer = ObserverType::New();
+  using ObserverType = _IterationStatusObserver;
+  auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 
   auto metric = MetricType::New();

@@ -41,31 +41,32 @@
 
 #include <string>
 
-namespace {
-  using ScalarImageType = itk::Image<float, 2>;
-  using VectorImageType = itk::Image<itk::Vector<float, 2>, 2>;
+namespace
+{
+using ScalarImageType = itk::Image<float, 2>;
+using VectorImageType = itk::Image<itk::Vector<float, 2>, 2>;
 
-  std::string _s_dataDir;
+std::string _s_dataDir;
 
-  template <typename T>
-  typename T::Pointer
-  _LoadImage(const std::string & filename)
-  {
-    auto reader = itk::ImageFileReader<T>::New();
-    reader->SetFileName(filename);
-    reader->Update();
-    
-    typename T::Pointer img = reader->GetOutput();
-    img->DisconnectPipeline();
-    return img;
-  }
+template <typename T>
+typename T::Pointer
+_LoadImage(const std::string & filename)
+{
+  auto reader = itk::ImageFileReader<T>::New();
+  reader->SetFileName(filename);
+  reader->Update();
+
+  typename T::Pointer img = reader->GetOutput();
+  img->DisconnectPipeline();
+  return img;
 }
+} // namespace
 
 int
 TestRepresenterForScalarImage()
 {
   using RepresenterType = itk::StandardImageRepresenter<float, 2>;
-  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType> ;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
 
   auto referenceFilename = _s_dataDir + "/hand_images/hand-1.vtk";
   auto testDatasetFilename = _s_dataDir + "/hand_images/hand-2.vtk";
@@ -76,7 +77,7 @@ TestRepresenterForScalarImage()
 
   // choose a test dataset, a point and its associate pixel value
 
-  auto testDataset = _LoadImage<ScalarImageType>(testDatasetFilename);
+  auto                       testDataset = _LoadImage<ScalarImageType>(testDatasetFilename);
   ScalarImageType::IndexType idx;
   idx.Fill(0);
   ScalarImageType::PointType testPt;
@@ -92,7 +93,7 @@ int
 TestRepresenterForVectorImage()
 {
   using RepresenterType = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2>;
-  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>            ;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
 
   auto referenceFilename = _s_dataDir + "/hand_dfs/df-hand-1.vtk";
   auto testDatasetFilename = _s_dataDir + "/hand_dfs/df-hand-2.vtk";
@@ -103,7 +104,7 @@ TestRepresenterForVectorImage()
 
   // choose a test dataset, a point and its associate pixel value
 
-  auto testDataset = _LoadImage<VectorImageType>(testDatasetFilename);
+  auto                       testDataset = _LoadImage<VectorImageType>(testDatasetFilename);
   VectorImageType::IndexType idx;
   idx.Fill(0);
   VectorImageType::PointType testPt;
@@ -128,7 +129,8 @@ itkStandardImageRepresenterTest(int argc, char ** argv)
 
   auto res = statismo::Translate([]() {
     return statismo::test::RunAllTests("itkStandardImageRepresenterTest",
-                                       { { "TestRepresenterForScalarImage", TestRepresenterForScalarImage },
+                                       {
+                                         { "TestRepresenterForScalarImage", TestRepresenterForScalarImage },
                                          { "TestRepresenterForVectorImage", TestRepresenterForVectorImage },
                                        });
   });

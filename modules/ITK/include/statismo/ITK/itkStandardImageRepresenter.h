@@ -50,17 +50,18 @@
 #include <itkObject.h>
 #include <itkImage.h>
 
-namespace statismo {
-  template <typename T, auto N>
-  struct RepresenterTraits<::itk::Image<T, N>>
-  {
-    using VectorImageType = ::itk::Image<T, N>;
-    using DatasetPointerType = typename VectorImageType::Pointer                ;
-    using DatasetConstPointerType = typename VectorImageType::Pointer                ;
-    using PointType = typename VectorImageType::PointType              ;
-    using ValueType = typename VectorImageType::PixelType              ;
-  };
-}
+namespace statismo
+{
+template <typename T, auto N>
+struct RepresenterTraits<::itk::Image<T, N>>
+{
+  using VectorImageType = ::itk::Image<T, N>;
+  using DatasetPointerType = typename VectorImageType::Pointer;
+  using DatasetConstPointerType = typename VectorImageType::Pointer;
+  using PointType = typename VectorImageType::PointType;
+  using ValueType = typename VectorImageType::PixelType;
+};
+} // namespace statismo
 
 namespace itk
 {
@@ -93,14 +94,14 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(StandardImageRepresenter, Object);
 
-  using ImageType = itk::Image<TPixel, ImageDimension> ;
-  using RepresenterBaseType = typename statismo::Representer<ImageType>             ;
-  using DomainType = typename RepresenterBaseType::DomainType              ;
-  using PointType = typename RepresenterBaseType::PointType               ;
-  using ValueType = typename RepresenterBaseType::ValueType               ;
-  using DatasetType = typename RepresenterBaseType::DatasetType             ;
-  using DatasetPointerType = typename RepresenterBaseType::DatasetPointerType      ;
-  using DatasetConstPointerType = typename RepresenterBaseType::DatasetConstPointerType ;
+  using ImageType = itk::Image<TPixel, ImageDimension>;
+  using RepresenterBaseType = typename statismo::Representer<ImageType>;
+  using DomainType = typename RepresenterBaseType::DomainType;
+  using PointType = typename RepresenterBaseType::PointType;
+  using ValueType = typename RepresenterBaseType::ValueType;
+  using DatasetType = typename RepresenterBaseType::DatasetType;
+  using DatasetPointerType = typename RepresenterBaseType::DatasetPointerType;
+  using DatasetConstPointerType = typename RepresenterBaseType::DatasetConstPointerType;
 
   StandardImageRepresenter();
   virtual ~StandardImageRepresenter();
@@ -117,7 +118,8 @@ public:
     return m_domain;
   }
 
-  virtual void DeleteDataset(DatasetConstPointerType) const override { 
+  virtual void DeleteDataset(DatasetConstPointerType) const override
+  {
     // no op
   }
   virtual DatasetPointerType

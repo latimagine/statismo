@@ -59,11 +59,10 @@ namespace itk
 
 template <class TPixel, unsigned ImageDimension>
 StandardImageRepresenter<TPixel, ImageDimension>::StandardImageRepresenter()
-  : m_reference{nullptr}
+  : m_reference{ nullptr }
 {}
 template <class TPixel, unsigned ImageDimension>
-StandardImageRepresenter<TPixel, ImageDimension>::~StandardImageRepresenter()
-= default;
+StandardImageRepresenter<TPixel, ImageDimension>::~StandardImageRepresenter() = default;
 
 template <class TPixel, unsigned ImageDimension>
 StandardImageRepresenter<TPixel, ImageDimension> *
@@ -107,16 +106,16 @@ StandardImageRepresenter<TPixel, ImageDimension>::LoadRef(const H5::Group & fg) 
   // Read
   statismo::VectorType originVec;
   statismo::hdf5utils::ReadVector(fg, "origin", originVec);
-  
+
   statismo::VectorType spacingVec;
   statismo::hdf5utils::ReadVector(fg, "spacing", spacingVec);
 
   typename statismo::GenericEigenTraits<int>::VectorType sizeVec;
   statismo::hdf5utils::ReadVectorOfType<int>(fg, "size", sizeVec);
-  
-  typename ImageType::PointType origin;
+
+  typename ImageType::PointType   origin;
   typename ImageType::SpacingType spacing;
-  typename ImageType::SizeType size;
+  typename ImageType::SizeType    size;
   for (unsigned i = 0; i < ImageDimension; ++i)
   {
     origin[i] = originVec[i];
@@ -136,7 +135,7 @@ StandardImageRepresenter<TPixel, ImageDimension>::LoadRef(const H5::Group & fg) 
   }
 
   H5::Group pdGroup = fg.openGroup("./pointData");
-  auto  readPixelDimension = static_cast<unsigned>(statismo::hdf5utils::ReadInt(pdGroup, "pixelDimension"));
+  auto      readPixelDimension = static_cast<unsigned>(statismo::hdf5utils::ReadInt(pdGroup, "pixelDimension"));
   if (readPixelDimension != StandardImageRepresenter::GetDimensions())
   {
     throw statismo::StatisticalModelException(
@@ -196,7 +195,7 @@ StandardImageRepresenter<TPixel, ImageDimension>::LoadRefLegacy(const H5::Group 
   catch (const itk::ImageFileReaderException & e)
   {
     throw statismo::StatisticalModelException((std::string("Could not read file ") + tmpfilename).c_str(),
-    statismo::Status::IO_ERROR);
+                                              statismo::Status::IO_ERROR);
   }
   typename DatasetType::Pointer img = reader->GetOutput();
   img->Register();
@@ -258,13 +257,13 @@ typename StandardImageRepresenter<TPixel, ImageDimension>::DatasetPointerType
 StandardImageRepresenter<TPixel, ImageDimension>::SampleVectorToSample(const statismo::VectorType & sample) const
 {
   using DuplicatorType = itk::ImageDuplicator<DatasetType>;
-  auto        duplicator = DuplicatorType::New();
+  auto duplicator = DuplicatorType::New();
   duplicator->SetInputImage(this->m_reference);
   duplicator->Update();
   DatasetPointerType clonedImage = duplicator->GetOutput();
 
   itk::ImageRegionIterator<DatasetType> it(clonedImage, clonedImage->GetLargestPossibleRegion());
-  it.GoToBegin(); 
+  it.GoToBegin();
   for (unsigned i = 0; !(it.IsAtEnd()); ++it, i++)
   {
 
@@ -317,16 +316,16 @@ template <class TPixel, unsigned ImageDimension>
 void
 StandardImageRepresenter<TPixel, ImageDimension>::Save(const H5::Group & fg) const
 {
-  auto origin = m_reference->GetOrigin();
-  statismo::VectorType          originVec(ImageDimension);
+  auto                 origin = m_reference->GetOrigin();
+  statismo::VectorType originVec(ImageDimension);
   for (unsigned i = 0; i < ImageDimension; i++)
   {
     originVec(i) = origin[i];
   }
   statismo::hdf5utils::WriteVector(fg, "origin", originVec);
 
-  auto spacing = m_reference->GetSpacing();
-  statismo::VectorType            spacingVec(ImageDimension);
+  auto                 spacing = m_reference->GetSpacing();
+  statismo::VectorType spacingVec(ImageDimension);
   for (unsigned i = 0; i < ImageDimension; i++)
   {
     spacingVec(i) = spacing[i];
@@ -339,8 +338,8 @@ StandardImageRepresenter<TPixel, ImageDimension>::Save(const H5::Group & fg) con
   }
   statismo::hdf5utils::WriteVectorOfType<int>(fg, "size", sizeVec);
 
-  auto direction = m_reference->GetDirection();
-  statismo::MatrixType              directionMat(ImageDimension, ImageDimension);
+  auto                 direction = m_reference->GetDirection();
+  statismo::MatrixType directionMat(ImageDimension, ImageDimension);
   for (unsigned i = 0; i < ImageDimension; i++)
   {
     for (unsigned j = 0; j < ImageDimension; j++)
@@ -358,7 +357,7 @@ StandardImageRepresenter<TPixel, ImageDimension>::Save(const H5::Group & fg) con
   statismo::MatrixType pixelMat(StandardImageRepresenter::GetDimensions(), GetNumberOfPoints());
 
   itk::ImageRegionIterator<DatasetType> it(m_reference, m_reference->GetLargestPossibleRegion());
-  it.GoToBegin(); 
+  it.GoToBegin();
   for (unsigned i = 0; !(it.IsAtEnd()); ++i, ++it)
   {
     pixelMat.col(i) = PixelConversionTrait<TPixel>::ToVector(it.Get());
@@ -403,10 +402,12 @@ StandardImageRepresenter<TPixel, ImageDimension>::GetPointIdForPoint(const Point
           "GetPointIdForPoint computed invalid ptId. Make sure that the point is within the reference you chose ");
       }
       // If it is on the boundary, we set it to the nearest boundary coordinate.
-      if (idx[i] == -1) {
+      if (idx[i] == -1)
+      {
         idx[i] = 0;
       }
-      if (idx[i] == static_cast<int>(size[i])) {
+      if (idx[i] == static_cast<int>(size[i]))
+      {
         idx[i] = size[i] - 1;
       }
     }
@@ -433,7 +434,7 @@ typename StandardImageRepresenter<TPixel, ImageDimension>::DatasetPointerType
 StandardImageRepresenter<TPixel, ImageDimension>::CloneDataset(DatasetConstPointerType d) const
 {
   using DuplicatorType = itk::ImageDuplicator<DatasetType>;
-  auto         duplicator = DuplicatorType::New();
+  auto duplicator = DuplicatorType::New();
   duplicator->SetInputImage(d);
   duplicator->Update();
   DatasetPointerType clone = duplicator->GetOutput();

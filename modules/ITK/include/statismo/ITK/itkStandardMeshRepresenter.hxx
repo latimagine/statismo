@@ -66,7 +66,7 @@ template <class TPixel, unsigned MeshDimension>
 StandardMeshRepresenter<TPixel, MeshDimension> *
 StandardMeshRepresenter<TPixel, MeshDimension>::CloneImpl() const
 {
-  StandardMeshRepresenter * clone = new StandardMeshRepresenter();
+  StandardMeshRepresenter *  clone = new StandardMeshRepresenter();
   typename MeshType::Pointer clonedReference = this->CloneDataset(m_reference);
   clone->SetReference(clonedReference);
   return clone;
@@ -95,7 +95,7 @@ StandardMeshRepresenter<TPixel, MeshDimension>::LoadRef(const H5::Group & fg) co
   statismo::hdf5utils::ReadMatrix(fg, "./points", vertexMat);
 
   using UIntMatrixType = typename statismo::GenericEigenTraits<unsigned int>::MatrixType;
-  UIntMatrixType                                                          cellsMat;
+  UIntMatrixType cellsMat;
   statismo::hdf5utils::ReadMatrixOfType<unsigned int>(fg, "./cells", cellsMat);
 
   unsigned nVertices = vertexMat.cols();
@@ -150,7 +150,7 @@ StandardMeshRepresenter<TPixel, MeshDimension>::LoadRef(const H5::Group & fg) co
     if (statismo::hdf5utils::ExistsObjectWithName(pdGroup, "scalars"))
     {
       auto ds = pdGroup.openDataSet("scalars");
-      auto    type = static_cast<unsigned>(statismo::hdf5utils::ReadIntAttribute(ds, "datatype"));
+      auto type = static_cast<unsigned>(statismo::hdf5utils::ReadIntAttribute(ds, "datatype"));
       if (type != PixelConversionTrait<TPixel>::GetDataType())
       {
         std::cout << "Warning: The datatype specified for the scalars does not match the TPixel template argument used "
@@ -194,7 +194,7 @@ StandardMeshRepresenter<TPixel, MeshDimension>::LoadRefLegacy(const H5::Group & 
   catch (const itk::MeshFileReaderException & e)
   {
     throw statismo::StatisticalModelException((std::string("Could not read file ") + tmpfilename).c_str(),
-    statismo::Status::IO_ERROR);
+                                              statismo::Status::IO_ERROR);
   }
 
   typename MeshType::Pointer mesh = reader->GetOutput();
@@ -211,9 +211,9 @@ StandardMeshRepresenter<TPixel, MeshDimension>::SetReference(DatasetPointerType 
   // Furthermore, we cache for all the points of the reference, as these are the most likely ones
   // we have to look up later.
   typename DomainType::DomainPointsListType domainPointList;
-  typename PointsContainerType::Pointer  points = m_reference->GetPoints();
-  typename PointsContainerType::Iterator pointIterator = points->Begin();
-  unsigned                               id = 0;
+  typename PointsContainerType::Pointer     points = m_reference->GetPoints();
+  typename PointsContainerType::Iterator    pointIterator = points->Begin();
+  unsigned                                  id = 0;
   while (pointIterator != points->End())
   {
     domainPointList.push_back(pointIterator.Value());
@@ -244,8 +244,8 @@ StandardMeshRepresenter<TPixel, MeshDimension>::SampleToSampleVector(DatasetCons
 
   typename PointsContainerType::Pointer points = mesh->GetPoints();
 
-  auto pointIterator = points->Begin();
-  unsigned                               id = 0;
+  auto     pointIterator = points->Begin();
+  unsigned id = 0;
   while (pointIterator != points->End())
   {
     for (unsigned d = 0; d < StandardMeshRepresenter::GetDimensions(); d++)
@@ -263,9 +263,9 @@ template <class TPixel, unsigned MeshDimension>
 typename StandardMeshRepresenter<TPixel, MeshDimension>::DatasetPointerType
 StandardMeshRepresenter<TPixel, MeshDimension>::SampleVectorToSample(const statismo::VectorType & sample) const
 {
-  auto           mesh = this->CloneDataset(m_reference);
-  typename PointsContainerType::Pointer  points = mesh->GetPoints();
-  auto pointsIterator = points->Begin();
+  auto                                  mesh = this->CloneDataset(m_reference);
+  typename PointsContainerType::Pointer points = mesh->GetPoints();
+  auto                                  pointsIterator = points->Begin();
 
   unsigned ptId = 0;
   while (pointsIterator != points->End())
@@ -419,8 +419,8 @@ StandardMeshRepresenter<TPixel, MeshDimension>::CloneDataset(DatasetConstPointer
   // cloning is cumbersome - therefore we let itk do the job for, and use perform a
   // Mesh transform using the identity transform. This should result in a perfect clone.
 
-  using IdentityTransformType = itk::IdentityTransform<TPixel, MeshDimension>                       ;
-  using TransformMeshFilterType = itk::TransformMeshFilter<MeshType, MeshType, IdentityTransformType> ;
+  using IdentityTransformType = itk::IdentityTransform<TPixel, MeshDimension>;
+  using TransformMeshFilterType = itk::TransformMeshFilter<MeshType, MeshType, IdentityTransformType>;
 
   auto tf = TransformMeshFilterType::New();
   tf->SetInput(mesh);

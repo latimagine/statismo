@@ -50,22 +50,23 @@
  * This example shows the ITK Wrapping of statismo can be used to build a deformation model.
  */
 
-namespace {
-using ImageType3D = itk::Image<float, 3>                                    ;
-using VectorImageType3D = itk::Image<itk::Vector<float, 3>, 3>                    ;
-using RepresenterType3D = itk::StandardImageRepresenter<itk::Vector<float, 3>, 3> ;
+namespace
+{
+using ImageType3D = itk::Image<float, 3>;
+using VectorImageType3D = itk::Image<itk::Vector<float, 3>, 3>;
+using RepresenterType3D = itk::StandardImageRepresenter<itk::Vector<float, 3>, 3>;
 
-using ImageType2D = itk::Image<float, 2>                                    ;
-using VectorImageType2D = itk::Image<itk::Vector<float, 2>, 2>                    ;
-using RepresenterType2D = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2> ;
+using ImageType2D = itk::Image<float, 2>;
+using VectorImageType2D = itk::Image<itk::Vector<float, 2>, 2>;
+using RepresenterType2D = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2>;
 
 template <class RepresenterType, class ImageType>
 void
 _DoRunExample(const char * dir, const char * modelname, double noiseVariance)
 {
-  using ModelBuilderType = itk::PCAModelBuilder<ImageType> ;
-  using DataManagerType = itk::DataManager<ImageType>     ;
-  using ImageFileReaderType = itk::ImageFileReader<ImageType> ;
+  using ModelBuilderType = itk::PCAModelBuilder<ImageType>;
+  using DataManagerType = itk::DataManager<ImageType>;
+  using ImageFileReaderType = itk::ImageFileReader<ImageType>;
 
   auto filenames = statismo::itk::GetDirFiles(dir, ".vtk");
   assert(!filenames.empty());
@@ -81,22 +82,22 @@ _DoRunExample(const char * dir, const char * modelname, double noiseVariance)
   auto dataManager = DataManagerType::New();
   dataManager->SetRepresenter(representer);
 
-  for (const auto& file : filenames)
+  for (const auto & file : filenames)
   {
-    auto                         fullpath = (std::string(dir) + "/") + file;
+    auto fullpath = (std::string(dir) + "/") + file;
     auto reader = ImageFileReaderType::New();
     reader->SetFileName(fullpath);
     reader->Update();
-  
+
     typename ImageType::Pointer df = reader->GetOutput();
     dataManager->AddDataset(df, fullpath.c_str());
   }
 
   auto pcaModelBuilder = ModelBuilderType::New();
-  auto                               model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), noiseVariance);
+  auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), noiseVariance);
   itk::StatismoIO<ImageType>::SaveStatisticalModel(model, modelname);
 }
-}
+} // namespace
 
 int
 main(int argc, char * argv[])
@@ -131,7 +132,6 @@ main(int argc, char * argv[])
     return 1;
   }
 
-  std::cout << "Model building completed successfully with a noise variance of " << noiseVariance << "."
-            << std::endl;
+  std::cout << "Model building completed successfully with a noise variance of " << noiseVariance << "." << std::endl;
   return 0;
 }

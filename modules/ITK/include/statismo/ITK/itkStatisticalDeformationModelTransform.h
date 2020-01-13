@@ -64,17 +64,17 @@ class ITK_EXPORT StatisticalDeformationModelTransform
 
 public:
   /* Standard class typedefs. */
-  using Self = StatisticalDeformationModelTransform                                  ;
-  using Superclass =  itk::StatisticalModelTransformBase<TDataSet, TScalarType, TDimension> ;
-  using Pointer =  SmartPointer<Self>                                                    ;
-  using ConstPointer =  SmartPointer<const Self>                                              ;
+  using Self = StatisticalDeformationModelTransform;
+  using Superclass = itk::StatisticalModelTransformBase<TDataSet, TScalarType, TDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   itkSimpleNewMacro(Self);
   /** Run-time type information (and related methods). */
   itkTypeMacro(StatisticalDeformationModelTransform, Superclass);
 
-  using InputPointType = typename Superclass::InputPointType  ;
-  using OutputPointType =  typename Superclass::OutputPointType ;
-  using RepresenterType = typename Superclass::RepresenterType ;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using RepresenterType = typename Superclass::RepresenterType;
 
   /**
    * Clone the current transform
@@ -101,7 +101,7 @@ public:
   TransformPoint(const InputPointType & pt) const override
   {
     auto d = this->m_statisticalModel->DrawSampleAtPoint(this->m_coeffVector, pt);
-    
+
     OutputPointType transformedPoint;
     for (unsigned i = 0; i < pt.GetPointDimension(); i++)
     {

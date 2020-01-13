@@ -65,7 +65,7 @@ private:
 };
 
 inline std::vector<std::string>
-GetDirFiles(const std::string& dir, const std::string & extension = ".*")
+GetDirFiles(const std::string & dir, const std::string & extension = ".*")
 {
   auto directory = ::itk::Directory::New();
   directory->Load(dir.c_str());
@@ -81,6 +81,6 @@ GetDirFiles(const std::string& dir, const std::string & extension = ".*")
   return files;
 }
 
-}
+} // namespace statismo::itk
 
 #endif

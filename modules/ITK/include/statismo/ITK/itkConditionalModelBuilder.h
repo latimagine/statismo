@@ -86,12 +86,12 @@ public:
     double                                                                                       modelVarianceRetained)
   {
     auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
-                                                     &ImplType::BuildNewModel,
-                                                     SampleDataStructureList,
-                                                     surrogateTypes,
-                                                     conditioningInfo,
-                                                     noiseVariance,
-                                                     modelVarianceRetained);
+                                                    &ImplType::BuildNewModel,
+                                                    SampleDataStructureList,
+                                                    surrogateTypes,
+                                                    conditioningInfo,
+                                                    noiseVariance,
+                                                    modelVarianceRetained);
 
     auto modelItk = StatisticalModel<Representer>::New();
     modelItk->SetStatismoImplObj(std::move(statismoModel));

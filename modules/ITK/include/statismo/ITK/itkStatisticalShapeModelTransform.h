@@ -63,18 +63,18 @@ class ITK_EXPORT StatisticalShapeModelTransform
 {
 public:
   /* Standard class using =s. */
-  using Self = StatisticalShapeModelTransform                                            ;
-  using Superclass = itk::StatisticalModelTransformBase<TRepresenter, TScalarType, TDimension> ;
-  using Pointer = SmartPointer<Self>                                                        ;
-  using ConstPointer = SmartPointer<const Self>                                                  ;
+  using Self = StatisticalShapeModelTransform;
+  using Superclass = itk::StatisticalModelTransformBase<TRepresenter, TScalarType, TDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkSimpleNewMacro(Self);
   /** Run-time type information (and related methods). */
   itkTypeMacro(StatisticalShapeModelTransform, Superclass);
 
-  using InputPointType = typename Superclass::InputPointType  ;
-  using OutputPointType = typename Superclass::OutputPointType ;
-  using RepresenterType = typename Superclass::RepresenterType ;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using RepresenterType = typename Superclass::RepresenterType;
 
   virtual ::itk::LightObject::Pointer
   CreateAnother() const override

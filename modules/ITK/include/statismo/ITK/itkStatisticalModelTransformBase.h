@@ -68,31 +68,32 @@ template <class TDataset,
           class TScalarType,
           unsigned int TInputDimension,
           unsigned int TOutputDimension = TInputDimension>
-class ITK_EXPORT StatisticalModelTransformBase : public itk::Transform<TScalarType, TInputDimension, TOutputDimension>,
-public statismo::NonCopyable
+class ITK_EXPORT StatisticalModelTransformBase
+  : public itk::Transform<TScalarType, TInputDimension, TOutputDimension>
+  , public statismo::NonCopyable
 {
 public:
   /* Standard class using =s. */
-  using Self = StatisticalModelTransformBase                                  ;
-  using Superclass = itk::Transform<TScalarType, TInputDimension, TOutputDimension> ;
-  using Pointer = SmartPointer<Self>                                             ;
-  using ConstPointer = SmartPointer<const Self>                                       ;
-  using VectorType = vnl_vector<statismo::ScalarType> ;
-  using MatrixType = vnl_matrix<statismo::ScalarType> ;
-    /* Parameters Type   */
-  using ParametersType = typename Superclass::ParametersType            ;
-  using JacobianType = typename Superclass::JacobianType              ;
-  using ScalarType = typename Superclass::ScalarType                ;
-  using InputPointType = typename Superclass::InputPointType            ;
-  using OutputPointType = typename Superclass::OutputPointType           ;
-  using InputVectorType = typename Superclass::InputVectorType           ;
-  using OutputVectorType = typename Superclass::OutputVectorType          ;
-  using InputVnlVectorType = typename Superclass::InputVnlVectorType        ;
-  using OutputVnlVectorType = typename Superclass::OutputVnlVectorType       ;
-  using InputCovariantVectorType = typename Superclass::InputCovariantVectorType  ;
-  using OutputCovariantVectorType = typename Superclass::OutputCovariantVectorType ;
-  using RepresenterType = statismo::Representer<TDataset> ;
-  using StatisticalModelType = itk::StatisticalModel<TDataset> ;
+  using Self = StatisticalModelTransformBase;
+  using Superclass = itk::Transform<TScalarType, TInputDimension, TOutputDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using VectorType = vnl_vector<statismo::ScalarType>;
+  using MatrixType = vnl_matrix<statismo::ScalarType>;
+  /* Parameters Type   */
+  using ParametersType = typename Superclass::ParametersType;
+  using JacobianType = typename Superclass::JacobianType;
+  using ScalarType = typename Superclass::ScalarType;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using InputVectorType = typename Superclass::InputVectorType;
+  using OutputVectorType = typename Superclass::OutputVectorType;
+  using InputVnlVectorType = typename Superclass::InputVnlVectorType;
+  using OutputVnlVectorType = typename Superclass::OutputVnlVectorType;
+  using InputCovariantVectorType = typename Superclass::InputCovariantVectorType;
+  using OutputCovariantVectorType = typename Superclass::OutputCovariantVectorType;
+  using RepresenterType = statismo::Representer<TDataset>;
+  using StatisticalModelType = itk::StatisticalModel<TDataset>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(StatisticalModelTransformBase, Superclass);

@@ -59,18 +59,19 @@
 
 /**
  * This example is to illustrate basic functionality of the Gaussian Process registration using statismo.
- * 
+ *
  * Usage:
  * ./bin/itkSimpleGaussianProcessImageToImageRegistration share/data/hand_images/hand-1.vtk
  * share/data/hand_images/hand-2.vtk /tmp/deformationfield.vtk
  */
 
-namespace {
+namespace
+{
 
-  constexpr int _k_gaussianSigma = 70;
-  constexpr int _k_gaussianScale = 100;
-  constexpr int _k_numBasisFunctions = 100;
-  constexpr int _k_numIterations  = 100;
+constexpr int _k_gaussianSigma = 70;
+constexpr int _k_gaussianScale = 100;
+constexpr int _k_numBasisFunctions = 100;
+constexpr int _k_numIterations = 100;
 
 /**
  * A scalar valued gaussian kernel.
@@ -79,8 +80,8 @@ template <class TPoint>
 class _GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
-  using CoordRepType = typename TPoint::CoordRepType ;
-  using VectorType = vnl_vector<CoordRepType>      ;
+  using CoordRepType = typename TPoint::CoordRepType;
+  using VectorType = vnl_vector<CoordRepType>;
 
   explicit _GaussianKernel(double sigma)
     : m_sigma(sigma)
@@ -141,18 +142,14 @@ BuildLowRankGPModel(const char * referenceFilename)
   auto representer = TRepresenterType::New();
   representer->SetReference(referenceReader->GetOutput());
 
-  auto gk =
-    _GaussianKernel<PointType>(_k_gaussianSigma); // a Gaussian kernel with sigma=gaussianKernelSigma
+  auto gk = _GaussianKernel<PointType>(_k_gaussianSigma); // a Gaussian kernel with sigma=gaussianKernelSigma
   // make the kernel matrix valued and scale it by a factor of 100
-  const auto& mvGk =
-    statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
-  const auto& scaledGk =
-    statismo::ScaledKernel<PointType>(&mvGk, _k_gaussianScale); // apply Gaussian scale parameter
+  const auto & mvGk = statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
+  const auto & scaledGk = statismo::ScaledKernel<PointType>(&mvGk, _k_gaussianScale); // apply Gaussian scale parameter
 
   auto gpModelBuilder = ModelBuilderType::New();
   gpModelBuilder->SetRepresenter(representer);
-  auto model =
-    gpModelBuilder->BuildNewZeroMeanModel(scaledGk, _k_numBasisFunctions); // number of basis functions
+  auto model = gpModelBuilder->BuildNewZeroMeanModel(scaledGk, _k_numBasisFunctions); // number of basis functions
 
   std::cout << "done!" << std::endl;
   return model;
@@ -174,16 +171,16 @@ BuildLowRankGPModel(const char * referenceFilename)
  */
 template <class TImage, class TVectorImage, class TStatisticalModelType, class TMetric, unsigned int VImageDimension>
 typename TVectorImage::Pointer
-ModelBasedImageToImageRegistration(const std::string  &                           referenceFilename,
-                                   const std::string  &                           targetFilename,
+ModelBasedImageToImageRegistration(const std::string &                     referenceFilename,
+                                   const std::string &                     targetFilename,
                                    typename TStatisticalModelType::Pointer model)
 {
 
-  using ImageReaderType = itk::ImageFileReader<TImage>                                                                  ;
-  using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<TVectorImage, double, VImageDimension> ;
-  using OptimizerType = itk::LBFGSOptimizer                                                                           ;
-  using RegistrationFilterType = itk::ImageRegistrationMethod<TImage, TImage>        ;
-  using InterpolatorType = itk::LinearInterpolateImageFunction<TImage, double> ;
+  using ImageReaderType = itk::ImageFileReader<TImage>;
+  using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<TVectorImage, double, VImageDimension>;
+  using OptimizerType = itk::LBFGSOptimizer;
+  using RegistrationFilterType = itk::ImageRegistrationMethod<TImage, TImage>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<TImage, double>;
 
   auto referenceReader = ImageReaderType::New();
   referenceReader->SetFileName(referenceFilename);
@@ -205,7 +202,7 @@ ModelBasedImageToImageRegistration(const std::string  &                         
   optimizer->MinimizeOn();
   optimizer->SetMaximumNumberOfFunctionEvaluations(_k_numIterations);
 
-  auto        metric = TMetric::New();
+  auto metric = TMetric::New();
   auto interpolator = InterpolatorType::New();
 
   auto registration = RegistrationFilterType::New();
@@ -222,7 +219,7 @@ ModelBasedImageToImageRegistration(const std::string  &                         
   {
     std::cout << "Performing registration... " << std::flush;
     registration->Update();
-    std::cout << "done!"<< std::endl;
+    std::cout << "done!" << std::endl;
   }
   catch (itk::ExceptionObject & o)
   {
@@ -232,7 +229,7 @@ ModelBasedImageToImageRegistration(const std::string  &                         
 
   return model->DrawSample(transform->GetCoefficients());
 }
-}
+} // namespace
 
 /*
  * Main routine:
@@ -251,15 +248,14 @@ main(int argc, char * argv[])
   std::string targetFilename = argv[2];
   std::string outputFilename = argv[3];
 
-  using ImageType = itk::Image<float, 2>                                         ;
-  using VectorImageType = itk::Image<itk::Vector<float, 2>, 2>                         ;
-  using RepresenterType = itk::StandardImageRepresenter<VectorImageType::PixelType, 2> ;
-  using StatisticalModelType = itk::StatisticalModel<VectorImageType>                       ;
-  using MeanSquaresMetricType = itk::MeanSquaresImageToImageMetric<ImageType, ImageType>     ;
+  using ImageType = itk::Image<float, 2>;
+  using VectorImageType = itk::Image<itk::Vector<float, 2>, 2>;
+  using RepresenterType = itk::StandardImageRepresenter<VectorImageType::PixelType, 2>;
+  using StatisticalModelType = itk::StatisticalModel<VectorImageType>;
+  using MeanSquaresMetricType = itk::MeanSquaresImageToImageMetric<ImageType, ImageType>;
 
   // perform low-rank approximation of Gaussian process prior
-  auto model =
-    BuildLowRankGPModel<RepresenterType, VectorImageType, StatisticalModelType>(referenceFilename.c_str());
+  auto model = BuildLowRankGPModel<RepresenterType, VectorImageType, StatisticalModelType>(referenceFilename.c_str());
 
   // perform image to image registration using the Gaussian process deformation model
   auto deformationField =

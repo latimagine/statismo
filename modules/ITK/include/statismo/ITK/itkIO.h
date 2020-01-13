@@ -68,8 +68,7 @@ public:
     try
     {
       auto model = ITKStatisticalModelType::New();
-      model->SetStatismoImplObj(
-        statismo::IO<T>::LoadStatisticalModel(representer, filename, maxNumberOfPCAComponents));
+      model->SetStatismoImplObj(statismo::IO<T>::LoadStatisticalModel(representer, filename, maxNumberOfPCAComponents));
       return model;
     }
     catch (const statismo::StatisticalModelException & e)

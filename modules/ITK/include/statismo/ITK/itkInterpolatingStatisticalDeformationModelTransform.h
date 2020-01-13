@@ -105,13 +105,13 @@ public:
     this->Superclass::SetStatisticalModel(model);
 
     m_meanDeformation = InterpolatorType::New();
-    
+
     auto meanDf = model->DrawMean();
     m_meanDeformation->SetInputImage(meanDf);
     for (unsigned i = 0; i < model->GetNumberOfPrincipalComponents(); ++i)
     {
       auto deformationField = model->DrawPCABasisSample(i);
-      auto    basisI = InterpolatorType::New();
+      auto basisI = InterpolatorType::New();
       basisI->SetInputImage(deformationField);
       m_PCABasisDeformations.push_back(basisI);
     }
@@ -123,7 +123,8 @@ public:
   {
     jacobian.SetSize(TDimension, m_PCABasisDeformations.size());
     jacobian.Fill(0);
-    if (!m_meanDeformation->IsInsideBuffer(pt)) {
+    if (!m_meanDeformation->IsInsideBuffer(pt))
+    {
       return;
     }
 

@@ -81,16 +81,16 @@ public:
   virtual ~PosteriorModelBuilder() = default;
 
   // create statismo stuff
-  using RepresenterType = statismo::Representer<T>                                        ;
-    using ValueType = typename RepresenterType::ValueType                             ;
-    using PointType = typename RepresenterType::PointType                             ;
-    using PointValueListType = typename statismo::PosteriorModelBuilder<T>::PointValueListType;
-    using PointValueWithCovariancePairType =
-    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovariancePairType ;
-    using PointValueWithCovarianceListType =
-    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovarianceListType ;
-    using StatisticalModelType = itk::StatisticalModel<T>                                                ;
-    using StatismoStatisticalModelType = statismo::StatisticalModel<T>                                           ;
+  using RepresenterType = statismo::Representer<T>;
+  using ValueType = typename RepresenterType::ValueType;
+  using PointType = typename RepresenterType::PointType;
+  using PointValueListType = typename statismo::PosteriorModelBuilder<T>::PointValueListType;
+  using PointValueWithCovariancePairType =
+    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovariancePairType;
+  using PointValueWithCovarianceListType =
+    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovarianceListType;
+  using StatisticalModelType = itk::StatisticalModel<T>;
+  using StatismoStatisticalModelType = statismo::StatisticalModel<T>;
 
   typename StatisticalModelType::Pointer
   BuildNewModelFromModel(const StatisticalModelType * model,
@@ -104,12 +104,12 @@ public:
                                                                           const PointValueListType & pointValues,
                                                                           double pointValuesNoiseVariance,
                                                                           bool   computeScores) const;
-    auto                                   newStatismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
-                                                         static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
-                                                         statismoModel,
-                                                         pointValues,
-                                                         pointValuesNoiseVariance,
-                                                         computeScores);
+    auto newStatismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                       static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
+                                                       statismoModel,
+                                                       pointValues,
+                                                       pointValuesNoiseVariance,
+                                                       computeScores);
     auto itkModel = StatisticalModelType::New();
     itkModel->SetStatismoImplObj(std::move(newStatismoModel));
     return itkModel;
@@ -121,12 +121,12 @@ public:
                 double                     pointValuesNoiseVariance,
                 double                     noiseVariance)
   {
-    auto                                   statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
-                                                     &ImplType::BuildNewModel,
-                                                     DataItemList,
-                                                     pointValues,
-                                                     pointValuesNoiseVariance,
-                                                     noiseVariance);
+    auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                    &ImplType::BuildNewModel,
+                                                    DataItemList,
+                                                    pointValues,
+                                                    pointValuesNoiseVariance,
+                                                    noiseVariance);
     auto itkModel = StatisticalModelType::New();
     itkModel->SetStatismoImplObj(std::move(statismoModel));
     return itkModel;
@@ -144,10 +144,10 @@ public:
       const PointValueWithCovarianceListType & pointValuesWithCovariance,
       bool                                     computeScores) const;
     auto newStatismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
-                                                         static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
-                                                         statismoModel,
-                                                         pointValuesWithCovariance,
-                                                         computeScores);
+                                                       static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
+                                                       statismoModel,
+                                                       pointValuesWithCovariance,
+                                                       computeScores);
 
     auto itkModel = StatisticalModelType::New();
     itkModel->SetStatismoImplObj(std::move(newStatismoModel));
@@ -159,8 +159,11 @@ public:
                 const PointValueWithCovarianceListType & pointValuesWithCovariance,
                 double                                   noiseVariance)
   {
-    auto statismoModel = this->CallForwardImplTrans(
-      statismo::itk::ExceptionHandler{ *this }, &ImplType::BuildNewModel, DataItemList, pointValuesWithCovariance, noiseVariance);
+    auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                    &ImplType::BuildNewModel,
+                                                    DataItemList,
+                                                    pointValuesWithCovariance,
+                                                    noiseVariance);
     auto itkModel = StatisticalModelType::New();
     itkModel->SetStatismoImplObj(std::move(statismoModel));
     return itkModel;

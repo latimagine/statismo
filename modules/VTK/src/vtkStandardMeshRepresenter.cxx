@@ -79,7 +79,7 @@ vtkStandardMeshRepresenter::CloneImpl() const
 void
 vtkStandardMeshRepresenter::Load(const H5::Group & fg)
 {
-  vtkSmartPointer<vtkPolyData> ref; 
+  vtkSmartPointer<vtkPolyData> ref;
 
   std::string repName = hdf5utils::ReadStringAttribute(fg, "name");
   if (repName == "vtkPolyDataRepresenter" || repName == "itkMeshRepresenter")
@@ -124,8 +124,8 @@ vtkStandardMeshRepresenter::LoadRef(const H5::Group & fg) const
 
   ref->SetPoints(points);
 
-  auto cell = vtkSmartPointer<vtkCellArray>::New();
-  unsigned       cellDim = cellsMat.rows();
+  auto     cell = vtkSmartPointer<vtkCellArray>::New();
+  unsigned cellDim = cellsMat.rows();
   for (unsigned i = 0; i < nCells; i++)
   {
     cell->InsertNextCell(cellDim);

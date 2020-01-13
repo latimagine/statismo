@@ -56,7 +56,6 @@
 #include <itkWarpImageFilter.h>
 
 
-
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -79,7 +78,8 @@
  *
  */
 
-namespace {
+namespace
+{
 
 //
 // Internal type
@@ -91,14 +91,14 @@ namespace {
 class _IterationStatusObserver : public itk::Command
 {
 public:
-  using Self = _IterationStatusObserver ;
-  using Superclass = itk::Command            ;
-  using Pointer = itk::SmartPointer<Self> ;
+  using Self = _IterationStatusObserver;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
 
   itkNewMacro(Self);
 
-  using OptimizerType = itk::LBFGSOptimizer   ;
-  using OptimizerPointer = const OptimizerType * ;
+  using OptimizerType = itk::LBFGSOptimizer;
+  using OptimizerPointer = const OptimizerType *;
 
   void
   Execute(itk::Object * caller, const itk::EventObject & event) override
@@ -121,7 +121,7 @@ public:
   }
 
 private:
-  int m_iterIdx{0};
+  int m_iterIdx{ 0 };
 };
 
 /**
@@ -131,8 +131,8 @@ template <class TPoint>
 class _GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
-  using CoordRepType = typename TPoint::CoordRepType ;
-  using VectorType = vnl_vector<CoordRepType>      ;
+  using CoordRepType = typename TPoint::CoordRepType;
+  using VectorType = vnl_vector<CoordRepType>;
 
   explicit _GaussianKernel(double sigma)
     : m_sigma(sigma)
@@ -185,14 +185,14 @@ private:
 template <class TRepresenter, class TImage, class TStatisticalModel>
 typename TStatisticalModel::Pointer
 _BuildLowRankGPModel(const char * referenceFilename,
-                    double       gaussianKernelSigma,
-                    double       gaussianKernelScale,
-                    unsigned     numberOfBasisFunctions)
+                     double       gaussianKernelSigma,
+                     double       gaussianKernelScale,
+                     unsigned     numberOfBasisFunctions)
 {
 
-  using ModelBuilderType = itk::LowRankGPModelBuilder<TImage> ;
-  using ImageFileReaderType = itk::ImageFileReader<TImage>       ;
-  using PointType = typename TImage::PointType         ;
+  using ModelBuilderType = itk::LowRankGPModelBuilder<TImage>;
+  using ImageFileReaderType = itk::ImageFileReader<TImage>;
+  using PointType = typename TImage::PointType;
 
   auto representer = TRepresenter::New();
 
@@ -205,18 +205,15 @@ _BuildLowRankGPModel(const char * referenceFilename,
 
   representer->SetReference(referenceReader->GetOutput());
 
-  auto gk =
-    _GaussianKernel<PointType>(gaussianKernelSigma); // a Gaussian kernel with sigma=gaussianKernelSigma
+  auto gk = _GaussianKernel<PointType>(gaussianKernelSigma); // a Gaussian kernel with sigma=gaussianKernelSigma
   // make the kernel matrix valued and scale it by a factor of 100
-  const auto& mvGk =
-    statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
-  const auto& scaledGk =
+  const auto & mvGk = statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
+  const auto & scaledGk =
     statismo::ScaledKernel<PointType>(&mvGk, gaussianKernelScale); // apply Gaussian scale parameter
 
   auto gpModelBuilder = ModelBuilderType::New();
   gpModelBuilder->SetRepresenter(representer);
-auto  model =
-    gpModelBuilder->BuildNewZeroMeanModel(scaledGk, numberOfBasisFunctions); // number of basis functions
+  auto model = gpModelBuilder->BuildNewZeroMeanModel(scaledGk, numberOfBasisFunctions); // number of basis functions
 
   std::cout << "done!" << std::endl;
   return model;
@@ -245,15 +242,15 @@ auto  model =
  */
 template <class TPointType, unsigned int VImageDimension>
 typename std::vector<TPointType>
-_ReadLandmarkFile(const std::string& landmarkFilename)
+_ReadLandmarkFile(const std::string & landmarkFilename)
 {
   std::vector<TPointType> pointVector;
 
   const unsigned int x = 0, y = 1, z = 2;
   double             p[3];
 
-  std::ifstream infile{landmarkFilename.c_str()};
-  std::string line;
+  std::ifstream infile{ landmarkFilename.c_str() };
+  std::string   line;
   while (std::getline(infile, line))
   {
     std::stringstream line_stream(line);
@@ -297,11 +294,11 @@ _ReadLandmarkFile(const std::string& landmarkFilename)
 template <class TImage, class TStatisticalModel, unsigned int VImageDimension>
 typename TStatisticalModel::Pointer
 _ConstrainModel(typename TStatisticalModel::Pointer model,
-               const std::string &                        referenceLandmarkFilename,
-               const std::string &                        targetLandmarkFilename,
-               double                              landmarkUncertainty)
+                const std::string &                 referenceLandmarkFilename,
+                const std::string &                 targetLandmarkFilename,
+                double                              landmarkUncertainty)
 {
-  using PosteriorModelBuilderType = typename itk::PosteriorModelBuilder<TImage> ;
+  using PosteriorModelBuilderType = typename itk::PosteriorModelBuilder<TImage>;
 
   typename TStatisticalModel::PointValueListType constraints;
 
@@ -309,7 +306,7 @@ _ConstrainModel(typename TStatisticalModel::Pointer model,
     _ReadLandmarkFile<typename TStatisticalModel::PointType, VImageDimension>(referenceLandmarkFilename);
   auto targetPointVector =
     _ReadLandmarkFile<typename TStatisticalModel::PointType, VImageDimension>(targetLandmarkFilename);
-  
+
   assert(referencePointVector.size() != targetPointVector.size());
 
   for (unsigned i = 0; i < referencePointVector.size(); i++)
@@ -325,8 +322,7 @@ _ConstrainModel(typename TStatisticalModel::Pointer model,
   }
 
   auto pfmb = PosteriorModelBuilderType::New();
-  auto         constraintModel =
-    pfmb->BuildNewModelFromModel(model.GetPointer(), constraints, landmarkUncertainty);
+  auto constraintModel = pfmb->BuildNewModelFromModel(model.GetPointer(), constraints, landmarkUncertainty);
 
   return constraintModel;
 }
@@ -350,20 +346,20 @@ _ConstrainModel(typename TStatisticalModel::Pointer model,
 
 template <class TImage, class TVectorImage, class TStatisticalModel, class TMetric, unsigned int VImageDimension>
 typename TImage::Pointer
-_ModelBasedImageToImageRegistration(const std::string&                         referenceFilename,
-                                   const std::string&                         targetFilename,
-                                   typename TStatisticalModel::Pointer model,
-                                   const std::string&                         outputDfFilename,
-                                   unsigned                            numberOfIterations)
+_ModelBasedImageToImageRegistration(const std::string &                 referenceFilename,
+                                    const std::string &                 targetFilename,
+                                    typename TStatisticalModel::Pointer model,
+                                    const std::string &                 outputDfFilename,
+                                    unsigned                            numberOfIterations)
 {
 
 
-  using ImageReaderType = itk::ImageFileReader<TImage>                                                                  ;
-  using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<TVectorImage, double, VImageDimension> ;
-  using OptimizerType = itk::LBFGSOptimizer                                                                           ;
-  using RegistrationFilterType = itk::ImageRegistrationMethod<TImage, TImage>        ;
-  using WarperType = itk::WarpImageFilter<TImage, TImage, TVectorImage>  ;
-  using InterpolatorType = itk::LinearInterpolateImageFunction<TImage, double> ;
+  using ImageReaderType = itk::ImageFileReader<TImage>;
+  using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<TVectorImage, double, VImageDimension>;
+  using OptimizerType = itk::LBFGSOptimizer;
+  using RegistrationFilterType = itk::ImageRegistrationMethod<TImage, TImage>;
+  using WarperType = itk::WarpImageFilter<TImage, TImage, TVectorImage>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<TImage, double>;
 
   auto referenceReader = ImageReaderType::New();
   referenceReader->SetFileName(referenceFilename);
@@ -390,10 +386,10 @@ _ModelBasedImageToImageRegistration(const std::string&                         r
   optimizer->SetMaximumNumberOfFunctionEvaluations(numberOfIterations);
 
   using ObserverType = _IterationStatusObserver;
-  auto         observer = ObserverType::New();
+  auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 
-  auto        metric = TMetric::New();
+  auto metric = TMetric::New();
   auto interpolator = InterpolatorType::New();
 
   auto registration = RegistrationFilterType::New();
@@ -466,31 +462,30 @@ _ModelBasedImageToImageRegistration(const std::string&                         r
  */
 template <class PixelType, unsigned int VImageDimension>
 void
-RunImageToImageRegistration(const std::string& referenceFilename,
-                            const std::string& referenceLandmarkFilename,
-                            const std::string& targetFilename,
-                            const std::string& targetLandmarkFilename,
-                            double      gaussianKernelSigma,
-                            double      gaussianKernelScale,
-                            double      landmarkUncertainty,
+RunImageToImageRegistration(const std::string & referenceFilename,
+                            const std::string & referenceLandmarkFilename,
+                            const std::string & targetFilename,
+                            const std::string & targetLandmarkFilename,
+                            double              gaussianKernelSigma,
+                            double              gaussianKernelScale,
+                            double              landmarkUncertainty,
                             const std::string & similarityMetric,
-                            const std::string& outputFilename,
-                            std::string outputDfFilename,
-                            unsigned    numberOfBasisFunctions,
-                            unsigned    numberOfIterations)
+                            const std::string & outputFilename,
+                            std::string         outputDfFilename,
+                            unsigned            numberOfBasisFunctions,
+                            unsigned            numberOfIterations)
 {
-  using ImageType = itk::Image<PixelType, VImageDimension>                                              ;
-  using VectorImageType = itk::Image<itk::Vector<float, VImageDimension>, VImageDimension>                    ;
-  using RepresenterType = itk::StandardImageRepresenter<typename VectorImageType::PixelType, VImageDimension> ;
-  using StatisticalModelType = itk::StatisticalModel<VectorImageType>                                              ;
-  using MeanSquaresMetricType = itk::MeanSquaresImageToImageMetric<ImageType, ImageType>                            ;
-  using NormalizedCorrelationMetricType = itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType> ;
+  using ImageType = itk::Image<PixelType, VImageDimension>;
+  using VectorImageType = itk::Image<itk::Vector<float, VImageDimension>, VImageDimension>;
+  using RepresenterType = itk::StandardImageRepresenter<typename VectorImageType::PixelType, VImageDimension>;
+  using StatisticalModelType = itk::StatisticalModel<VectorImageType>;
+  using MeanSquaresMetricType = itk::MeanSquaresImageToImageMetric<ImageType, ImageType>;
+  using NormalizedCorrelationMetricType = itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType>;
 
   // build deformation model
-  auto model =
-    _BuildLowRankGPModel<RepresenterType, VectorImageType, StatisticalModelType>(
-      referenceFilename.c_str(), gaussianKernelSigma, gaussianKernelScale, numberOfBasisFunctions);
-  
+  auto model = _BuildLowRankGPModel<RepresenterType, VectorImageType, StatisticalModelType>(
+    referenceFilename.c_str(), gaussianKernelSigma, gaussianKernelScale, numberOfBasisFunctions);
+
   if (!referenceLandmarkFilename.empty() && !targetLandmarkFilename.empty())
   {
     model = _ConstrainModel<VectorImageType, StatisticalModelType, VImageDimension>(
@@ -502,19 +497,19 @@ RunImageToImageRegistration(const std::string& referenceFilename,
   if (similarityMetric == "MeanSquares")
   {
     registeredImage = _ModelBasedImageToImageRegistration<ImageType,
-                                                         VectorImageType,
-                                                         StatisticalModelType,
-                                                         MeanSquaresMetricType,
-                                                         VImageDimension>(
+                                                          VectorImageType,
+                                                          StatisticalModelType,
+                                                          MeanSquaresMetricType,
+                                                          VImageDimension>(
       referenceFilename, targetFilename, model, outputDfFilename, numberOfIterations);
   }
   else if (similarityMetric == "NormalizedCorrelation")
   {
     registeredImage = _ModelBasedImageToImageRegistration<ImageType,
-                                                         VectorImageType,
-                                                         StatisticalModelType,
-                                                         NormalizedCorrelationMetricType,
-                                                         VImageDimension>(
+                                                          VectorImageType,
+                                                          StatisticalModelType,
+                                                          NormalizedCorrelationMetricType,
+                                                          VImageDimension>(
       referenceFilename, targetFilename, model, outputDfFilename, numberOfIterations);
   }
 
@@ -527,7 +522,7 @@ RunImageToImageRegistration(const std::string& referenceFilename,
     writer->Update();
   }
 }
-}
+} // namespace
 
 
 /*
@@ -660,11 +655,13 @@ main(int argc, char * argv[])
   std::cout << "Low-rank Gaussian process image registration:" << std::endl;
   std::cout << " - space dimensions\t\t" << numDimensions << std::endl;
   std::cout << " - reference\t\t\t" << referenceFilename << std::endl;
-  if (!referenceLandmarkFilename.empty()) {
+  if (!referenceLandmarkFilename.empty())
+  {
     std::cout << " - reference landmarks\t\t" << referenceLandmarkFilename << std::endl;
   }
   std::cout << " - target\t\t\t" << targetFilename << std::endl;
-  if (!targetLandmarkFilename.empty()) {
+  if (!targetLandmarkFilename.empty())
+  {
     std::cout << " - target landmarks\t\t" << targetLandmarkFilename << std::endl;
   }
   std::cout << " - output\t\t\t" << outputFilename << std::endl;
@@ -672,7 +669,8 @@ main(int argc, char * argv[])
   std::cout << " - similarity metric\t\t" << similarityMetric << std::endl;
   std::cout << " - Gaussian sigma\t\t" << gaussianKernelSigma << std::endl;
   std::cout << " - Gaussian scale\t\t" << gaussianKernelScale << std::endl;
-  if (!targetLandmarkFilename.empty() && !referenceLandmarkFilename.empty()) {
+  if (!targetLandmarkFilename.empty() && !referenceLandmarkFilename.empty())
+  {
     std::cout << " - Landmark uncertainty\t\t" << landmarkUncertainty << std::endl;
   }
   std::cout << " - #basis functions\t\t" << numberOfBasisFunctions << std::endl;
@@ -725,7 +723,9 @@ main(int argc, char * argv[])
                                           outputDfFilename,
                                           numberOfBasisFunctions,
                                           numberOfIterations);
-  } else {
+  }
+  else
+  {
     std::cerr << "expected dimension 2 or 3" << std::endl;
     return 1;
   }

@@ -72,47 +72,48 @@
  *
  */
 
-namespace {
+namespace
+{
 
 //
 // Internal types
 //
 
-constexpr unsigned                                                                      Dimensions = 3;
-using PointSetType = itk::PointSet<float, Dimensions>                                            ;
-using MeshType = itk::Mesh<float, Dimensions>                                                ;
-using PointType = itk::Point<double, 3>                                                       ;
-using CTImageType = itk::Image<float, Dimensions>                                               ;
-using DistanceImageType = itk::Image<float, Dimensions>                                               ;
-using CTImageReaderType = itk::ImageFileReader<CTImageType>                                           ;
-using DistanceImageWriterType = itk::ImageFileWriter<DistanceImageType>                                     ;
-using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>                             ;
-using MeshReaderType = itk::MeshFileReader<MeshType>                                               ;
-using GradientImageType = itk::Image<itk::CovariantVector<float, Dimensions>, Dimensions>             ;
-using MetricType = itk::MeanSquaresPointSetToImageMetric<PointSetType, DistanceImageType>      ;
-using StatisticalModelTransformType = itk::StatisticalShapeModelTransform<MeshType, double, Dimensions>           ;
-using StatisticalModelType = itk::StatisticalModel<MeshType>                                             ;
-using RegistrationFilterType = itk::PointSetToImageRegistrationMethod<PointSetType, DistanceImageType>     ;
-using OptimizerType = itk::LBFGSOptimizer                                                         ;
-using InterpolatorType = itk::LinearInterpolateImageFunction<DistanceImageType, double>              ;
-using BinaryThresholdImageFilterType = itk::BinaryThresholdImageFilter<CTImageType, CTImageType>                   ;
-using DistanceMapImageFilterType = itk::SignedDanielssonDistanceMapImageFilter<CTImageType, DistanceImageType> ;
-using RigidTransformType = itk::VersorRigid3DTransform<double>                                         ;
-using LandmarkTransformInitializerType = itk::LandmarkBasedTransformInitializer<RigidTransformType, DistanceImageType, DistanceImageType>
-                                                                             ;
-using CompositeTransformType = itk::CompositeTransform<double, 3>                                   ;
-using TransformMeshFilterType = itk::TransformMeshFilter<MeshType, MeshType, CompositeTransformType> ;
-using PosteriorModelBuilderType = itk::PosteriorModelBuilder<MeshType> ;
-using PointsLocatorType = itk::PointsLocator<MeshType::PointsContainer> ;
+constexpr unsigned Dimensions = 3;
+using PointSetType = itk::PointSet<float, Dimensions>;
+using MeshType = itk::Mesh<float, Dimensions>;
+using PointType = itk::Point<double, 3>;
+using CTImageType = itk::Image<float, Dimensions>;
+using DistanceImageType = itk::Image<float, Dimensions>;
+using CTImageReaderType = itk::ImageFileReader<CTImageType>;
+using DistanceImageWriterType = itk::ImageFileWriter<DistanceImageType>;
+using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+using MeshReaderType = itk::MeshFileReader<MeshType>;
+using GradientImageType = itk::Image<itk::CovariantVector<float, Dimensions>, Dimensions>;
+using MetricType = itk::MeanSquaresPointSetToImageMetric<PointSetType, DistanceImageType>;
+using StatisticalModelTransformType = itk::StatisticalShapeModelTransform<MeshType, double, Dimensions>;
+using StatisticalModelType = itk::StatisticalModel<MeshType>;
+using RegistrationFilterType = itk::PointSetToImageRegistrationMethod<PointSetType, DistanceImageType>;
+using OptimizerType = itk::LBFGSOptimizer;
+using InterpolatorType = itk::LinearInterpolateImageFunction<DistanceImageType, double>;
+using BinaryThresholdImageFilterType = itk::BinaryThresholdImageFilter<CTImageType, CTImageType>;
+using DistanceMapImageFilterType = itk::SignedDanielssonDistanceMapImageFilter<CTImageType, DistanceImageType>;
+using RigidTransformType = itk::VersorRigid3DTransform<double>;
+using LandmarkTransformInitializerType =
+  itk::LandmarkBasedTransformInitializer<RigidTransformType, DistanceImageType, DistanceImageType>;
+using CompositeTransformType = itk::CompositeTransform<double, 3>;
+using TransformMeshFilterType = itk::TransformMeshFilter<MeshType, MeshType, CompositeTransformType>;
+using PosteriorModelBuilderType = itk::PosteriorModelBuilder<MeshType>;
+using PointsLocatorType = itk::PointsLocator<MeshType::PointsContainer>;
 
 //
 // Static variables
 //
 
 constexpr int16_t _k_maxNumberOfIterations = 10000; // the maximum number of iterations to use in the optimization
-constexpr double _k_translationScale = 1; // dynamic range of translations
-constexpr double _k_rotationScale = 0.1; // dynamic range of rotations
-constexpr double _k_smScale = 3; // dynamic range of statistical model parameters
+constexpr double  _k_translationScale = 1;          // dynamic range of translations
+constexpr double  _k_rotationScale = 0.1;           // dynamic range of rotations
+constexpr double  _k_smScale = 3;                   // dynamic range of statistical model parameters
 
 //
 // This class is used to track the progress of the optimization
@@ -121,15 +122,15 @@ constexpr double _k_smScale = 3; // dynamic range of statistical model parameter
 class _IterationStatusObserver : public itk::Command
 {
 public:
-  using Self = _IterationStatusObserver ;
-  using Superclass = itk::Command            ;
-  using Pointer = itk::SmartPointer<Self> ;
+  using Self = _IterationStatusObserver;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
 
   itkNewMacro(Self);
 
-  using OptimizerType = itk::LBFGSOptimizer ;
+  using OptimizerType = itk::LBFGSOptimizer;
   // using = itk::GradientDescentOptimizer OptimizerType;
-  using OptimizerPointer = const OptimizerType * ;
+  using OptimizerPointer = const OptimizerType *;
 
 
   void
@@ -141,7 +142,7 @@ public:
   void
   Execute(const itk::Object * object, const itk::EventObject & event) override
   {
-    auto  optimizer = dynamic_cast<OptimizerPointer>(object);
+    auto optimizer = dynamic_cast<OptimizerPointer>(object);
 
     if (!itk::IterationEvent().CheckEvent(&event))
     {
@@ -154,7 +155,7 @@ public:
   }
 
 private:
-  int m_iterIdx{0};
+  int m_iterIdx{ 0 };
 };
 
 //
@@ -169,7 +170,7 @@ private:
  * \param filename the filename
  * \return A list of itk points
  */
- std::vector<PointType>
+std::vector<PointType>
 _ReadLandmarks(const std::string & filename)
 {
   std::vector<PointType> ptList;
@@ -183,7 +184,8 @@ _ReadLandmarks(const std::string & filename)
   std::string line;
   while (std::getline(file, line))
   {
-    if (line.length() > 0 && line[0] == '#') {
+    if (line.length() > 0 && line[0] == '#')
+    {
       continue;
     }
 
@@ -223,7 +225,7 @@ computePosteriorModel(const RigidTransformType *     rigidTransform,
   StatisticalModelType::PointValueListType constraints;
 
   // We need to make sure the the points in fixed landmarks are real vertex points of the model reference.
-  auto        reference = statisticalModel->GetRepresenter()->GetReference();
+  auto reference = statisticalModel->GetRepresenter()->GetReference();
   auto ptLocator = PointsLocatorType::New();
   ptLocator->SetPoints(reference->GetPoints());
   ptLocator->Initialize();
@@ -241,12 +243,11 @@ computePosteriorModel(const RigidTransformType *     rigidTransform,
   }
 
   auto posteriorModelBuilder = PosteriorModelBuilderType::New();
-  auto    posteriorModel =
-    posteriorModelBuilder->BuildNewModelFromModel(statisticalModel, constraints, variance, false);
+  auto posteriorModel = posteriorModelBuilder->BuildNewModelFromModel(statisticalModel, constraints, variance, false);
 
   return posteriorModel;
 }
-}
+} // namespace
 
 /**
  * The input to the program is:
@@ -273,8 +274,8 @@ main(int argc, char * argv[])
   const char * targetName = argv[2];
   const char * fixedLandmarksName = argv[3];
   const char * movingLandmarksName = argv[4];
-  int16_t  threshold = std::stoi(argv[5]);
-  double lmVariance = std::stod(argv[6]);
+  int16_t      threshold = std::stoi(argv[5]);
+  double       lmVariance = std::stod(argv[6]);
   const char * outputMeshName = argv[7];
 
   // load the image to which we will fit
@@ -298,7 +299,7 @@ main(int argc, char * argv[])
   auto movingLandmarks = _ReadLandmarks(movingLandmarksName);
 
   // initialize the rigid transform
-  auto            rigidTransform = RigidTransformType::New();
+  auto rigidTransform = RigidTransformType::New();
   auto initializer = LandmarkTransformInitializerType::New();
   initializer->SetFixedLandmarks(fixedLandmarks);
   initializer->SetMovingLandmarks(movingLandmarks);
@@ -306,11 +307,10 @@ main(int argc, char * argv[])
   initializer->InitializeTransform();
 
   // load the model create a shape model transform with it
-  auto    representer = RepresenterType::New();
+  auto representer = RepresenterType::New();
   auto model = itk::StatismoIO<MeshType>::LoadStatisticalModel(representer, modelName);
 
-  auto constraintModel =
-    computePosteriorModel(rigidTransform, model, fixedLandmarks, movingLandmarks, lmVariance);
+  auto constraintModel = computePosteriorModel(rigidTransform, model, fixedLandmarks, movingLandmarks, lmVariance);
 
   auto statModelTransform = StatisticalModelTransformType::New();
   statModelTransform->SetStatisticalModel(constraintModel);
@@ -351,12 +351,12 @@ main(int argc, char * argv[])
 
 
   // set up the observer to keep track of the progress
-  using ObserverType = _IterationStatusObserver ;
-  auto        observer = ObserverType::New();
+  using ObserverType = _IterationStatusObserver;
+  auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 
   // set up the metric and interpolators
-  auto     metric = MetricType::New();
+  auto metric = MetricType::New();
   auto interpolator = InterpolatorType::New();
 
   // connect all the components

@@ -194,7 +194,7 @@ ModelInfo::LoadDataInfoOldStatismoFormat(const H5::H5Location & publicModelGroup
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 BuilderInfo::BuilderInfo(std::string                    modelBuilderName,
-                         std::string                   buildTime,
+                         std::string                    buildTime,
                          BuilderInfo::DataInfoList      di,
                          BuilderInfo::ParameterInfoList pi)
   : m_modelBuilderName(std::move(modelBuilderName))
@@ -203,9 +203,7 @@ BuilderInfo::BuilderInfo(std::string                    modelBuilderName,
   , m_parameterInfo(std::move(pi))
 {}
 
-BuilderInfo::BuilderInfo(std::string                   modelBuilderName,
-                         BuilderInfo::DataInfoList     di,
-                         BuilderInfo::ParameterInfoList pi)
+BuilderInfo::BuilderInfo(std::string modelBuilderName, BuilderInfo::DataInfoList di, BuilderInfo::ParameterInfoList pi)
   : m_modelBuilderName(std::move(modelBuilderName))
   , m_dataInfo(std::move(di))
   , m_parameterInfo(std::move(pi))

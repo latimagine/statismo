@@ -41,8 +41,11 @@
 
 namespace
 {
-const std::map<statismo::RepresenterDataType, std::string>& _DataTypeMap() {
-  try {
+const std::map<statismo::RepresenterDataType, std::string> &
+_DataTypeMap()
+{
+  try
+  {
     static std::map<statismo::RepresenterDataType, std::string> representerDataTypeMap = {
       { statismo::RepresenterDataType::UNKNOWN, "UNKNOWN" },
       { statismo::RepresenterDataType::POINT_SET, "POINT_SET" },
@@ -53,12 +56,14 @@ const std::map<statismo::RepresenterDataType, std::string>& _DataTypeMap() {
       { statismo::RepresenterDataType::CUSTOM, "CUSTOM" }
     };
     return representerDataTypeMap;
-  } catch(...) {
+  }
+  catch (...)
+  {
     std::cerr << "unrecoverable error in static daat initialization" << std::endl;
     exit(1);
   }
 }
-}
+} // namespace
 
 namespace statismo
 {
@@ -72,10 +77,9 @@ TypeToString(RepresenterDataType type)
 RepresenterDataType
 TypeFromString(const std::string & s)
 {
-  const auto& dataTypeMap = _DataTypeMap();
-  auto match = std::find_if(std::cbegin(dataTypeMap),
-                            std::cend(dataTypeMap),
-                            [&](const auto & p) { return p.second == s; });
+  const auto & dataTypeMap = _DataTypeMap();
+  auto         match =
+    std::find_if(std::cbegin(dataTypeMap), std::cend(dataTypeMap), [&](const auto & p) { return p.second == s; });
 
   if (match != std::cend(dataTypeMap))
   {
