@@ -38,6 +38,8 @@
 
 #include <itkObject.h>
 #include <itkDirectory.h>
+#include <itkIdentityTransform.h>
+#include <itkTransformMeshFilter.h>
 
 #include <string>
 #include <sstream>
@@ -79,6 +81,21 @@ GetDirFiles(const std::string & dir, const std::string & extension = ".*")
   }
 
   return files;
+}
+
+template <typename DataType>
+typename DataType::Pointer
+CloneMesh(typename DataType::Pointer pMesh)
+{
+  using IdentityTransformType = ::itk::IdentityTransform<float, DataType::PointDimension>             ;
+  using TransformFilterType = ::itk::TransformMeshFilter<DataType, DataType, IdentityTransformType> ;
+  auto   transformMeshFilter = TransformFilterType::New();
+  auto identityTransform = IdentityTransformType::New();
+  transformMeshFilter->SetInput(pMesh);
+  transformMeshFilter->SetTransform(identityTransform);
+  transformMeshFilter->Update();
+
+  return transformMeshFilter->GetOutput();
 }
 
 } // namespace statismo::itk

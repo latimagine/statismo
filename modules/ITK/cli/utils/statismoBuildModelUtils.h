@@ -31,6 +31,11 @@
  *
  */
 
+#ifndef __STATISMO_BUILD_MODEL_UTILS_H_
+#define __STATISMO_BUILD_MODEL_UTILS_H_
+
+#include "statismo/ITK/itkUtils.h"
+
 #include <itkCompensatedSummation.h>
 #include <itkIdentityTransform.h>
 #include <itkTransformMeshFilter.h>
@@ -42,100 +47,16 @@
 #include <string>
 #include <vector>
 
-typedef std::list<std::string> StringList;
-StringList
-getFileList(std::string path);
-
-template <class MeshType>
-typename MeshType::Pointer
-calculateMeanMesh(std::vector<typename MeshType::Pointer> meshes);
-
-template <class MeshType>
-float
-calculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2);
-
-template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
-std::vector<typename MeshType::Pointer>
-superimposeMeshes(std::vector<typename MeshType::Pointer> originalMeshes,
-                  typename MeshType::Pointer              referenceMesh,
-                  std::set<unsigned>                      landmarkIndices);
-
-template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
-typename MeshType::Pointer
-calculateProcrustesMeanMesh(std::vector<typename MeshType::Pointer> meshes,
-                            unsigned                                maxIterations,
-                            unsigned                                nrOfLandmarks,
-                            float                                   breakIfChangeBelow);
-
-template <class DataType>
-typename DataType::Pointer
-cloneMesh(typename DataType::Pointer pMesh);
-
-
-template <class DataType>
-typename DataType::Pointer
-cloneMesh(typename DataType::Pointer pMesh)
+namespace statismo::cli
 {
-  typedef itk::IdentityTransform<float, DataType::PointDimension>             IdentityTransformType;
-  typedef itk::TransformMeshFilter<DataType, DataType, IdentityTransformType> TransformFilterType;
-  typename TransformFilterType::Pointer   transformMeshFilter = TransformFilterType::New();
-  typename IdentityTransformType::Pointer pIdentityTransform = IdentityTransformType::New();
-  transformMeshFilter->SetInput(pMesh);
-  transformMeshFilter->SetTransform(pIdentityTransform);
-  transformMeshFilter->Update();
-  return transformMeshFilter->GetOutput();
-}
-
-template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
-typename MeshType::Pointer
-calculateProcrustesMeanMesh(std::vector<typename MeshType::Pointer> meshes,
-                            unsigned                                maxIterations,
-                            unsigned                                nrOfLandmarks,
-                            float                                   breakIfChangeBelow)
-{
-  // the initial mesh to which all others will be aligned to is the first one in the list here. Any other mesh could be
-  // chosen as well
-  typename MeshType::Pointer referenceMesh = *meshes.begin();
-
-  unsigned rngSeed = time(0);
-  unsigned meshVerticesCount = referenceMesh->GetNumberOfPoints();
-  srand(rngSeed);
-  std::set<unsigned> pointNumbers;
-  while (pointNumbers.size() < std::min(nrOfLandmarks, meshVerticesCount))
-  {
-    unsigned randomIndex = ((unsigned)rand()) % meshVerticesCount;
-    pointNumbers.insert(randomIndex);
-  }
-
-  float fPreviousDifference = -1;
-
-  for (unsigned i = 0; i < maxIterations; ++i)
-  {
-    // calculate the difference to the previous iteration's mesh and break if the difference is very small
-    std::vector<typename MeshType::Pointer> translatedMeshes =
-      superimposeMeshes<MeshType, LandmarkBasedTransformInitializerType, TransformType, FilterType>(
-        meshes, referenceMesh, pointNumbers);
-    typename MeshType::Pointer meanMesh = calculateMeanMesh<MeshType>(translatedMeshes);
-    float                      fDifference = calculateMeshDistance<MeshType>(meanMesh, referenceMesh);
-    float                      fDifferenceDelta = std::abs(fDifference - fPreviousDifference);
-    fPreviousDifference = fDifference;
-    referenceMesh = meanMesh;
-
-    if (fDifferenceDelta < breakIfChangeBelow)
-    {
-      break;
-    }
-  }
-  return referenceMesh;
-}
-
-template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
+  namespace details {
+    template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
 std::vector<typename MeshType::Pointer>
-superimposeMeshes(std::vector<typename MeshType::Pointer> originalMeshes,
+SuperimposeMeshes(const std::vector<typename MeshType::Pointer>& originalMeshes,
                   typename MeshType::Pointer              referenceMesh,
                   std::set<unsigned>                      landmarkIndices)
 {
-  std::vector<typename MeshType::Pointer> translatedMeshes(originalMeshes.begin(), originalMeshes.end());
+  std::vector<typename MeshType::Pointer> translatedMeshes(std::cbegin(originalMeshes), std::cend(originalMeshes));
   for (typename std::vector<typename MeshType::Pointer>::iterator it = translatedMeshes.begin();
        it != translatedMeshes.end();
        ++it)
@@ -182,7 +103,7 @@ superimposeMeshes(std::vector<typename MeshType::Pointer> originalMeshes,
 
 template <class MeshType>
 float
-calculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
+CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
 {
   if (mesh1->GetNumberOfPoints() != mesh2->GetNumberOfPoints() ||
       mesh1->GetNumberOfCells() != mesh2->GetNumberOfCells())
@@ -204,14 +125,14 @@ calculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Point
 
 template <class MeshType>
 typename MeshType::Pointer
-calculateMeanMesh(std::vector<typename MeshType::Pointer> meshes)
+CalculateMeanMesh(std::vector<typename MeshType::Pointer> meshes)
 {
   if (meshes.size() == 0)
   {
     itkGenericExceptionMacro(<< "Can't calculate the mean since no meshes were provided.");
   }
 
-  typedef itk::CompensatedSummation<typename MeshType::PixelType> CompensatedSummationType;
+  typedef ::itk::CompensatedSummation<typename MeshType::PixelType> CompensatedSummationType;
   typedef std::vector<CompensatedSummationType>                   MeshPointsVectorType;
 
   typename MeshType::Pointer pFirstMesh = *meshes.begin();
@@ -249,7 +170,7 @@ calculateMeanMesh(std::vector<typename MeshType::Pointer> meshes)
   }
 
   float                      fInvNumberOfMeshes = 1.0f / meshes.size();
-  typename MeshType::Pointer pMeanMesh = cloneMesh<MeshType>(pFirstMesh);
+  typename MeshType::Pointer pMeanMesh = statismo::itk::CloneMesh<MeshType>(pFirstMesh);
 
   // write the data to the mean mesh
   typename MeshPointsVectorType::iterator sum = vMeshPoints.begin();
@@ -267,12 +188,56 @@ calculateMeanMesh(std::vector<typename MeshType::Pointer> meshes)
 
   return pMeanMesh;
 }
+  }
 
 
-StringList
-getFileList(std::string path)
+template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
+typename MeshType::Pointer
+CalculateProcrustesMeanMesh(std::vector<typename MeshType::Pointer> meshes,
+                            unsigned                                maxIterations,
+                            unsigned                                nrOfLandmarks,
+                            float                                   breakIfChangeBelow)
 {
-  StringList fileList;
+  // the initial mesh to which all others will be aligned to is the first one in the list here. Any other mesh could be
+  // chosen as well
+  typename MeshType::Pointer referenceMesh = *meshes.begin();
+
+  unsigned rngSeed = time(0);
+  unsigned meshVerticesCount = referenceMesh->GetNumberOfPoints();
+  srand(rngSeed);
+  std::set<unsigned> pointNumbers;
+  while (pointNumbers.size() < std::min(nrOfLandmarks, meshVerticesCount))
+  {
+    unsigned randomIndex = ((unsigned)rand()) % meshVerticesCount;
+    pointNumbers.insert(randomIndex);
+  }
+
+  float fPreviousDifference = -1;
+
+  for (unsigned i = 0; i < maxIterations; ++i)
+  {
+    // calculate the difference to the previous iteration's mesh and break if the difference is very small
+    std::vector<typename MeshType::Pointer> translatedMeshes =
+      details::SuperimposeMeshes<MeshType, LandmarkBasedTransformInitializerType, TransformType, FilterType>(
+        meshes, referenceMesh, pointNumbers);
+    typename MeshType::Pointer meanMesh = details::CalculateMeanMesh<MeshType>(translatedMeshes);
+    float                      fDifference = details::CalculateMeshDistance<MeshType>(meanMesh, referenceMesh);
+    float                      fDifferenceDelta = std::abs(fDifference - fPreviousDifference);
+    fPreviousDifference = fDifference;
+    referenceMesh = meanMesh;
+
+    if (fDifferenceDelta < breakIfChangeBelow)
+    {
+      break;
+    }
+  }
+  return referenceMesh;
+}
+
+std::vector<std::string>
+GetFileList(std::string path)
+{
+  std::vector<std::string> fileList;
 
   std::ifstream file;
   try
@@ -303,3 +268,7 @@ getFileList(std::string path)
 
   return fileList;
 }
+
+}
+
+#endif

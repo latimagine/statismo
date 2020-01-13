@@ -43,7 +43,7 @@
 #include <statismo/ITK/itkStatisticalModel.h>
 #include <itkVersorRigid3DTransform.h>
 
-#include "utils/statismo-fitting-utils.h"
+#include "utils/statismoBuildPosteriorModelUtils.h"
 
 const unsigned Dimensionality3D = 3;
 const unsigned Dimensionality2D = 2;

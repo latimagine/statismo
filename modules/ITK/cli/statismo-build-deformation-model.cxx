@@ -41,7 +41,7 @@
 #include <statismo/ITK/itkIO.h>
 #include <statismo/ITK/itkStatisticalModel.h>
 
-#include "utils/statismo-build-models-utils.h"
+#include "utils/statismoBuildModelUtils.h"
 
 namespace po = lpo;
 using namespace std;
@@ -146,7 +146,7 @@ buildAndSaveDeformationModel(const ProgramOptions & opt)
   typedef itk::DataManager<ImageType> DataManagerType;
   typename DataManagerType::Pointer   dataManager = DataManagerType::New();
 
-  StringList fileNames = getFileList(opt.strDataListFile);
+  auto fileNames = statismo::cli::GetFileList(opt.strDataListFile);
 
   typedef itk::ImageFileReader<ImageType>           ImageReaderType;
   typedef vector<typename ImageReaderType::Pointer> ImageReaderList;
@@ -156,12 +156,12 @@ buildAndSaveDeformationModel(const ProgramOptions & opt)
     itkGenericExceptionMacro(<< "No Data was loaded and thus the model can't be built.");
   }
   bool firstPass = true;
-  for (StringList::const_iterator it = fileNames.begin(); it != fileNames.end(); ++it)
+  for (const auto& file : fileNames)
   {
 
     typename ImageReaderType::Pointer reader = ImageReaderType::New();
 
-    reader->SetFileName(it->c_str());
+    reader->SetFileName(file);
     reader->Update();
     if (firstPass)
     {

@@ -34,8 +34,8 @@
 #include "lpo.h"
 
 #include "utils/itkPenalizingMeanSquaresPointSetToImageMetric.h"
-#include "utils/statismo-build-models-utils.h"
-#include "utils/statismo-fitting-utils.h"
+#include "utils/statismoBuildPosteriorModelUtils.h"
+#include "utils/statismoFittingUtils.h"
 
 #include <itkBoundingBox.h>
 #include <itkCompositeTransform.h>
@@ -253,7 +253,7 @@ projectOnTargetMesh(DataType::Pointer pMesh, DataType::Pointer pTargetMesh)
   typename PointsLocatorType::Pointer ptLocator = PointsLocatorType::New();
   ptLocator->SetPoints(pTargetMesh->GetPoints());
   ptLocator->Initialize();
-  DataType::Pointer projectedMesh = cloneMesh<DataType>(pMesh);
+  DataType::Pointer projectedMesh = statismo::itk::CloneMesh<DataType>(pMesh);
   for (DataType::PointsContainer::Iterator pointIter = projectedMesh->GetPoints()->Begin();
        pointIter != projectedMesh->GetPoints()->End();
        ++pointIter)

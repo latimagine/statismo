@@ -34,7 +34,8 @@
 #include "lpo.h"
 
 #include "utils/itkPenalizingMeanSquaresImageToImageMetric.h"
-#include "utils/statismo-fitting-utils.h"
+#include "utils/statismoFittingUtils.h"
+#include "utils/statismoBuildPosteriorModelUtils.h"
 
 #include <itkCommand.h>
 #include <itkCompositeTransform.h>

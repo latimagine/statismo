@@ -32,6 +32,7 @@
 
 #ifndef __STATISMO_ITK_PENALIZING_MEAN_SQUARES_POINTSET_TO_IMAGE_METRIC_H_
 #define __STATISMO_ITK_PENALIZING_MEAN_SQUARES_POINTSET_TO_IMAGE_METRIC_H_
+
 #include <itkMeanSquaresPointSetToImageMetric.h>
 /**
  * This is a simple extension of the itkMeanSquaresPointSetToImageMetric, which adds a regularization
@@ -44,23 +45,24 @@ class ITK_EXPORT PenalizingMeanSquaresPointSetToImageMetric
   : public MeanSquaresPointSetToImageMetric<TFixedPointSet, TMovingImage>
 {
 public:
-  // Standard class typedefs.
-  typedef PenalizingMeanSquaresPointSetToImageMetric                     Self;
-  typedef MeanSquaresPointSetToImageMetric<TFixedPointSet, TMovingImage> Superclass;
-  typedef SmartPointer<Self>                                             Pointer;
-  typedef SmartPointer<const Self>                                       ConstPointer;
+  // Standard class using =s.
+  using Self = PenalizingMeanSquaresPointSetToImageMetric                     ;
+  using Superclass = MeanSquaresPointSetToImageMetric<TFixedPointSet, TMovingImage> ;
+  using Pointer = SmartPointer<Self>                                             ;
+  using ConstPointer = SmartPointer<const Self>                                       ;
   // Method for creation through the object factory.
   itkNewMacro(Self);
+  ITK_DISALLOW_COPY_AND_ASSIGN(PenalizingMeanSquaresPointSetToImageMetric);
   // Run-time type information (and related methods).
   itkTypeMacro(PenalizingMeanSquaresPointSetToImageMetric, Object);
   // Types transferred from the base class
-  typedef typename Superclass::TransformParametersType ParametersType;
-  typedef typename Superclass::MeasureType             MeasureType;
-  typedef typename Superclass::DerivativeType          DerivativeType;
+  using ParametersType = typename Superclass::TransformParametersType ;
+  using MeasureType = typename Superclass::MeasureType             ;
+  using DerivativeType = typename Superclass::DerivativeType          ;
 
   // Get the derivatives of the match measure.
   void
-  GetDerivative(const ParametersType & parameters, DerivativeType & derivative) const
+  GetDerivative(const ParametersType & parameters, DerivativeType & derivative) const override
   {
     Superclass::GetDerivative(parameters, derivative);
     CalculateDerivativePenalty(parameters, derivative);
@@ -68,7 +70,7 @@ public:
 
   // Get the value for single valued optimizers.
   MeasureType
-  GetValue(const ParametersType & parameters) const
+  GetValue(const ParametersType & parameters) const override
   {
     MeasureType value = Superclass::GetValue(parameters);
     return value + CalculateValuePenalty(parameters);
@@ -76,22 +78,20 @@ public:
 
   // Get value and derivatives for multiple valued optimizers.
   void
-  GetValueAndDerivative(const ParametersType & parameters, MeasureType & value, DerivativeType & derivative) const
+  GetValueAndDerivative(const ParametersType & parameters, MeasureType & value, DerivativeType & derivative) const override
   {
     Superclass::GetValueAndDerivative(parameters, value, derivative);
     value += CalculateValuePenalty(parameters);
     CalculateDerivativePenalty(parameters, derivative);
   }
 
-  itkSetMacro(RegularizationParameter, MeasureType) itkGetMacro(RegularizationParameter, MeasureType)
+  itkSetMacro(RegularizationParameter, MeasureType) itkGetMacro(RegularizationParameter, MeasureType);
+  itkSetMacro(NumberOfModelComponents, unsigned) itkGetMacro(NumberOfModelComponents, unsigned);
 
-    itkSetMacro(NumberOfModelComponents, unsigned) itkGetMacro(NumberOfModelComponents, unsigned)
-
-      protected
-    : PenalizingMeanSquaresPointSetToImageMetric()
-    : m_RegularizationParameter(0)
-  {}
-  virtual ~PenalizingMeanSquaresPointSetToImageMetric() {}
+  protected:
+  
+  PenalizingMeanSquaresPointSetToImageMetric() = default;
+  virtual ~PenalizingMeanSquaresPointSetToImageMetric() = default;
   MeasureType m_RegularizationParameter;
   unsigned    m_NumberOfModelComponents{ 0 };
 
@@ -114,9 +114,6 @@ private:
       derivative[i] += parameters[i] * 2 * m_RegularizationParameter;
     }
   }
-  PenalizingMeanSquaresPointSetToImageMetric(const Self &); // purposely not implemented
-  void
-  operator=(const Self &); // purposely not implemented
 };
 } // end namespace itk
 #endif

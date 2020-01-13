@@ -32,7 +32,8 @@
  */
 
 #include "lpo.h"
-#include "utils/statismo-build-models-utils.h"
+#include "utils/statismoBuildModelUtils.h"
+#include "statismo/ITK/itkUtils.h"
 
 #include <statismo/ITK/itkDataManager.h>
 #include <itkDirectory.h>
@@ -175,16 +176,16 @@ buildAndSaveShapeModel(const ProgramOptions & opt)
   typedef itk::DataManager<MeshType>   DataManagerType;
   DataManagerType::Pointer             dataManager = DataManagerType::New();
 
-  StringList fileNames = getFileList(opt.strDataListFile);
+  auto fileNames = statismo::cli::GetFileList(opt.strDataListFile);
 
   typedef itk::MeshFileReader<MeshType>   MeshReaderType;
   typedef vector<MeshReaderType::Pointer> MeshReaderList;
   MeshReaderList                          meshes;
   meshes.reserve(fileNames.size());
-  for (StringList::const_iterator it = fileNames.begin(); it != fileNames.end(); ++it)
+  for (const auto& file : fileNames)
   {
     MeshReaderType::Pointer reader = MeshReaderType::New();
-    reader->SetFileName(it->c_str());
+    reader->SetFileName(file);
     reader->Update();
     // itk::PCAModelBuilder is not a Filter in the ITK world, so the pipeline would not get executed if its main method
     // is called. So the pipeline before calling itk::PCAModelBuilder must be executed by the means of calls to Update()
@@ -223,7 +224,7 @@ buildAndSaveShapeModel(const ProgramOptions & opt)
                                                                                LandmarkBasedTransformInitializerType;
     typedef itk::TransformMeshFilter<MeshType, MeshType, Rigid3DTransformType> FilterType;
     MeshType::Pointer                                                          referenceMesh =
-      calculateProcrustesMeanMesh<MeshType, LandmarkBasedTransformInitializerType, Rigid3DTransformType, FilterType>(
+      statismo::cli::CalculateProcrustesMeanMesh<MeshType, LandmarkBasedTransformInitializerType, Rigid3DTransformType, FilterType>(
         originalMeshes, uMaxGPAIterations, uNumberOfPoints, fBreakIfChangeBelow);
     representer->SetReference(referenceMesh);
   }

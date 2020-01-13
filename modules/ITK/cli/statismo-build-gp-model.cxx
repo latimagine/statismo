@@ -32,7 +32,7 @@
  */
 
 // Add new kernels in this file (and document their usage in the statismo-build-gp-model.md file)
-#include "utils/statismo-build-gp-model-kernels.h"
+#include "utils/statismoBuildGPModelKernels.h"
 #include "statismo/core/Utils.h"
 #include "lpo.h"
 
@@ -77,7 +77,7 @@ getAvailableKernelsStr();
 int
 main(int argc, char ** argv)
 {
-  statismo::cli::createKernelMap();
+  statismo::cli::CreateKernelMap();
 
   ProgramOptions poParameters;
   string         kernelHelp =
@@ -225,32 +225,24 @@ template <class DataType, class RepresenterType, class DataReaderType, bool isSh
 void
 buildAndSaveModel(const ProgramOptions & opt)
 {
-  auto it = statismo::cli::sKernelMap.find(opt.strKernel);
-  if (it == std::end(statismo::cli::sKernelMap))
+  auto it = statismo::cli::s_kernelMap.find(opt.strKernel);
+  if (it == std::end(statismo::cli::s_kernelMap))
   {
     itkGenericExceptionMacro(<< "The kernel '" << opt.strKernel
                              << "' isn't available. Available kernels: " << getAvailableKernelsStr());
   }
 
   typedef typename DataType::PointType                                   PointType;
-  typedef std::unique_ptr<const statismo::ScalarValuedKernel<PointType>> MatrixPointerType;
+  typedef std::unique_ptr<statismo::ScalarValuedKernel<PointType>> MatrixPointerType;
   MatrixPointerType                                                      pKernel;
-  if (isShapeModel == true)
-  {
-    pKernel.reset((statismo::ScalarValuedKernel<PointType> *)it->second.createKernelShape(opt.vKernelParameters));
-  }
-  else
-  {
-    if (Dimenstionality == statismo::cli::Dimensionality2D)
-    {
-      pKernel.reset(
-        (statismo::ScalarValuedKernel<PointType> *)it->second.createKernel2DDeformation(opt.vKernelParameters));
-    }
-    else
-    {
-      pKernel.reset(
-        (statismo::ScalarValuedKernel<PointType> *)it->second.createKernel3DDeformation(opt.vKernelParameters));
-    }
+
+  if constexpr(std::is_same_v<DataType, statismo::cli::DataTypeShape>) {
+    pKernel = std::move(it->second.createKernelShape(opt.vKernelParameters));
+
+  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType2DDeformation>) {
+    pKernel = std::move(it->second.createKernel2DDeformation(opt.vKernelParameters));
+  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType3DDeformation>) {
+pKernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
   }
 
   typedef std::shared_ptr<statismo::MatrixValuedKernel<PointType>> KernelPointerType;
@@ -310,7 +302,7 @@ getAvailableKernelsStr()
 {
   string ret;
 
-  for (const auto & p : statismo::cli::sKernelMap)
+  for (const auto & p : statismo::cli::s_kernelMap)
   {
     ret += p.first + ",";
   }
