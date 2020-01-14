@@ -69,10 +69,10 @@ struct ProgramOptions
 bool
 isOptionsConflictPresent(ProgramOptions & opt);
 void
-buildPosteriorShapeModel(const ProgramOptions & opt);
+BuildPosteriorShapeModel(const ProgramOptions & opt);
 template <unsigned Dimensionality>
 void
-buildPosteriorDeformationModel(const ProgramOptions & opt);
+BuildPosteriorDeformationModel(const ProgramOptions & opt);
 
 
 int
@@ -138,17 +138,17 @@ main(int argc, char ** argv)
   {
     if (poParameters.strModelType == "shape")
     {
-      buildPosteriorShapeModel(poParameters);
+      BuildPosteriorShapeModel(poParameters);
     }
     else
     {
       if (poParameters.uNumberOfDimensions == Dimensionality2D)
       {
-        buildPosteriorDeformationModel<Dimensionality2D>(poParameters);
+        BuildPosteriorDeformationModel<Dimensionality2D>(poParameters);
       }
       else
       {
-        buildPosteriorDeformationModel<Dimensionality3D>(poParameters);
+        BuildPosteriorDeformationModel<Dimensionality3D>(poParameters);
       }
     }
   }
@@ -216,7 +216,7 @@ isOptionsConflictPresent(ProgramOptions & opt)
 
 
 void
-buildPosteriorShapeModel(const ProgramOptions & opt)
+BuildPosteriorShapeModel(const ProgramOptions & opt)
 {
   typedef itk::Mesh<float, Dimensionality3D>                    DataType;
   typedef itk::StatisticalModel<DataType>                       StatisticalModelType;
@@ -230,7 +230,7 @@ buildPosteriorShapeModel(const ProgramOptions & opt)
   if (opt.strInputMeshFileName == "")
   {
     typedef itk::PointsLocator<DataType::PointsContainer> PointsLocatorType;
-    pConstrainedModel = buildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
+    pConstrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
       pModel, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance);
   }
   else
@@ -241,7 +241,7 @@ buildPosteriorShapeModel(const ProgramOptions & opt)
     pMeshReader->Update();
     DataType::Pointer pMeshInCorrespondence = pMeshReader->GetOutput();
     pConstrainedModel =
-      buildPosteriorShapeModel<DataType, StatisticalModelType>(pModel, pMeshInCorrespondence, opt.dVariance);
+      statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType>(pModel, pMeshInCorrespondence, opt.dVariance);
   }
 
   itk::StatismoIO<DataType>::SaveStatisticalModel(pConstrainedModel, opt.strOutputModelFileName.c_str());
@@ -249,7 +249,7 @@ buildPosteriorShapeModel(const ProgramOptions & opt)
 
 template <unsigned Dimensionality>
 void
-buildPosteriorDeformationModel(const ProgramOptions & opt)
+BuildPosteriorDeformationModel(const ProgramOptions & opt)
 {
   typedef itk::Vector<float, Dimensionality>                             VectorPixelType;
   typedef itk::Image<VectorPixelType, Dimensionality>                    DataType;
@@ -261,7 +261,7 @@ buildPosteriorDeformationModel(const ProgramOptions & opt)
     itk::StatismoIO<DataType>::LoadStatisticalModel(pRepresenter.GetPointer(), opt.strInputModelFileName.c_str());
 
   typename StatisticalModelType::Pointer pConstrainedModel;
-  pConstrainedModel = buildPosteriorDeformationModel<DataType, StatisticalModelType>(
+  pConstrainedModel = statismo::cli::BuildPosteriorDeformationModel<DataType, StatisticalModelType>(
     pModel, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance);
 
   itk::StatismoIO<DataType>::SaveStatisticalModel(pConstrainedModel, opt.strOutputModelFileName.c_str());

@@ -31,24 +31,13 @@
  *
  */
 
+#ifndef __STATISMO_FITTING_UTILS_H_
+#define __STATISMO_FITTING_UTILS_H_
+
+#include <itkCommand.h>
+
 #include <iostream>
 #include <vector>
-
-
-
-class ConsoleOutputSilencer;
-template <class DataType>
-std::vector<typename DataType::PointType>
-readLandmarksFile(std::string path);
-
-template <class OptimizerType>
-void
-initializeOptimizer(typename OptimizerType::Pointer pOptimizer,
-                    const unsigned                  uNumberOfIterations,
-                    const unsigned                  uNumberOfModelComponents,
-                    const unsigned                  uTotalNumberOfOptimizationParameters,
-                    const bool                      bPrintFittingInformation,
-                    ConsoleOutputSilencer *         pCOSilencer);
 
 #ifdef _WIN32
 #  include <io.h>
@@ -66,160 +55,159 @@ initializeOptimizer(typename OptimizerType::Pointer pOptimizer,
 #  define CLOSE(f) close(f)
 #endif
 
+namespace statismo::cli {
+
 // The optimizer may print something despite me not wanting it to print anything. It is thus that I manually silence the
 // console output when it's not me printing.
 class ConsoleOutputSilencer
 {
 private:
-  int    iOldStdOutDescriptor;
-  int    iOldStdErrDescriptor;
-  int    iNullDescriptor;
-  FILE * fNullFile;
-  bool   bIsOutputEnabled;
+  int    m_oldStdOutDescriptor;
+  int    m_oldStdErrDescriptor;
+  int    m_nullDescriptor;
+  FILE * m_nullFile;
+  bool   m_isOutputEnabled;
 
   void
-  flushAll()
+  FlushAll()
   {
     fflush(stdout);
     fflush(stderr);
-    fflush(fNullFile);
+    fflush(m_nullFile);
   }
 
 public:
   ~ConsoleOutputSilencer()
   {
-    if (bIsOutputEnabled == false)
+    if (m_isOutputEnabled == false)
     {
-      enableOutput();
+      EnableOutput();
     }
-    CLOSE(iNullDescriptor);
+    CLOSE(m_nullDescriptor);
   }
 
   ConsoleOutputSilencer()
   {
 #ifdef _WIN32
-    fopen_s(&fNullFile, "NUL", "w");
+    fopen_s(&m_nullFile, "NUL", "w");
 #else
-    fNullFile = fopen("/dev/null", "w");
+    m_nullFile = fopen("/dev/null", "w");
 #endif
-    iOldStdOutDescriptor = DUP(FILENO(stdout));
-    iOldStdErrDescriptor = DUP(FILENO(stderr));
-    iNullDescriptor = FILENO(fNullFile);
-    bIsOutputEnabled = true;
+    m_oldStdOutDescriptor = DUP(FILENO(stdout));
+    m_oldStdErrDescriptor = DUP(FILENO(stderr));
+    m_nullDescriptor = FILENO(m_nullFile);
+    m_isOutputEnabled = true;
   }
 
   void
-  disableOutput()
+  DisableOutput()
   {
-    if (bIsOutputEnabled == false)
+    if (m_isOutputEnabled == false)
     {
       return;
     }
-    bIsOutputEnabled = false;
-    flushAll();
-    DUP2(iNullDescriptor, FILENO(stdout));
-    DUP2(iNullDescriptor, FILENO(stderr));
+    m_isOutputEnabled = false;
+    FlushAll();
+    DUP2(m_nullDescriptor, FILENO(stdout));
+    DUP2(m_nullDescriptor, FILENO(stderr));
   }
 
   void
-  enableOutput()
+  EnableOutput()
   {
-    if (bIsOutputEnabled == true)
+    if (m_isOutputEnabled == true)
     {
       return;
     }
-    bIsOutputEnabled = true;
-    flushAll();
-    DUP2(iOldStdOutDescriptor, FILENO(stdout));
-    DUP2(iOldStdErrDescriptor, FILENO(stderr));
+    m_isOutputEnabled = true;
+    FlushAll();
+    DUP2(m_oldStdOutDescriptor, FILENO(stdout));
+    DUP2(m_oldStdErrDescriptor, FILENO(stderr));
   }
 };
 
 template <class OptimizerType>
-class IterationStatusObserver : public itk::Command
+class IterationStatusObserver : public ::itk::Command
 {
 public:
-  typedef IterationStatusObserver<OptimizerType> Self;
-  typedef itk::Command                           Superclass;
-  typedef itk::SmartPointer<Self>                Pointer;
-  typedef const OptimizerType *                  OptimizerPointer;
+  using Self = IterationStatusObserver<OptimizerType> ;
+  using Superclass = ::itk::Command                           ;
+  using Pointer = ::itk::SmartPointer<Self>                ;
+  using OptimizerPointer = const OptimizerType *                  ;
 
   itkNewMacro(Self);
 
   void
-  Execute(itk::Object * caller, const itk::EventObject & event)
+  Execute(::itk::Object * caller, const ::itk::EventObject & event) override
   {
-    Execute((const itk::Object *)caller, event);
+    Execute(static_cast<const ::itk::Object *>(caller), event);
   }
 
   void
-  Execute(const itk::Object * object, const itk::EventObject & event)
+  Execute(const ::itk::Object * object, const ::itk::EventObject & event) override
   {
-    OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>(object);
+    auto optimizer = dynamic_cast<OptimizerPointer>(object);
 
-    if (itk::IterationEvent().CheckEvent(&event) == false || optimizer == NULL)
+    if (::itk::IterationEvent().CheckEvent(&event) == false || !optimizer)
     {
       return;
     }
 
-    if (coSilencer != NULL)
+    if (m_coSilencer)
     {
-      coSilencer->enableOutput();
+      m_coSilencer->EnableOutput();
     }
-    std::cout << "Iteration: " << ++m_iter_no;
+    std::cout << "Iteration: " << ++m_iterNo;
     std::cout << "; Value: " << optimizer->GetCachedValue();
     std::cout << "; Current Parameters: " << optimizer->GetCachedCurrentPosition() << std::endl;
-    if (coSilencer != NULL)
+    if (m_coSilencer)
     {
-      coSilencer->disableOutput();
+      m_coSilencer->DisableOutput();
     }
   }
 
   void
-  SetConsoleSilencer(ConsoleOutputSilencer * pCOSilencer)
+  SetConsoleSilencer(statismo::cli::ConsoleOutputSilencer * cos)
   {
-    coSilencer = pCOSilencer;
+    m_coSilencer = cos;
   }
 
 protected:
-  IterationStatusObserver()
-    : m_iter_no(0)
-    , coSilencer(NULL){};
-
-  virtual ~IterationStatusObserver(){};
+  IterationStatusObserver() = default;
+  virtual ~IterationStatusObserver() = default;
 
 private:
-  int                     m_iter_no;
-  ConsoleOutputSilencer * coSilencer;
+  int                     m_iterNo{0};
+  statismo::cli::ConsoleOutputSilencer * m_coSilencer{nullptr};
 };
 
 
 template <class OptimizerType>
-void
-initializeOptimizer(typename OptimizerType::Pointer pOptimizer,
-                    const unsigned                  uNumberOfIterations,
-                    const unsigned                  uNumberOfModelComponents,
-                    const unsigned                  uTotalNumberOfOptimizationParameters,
-                    const bool                      bPrintFittingInformation,
-                    ConsoleOutputSilencer *         pCOSilencer)
+static void
+InitializeOptimizer(typename OptimizerType::Pointer optimizer,
+                    unsigned                  numberOfIterations,
+                    unsigned                  numberOfModelComponents,
+                    unsigned                  totalNumberOfOptimizationParameters,
+                    bool                      doPrintFittingInformation,
+                    statismo::cli::ConsoleOutputSilencer *         coSilencer)
 {
-  const unsigned uNumberOfRigid2DtransformComponents = 3;
-  const unsigned uNumberOfRigid3DtransformComponents = 6;
+  constexpr unsigned uNumberOfRigid2DtransformComponents = 3;
+  constexpr unsigned uNumberOfRigid3DtransformComponents = 6;
 
-  pOptimizer->SetMaximumNumberOfFunctionEvaluations(uNumberOfIterations);
-  pOptimizer->MinimizeOn();
+  optimizer->SetMaximumNumberOfFunctionEvaluations(numberOfIterations);
+  optimizer->MinimizeOn();
 
-  if (bPrintFittingInformation == true)
+  if (doPrintFittingInformation == true)
   {
-    typedef IterationStatusObserver<OptimizerType> ObserverType;
-    typename ObserverType::Pointer                 pObserver = ObserverType::New();
-    pObserver->SetConsoleSilencer(pCOSilencer);
-    pOptimizer->AddObserver(itk::IterationEvent(), pObserver);
+    using ObserverType = IterationStatusObserver<OptimizerType>;
+    auto                 obs = ObserverType::New();
+    obs->SetConsoleSilencer(coSilencer);
+    optimizer->AddObserver(::itk::IterationEvent(), obs);
   }
 
   unsigned uNrOfRotationComponents;
   unsigned uNrOfTranslationComponents;
-  switch (uTotalNumberOfOptimizationParameters - uNumberOfModelComponents)
+  switch (totalNumberOfOptimizationParameters - numberOfModelComponents)
   {
     case uNumberOfRigid3DtransformComponents:
       uNrOfRotationComponents = 3;
@@ -236,14 +224,14 @@ initializeOptimizer(typename OptimizerType::Pointer pOptimizer,
   }
 
 
-  if (uNumberOfModelComponents != uTotalNumberOfOptimizationParameters)
+  if (numberOfModelComponents != totalNumberOfOptimizationParameters)
   {
     const double dModelParamScale = 3;
     const double dRotationScale = 0.1;
     const double dTranslationScale = 1;
     // set the scales of the optimizer, to compensate for potentially different scales of translation, rotation and
     // shape parameters
-    typename OptimizerType::ScalesType scales(uTotalNumberOfOptimizationParameters);
+    typename OptimizerType::ScalesType scales(totalNumberOfOptimizationParameters);
     unsigned                           count = 0;
 
     for (unsigned i = 0; i < uNrOfRotationComponents; ++i, ++count)
@@ -254,10 +242,13 @@ initializeOptimizer(typename OptimizerType::Pointer pOptimizer,
     {
       scales[count] = 1.0 / (dTranslationScale);
     }
-    for (unsigned i = 0; i < uNumberOfModelComponents; ++i, ++count)
+    for (unsigned i = 0; i < numberOfModelComponents; ++i, ++count)
     {
       scales[count] = 1.0 / (dModelParamScale);
     }
-    pOptimizer->SetScales(scales);
+    optimizer->SetScales(scales);
   }
 }
+}
+
+#endif

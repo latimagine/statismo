@@ -86,7 +86,7 @@ bool
 isOptionsConflictPresent(const ProgramOptions & opt);
 template <unsigned Dimensions, class RotationAndTranslationTransformType>
 void
-fitImage(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer);
+fitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSilencer);
 
 int
 main(int argc, char ** argv)
@@ -164,7 +164,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  ConsoleOutputSilencer coSilencer;
+  statismo::cli::ConsoleOutputSilencer coSilencer;
   try
   {
     if (poParameters.uNumberOfDimensions == Dimensionality2D)
@@ -180,14 +180,14 @@ main(int argc, char ** argv)
   }
   catch (ifstream::failure & e)
   {
-    coSilencer.enableOutput();
+    coSilencer.EnableOutput();
     cerr << "Could not read a file:" << endl;
     cerr << e.what() << endl;
     return EXIT_FAILURE;
   }
   catch (itk::ExceptionObject & e)
   {
-    coSilencer.enableOutput();
+    coSilencer.EnableOutput();
     cerr << "Could not fit the model:" << endl;
     cerr << e.what() << endl;
     return EXIT_FAILURE;
@@ -258,7 +258,7 @@ generateAndSaveDisplacementField(typename ReferenceImageType::Pointer pReference
 
 template <unsigned Dimensions, class RotationAndTranslationTransformType>
 void
-fitImage(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
+fitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSilencer)
 {
   typedef itk::Image<float, Dimensions>   ImageType;
   typedef itk::ImageFileReader<ImageType> ImageReaderType;
@@ -290,7 +290,7 @@ fitImage(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
 
   if (opt.strInputMovingLandmarksFileName != "")
   {
-    pModel = buildPosteriorDeformationModel<VectorImageType, StatisticalModelType>(
+    pModel = statismo::cli::BuildPosteriorDeformationModel<VectorImageType, StatisticalModelType>(
       pModel, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance);
     pTransform = pModelTransform;
   }
@@ -325,7 +325,7 @@ fitImage(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
 
   typedef itk::LBFGSOptimizer OptimizerType;
   OptimizerType::Pointer      pOptimizer = OptimizerType::New();
-  initializeOptimizer<OptimizerType>(pOptimizer,
+  statismo::cli::InitializeOptimizer<OptimizerType>(pOptimizer,
                                      opt.uNumberOfIterations,
                                      pModel->GetNumberOfPrincipalComponents(),
                                      pTransform->GetNumberOfParameters(),
@@ -351,9 +351,9 @@ fitImage(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
   pRegistration->SetFixedImageRegion(pFixedImage->GetBufferedRegion());
   pRegistration->SetMovingImage(pMovingImage);
 
-  pCOSilencer->disableOutput();
+  pCOSilencer->DisableOutput();
   pRegistration->Update();
-  pCOSilencer->enableOutput();
+  pCOSilencer->EnableOutput();
 
   typename VectorImageType::Pointer pDisplacementField =
     generateAndSaveDisplacementField<VectorImageType, ImageType, TransformType>(

@@ -81,7 +81,7 @@ struct ProgramOptions
 bool
 isOptionsConflictPresent(const ProgramOptions & opt);
 void
-fitMesh(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer);
+fitMesh(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSilencer);
 
 int
 main(int argc, char ** argv)
@@ -146,21 +146,21 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  ConsoleOutputSilencer coSilencer;
+  statismo::cli::ConsoleOutputSilencer coSilencer;
   try
   {
     fitMesh(poParameters, &coSilencer);
   }
   catch (ifstream::failure & e)
   {
-    coSilencer.enableOutput();
+    coSilencer.EnableOutput();
     cerr << "Could not read a file:" << endl;
     cerr << e.what() << endl;
     return EXIT_FAILURE;
   }
   catch (itk::ExceptionObject & e)
   {
-    coSilencer.enableOutput();
+    coSilencer.EnableOutput();
     cerr << "Could not fit the model:" << endl;
     cerr << e.what() << endl;
     return EXIT_FAILURE;
@@ -265,7 +265,7 @@ projectOnTargetMesh(DataType::Pointer pMesh, DataType::Pointer pTargetMesh)
 }
 
 void
-fitMesh(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
+fitMesh(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSilencer)
 {
   typedef itk::MeshFileReader<DataType> MeshReaderType;
   MeshReaderType::Pointer               pMeshReader = MeshReaderType::New();
@@ -326,7 +326,7 @@ fitMesh(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
   }
   else
   {
-    pConstrainedModel = buildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
+    pConstrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
       pModel, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance);
     StatisticalModelTransformType::Pointer pModelTransform = StatisticalModelTransformType::New();
     pModelTransform->SetStatisticalModel(pConstrainedModel);
@@ -339,7 +339,7 @@ fitMesh(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
 
   typedef itk::LBFGSOptimizer OptimizerType;
   OptimizerType::Pointer      pOptimizer = OptimizerType::New();
-  initializeOptimizer<OptimizerType>(pOptimizer,
+  statismo::cli::InitializeOptimizer<OptimizerType>(pOptimizer,
                                      opt.uNumberOfIterations,
                                      pModel->GetNumberOfPrincipalComponents(),
                                      pTransform->GetNumberOfParameters(),
@@ -376,9 +376,9 @@ fitMesh(const ProgramOptions & opt, ConsoleOutputSilencer * pCOSilencer)
   pRegistration->SetFixedPointSet(pFixedPointSet);
   pRegistration->SetMovingImage(pDistanceImage);
 
-  pCOSilencer->disableOutput();
+  pCOSilencer->DisableOutput();
   pRegistration->Update();
-  pCOSilencer->enableOutput();
+  pCOSilencer->EnableOutput();
 
 
   typedef itk::TransformMeshFilter<DataType, DataType, TransformType> TransformMeshFilterType;
