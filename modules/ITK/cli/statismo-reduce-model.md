@@ -4,13 +4,16 @@
 
 statismo-reduce-model - Reduces the number of components in a model.
 
+
 # SYNOPSIS
 
 statismo-reduce-model [*options*] -i *input-file* *output-file*
 
+
 # DESCRIPTION
 
 statismo-reduce-model is used to reduce the number of components in a model. It's possible to reduce the number of components to a fixed number or to a percentage of the model's total variance.
+
 
 # OPTIONS
 
@@ -28,29 +31,32 @@ statismo-reduce-model is used to reduce the number of components in a model. It'
 
 -i, \--input-file *MODEL_FILE*
 :	*MODEL_FILE* is the path to the model.
- 
-# Examples 
-Crate a new shape model with 5 components:
+
+
+# EXAMPLES
+
+Create a new shape model with 5 components:
 
     statismo-reduce-model -i model.h5 -n 5 reduced_model.h5
 
 
-Crate a new shape model with 42.1% of to models' total variance:
+Create a new shape model with 42.1% of to models' total variance:
 
     statismo-reduce-model -i model.h5 -v 42.1 reduced_model.h5
 
-Crate a new 3D deformation model with 91% of to models' total variance:
+Create a new 3D deformation model with 91% of to models' total variance:
 
     statismo-reduce-model -t deformation -i model.h5 -v 91 reduced_model.h5
 
-Crate a new 2D deformation model with 91% of to models' total variance:
+Create a new 2D deformation model with 91% of to models' total variance:
 
     statismo-reduce-model -d 2 -t deformation -i model.h5 -v 91 reduced_model.h5
 
 
 # SEE ALSO
 
-##Building Models:
+## Building Models
+
 *statismo-build-shape-model* (8).
 Builds shape models from a list of meshes.
 
@@ -60,7 +66,7 @@ Builds deformation models from a list of deformation fields
 *statismo-build-gp-model* (8).
 Builds shape or deformation models from a given gaussian process definition.
 
-##Working with models:
+## Working with models
 
 *statismo-sample* (8).
 Draws samples from a model.

@@ -223,7 +223,6 @@ InitializeOptimizer(typename OptimizerType::Pointer optimizer,
       itkGenericExceptionMacro(<< "Unknown Transform. Can't scale for that one.")
   }
 
-
   if (numberOfModelComponents != totalNumberOfOptimizationParameters)
   {
     const double dModelParamScale = 3;
@@ -234,6 +233,10 @@ InitializeOptimizer(typename OptimizerType::Pointer optimizer,
     typename OptimizerType::ScalesType scales(totalNumberOfOptimizationParameters);
     unsigned                           count = 0;
 
+    for (unsigned i = 0; i < numberOfModelComponents; ++i, ++count)
+    {
+      scales[count] = 1.0 / (dModelParamScale);
+    }
     for (unsigned i = 0; i < uNrOfRotationComponents; ++i, ++count)
     {
       scales[count] = 1.0 / (dRotationScale);
@@ -241,10 +244,6 @@ InitializeOptimizer(typename OptimizerType::Pointer optimizer,
     for (unsigned i = 0; i < uNrOfTranslationComponents; ++i, ++count)
     {
       scales[count] = 1.0 / (dTranslationScale);
-    }
-    for (unsigned i = 0; i < numberOfModelComponents; ++i, ++count)
-    {
-      scales[count] = 1.0 / (dModelParamScale);
     }
     optimizer->SetScales(scales);
   }

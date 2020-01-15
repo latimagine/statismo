@@ -31,22 +31,24 @@
  *
  */
 
+#include "utils/statismoBuildModelUtils.h"
+
+#include "statismo/ITK/itkDataManager.h"
+#include "statismo/ITK/itkPCAModelBuilder.h"
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkIO.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+
 #include "lpo.h"
 
-#include <statismo/ITK/itkDataManager.h>
-#include <itkDirectory.h>
 #include <itkImageFileReader.h>
-#include <statismo/ITK/itkPCAModelBuilder.h>
-#include <statismo/ITK/itkStandardImageRepresenter.h>
-#include <statismo/ITK/itkIO.h>
-#include <statismo/ITK/itkStatisticalModel.h>
-
-#include "utils/statismoBuildModelUtils.h"
 
 namespace po = lpo;
 using namespace std;
 
-struct ProgramOptions
+namespace {
+
+struct _ProgramOptions
 {
   bool     bComputeScores{ true };
   string   strDataListFile;
@@ -56,15 +58,62 @@ struct ProgramOptions
 };
 
 bool
-isOptionsConflictPresent(const ProgramOptions & opt);
+_IsOptionsConflictPresent(const _ProgramOptions & opt)
+{
+  return opt.strDataListFile.empty() ||
+  opt.strOutputFileName.empty() ||
+  (opt.strDataListFile == opt.strOutputFileName);
+}
+
 template <unsigned Dimensions>
 void
-buildAndSaveDeformationModel(const ProgramOptions & opt);
+_BuildAndSaveDeformationModel(const _ProgramOptions & opt)
+{
+  using VectorPixelType = itk::Vector<float, Dimensions>                             ;
+  using ImageType = itk::Image<VectorPixelType, Dimensions>                    ;
+  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensions> ;
+  using DataManagerType = itk::DataManager<ImageType> ;
+  using ImageReaderType = itk::ImageFileReader<ImageType>           ;
+  using ImageReaderList = vector<typename ImageReaderType::Pointer> ;
+  using StatisticalModelType = itk::StatisticalModel<ImageType> ;
+  using ModelBuilderType = itk::PCAModelBuilder<ImageType> ;
+
+  auto representer = RepresenterType::New();
+  auto dataManager = DataManagerType::New();
+  auto fileNames = statismo::cli::GetFileList(opt.strDataListFile);
+
+  if (fileNames.empty())
+  {
+    itkGenericExceptionMacro(<< "No Data was loaded and thus the model can't be built.");
+  }
+
+  bool firstPass{true};
+  for (const auto& file : fileNames)
+  {
+    auto reader = ImageReaderType::New();
+    reader->SetFileName(file);
+    reader->Update();
+
+    if (firstPass)
+    {
+      representer->SetReference(reader->GetOutput());
+      dataManager->SetRepresenter(representer);
+      firstPass = false;
+    }
+
+    dataManager->AddDataset(reader->GetOutput(), reader->GetFileName().c_str());
+  }
+
+  auto pcaModelBuilder = ModelBuilderType::New();
+  auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance, opt.bComputeScores);
+  itk::StatismoIO<ImageType>::SaveStatisticalModel(model, opt.strOutputFileName.c_str());
+}
+}
 
 int
 main(int argc, char ** argv)
 {
-  ProgramOptions                                           poParameters;
+  _ProgramOptions                                           poParameters;
   lpo::program_options<std::string, float, unsigned, bool> parser{ argv[0], "Program help:" };
 
   parser
@@ -84,7 +133,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (isOptionsConflictPresent(poParameters))
+  if (_IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -95,20 +144,20 @@ main(int argc, char ** argv)
   {
     if (poParameters.uNumberOfDimensions == 2)
     {
-      buildAndSaveDeformationModel<2>(poParameters);
+      _BuildAndSaveDeformationModel<2>(poParameters);
     }
     else
     {
-      buildAndSaveDeformationModel<3>(poParameters);
+      _BuildAndSaveDeformationModel<3>(poParameters);
     }
   }
-  catch (ifstream::failure & e)
+  catch (const ifstream::failure & e)
   {
     cerr << "Could not read the data-list:" << endl;
     cerr << e.what() << endl;
     return EXIT_FAILURE;
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     cerr << "Could not build the model:" << endl;
     cerr << e.what() << endl;
@@ -116,67 +165,4 @@ main(int argc, char ** argv)
   }
 
   return EXIT_SUCCESS;
-}
-
-bool
-isOptionsConflictPresent(const ProgramOptions & opt)
-{
-  if (opt.strDataListFile == "" || opt.strOutputFileName == "")
-  {
-    return true;
-  }
-
-  if (opt.strDataListFile == opt.strOutputFileName)
-  {
-    return true;
-  }
-
-  return false;
-}
-
-template <unsigned Dimensions>
-void
-buildAndSaveDeformationModel(const ProgramOptions & opt)
-{
-  typedef itk::Vector<float, Dimensions>                             VectorPixelType;
-  typedef itk::Image<VectorPixelType, Dimensions>                    ImageType;
-  typedef itk::StandardImageRepresenter<VectorPixelType, Dimensions> RepresenterType;
-  typename RepresenterType::Pointer                                  representer = RepresenterType::New();
-
-  typedef itk::DataManager<ImageType> DataManagerType;
-  typename DataManagerType::Pointer   dataManager = DataManagerType::New();
-
-  auto fileNames = statismo::cli::GetFileList(opt.strDataListFile);
-
-  typedef itk::ImageFileReader<ImageType>           ImageReaderType;
-  typedef vector<typename ImageReaderType::Pointer> ImageReaderList;
-
-  if (fileNames.size() == 0)
-  {
-    itkGenericExceptionMacro(<< "No Data was loaded and thus the model can't be built.");
-  }
-  bool firstPass = true;
-  for (const auto& file : fileNames)
-  {
-
-    typename ImageReaderType::Pointer reader = ImageReaderType::New();
-
-    reader->SetFileName(file);
-    reader->Update();
-    if (firstPass)
-    {
-      representer->SetReference(reader->GetOutput());
-      dataManager->SetRepresenter(representer);
-      firstPass = false;
-    }
-    dataManager->AddDataset(reader->GetOutput(), reader->GetFileName().c_str());
-  }
-
-  typedef itk::StatisticalModel<ImageType> StatisticalModelType;
-  typename StatisticalModelType::Pointer   model;
-
-  typedef itk::PCAModelBuilder<ImageType> ModelBuilderType;
-  typename ModelBuilderType::Pointer      pcaModelBuilder = ModelBuilderType::New();
-  model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance, opt.bComputeScores);
-  itk::StatismoIO<ImageType>::SaveStatisticalModel(model, opt.strOutputFileName.c_str());
 }

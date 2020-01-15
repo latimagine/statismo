@@ -33,18 +33,19 @@
 
 // Add new kernels in this file (and document their usage in the statismo-build-gp-model.md file)
 #include "utils/statismoBuildGPModelKernels.h"
+
 #include "statismo/core/Utils.h"
+#include "statismo/ITK/itkDataManager.h"
+#include "statismo/ITK/itkLowRankGPModelBuilder.h"
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+#include "statismo/ITK/itkIO.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+
 #include "lpo.h"
 
-#include <statismo/ITK/itkDataManager.h>
-#include <itkDirectory.h>
 #include <itkImageFileReader.h>
-#include <statismo/ITK/itkLowRankGPModelBuilder.h>
 #include <itkMeshFileReader.h>
-#include <statismo/ITK/itkStandardImageRepresenter.h>
-#include <statismo/ITK/itkStandardMeshRepresenter.h>
-#include <statismo/ITK/itkIO.h>
-#include <statismo/ITK/itkStatisticalModel.h>
 
 #include <iostream>
 #include <memory>
@@ -52,7 +53,9 @@
 namespace po = lpo;
 using namespace std;
 
-struct ProgramOptions
+namespace {
+
+struct _ProgramOptions
 {
   string         strOptionalModelPath;
   string         strReferenceFile;
@@ -65,23 +68,118 @@ struct ProgramOptions
   string         strOutputFileName;
 };
 
-bool
-isOptionsConflictPresent(ProgramOptions & opt);
-template <class DataType, class RepresenterType, class DataReaderType, bool isShapeModel, unsigned Dimenstionality>
-void
-buildAndSaveModel(const ProgramOptions & opt);
 string
-getAvailableKernelsStr();
+_GetAvailableKernelsStr()
+{
+  string ret;
 
+  for (const auto & p : statismo::cli::s_kernelMap)
+  {
+    ret += p.first + ",";
+  }
+
+  ret.pop_back();
+  return ret;
+}
+
+bool
+_IsOptionsConflictPresent(_ProgramOptions & opt)
+{
+  statismo::utils::ToLower(opt.strKernel);
+  statismo::utils::ToLower(opt.strType);
+
+  return (opt.strType != "shape" && opt.strType != "deformation") ||
+  (opt.strReferenceFile.empty() &&  opt.strOptionalModelPath.empty()) ||
+  (!opt.strReferenceFile.empty() &&  !opt.strOptionalModelPath.empty()) ||
+  opt.strOutputFileName == opt.strReferenceFile ||
+  (opt.strType == "shape" && opt.uNumberOfDimensions != 3);
+}
+
+template <class DataType, class RepresenterType, class DataReaderType, bool isShapeModel, unsigned Dim>
+void
+_BuildAndSaveModel(const _ProgramOptions & opt)
+{
+  auto it = statismo::cli::s_kernelMap.find(opt.strKernel);
+  if (it == std::end(statismo::cli::s_kernelMap))
+  {
+    itkGenericExceptionMacro(<< "The kernel '" << opt.strKernel
+                             << "' isn't available. Available kernels: " << _GetAvailableKernelsStr());
+  }
+
+  using PointType = typename DataType::PointType                                   ;
+  using MatrixPointerType = std::unique_ptr<statismo::ScalarValuedKernel<PointType>> ;
+  using KernelPointerType = std::unique_ptr<statismo::MatrixValuedKernel<PointType>>;
+  using RawModelType = statismo::StatisticalModel<DataType>         ;
+  using RawModelPointerType = statismo::UniquePtrType<RawModelType>        ;
+  using DatasetPointerType = typename RepresenterType::DatasetPointerType ;
+  
+  MatrixPointerType                                                      kernel;
+  if constexpr(std::is_same_v<DataType, statismo::cli::DataTypeShape>) {
+    kernel = std::move(it->second.createKernelShape(opt.vKernelParameters));
+
+  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType2DDeformation>) {
+    kernel = std::move(it->second.createKernel2DDeformation(opt.vKernelParameters));
+  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType3DDeformation>) {
+kernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
+  }
+
+  KernelPointerType                                                unscaledKernel(
+    new statismo::UncorrelatedMatrixValuedKernel<PointType>(kernel.get(), Dim));
+  KernelPointerType scaledKernel(new statismo::ScaledKernel<PointType>(unscaledKernel.get(), opt.fKernelScale));
+
+  KernelPointerType statModelKernel;
+  KernelPointerType modelBuildingKernel;
+  RawModelPointerType               rawStatisticalModel;
+  DatasetPointerType                mean;
+
+  auto representer = RepresenterType::New();
+  if (!opt.strOptionalModelPath.empty())
+  {
+    try
+    {
+      rawStatisticalModel =
+        statismo::IO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strOptionalModelPath.c_str());
+      statModelKernel.reset(new statismo::StatisticalModelKernel<DataType>(rawStatisticalModel.get()));
+      modelBuildingKernel.reset(new statismo::SumKernel<PointType>(statModelKernel.get(), scaledKernel.get()));
+    }
+    catch (const statismo::StatisticalModelException & s)
+    {
+      itkGenericExceptionMacro(<< "Failed to read the optional model: " << s.what());
+    }
+
+    mean = rawStatisticalModel->DrawMean();
+  }
+  else
+  {
+    modelBuildingKernel = std::move(scaledKernel);
+    
+    auto refReader = DataReaderType::New();
+    refReader->SetFileName(opt.strReferenceFile);
+    refReader->Update();
+    representer->SetReference(refReader->GetOutput());
+    mean = representer->IdentitySample();
+  }
+
+  using ModelBuilderType = itk::LowRankGPModelBuilder<DataType> ;
+  auto          gpModelBuilder = ModelBuilderType::New();
+  gpModelBuilder->SetRepresenter(representer);
+
+  using StatisticalModelType = itk::StatisticalModel<DataType> ;
+  auto model = gpModelBuilder->BuildNewModel(mean, *modelBuildingKernel.get(), opt.iNrOfBasisFunctions);
+
+  itk::StatismoIO<DataType>::SaveStatisticalModel(model, opt.strOutputFileName.c_str());
+}
+
+}
 
 int
 main(int argc, char ** argv)
 {
   statismo::cli::CreateKernelMap();
 
-  ProgramOptions poParameters;
+  _ProgramOptions poParameters;
   string         kernelHelp =
-    "Specifies the kernel (covariance function). The following kernels are available: " + getAvailableKernelsStr();
+    "Specifies the kernel (covariance function). The following kernels are available: " + _GetAvailableKernelsStr();
   lpo::program_options<std::string, float, int, unsigned, std::vector<std::string>> parser{ argv[0], "Program help:" };
 
   parser
@@ -129,7 +227,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (isOptionsConflictPresent(poParameters))
+  if (_IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -140,9 +238,9 @@ main(int argc, char ** argv)
   {
     if (poParameters.strType == "shape")
     {
-      typedef itk::StandardMeshRepresenter<float, statismo::cli::Dimensionality3D> RepresenterType;
-      typedef itk::MeshFileReader<statismo::cli::DataTypeShape>                    DataReaderType;
-      buildAndSaveModel<statismo::cli::DataTypeShape,
+      using RepresenterType = itk::StandardMeshRepresenter<float, statismo::cli::Dimensionality3D>;
+      using DataReaderType = itk::MeshFileReader<statismo::cli::DataTypeShape>                    ;
+      _BuildAndSaveModel<statismo::cli::DataTypeShape,
                         RepresenterType,
                         DataReaderType,
                         true,
@@ -152,10 +250,10 @@ main(int argc, char ** argv)
     {
       if (poParameters.uNumberOfDimensions == 2)
       {
-        typedef itk::StandardImageRepresenter<statismo::cli::VectorPixel2DType, statismo::cli::Dimensionality2D>
-                                                                           RepresenterType;
-        typedef itk::ImageFileReader<statismo::cli::DataType2DDeformation> DataReaderType;
-        buildAndSaveModel<statismo::cli::DataType2DDeformation,
+        using RepresenterType = itk::StandardImageRepresenter<statismo::cli::VectorPixel2DType, statismo::cli::Dimensionality2D>
+                                                                           ;
+        using DataReaderType = itk::ImageFileReader<statismo::cli::DataType2DDeformation> ;
+        _BuildAndSaveModel<statismo::cli::DataType2DDeformation,
                           RepresenterType,
                           DataReaderType,
                           false,
@@ -163,10 +261,10 @@ main(int argc, char ** argv)
       }
       else
       {
-        typedef itk::StandardImageRepresenter<statismo::cli::VectorPixel3DType, statismo::cli::Dimensionality3D>
-                                                                           RepresenterType;
-        typedef itk::ImageFileReader<statismo::cli::DataType3DDeformation> DataReaderType;
-        buildAndSaveModel<statismo::cli::DataType3DDeformation,
+        using RepresenterType = itk::StandardImageRepresenter<statismo::cli::VectorPixel3DType, statismo::cli::Dimensionality3D>
+                                                                           ;
+        using DataReaderType = itk::ImageFileReader<statismo::cli::DataType3DDeformation> ;
+        _BuildAndSaveModel<statismo::cli::DataType3DDeformation,
                           RepresenterType,
                           DataReaderType,
                           false,
@@ -181,132 +279,5 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  std::cout << "ok" << std::endl;
-
   return EXIT_SUCCESS;
-}
-
-bool
-isOptionsConflictPresent(ProgramOptions & opt)
-{
-  statismo::utils::ToLower(opt.strKernel);
-  statismo::utils::ToLower(opt.strType);
-
-  if (opt.strType != "shape" && opt.strType != "deformation")
-  {
-    return true;
-  }
-
-  if ((opt.strOptionalModelPath == "" && opt.strReferenceFile == "") ||
-      (opt.strOptionalModelPath != "" & opt.strReferenceFile != ""))
-  {
-    return true;
-  }
-
-  if (opt.strOutputFileName == opt.strReferenceFile)
-  {
-    return true;
-  }
-
-  if (opt.strType == "deformation" && opt.uNumberOfDimensions != 2 && opt.uNumberOfDimensions != 3)
-  {
-    return true;
-  }
-
-  if (opt.strType == "shape" && opt.uNumberOfDimensions != 3)
-  {
-    return true;
-  }
-
-  return false;
-}
-
-template <class DataType, class RepresenterType, class DataReaderType, bool isShapeModel, unsigned Dimenstionality>
-void
-buildAndSaveModel(const ProgramOptions & opt)
-{
-  auto it = statismo::cli::s_kernelMap.find(opt.strKernel);
-  if (it == std::end(statismo::cli::s_kernelMap))
-  {
-    itkGenericExceptionMacro(<< "The kernel '" << opt.strKernel
-                             << "' isn't available. Available kernels: " << getAvailableKernelsStr());
-  }
-
-  typedef typename DataType::PointType                                   PointType;
-  typedef std::unique_ptr<statismo::ScalarValuedKernel<PointType>> MatrixPointerType;
-  MatrixPointerType                                                      pKernel;
-
-  if constexpr(std::is_same_v<DataType, statismo::cli::DataTypeShape>) {
-    pKernel = std::move(it->second.createKernelShape(opt.vKernelParameters));
-
-  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType2DDeformation>) {
-    pKernel = std::move(it->second.createKernel2DDeformation(opt.vKernelParameters));
-  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType3DDeformation>) {
-pKernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
-  }
-
-  typedef std::shared_ptr<statismo::MatrixValuedKernel<PointType>> KernelPointerType;
-  KernelPointerType                                                pUnscaledKernel(
-    new statismo::UncorrelatedMatrixValuedKernel<PointType>(pKernel.get(), Dimenstionality));
-  KernelPointerType pScaledKernel(new statismo::ScaledKernel<PointType>(pUnscaledKernel.get(), opt.fKernelScale));
-  KernelPointerType pStatModelKernel;
-  KernelPointerType pModelBuildingKernel;
-
-  typedef statismo::StatisticalModel<DataType>         RawModelType;
-  typedef statismo::UniquePtrType<RawModelType>        RawModelPointerType;
-  typedef typename RepresenterType::DatasetPointerType DatasetPointerType;
-
-  RawModelPointerType               pRawStatisticalModel;
-  typename RepresenterType::Pointer pRepresenter = RepresenterType::New();
-  DatasetPointerType                pMean;
-
-
-  if (opt.strOptionalModelPath != "")
-  {
-    try
-    {
-      pRawStatisticalModel =
-        statismo::IO<DataType>::LoadStatisticalModel(pRepresenter.GetPointer(), opt.strOptionalModelPath.c_str());
-      pStatModelKernel.reset(new statismo::StatisticalModelKernel<DataType>(pRawStatisticalModel.get()));
-      pModelBuildingKernel.reset(new statismo::SumKernel<PointType>(pStatModelKernel.get(), pScaledKernel.get()));
-    }
-    catch (statismo::StatisticalModelException & s)
-    {
-      itkGenericExceptionMacro(<< "Failed to read the optional model: " << s.what());
-    }
-    pMean = pRawStatisticalModel->DrawMean();
-  }
-  else
-  {
-    pModelBuildingKernel = pScaledKernel;
-    typename DataReaderType::Pointer pReferenceReader = DataReaderType::New();
-    pReferenceReader->SetFileName(opt.strReferenceFile);
-    pReferenceReader->Update();
-    pRepresenter->SetReference(pReferenceReader->GetOutput());
-    pMean = pRepresenter->IdentitySample();
-  }
-
-  typedef itk::LowRankGPModelBuilder<DataType> ModelBuilderType;
-  typename ModelBuilderType::Pointer           gpModelBuilder = ModelBuilderType::New();
-  gpModelBuilder->SetRepresenter(pRepresenter);
-
-  typedef itk::StatisticalModel<DataType> StatisticalModelType;
-  typename StatisticalModelType::Pointer  pModel;
-  pModel = gpModelBuilder->BuildNewModel(pMean, *pModelBuildingKernel.get(), opt.iNrOfBasisFunctions);
-
-  itk::StatismoIO<DataType>::SaveStatisticalModel(pModel, opt.strOutputFileName.c_str());
-}
-
-string
-getAvailableKernelsStr()
-{
-  string ret;
-
-  for (const auto & p : statismo::cli::s_kernelMap)
-  {
-    ret += p.first + ",";
-  }
-
-  ret.pop_back();
-  return ret;
 }

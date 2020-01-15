@@ -4,13 +4,16 @@
 
 statismo-sample - draws samples from a model
 
+
 # SYNOPSIS
 
 statismo-sample [*options*] -i *input-file* *output-file*
 
+
 # DESCRIPTION
 
 statismo-sample is used to draw samples from a model. It's possible to draw different samples such as the mean, a random sample or a sample with given parameters.
+
 
 # OPTIONS
 
@@ -32,7 +35,9 @@ statismo-sample is used to draw samples from a model. It's possible to draw diff
 -i, \--input-file *MODEL_FILE*
 :	*MODEL_FILE* is the path to the model.
 
-# Examples 
+
+# EXAMPLES 
+
 Draw a random sample from a shape model:
 
     statismo-sample -i model.h5 sample.vtk
@@ -59,14 +64,16 @@ Draw the reference from a shape model:
 
 Draw a sample from a shape model with the 1st parameter set to 1, the 5th parameter set to 0.1 and the 10th parameter set to 2.5:
 
-    statismo-sample -p 1:1 4:0.1 9:2.5 -i model.h5 sample.vtk
+    statismo-sample -p 1:1,4:0.1,9:2.5 -i model.h5 sample.vtk
 
 Hint
 :	When working with deformation models, use *statismo-warp-image* to apply the sampled deformation fields to images.
 
+
 # SEE ALSO
 
-##Building Models:
+## Building Models
+
 *statismo-build-shape-model* (8).
 Builds shape models from a list of meshes.
 
@@ -76,7 +83,7 @@ Builds deformation models from a list of deformation fields
 *statismo-build-gp-model* (8).
 Builds shape or deformation models from a given gaussian process definition.
 
-##Working with models:
+## Working with models
 
 *statismo-sample* (8).
 Draws samples from a model.
