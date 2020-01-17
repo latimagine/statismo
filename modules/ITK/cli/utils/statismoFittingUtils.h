@@ -55,7 +55,8 @@
 #  define CLOSE(f) close(f)
 #endif
 
-namespace statismo::cli {
+namespace statismo::cli
+{
 
 // The optimizer may print something despite me not wanting it to print anything. It is thus that I manually silence the
 // console output when it's not me printing.
@@ -130,10 +131,10 @@ template <class OptimizerType>
 class IterationStatusObserver : public ::itk::Command
 {
 public:
-  using Self = IterationStatusObserver<OptimizerType> ;
-  using Superclass = ::itk::Command                           ;
-  using Pointer = ::itk::SmartPointer<Self>                ;
-  using OptimizerPointer = const OptimizerType *                  ;
+  using Self = IterationStatusObserver<OptimizerType>;
+  using Superclass = ::itk::Command;
+  using Pointer = ::itk::SmartPointer<Self>;
+  using OptimizerPointer = const OptimizerType *;
 
   itkNewMacro(Self);
 
@@ -177,19 +178,19 @@ protected:
   virtual ~IterationStatusObserver() = default;
 
 private:
-  int                     m_iterNo{0};
-  statismo::cli::ConsoleOutputSilencer * m_coSilencer{nullptr};
+  int                                    m_iterNo{ 0 };
+  statismo::cli::ConsoleOutputSilencer * m_coSilencer{ nullptr };
 };
 
 
 template <class OptimizerType>
 static void
-InitializeOptimizer(typename OptimizerType::Pointer optimizer,
-                    unsigned                  numberOfIterations,
-                    unsigned                  numberOfModelComponents,
-                    unsigned                  totalNumberOfOptimizationParameters,
-                    bool                      doPrintFittingInformation,
-                    statismo::cli::ConsoleOutputSilencer *         coSilencer)
+InitializeOptimizer(typename OptimizerType::Pointer        optimizer,
+                    unsigned                               numberOfIterations,
+                    unsigned                               numberOfModelComponents,
+                    unsigned                               totalNumberOfOptimizationParameters,
+                    bool                                   doPrintFittingInformation,
+                    statismo::cli::ConsoleOutputSilencer * coSilencer)
 {
   constexpr unsigned uNumberOfRigid2DtransformComponents = 3;
   constexpr unsigned uNumberOfRigid3DtransformComponents = 6;
@@ -200,13 +201,13 @@ InitializeOptimizer(typename OptimizerType::Pointer optimizer,
   if (doPrintFittingInformation == true)
   {
     using ObserverType = IterationStatusObserver<OptimizerType>;
-    auto                 obs = ObserverType::New();
+    auto obs = ObserverType::New();
     obs->SetConsoleSilencer(coSilencer);
     optimizer->AddObserver(::itk::IterationEvent(), obs);
   }
 
-  unsigned uNrOfRotationComponents{0};
-  unsigned uNrOfTranslationComponents{0};
+  unsigned uNrOfRotationComponents{ 0 };
+  unsigned uNrOfTranslationComponents{ 0 };
   switch (totalNumberOfOptimizationParameters - numberOfModelComponents)
   {
     case uNumberOfRigid3DtransformComponents:
@@ -248,6 +249,6 @@ InitializeOptimizer(typename OptimizerType::Pointer optimizer,
     optimizer->SetScales(scales);
   }
 }
-}
+} // namespace statismo::cli
 
 #endif

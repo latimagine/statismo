@@ -53,7 +53,8 @@
 namespace po = lpo;
 using namespace std;
 
-namespace {
+namespace
+{
 
 struct _ProgramOptions
 {
@@ -61,7 +62,7 @@ struct _ProgramOptions
   string strProcrustesMode;
   string strProcrustesReferenceFile;
   string strOutputFileName;
-  float  fNoiseVariance{0.0};
+  float  fNoiseVariance{ 0.0 };
 };
 
 bool
@@ -70,13 +71,11 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
   statismo::utils::ToLower(opt.strProcrustesMode);
 
   return (opt.strProcrustesMode != "reference" && opt.strProcrustesMode != "gpa") ||
-  (opt.strProcrustesMode == "reference" && opt.strProcrustesReferenceFile.empty()) ||
-(opt.strProcrustesMode == "gpa" && !opt.strProcrustesReferenceFile.empty()) ||
-opt.strDataListFile.empty() || 
-opt.strOutputFileName.empty() ||
-opt.strDataListFile == opt.strOutputFileName ||
-(opt.strProcrustesMode == "reference" && (opt.strDataListFile == opt.strProcrustesReferenceFile ||
-        opt.strOutputFileName == opt.strProcrustesReferenceFile));
+         (opt.strProcrustesMode == "reference" && opt.strProcrustesReferenceFile.empty()) ||
+         (opt.strProcrustesMode == "gpa" && !opt.strProcrustesReferenceFile.empty()) || opt.strDataListFile.empty() ||
+         opt.strOutputFileName.empty() || opt.strDataListFile == opt.strOutputFileName ||
+         (opt.strProcrustesMode == "reference" && (opt.strDataListFile == opt.strProcrustesReferenceFile ||
+                                                   opt.strOutputFileName == opt.strProcrustesReferenceFile));
 }
 
 void
@@ -86,22 +85,24 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
 
   using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
   using MeshType = itk::Mesh<float, Dimensions>;
-  using DataManagerType = itk::DataManager<MeshType>   ;
-  using MeshReaderType = itk::MeshFileReader<MeshType>   ;
-  using MeshReaderList = vector<MeshReaderType::Pointer> ;
-  using Rigid3DTransformType = itk::VersorRigid3DTransform<float> ;
-  using ImageType = itk::Image<float, Dimensions>      ;
-  using LandmarkBasedTransformInitializerType = itk::LandmarkBasedTransformInitializer<Rigid3DTransformType, ImageType, ImageType>;
-    using PCAModelBuilder = itk::PCAModelBuilder<MeshType>  ;                                                 ;
-  using FilterType= itk::TransformMeshFilter<MeshType, MeshType, Rigid3DTransformType> ;
+  using DataManagerType = itk::DataManager<MeshType>;
+  using MeshReaderType = itk::MeshFileReader<MeshType>;
+  using MeshReaderList = vector<MeshReaderType::Pointer>;
+  using Rigid3DTransformType = itk::VersorRigid3DTransform<float>;
+  using ImageType = itk::Image<float, Dimensions>;
+  using LandmarkBasedTransformInitializerType =
+    itk::LandmarkBasedTransformInitializer<Rigid3DTransformType, ImageType, ImageType>;
+  using PCAModelBuilder = itk::PCAModelBuilder<MeshType>;
+  ;
+  using FilterType = itk::TransformMeshFilter<MeshType, MeshType, Rigid3DTransformType>;
 
   auto representer = RepresenterType::New();
   auto dataManager = DataManagerType::New();
   auto fileNames = statismo::cli::GetFileList(opt.strDataListFile);
 
-  MeshReaderList                          meshReaders;
+  MeshReaderList meshReaders;
   meshReaders.reserve(fileNames.size());
-  for (const auto& file : fileNames)
+  for (const auto & file : fileNames)
   {
     auto reader = MeshReaderType::New();
     reader->SetFileName(file);
@@ -127,7 +128,7 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
   else
   {
     vector<MeshType::Pointer> originalMeshes;
-    for (const auto& reader : meshReaders)
+    for (const auto & reader : meshReaders)
     {
       originalMeshes.emplace_back(reader->GetOutput());
     }
@@ -136,34 +137,37 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
     const unsigned uNumberOfPoints = 100;
     const float    fBreakIfChangeBelow = 0.001f;
 
-     auto                                                         referenceMesh =
-      statismo::cli::CalculateProcrustesMeanMesh<MeshType, LandmarkBasedTransformInitializerType, Rigid3DTransformType, FilterType>(
+    auto referenceMesh = statismo::cli::
+      CalculateProcrustesMeanMesh<MeshType, LandmarkBasedTransformInitializerType, Rigid3DTransformType, FilterType>(
         originalMeshes, uMaxGPAIterations, uNumberOfPoints, fBreakIfChangeBelow);
     representer->SetReference(referenceMesh);
   }
 
   dataManager->SetRepresenter(representer);
-  for (const auto& reader : meshReaders)
+  for (const auto & reader : meshReaders)
   {
     dataManager->AddDataset(reader->GetOutput(), reader->GetFileName());
   }
 
-  auto                pcaModelBuilder = PCAModelBuilder::New();
+  auto pcaModelBuilder = PCAModelBuilder::New();
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance);
   itk::StatismoIO<MeshType>::SaveStatisticalModel(model, opt.strOutputFileName);
 }
-}
+} // namespace
 
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                           poParameters;
+  _ProgramOptions                         poParameters;
   po::program_options<std::string, float> parser{ argv[0], "Program help:" };
 
   parser
-    .add_opt<std::string>(
-      { "data-list", "l", "File containing a list of meshes to build shape model from", &poParameters.strDataListFile, "" },
-      true)
+    .add_opt<std::string>({ "data-list",
+                            "l",
+                            "File containing a list of meshes to build shape model from",
+                            &poParameters.strDataListFile,
+                            "" },
+                          true)
     .add_opt<std::string>({ "procrustes",
                             "p",
                             "Specify how the data is aligned: REFERENCE aligns all datasets rigidly to the reference "
@@ -174,7 +178,8 @@ main(int argc, char ** argv)
       { "reference",
         "r",
         "Specify the reference used for model building. This is needed if --procrustes is REFERENCE",
-        &poParameters.strProcrustesReferenceFile, "" })
+        &poParameters.strProcrustesReferenceFile,
+        "" })
     .add_opt<float>({ "noise", "n", "Noise variance of the PPCA model", &poParameters.fNoiseVariance, 0.0f, 0.0f })
     .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName });
 

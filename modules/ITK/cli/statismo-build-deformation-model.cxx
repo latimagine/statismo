@@ -46,35 +46,34 @@
 namespace po = lpo;
 using namespace std;
 
-namespace {
+namespace
+{
 
 struct _ProgramOptions
 {
   bool     bComputeScores{ true };
   string   strDataListFile;
   string   strOutputFileName;
-  float    fNoiseVariance{0.0};
-  unsigned uNumberOfDimensions{0};
+  float    fNoiseVariance{ 0.0 };
+  unsigned uNumberOfDimensions{ 0 };
 };
 
 bool
 _IsOptionsConflictPresent(const _ProgramOptions & opt)
 {
-  return opt.strDataListFile.empty() ||
-  opt.strOutputFileName.empty() ||
-  (opt.strDataListFile == opt.strOutputFileName);
+  return opt.strDataListFile.empty() || opt.strOutputFileName.empty() || (opt.strDataListFile == opt.strOutputFileName);
 }
 
 template <unsigned Dimensions>
 void
 _BuildAndSaveDeformationModel(const _ProgramOptions & opt)
 {
-  using VectorPixelType = itk::Vector<float, Dimensions>                             ;
-  using ImageType = itk::Image<VectorPixelType, Dimensions>                    ;
-  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensions> ;
-  using DataManagerType = itk::DataManager<ImageType> ;
-  using ImageReaderType = itk::ImageFileReader<ImageType>           ;
-  using ModelBuilderType = itk::PCAModelBuilder<ImageType> ;
+  using VectorPixelType = itk::Vector<float, Dimensions>;
+  using ImageType = itk::Image<VectorPixelType, Dimensions>;
+  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensions>;
+  using DataManagerType = itk::DataManager<ImageType>;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using ModelBuilderType = itk::PCAModelBuilder<ImageType>;
 
   auto representer = RepresenterType::New();
   auto dataManager = DataManagerType::New();
@@ -85,8 +84,8 @@ _BuildAndSaveDeformationModel(const _ProgramOptions & opt)
     itkGenericExceptionMacro(<< "No Data was loaded and thus the model can't be built.");
   }
 
-  bool firstPass{true};
-  for (const auto& file : fileNames)
+  bool firstPass{ true };
+  for (const auto & file : fileNames)
   {
     auto reader = ImageReaderType::New();
     reader->SetFileName(file);
@@ -106,19 +105,20 @@ _BuildAndSaveDeformationModel(const _ProgramOptions & opt)
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance, opt.bComputeScores);
   itk::StatismoIO<ImageType>::SaveStatisticalModel(model, opt.strOutputFileName);
 }
-}
+} // namespace
 
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                                           poParameters;
+  _ProgramOptions                                         poParameters;
   po::program_options<std::string, float, unsigned, bool> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "data-list",
                             "l",
                             "File containing a list of meshes to build the deformation model from",
-                            &poParameters.strDataListFile, "" },
+                            &poParameters.strDataListFile,
+                            "" },
                           true)
     .add_opt<unsigned>(
       { "dimensionality", "d", "Dimensionality of the input image", &poParameters.uNumberOfDimensions, 3, 2, 3 }, true)

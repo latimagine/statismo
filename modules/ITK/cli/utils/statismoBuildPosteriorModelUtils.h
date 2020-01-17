@@ -40,11 +40,13 @@
 #include <string>
 #include <fstream>
 
-namespace statismo::cli {
-  namespace details {
+namespace statismo::cli
+{
+namespace details
+{
 template <class DataType>
 static std::vector<typename DataType::PointType>
-ReadLandmarksFile(const std::string& path)
+ReadLandmarksFile(const std::string & path)
 {
   std::vector<typename DataType::PointType> vLandmarks;
 
@@ -67,9 +69,9 @@ ReadLandmarksFile(const std::string& path)
         // typedef boost::tokenizer<boost::escaped_list_separator<char> > TokenizerType;
         // TokenizerType t(line);
         // TODO: Replace with a real csv tokenizer that can handle coma in escaped string
-        auto                                   t = statismo::utils::Split<','>(line);
-        typename DataType::PointType           p;
-        auto pointIter = p.Begin();
+        auto                         t = statismo::utils::Split<','>(line);
+        typename DataType::PointType p;
+        auto                         pointIter = p.Begin();
         // The first element is the description/name and will be ignored
         for (auto it = ++std::begin(t); it != std::end(t); ++it, ++pointIter)
         {
@@ -114,7 +116,7 @@ ReadLandmarksFile(const std::string& path)
       }
     }
   }
-  catch (const std::ifstream::failure& e)
+  catch (const std::ifstream::failure & e)
   {
     if (file.eof() == false)
     {
@@ -124,14 +126,14 @@ ReadLandmarksFile(const std::string& path)
 
   return vLandmarks;
 }
-  }
+} // namespace details
 
 template <class DataType, class StatisticalModelType>
 static typename StatisticalModelType::Pointer
 BuildPosteriorDeformationModel(typename StatisticalModelType::Pointer model,
                                const std::string &                    fixedLandmarksFileName,
                                const std::string &                    movingLandmarksFileName,
-                               double                           dLandmarksVariance)
+                               double                                 dLandmarksVariance)
 {
   auto fixedLandmarks = details::ReadLandmarksFile<DataType>(fixedLandmarksFileName);
   auto movingLandmarks = details::ReadLandmarksFile<DataType>(movingLandmarksFileName);
@@ -142,9 +144,8 @@ BuildPosteriorDeformationModel(typename StatisticalModelType::Pointer model,
   }
 
   typename StatisticalModelType::PointValueListType constraints;
-  auto fixedIt = std::begin(fixedLandmarks);
-  for (auto movingIt = std::begin(movingLandmarks); movingIt != std::end(movingLandmarks);
-       ++movingIt, ++fixedIt)
+  auto                                              fixedIt = std::begin(fixedLandmarks);
+  for (auto movingIt = std::begin(movingLandmarks); movingIt != std::end(movingLandmarks); ++movingIt, ++fixedIt)
   {
     typename DataType::PixelType disp;
     for (unsigned i = 0; i < fixedIt->Size(); ++i)
@@ -155,8 +156,8 @@ BuildPosteriorDeformationModel(typename StatisticalModelType::Pointer model,
   }
 
   using PosteriorModelBuilderType = ::itk::PosteriorModelBuilder<DataType>;
-  
-  auto  posteriorModelBuilder = PosteriorModelBuilderType::New();
+
+  auto posteriorModelBuilder = PosteriorModelBuilderType::New();
   return posteriorModelBuilder->BuildNewModelFromModel(model, constraints, dLandmarksVariance, false);
 }
 
@@ -165,7 +166,7 @@ template <class DataType, class StatisticalModelType>
 static typename StatisticalModelType::Pointer
 BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
                          typename DataType::Pointer             mesh,
-                        double                           dVariance)
+                         double                                 dVariance)
 {
   if (mesh->GetNumberOfPoints() != model->GetRepresenter()->GetReference()->GetNumberOfPoints())
   {
@@ -175,9 +176,7 @@ BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
   typename StatisticalModelType::PointValueListType constraints;
 
   auto fixedIt = model->GetRepresenter()->GetReference()->GetPoints()->Begin();
-  for (auto movingIt = mesh->GetPoints()->Begin();
-       movingIt != mesh->GetPoints()->End();
-       ++movingIt, ++fixedIt)
+  for (auto movingIt = mesh->GetPoints()->Begin(); movingIt != mesh->GetPoints()->End(); ++movingIt, ++fixedIt)
   {
     constraints.emplace_back(fixedIt->Value(), movingIt->Value());
   }
@@ -192,7 +191,7 @@ static typename StatisticalModelType::Pointer
 BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
                          const std::string &                    fixedLandmarksFileName,
                          const std::string &                    movingLandmarksFileName,
-                        double                           dLandmarksVariance)
+                         double                                 dLandmarksVariance)
 {
   auto fixedLandmarks = details::ReadLandmarksFile<DataType>(fixedLandmarksFileName);
   auto movingLandmarks = details::ReadLandmarksFile<DataType>(movingLandmarksFileName);
@@ -202,25 +201,25 @@ BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
     itkGenericExceptionMacro(<< "There have to be an equal number of fixed and moving Landmarks.")
   }
 
-  typename DataType::Pointer          pReference = model->GetRepresenter()->GetReference();
-  auto pPointLocator = PointsLocatorType::New();
+  typename DataType::Pointer pReference = model->GetRepresenter()->GetReference();
+  auto                       pPointLocator = PointsLocatorType::New();
   pPointLocator->SetPoints(pReference->GetPoints());
   pPointLocator->Initialize();
 
-  const auto *        referenceMeshPoints = pReference->GetPoints();
+  const auto *                                      referenceMeshPoints = pReference->GetPoints();
   typename StatisticalModelType::PointValueListType constraints;
-  
+
   for (unsigned i = 0; i < fixedLandmarks.size(); ++i)
   {
     constraints.emplace_back(referenceMeshPoints->at(pPointLocator->FindClosestPoint(fixedLandmarks[i])),
-    movingLandmarks[i]);
+                             movingLandmarks[i]);
   }
 
   using PosteriorModelBuilderType = ::itk::PosteriorModelBuilder<DataType>;
-  auto  posteriorModelBuilder = PosteriorModelBuilderType::New();
+  auto posteriorModelBuilder = PosteriorModelBuilderType::New();
   return posteriorModelBuilder->BuildNewModelFromModel(model, constraints, dLandmarksVariance, false);
 }
 
-}
+} // namespace statismo::cli
 
 #endif

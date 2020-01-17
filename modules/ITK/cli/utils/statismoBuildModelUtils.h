@@ -50,21 +50,22 @@
 
 namespace statismo::cli
 {
-  namespace details {
-    template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
-std::vector<typename MeshType::Pointer>
-static SuperimposeMeshes(const std::vector<typename MeshType::Pointer>& originalMeshes,
-                  typename MeshType::Pointer              referenceMesh,
-                  const std::set<unsigned>&                      landmarkIndices)
+namespace details
+{
+template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
+std::vector<typename MeshType::Pointer> static SuperimposeMeshes(
+  const std::vector<typename MeshType::Pointer> & originalMeshes,
+  typename MeshType::Pointer                      referenceMesh,
+  const std::set<unsigned> &                      landmarkIndices)
 {
   std::vector<typename MeshType::Pointer> translatedMeshes;
   translatedMeshes.reserve(originalMeshes.size());
   for (auto origMesh : originalMeshes)
   {
     using LandmarkContainerType = typename LandmarkBasedTransformInitializerType::LandmarkPointContainer;
-    LandmarkContainerType                                                          movingLandmarks;
-    LandmarkContainerType                                                          fixedLandmarks;
-    auto                                                    movingMesh = origMesh;
+    LandmarkContainerType movingLandmarks;
+    LandmarkContainerType fixedLandmarks;
+    auto                  movingMesh = origMesh;
 
     if (movingMesh->GetNumberOfPoints() != referenceMesh->GetNumberOfPoints() ||
         movingMesh->GetNumberOfCells() != referenceMesh->GetNumberOfCells())
@@ -81,11 +82,10 @@ static SuperimposeMeshes(const std::vector<typename MeshType::Pointer>& original
     }
 
     // only rotate & translate the moving mesh to best fit with the fixed mesh; there's no scaling taking place.
-    auto landmarkBasedTransformInitializer =
-      LandmarkBasedTransformInitializerType::New();
+    auto landmarkBasedTransformInitializer = LandmarkBasedTransformInitializerType::New();
     landmarkBasedTransformInitializer->SetFixedLandmarks(fixedLandmarks);
     landmarkBasedTransformInitializer->SetMovingLandmarks(movingLandmarks);
-    
+
     auto transform = TransformType::New();
     transform->SetIdentity();
     landmarkBasedTransformInitializer->SetTransform(transform);
@@ -103,8 +103,7 @@ static SuperimposeMeshes(const std::vector<typename MeshType::Pointer>& original
 
 
 template <class MeshType>
-float
-static CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
+float static CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
 {
   if (mesh1->GetNumberOfPoints() != mesh2->GetNumberOfPoints() ||
       mesh1->GetNumberOfCells() != mesh2->GetNumberOfCells())
@@ -112,10 +111,10 @@ static CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType
     itkGenericExceptionMacro(<< "Both meshes must have the same number of Edges & Vertices");
   }
 
-  float                                                fDifference{0.0f};
+  float fDifference{ 0.0f };
   using IteratorType = typename MeshType::PointsContainer::Iterator;
-  IteratorType                                         point1 = mesh1->GetPoints()->Begin();
-  IteratorType                                         point2 = mesh2->GetPoints()->Begin();
+  IteratorType point1 = mesh1->GetPoints()->Begin();
+  IteratorType point2 = mesh2->GetPoints()->Begin();
   for (; point1 != mesh1->GetPoints()->End(); ++point1, ++point2)
   {
     fDifference += point1->Value().SquaredEuclideanDistanceTo(point2->Value());
@@ -125,16 +124,15 @@ static CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType
 }
 
 template <class MeshType>
-typename MeshType::Pointer
-static CalculateMeanMesh(const std::vector<typename MeshType::Pointer>& meshes)
+typename MeshType::Pointer static CalculateMeanMesh(const std::vector<typename MeshType::Pointer> & meshes)
 {
   if (meshes.size() == 0)
   {
     itkGenericExceptionMacro(<< "Can't calculate the mean since no meshes were provided.");
   }
 
-  using CompensatedSummationType = ::itk::CompensatedSummation<typename MeshType::PixelType> ;
-  using MeshPointsVectorType = std::vector<CompensatedSummationType>                   ;
+  using CompensatedSummationType = ::itk::CompensatedSummation<typename MeshType::PixelType>;
+  using MeshPointsVectorType = std::vector<CompensatedSummationType>;
 
   auto firstMesh = meshes.front();
 
@@ -148,40 +146,35 @@ static CalculateMeanMesh(const std::vector<typename MeshType::Pointer>& meshes)
     vMeshPoints.push_back(sum);
   }
 
-  for (const auto& mesh : meshes)
+  for (const auto & mesh : meshes)
   {
     if (vMeshPoints.size() != mesh->GetNumberOfPoints() * MeshType::PointDimension)
     {
       itkGenericExceptionMacro(<< "All meshes must have the same number of Edges");
     }
 
-    auto           sum = std::begin(vMeshPoints);
+    auto sum = std::begin(vMeshPoints);
     auto pointData = mesh->GetPoints()->Begin();
-    
+
     // sum up all meshes
     for (; pointData != mesh->GetPoints()->End(); ++pointData)
     {
       auto point = pointData->Value();
-      for (auto pointIter = point.Begin(); pointIter != point.End();
-           ++pointIter, ++sum)
+      for (auto pointIter = point.Begin(); pointIter != point.End(); ++pointIter, ++sum)
       {
         (*sum) += *pointIter;
       }
     }
   }
 
-  float                      fInvNumberOfMeshes = 1.0f / meshes.size();
-  auto meanMesh = statismo::itk::CloneMesh<MeshType>(firstMesh);
+  float fInvNumberOfMeshes = 1.0f / meshes.size();
+  auto  meanMesh = statismo::itk::CloneMesh<MeshType>(firstMesh);
 
   // write the data to the mean mesh
   auto sum = std::begin(vMeshPoints);
-  for (auto pointData = meanMesh->GetPoints()->Begin();
-       pointData != meanMesh->GetPoints()->End();
-       ++pointData)
+  for (auto pointData = meanMesh->GetPoints()->Begin(); pointData != meanMesh->GetPoints()->End(); ++pointData)
   {
-    for (auto pointIter = pointData->Value().Begin();
-         pointIter != pointData->Value().End();
-         ++pointIter, ++sum)
+    for (auto pointIter = pointData->Value().Begin(); pointIter != pointData->Value().End(); ++pointIter, ++sum)
     {
       *pointIter = sum->GetSum() * fInvNumberOfMeshes;
     }
@@ -189,22 +182,21 @@ static CalculateMeanMesh(const std::vector<typename MeshType::Pointer>& meshes)
 
   return meanMesh;
 }
-  }
+} // namespace details
 
 
 template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
-typename MeshType::Pointer
-static CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer>& meshes,
-                            unsigned                                maxIterations,
-                            unsigned                                nrOfLandmarks,
-                            float                                   breakIfChangeBelow)
+typename MeshType::Pointer static CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer> & meshes,
+                                                              unsigned maxIterations,
+                                                              unsigned nrOfLandmarks,
+                                                              float    breakIfChangeBelow)
 {
   // the initial mesh to which all others will be aligned to is the first one in the list here. Any other mesh could be
   // chosen as well
   auto referenceMesh = meshes.front();
 
-  std::random_device r;
-  std::default_random_engine eng{r()};
+  std::random_device              r;
+  std::default_random_engine      eng{ r() };
   std::uniform_int_distribution<> urd(0, referenceMesh->GetNumberOfPoints() - 1);
 
   std::set<unsigned> pointNumbers;
@@ -222,8 +214,8 @@ static CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer>
       details::SuperimposeMeshes<MeshType, LandmarkBasedTransformInitializerType, TransformType, FilterType>(
         meshes, referenceMesh, pointNumbers);
     auto meanMesh = details::CalculateMeanMesh<MeshType>(translatedMeshes);
-    auto                      fDifference = details::CalculateMeshDistance<MeshType>(meanMesh, referenceMesh);
-    auto                      fDifferenceDelta = std::abs(fDifference - fPreviousDifference);
+    auto fDifference = details::CalculateMeshDistance<MeshType>(meanMesh, referenceMesh);
+    auto fDifferenceDelta = std::abs(fDifference - fPreviousDifference);
     fPreviousDifference = fDifference;
     referenceMesh = meanMesh;
 
@@ -236,10 +228,10 @@ static CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer>
 }
 
 static std::vector<std::string>
-GetFileList(const std::string& path)
+GetFileList(const std::string & path)
 {
   std::vector<std::string> fileList;
-  std::ifstream file;
+  std::ifstream            file;
   try
   {
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -258,7 +250,7 @@ GetFileList(const std::string& path)
       }
     }
   }
-  catch (const std::ifstream::failure& e)
+  catch (const std::ifstream::failure & e)
   {
     if (file.eof() == false)
     {
@@ -269,6 +261,6 @@ GetFileList(const std::string& path)
   return fileList;
 }
 
-}
+} // namespace statismo::cli
 
 #endif

@@ -46,10 +46,10 @@ class ITK_EXPORT PenalizingMeanSquaresImageToImageMetric
 {
 public:
   // Standard class typedefs.
-  using Self = PenalizingMeanSquaresImageToImageMetric                  ;
-  using Superclass = MeanSquaresImageToImageMetric<TFixedImage, TMovingImage> ;
-  using Pointer = SmartPointer<Self>                                       ;
-  using ConstPointer = SmartPointer<const Self>                                 ;
+  using Self = PenalizingMeanSquaresImageToImageMetric;
+  using Superclass = MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   // Method for creation through the object factory.
   itkNewMacro(Self);
   ITK_DISALLOW_COPY_AND_ASSIGN(PenalizingMeanSquaresImageToImageMetric);
@@ -57,9 +57,9 @@ public:
   itkTypeMacro(PenalizingMeanSquaresImageToImageMetric, Object);
 
   // Types transferred from the base class
-  using ParametersType = typename Superclass::ParametersType ;
-  using MeasureType = typename Superclass::MeasureType    ;
-  using DerivativeType = typename Superclass::DerivativeType ;
+  using ParametersType = typename Superclass::ParametersType;
+  using MeasureType = typename Superclass::MeasureType;
+  using DerivativeType = typename Superclass::DerivativeType;
 
   // Get the derivatives of the match measure.
   void
@@ -79,7 +79,9 @@ public:
 
   // Get value and derivatives for multiple valued optimizers.
   void
-  GetValueAndDerivative(const ParametersType & parameters, MeasureType & value, DerivativeType & derivative) const override
+  GetValueAndDerivative(const ParametersType & parameters,
+                        MeasureType &          value,
+                        DerivativeType &       derivative) const override
   {
     Superclass::GetValueAndDerivative(parameters, value, derivative);
     value += CalculateValuePenalty(parameters);
@@ -92,11 +94,10 @@ public:
   itkSetMacro(NumberOfModelComponents, unsigned);
   itkGetMacro(NumberOfModelComponents, unsigned);
 
-  protected:
-
+protected:
   PenalizingMeanSquaresImageToImageMetric() = default;
   virtual ~PenalizingMeanSquaresImageToImageMetric() = default;
-  
+
   MeasureType m_RegularizationParameter;
   unsigned    m_NumberOfModelComponents{ 0 };
 

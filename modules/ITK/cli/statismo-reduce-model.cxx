@@ -47,15 +47,16 @@
 namespace po = lpo;
 using namespace std;
 
-namespace {
+namespace
+{
 
 struct _ProgramOptions
 {
   string   strInputFileName;
   string   strOutputFileName;
-  unsigned uNumberOfComponents{0};
-  unsigned uNumberOfDimensions{0};
-  double   dTotalVariance{0.0};
+  unsigned uNumberOfComponents{ 0 };
+  unsigned uNumberOfDimensions{ 0 };
+  double   dTotalVariance{ 0.0 };
   string   strType;
 };
 
@@ -65,11 +66,9 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
   statismo::utils::ToLower(opt.strType);
 
   return (opt.strType != "shape" && opt.strType != "deformation") ||
-  (opt.dTotalVariance != 0 && opt.uNumberOfComponents != 0) ||
-  (opt.dTotalVariance == 0 && opt.uNumberOfComponents == 0) ||
-  opt.strInputFileName.empty() ||
-  opt.strOutputFileName.empty() ||
-  opt.strInputFileName == opt.strOutputFileName;
+         (opt.dTotalVariance != 0 && opt.uNumberOfComponents != 0) ||
+         (opt.dTotalVariance == 0 && opt.uNumberOfComponents == 0) || opt.strInputFileName.empty() ||
+         opt.strOutputFileName.empty() || opt.strInputFileName == opt.strOutputFileName;
 }
 
 
@@ -83,8 +82,8 @@ _ReduceModel(const _ProgramOptions & opt)
   auto representer = RepresenterType::New();
   auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName);
 
-  auto reducedVarModelBuilder = ReducedVarianceModelBuilderType::New();
-  typename StatisticalModelType::Pointer            outputModel;
+  auto                                   reducedVarModelBuilder = ReducedVarianceModelBuilderType::New();
+  typename StatisticalModelType::Pointer outputModel;
 
   if (opt.uNumberOfComponents != 0)
   {
@@ -104,12 +103,12 @@ _ReduceModel(const _ProgramOptions & opt)
   itk::StatismoIO<DataType>::SaveStatisticalModel(outputModel, opt.strOutputFileName);
 }
 
-}
+} // namespace
 
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                                      poParameters;
+  _ProgramOptions                                    poParameters;
   po::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
 
   parser
@@ -127,7 +126,8 @@ main(int argc, char ** argv)
                          2,
                          3 },
                        true)
-    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName, "" }, true)
+    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName, "" },
+                          true)
     .add_opt<unsigned>({ "numcomponents",
                          "n",
                          "Creates a new model with the specified number of components.",
@@ -162,24 +162,24 @@ main(int argc, char ** argv)
     const unsigned Dimensionality3D = 3;
     if (poParameters.strType == "shape")
     {
-      using DataType = itk::Mesh<float, Dimensionality3D>                    ;
-      using RepresenterType = itk::StandardMeshRepresenter<float, Dimensionality3D> ;
+      using DataType = itk::Mesh<float, Dimensionality3D>;
+      using RepresenterType = itk::StandardMeshRepresenter<float, Dimensionality3D>;
       _ReduceModel<DataType, RepresenterType>(poParameters);
     }
     else
     {
       if (poParameters.uNumberOfDimensions == Dimensionality2D)
       {
-        using VectorPixelType = itk::Vector<float, Dimensionality2D>                             ;
-        using DataType = itk::Image<VectorPixelType, Dimensionality2D>                    ;
-        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality2D> ;
+        using VectorPixelType = itk::Vector<float, Dimensionality2D>;
+        using DataType = itk::Image<VectorPixelType, Dimensionality2D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality2D>;
         _ReduceModel<DataType, RepresenterType>(poParameters);
       }
       else
       {
-        using VectorPixelType = itk::Vector<float, Dimensionality3D>                             ;
-        using DataType = itk::Image<VectorPixelType, Dimensionality3D>                    ;
-        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality3D> ;
+        using VectorPixelType = itk::Vector<float, Dimensionality3D>;
+        using DataType = itk::Image<VectorPixelType, Dimensionality3D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality3D>;
         _ReduceModel<DataType, RepresenterType>(poParameters);
       }
     }

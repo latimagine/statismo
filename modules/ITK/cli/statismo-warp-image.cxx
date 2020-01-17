@@ -44,7 +44,8 @@
 namespace po = lpo;
 using namespace std;
 
-namespace {
+namespace
+{
 
 constexpr unsigned _Dimensionality3D = 3;
 constexpr unsigned _Dimensionality2D = 2;
@@ -54,43 +55,41 @@ struct _ProgramOptions
   string   strInputImageFileName;
   string   strInputDeformFieldFileName;
   string   strOutputFileName;
-  unsigned uNumberOfDimensions{0};
+  unsigned uNumberOfDimensions{ 0 };
 };
 
 bool
 _IsOptionsConflictPresent(const _ProgramOptions & opt)
 {
-  return opt.strInputDeformFieldFileName.empty() ||
-  opt.strInputImageFileName.empty() ||
-  opt.strOutputFileName.empty();
+  return opt.strInputDeformFieldFileName.empty() || opt.strInputImageFileName.empty() || opt.strOutputFileName.empty();
 }
 
 template <unsigned Dimensions>
 void
 _ApplyDeformationFieldToImage(const _ProgramOptions & opt)
 {
-  using ImageType = itk::Image<float, Dimensions>   ;
-  using ImageReaderType = itk::ImageFileReader<ImageType> ;
-  using VectorPixelType = itk::Vector<float, Dimensions>          ;
-  using VectorImageType = itk::Image<VectorPixelType, Dimensions> ;
-  using VectorImageReaderType = itk::ImageFileReader<VectorImageType>   ;
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double> ;
-  using WarpFilterType = itk::WarpImageFilter<ImageType, ImageType, VectorImageType> ;
-  using ImageWriterType = itk::ImageFileWriter<ImageType> ;
+  using ImageType = itk::Image<float, Dimensions>;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
+  using VectorPixelType = itk::Vector<float, Dimensions>;
+  using VectorImageType = itk::Image<VectorPixelType, Dimensions>;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  using WarpFilterType = itk::WarpImageFilter<ImageType, ImageType, VectorImageType>;
+  using ImageWriterType = itk::ImageFileWriter<ImageType>;
 
-  auto       origImgReader = ImageReaderType::New();
+  auto origImgReader = ImageReaderType::New();
   origImgReader->SetFileName(opt.strInputImageFileName);
   origImgReader->Update();
 
   typename ImageType::Pointer origImg = origImgReader->GetOutput();
 
 
-  auto         defFieldReader = VectorImageReaderType::New();
+  auto defFieldReader = VectorImageReaderType::New();
   defFieldReader->SetFileName(opt.strInputDeformFieldFileName);
   defFieldReader->Update();
   typename VectorImageType::Pointer defField = defFieldReader->GetOutput();
 
-  auto                            interpolator = InterpolatorType::New();
+  auto interpolator = InterpolatorType::New();
 
   auto warper = WarpFilterType::New();
   warper->SetInput(origImg);
@@ -109,12 +108,12 @@ _ApplyDeformationFieldToImage(const _ProgramOptions & opt)
   writer->Update();
 }
 
-}
+} // namespace
 
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                              poParameters;
+  _ProgramOptions                            poParameters;
   po::program_options<std::string, unsigned> parser{ argv[0], "Program help:" };
 
   parser
@@ -128,9 +127,12 @@ main(int argc, char ** argv)
                        true)
     .add_opt<std::string>(
       { "input-image", "i", "The path to the original image.", &poParameters.strInputImageFileName, "" }, true)
-    .add_opt<std::string>(
-      { "input-deformation-field", "f", "The path to the original image.", &poParameters.strInputDeformFieldFileName, "" },
-      true)
+    .add_opt<std::string>({ "input-deformation-field",
+                            "f",
+                            "The path to the original image.",
+                            &poParameters.strInputDeformFieldFileName,
+                            "" },
+                          true)
     .add_pos_opt<std::string>({ "Name of the warped output image.", &poParameters.strOutputFileName });
 
   if (!parser.parse(argc, argv))

@@ -87,9 +87,9 @@ template <typename DataType>
 typename DataType::Pointer
 CloneMesh(typename DataType::Pointer pMesh)
 {
-  using IdentityTransformType = ::itk::IdentityTransform<float, DataType::PointDimension>             ;
-  using TransformFilterType = ::itk::TransformMeshFilter<DataType, DataType, IdentityTransformType> ;
-  auto   transformMeshFilter = TransformFilterType::New();
+  using IdentityTransformType = ::itk::IdentityTransform<float, DataType::PointDimension>;
+  using TransformFilterType = ::itk::TransformMeshFilter<DataType, DataType, IdentityTransformType>;
+  auto transformMeshFilter = TransformFilterType::New();
   auto identityTransform = IdentityTransformType::New();
   transformMeshFilter->SetInput(pMesh);
   transformMeshFilter->SetTransform(identityTransform);
