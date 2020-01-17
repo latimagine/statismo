@@ -118,11 +118,11 @@ if (BUILD_WITH_TIDY)
   else()
     message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
     set(WITH_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=-*,cert-*,bugprone-*,cppcoreguidelines-*,google-*,hicpp-*,misc-*,\
-    modernize-*,performance-*,readability-*,-google-readability-namespace-comments,-cert-dcl58-cpp,\
+    modernize-*,performance-*,readability-*,-google-readability-namespace-comments,-google-runtime-references,-cert-dcl58-cpp,\
     -hicpp-special-member-functions,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,\
     -cppcoreguidelines-owning-memory,-readability-implicit-bool-conversion,-hicpp-no-array-decay,\
     -cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-build-using-namespace,\
-    -cppcoreguidelines-pro-bounds-constant-array-index")
+    -cppcoreguidelines-pro-bounds-constant-array-index,-clang-diagnostic-unused-lambda-capture")
   endif()
 endif()
 

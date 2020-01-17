@@ -65,9 +65,9 @@ struct _ProgramOptions
   string     strOutputFileName;
   string     strType;
   StringListType vParameters;
-  bool       bSampleMean;
-  bool       bSampleReference;
-  unsigned   uNumberOfDimensions;
+  bool       bSampleMean{false};
+  bool       bSampleReference{false};
+  unsigned   uNumberOfDimensions{0};
 };
 
 bool
@@ -75,7 +75,7 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
 {
   statismo::utils::ToLower(opt.strType);
 
-  return (opt.bSampleMean + (opt.vParameters.size() > 0) + opt.bSampleReference > 1) ||
+  return (opt.bSampleMean + !opt.vParameters.empty() + opt.bSampleReference > 1) ||
   opt.strInputFileName.empty() ||
   opt.strOutputFileName.empty() ||
   (opt.strType != "shape" && opt.strType != "deformation") ||
@@ -131,7 +131,7 @@ _PopulateVectorWithParameters(const StringListType & paramsIn, VectorType & para
     if (!hasSucceeded)
     {
       itkGenericExceptionMacro(
-        << "The parameter '" << strcspn
+        << "The parameter '" << str
         << "' is in an incorrect format. The correct format is index:value. Like for example 0:1.1 or 19:-2");
     }
   }
@@ -144,14 +144,14 @@ _DrawSampleFromModel(const _ProgramOptions & opt)
   using StatisticalModelType = itk::StatisticalModel<DataType> ;
 
   auto representer = RepresenterType::New();
-  auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName.c_str());
+  auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName);
 
   typename DataType::Pointer output;
   if (opt.bSampleMean)
   {
     output = model->DrawMean();
   }
-  else if (opt.vParameters.size() > 0)
+  else if (!opt.vParameters.empty())
   {
     auto                                  paramsCount = model->GetNumberOfPrincipalComponents();
     typename StatisticalModelType::VectorType params(paramsCount);
@@ -160,7 +160,7 @@ _DrawSampleFromModel(const _ProgramOptions & opt)
     _PopulateVectorWithParameters<typename StatisticalModelType::VectorType>(opt.vParameters, params);
     output = model->DrawSample(params);
   }
-  else if (opt.bSampleReference == true)
+  else if (opt.bSampleReference)
   {
     output = model->GetRepresenter()->GetReference();
   }
@@ -182,7 +182,7 @@ main(int argc, char ** argv)
 {
 
   _ProgramOptions                                                poParameters;
-  lpo::program_options<std::string, StringListType, bool, unsigned> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, StringListType, bool, unsigned> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "type",
@@ -199,17 +199,17 @@ main(int argc, char ** argv)
                          2,
                          3 },
                        true)
-    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName }, true)
-    .add_flag({ "mean", "m", "Draws the mean from the model and saves it.", &poParameters.bSampleMean })
-    .add_flag({ "reference", "r", "Draws the reference from the model and saves it.", &poParameters.bSampleReference })
+    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName, "" }, true)
+    .add_flag({ "mean", "m", "Draws the mean from the model and saves it.", &poParameters.bSampleMean, true })
+    .add_flag({ "reference", "r", "Draws the reference from the model and saves it.", &poParameters.bSampleReference, false })
     .add_opt<StringListType>(
       { "parameters",
         "p",
         "Makes it possible to specify a list of parameters and their positions that will then be used to draw a "
         "sample. Parameters are speciefied in the following format: POSITION1:VALUE1 POSITIONn:VALUEn. Unspecified "
         "parameters will be set to 0. The first parameter is at position 1.",
-        &poParameters.vParameters })
-    .add_pos_opt<std::string>({ "Name of the output file/the sample.", &poParameters.strOutputFileName });
+        &poParameters.vParameters, {} })
+    .add_pos_opt<std::string>({ "Name of the output file/the sample.", &poParameters.strOutputFileName});
 
   if (!parser.parse(argc, argv))
   {
@@ -227,27 +227,27 @@ main(int argc, char ** argv)
   {
     if (poParameters.strType == "shape")
     {
-      typedef itk::Mesh<float, _Dimensionality3D>                    DataType;
-      typedef itk::StandardMeshRepresenter<float, _Dimensionality3D> RepresenterType;
-      typedef itk::MeshFileWriter<DataType>                         DataWriterType;
+      using DataType = itk::Mesh<float, _Dimensionality3D>                    ;
+      using RepresenterType = itk::StandardMeshRepresenter<float, _Dimensionality3D> ;
+      using DataWriterType = itk::MeshFileWriter<DataType>                         ;
       _DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
     }
     else
     {
       if (poParameters.uNumberOfDimensions == 2)
       {
-        typedef itk::Vector<float, _Dimensionality2D>                             VectorPixelType;
-        typedef itk::Image<VectorPixelType, _Dimensionality2D>                    DataType;
-        typedef itk::StandardImageRepresenter<VectorPixelType, _Dimensionality2D> RepresenterType;
-        typedef itk::ImageFileWriter<DataType>                                   DataWriterType;
+        using VectorPixelType = itk::Vector<float, _Dimensionality2D>                             ;
+        using DataType = itk::Image<VectorPixelType, _Dimensionality2D>                    ;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, _Dimensionality2D> ;
+        using DataWriterType = itk::ImageFileWriter<DataType>                                   ;
         _DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
       }
       else
       {
-        typedef itk::Vector<float, _Dimensionality3D>                             VectorPixelType;
-        typedef itk::Image<VectorPixelType, _Dimensionality3D>                    DataType;
-        typedef itk::StandardImageRepresenter<VectorPixelType, _Dimensionality3D> RepresenterType;
-        typedef itk::ImageFileWriter<DataType>                                   DataWriterType;
+        using VectorPixelType = itk::Vector<float, _Dimensionality3D>                             ;
+        using DataType = itk::Image<VectorPixelType, _Dimensionality3D>                    ;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, _Dimensionality3D> ;
+        using DataWriterType= itk::ImageFileWriter<DataType>                                   ;
         _DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
       }
     }

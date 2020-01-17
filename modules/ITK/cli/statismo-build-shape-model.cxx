@@ -61,7 +61,7 @@ struct _ProgramOptions
   string strProcrustesMode;
   string strProcrustesReferenceFile;
   string strOutputFileName;
-  float  fNoiseVariance;
+  float  fNoiseVariance{0.0};
 };
 
 bool
@@ -92,7 +92,6 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
   using Rigid3DTransformType = itk::VersorRigid3DTransform<float> ;
   using ImageType = itk::Image<float, Dimensions>      ;
   using LandmarkBasedTransformInitializerType = itk::LandmarkBasedTransformInitializer<Rigid3DTransformType, ImageType, ImageType>;
-  using StatisticalModelType = itk::StatisticalModel<MeshType> ;
     using PCAModelBuilder = itk::PCAModelBuilder<MeshType>  ;                                                 ;
   using FilterType= itk::TransformMeshFilter<MeshType, MeshType, Rigid3DTransformType> ;
 
@@ -128,9 +127,9 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
   else
   {
     vector<MeshType::Pointer> originalMeshes;
-    for (auto reader : meshReaders)
+    for (const auto& reader : meshReaders)
     {
-      originalMeshes.push_back(reader->GetOutput());
+      originalMeshes.emplace_back(reader->GetOutput());
     }
 
     const unsigned uMaxGPAIterations = 20;
@@ -144,14 +143,14 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
   }
 
   dataManager->SetRepresenter(representer);
-  for (auto reader : meshReaders)
+  for (const auto& reader : meshReaders)
   {
     dataManager->AddDataset(reader->GetOutput(), reader->GetFileName());
   }
 
   auto                pcaModelBuilder = PCAModelBuilder::New();
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance);
-  itk::StatismoIO<MeshType>::SaveStatisticalModel(model, opt.strOutputFileName.c_str());
+  itk::StatismoIO<MeshType>::SaveStatisticalModel(model, opt.strOutputFileName);
 }
 }
 
@@ -159,11 +158,11 @@ int
 main(int argc, char ** argv)
 {
   _ProgramOptions                           poParameters;
-  lpo::program_options<std::string, float> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, float> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>(
-      { "data-list", "l", "File containing a list of meshes to build shape model from", &poParameters.strDataListFile },
+      { "data-list", "l", "File containing a list of meshes to build shape model from", &poParameters.strDataListFile, "" },
       true)
     .add_opt<std::string>({ "procrustes",
                             "p",
@@ -175,7 +174,7 @@ main(int argc, char ** argv)
       { "reference",
         "r",
         "Specify the reference used for model building. This is needed if --procrustes is REFERENCE",
-        &poParameters.strProcrustesReferenceFile })
+        &poParameters.strProcrustesReferenceFile, "" })
     .add_opt<float>({ "noise", "n", "Noise variance of the PPCA model", &poParameters.fNoiseVariance, 0.0f, 0.0f })
     .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName });
 

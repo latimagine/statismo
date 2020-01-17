@@ -142,7 +142,7 @@ static CalculateMeanMesh(const std::vector<typename MeshType::Pointer>& meshes)
   MeshPointsVectorType vMeshPoints;
   unsigned             uDataSize = firstMesh->GetNumberOfPoints() * MeshType::PointDimension;
   vMeshPoints.reserve(uDataSize);
-  for (int i = 0; i < uDataSize; ++i)
+  for (unsigned i = 0; i < uDataSize; ++i)
   {
     CompensatedSummationType sum;
     vMeshPoints.push_back(sum);

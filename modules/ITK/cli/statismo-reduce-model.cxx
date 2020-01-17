@@ -53,9 +53,9 @@ struct _ProgramOptions
 {
   string   strInputFileName;
   string   strOutputFileName;
-  unsigned uNumberOfComponents;
-  unsigned uNumberOfDimensions;
-  double   dTotalVariance;
+  unsigned uNumberOfComponents{0};
+  unsigned uNumberOfDimensions{0};
+  double   dTotalVariance{0.0};
   string   strType;
 };
 
@@ -81,7 +81,7 @@ _ReduceModel(const _ProgramOptions & opt)
   using ReducedVarianceModelBuilderType = typename itk::ReducedVarianceModelBuilder<DataType>;
 
   auto representer = RepresenterType::New();
-  auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName.c_str());
+  auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName);
 
   auto reducedVarModelBuilder = ReducedVarianceModelBuilderType::New();
   typename StatisticalModelType::Pointer            outputModel;
@@ -101,7 +101,7 @@ _ReduceModel(const _ProgramOptions & opt)
     outputModel = reducedVarModelBuilder->BuildNewModelWithVariance(model.GetPointer(), opt.dTotalVariance);
   }
 
-  itk::StatismoIO<DataType>::SaveStatisticalModel(outputModel, opt.strOutputFileName.c_str());
+  itk::StatismoIO<DataType>::SaveStatisticalModel(outputModel, opt.strOutputFileName);
 }
 
 }
@@ -110,7 +110,7 @@ int
 main(int argc, char ** argv)
 {
   _ProgramOptions                                      poParameters;
-  lpo::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "type",
@@ -127,7 +127,7 @@ main(int argc, char ** argv)
                          2,
                          3 },
                        true)
-    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName }, true)
+    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName, "" }, true)
     .add_opt<unsigned>({ "numcomponents",
                          "n",
                          "Creates a new model with the specified number of components.",

@@ -53,8 +53,8 @@ struct _ProgramOptions
   bool     bComputeScores{ true };
   string   strDataListFile;
   string   strOutputFileName;
-  float    fNoiseVariance;
-  unsigned uNumberOfDimensions;
+  float    fNoiseVariance{0.0};
+  unsigned uNumberOfDimensions{0};
 };
 
 bool
@@ -74,8 +74,6 @@ _BuildAndSaveDeformationModel(const _ProgramOptions & opt)
   using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensions> ;
   using DataManagerType = itk::DataManager<ImageType> ;
   using ImageReaderType = itk::ImageFileReader<ImageType>           ;
-  using ImageReaderList = vector<typename ImageReaderType::Pointer> ;
-  using StatisticalModelType = itk::StatisticalModel<ImageType> ;
   using ModelBuilderType = itk::PCAModelBuilder<ImageType> ;
 
   auto representer = RepresenterType::New();
@@ -106,7 +104,7 @@ _BuildAndSaveDeformationModel(const _ProgramOptions & opt)
 
   auto pcaModelBuilder = ModelBuilderType::New();
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance, opt.bComputeScores);
-  itk::StatismoIO<ImageType>::SaveStatisticalModel(model, opt.strOutputFileName.c_str());
+  itk::StatismoIO<ImageType>::SaveStatisticalModel(model, opt.strOutputFileName);
 }
 }
 
@@ -114,13 +112,13 @@ int
 main(int argc, char ** argv)
 {
   _ProgramOptions                                           poParameters;
-  lpo::program_options<std::string, float, unsigned, bool> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, float, unsigned, bool> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "data-list",
                             "l",
                             "File containing a list of meshes to build the deformation model from",
-                            &poParameters.strDataListFile },
+                            &poParameters.strDataListFile, "" },
                           true)
     .add_opt<unsigned>(
       { "dimensionality", "d", "Dimensionality of the input image", &poParameters.uNumberOfDimensions, 3, 2, 3 }, true)

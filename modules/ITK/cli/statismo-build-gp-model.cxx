@@ -62,9 +62,9 @@ struct _ProgramOptions
   string         strKernel;
   string         strType;
   vector<string> vKernelParameters;
-  float          fKernelScale;
-  int            iNrOfBasisFunctions;
-  unsigned       uNumberOfDimensions;
+  float          fKernelScale{0.0};
+  int            iNrOfBasisFunctions{0};
+  unsigned       uNumberOfDimensions{0};
   string         strOutputFileName;
 };
 
@@ -114,13 +114,12 @@ _BuildAndSaveModel(const _ProgramOptions & opt)
   using DatasetPointerType = typename RepresenterType::DatasetPointerType ;
   
   MatrixPointerType                                                      kernel;
-  if constexpr(std::is_same_v<DataType, statismo::cli::DataTypeShape>) {
+  if constexpr((std::is_same_v<DataType, statismo::cli::DataTypeShape>)) {
     kernel = std::move(it->second.createKernelShape(opt.vKernelParameters));
-
-  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType2DDeformation>) {
+  } else if constexpr((std::is_same_v<DataType, statismo::cli::DataType2DDeformation>)) {
     kernel = std::move(it->second.createKernel2DDeformation(opt.vKernelParameters));
-  } else if constexpr(std::is_same_v<DataType, statismo::cli::DataType3DDeformation>) {
-kernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
+  } else if constexpr((std::is_same_v<DataType, statismo::cli::DataType3DDeformation>)) {
+    kernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
   }
 
   KernelPointerType                                                unscaledKernel(
@@ -138,7 +137,7 @@ kernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
     try
     {
       rawStatisticalModel =
-        statismo::IO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strOptionalModelPath.c_str());
+        statismo::IO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strOptionalModelPath);
       statModelKernel.reset(new statismo::StatisticalModelKernel<DataType>(rawStatisticalModel.get()));
       modelBuildingKernel.reset(new statismo::SumKernel<PointType>(statModelKernel.get(), scaledKernel.get()));
     }
@@ -164,10 +163,9 @@ kernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
   auto          gpModelBuilder = ModelBuilderType::New();
   gpModelBuilder->SetRepresenter(representer);
 
-  using StatisticalModelType = itk::StatisticalModel<DataType> ;
   auto model = gpModelBuilder->BuildNewModel(mean, *modelBuildingKernel.get(), opt.iNrOfBasisFunctions);
 
-  itk::StatismoIO<DataType>::SaveStatisticalModel(model, opt.strOutputFileName.c_str());
+  itk::StatismoIO<DataType>::SaveStatisticalModel(model, opt.strOutputFileName);
 }
 
 }
@@ -180,7 +178,7 @@ main(int argc, char ** argv)
   _ProgramOptions poParameters;
   string         kernelHelp =
     "Specifies the kernel (covariance function). The following kernels are available: " + _GetAvailableKernelsStr();
-  lpo::program_options<std::string, float, int, unsigned, std::vector<std::string>> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, float, int, unsigned, std::vector<std::string>> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "type",
@@ -197,11 +195,11 @@ main(int argc, char ** argv)
                          2,
                          3 },
                        true)
-    .add_opt<std::string>({ "kernel", "k", kernelHelp, &poParameters.strKernel }, true)
+    .add_opt<std::string>({ "kernel", "k", kernelHelp, &poParameters.strKernel, "" }, true)
     .add_opt<std::vector<std::string>>({ "parameters",
                                          "p",
                                          "Specifies the kernel parameters. The Parameters depend on the kernel",
-                                         &poParameters.vKernelParameters },
+                                         &poParameters.vKernelParameters, {} },
                                        true)
     .add_opt<float>(
       { "scale", "s", "A Scaling factor with which the Kernel will be scaled", &poParameters.fKernelScale, 1.0f }, true)
@@ -213,12 +211,12 @@ main(int argc, char ** argv)
                     1 },
                   true)
     .add_opt<std::string>(
-      { "reference", "r", "The reference that will be used to build the model", &poParameters.strReferenceFile })
+      { "reference", "r", "The reference that will be used to build the model", &poParameters.strReferenceFile, "" })
     .add_opt<std::string>({ "input-model",
                             "m",
                             "Extends an existing model with data from the specified kernel. This is useful to extend "
                             "existing models in case of insufficient data.",
-                            &poParameters.strOptionalModelPath })
+                            &poParameters.strOptionalModelPath, "" })
     .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName });
 
 

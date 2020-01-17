@@ -298,7 +298,6 @@ public:
   operator()(const TPoint & x, const TPoint & y) const override
   {
     assert(x.Size() == y.Size());
-    const unsigned dim = x.Size();
     double         sum = 0;
     for (unsigned i = 0; i < m_kernels.size(); ++i)
     {

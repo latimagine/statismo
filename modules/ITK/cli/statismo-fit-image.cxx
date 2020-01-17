@@ -76,13 +76,13 @@ struct _ProgramOptions
 
   string strInputFixedLandmarksFileName;
   string strInputMovingLandmarksFileName;
-  double dLandmarksVariance;
+  double dLandmarksVariance{0.0};
 
-  unsigned uNumberOfDimensions;
-  unsigned uNumberOfIterations;
-  double   dRegularizationWeight;
+  unsigned uNumberOfDimensions{0};
+  unsigned uNumberOfIterations{0};
+  double   dRegularizationWeight{0.0};
 
-  bool bPrintFittingInformation;
+  bool bPrintFittingInformation{false};
 };
 
 bool
@@ -252,15 +252,15 @@ int
 main(int argc, char ** argv)
 {
   _ProgramOptions                                      poParameters;
-  lpo::program_options<std::string, double, unsigned> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, double, unsigned> parser{ argv[0], "Program help:" };
 
   parser
-    .add_opt<std::string>({ "input-model", "i", "The path to the model file.", &poParameters.strInputModelFileName },
+    .add_opt<std::string>({ "input-model", "i", "The path to the model file.", &poParameters.strInputModelFileName, "" },
                           true)
     .add_opt<std::string>(
-      { "moving-image", "m", "The path to the moving image.", &poParameters.strInputMovingImageFileName }, true)
+      { "moving-image", "m", "The path to the moving image.", &poParameters.strInputMovingImageFileName, "" }, true)
     .add_opt<std::string>(
-      { "fixed-image", "f", "The path to the fixed image.", &poParameters.strInputFixedImageFileName }, true)
+      { "fixed-image", "f", "The path to the fixed image.", &poParameters.strInputFixedImageFileName, "" }, true)
     .add_opt<unsigned>({ "dimensionality",
                          "d",
                          "Dimensionality of the input image and model",
@@ -275,25 +275,25 @@ main(int argc, char ** argv)
       { "regularization-weight",
         "w",
         "This is the regularization weight to make sure the model parameters don't don't get too big while fitting.",
-        &poParameters.dRegularizationWeight },
+        &poParameters.dRegularizationWeight, 0.0 },
       true)
     .add_opt<std::string>({ "output-model-deformationfield",
                            "a",
                            "Name of the output file where the model deformation field will be written to.",
-                           &poParameters.strOutputModelTransformFileName })
+                           &poParameters.strOutputModelTransformFileName, "" })
     .add_opt<std::string>({ "output-deformationfield",
                             "e",
                             "Name of the output file where the entire deformation field will be written to. This "
                             "includes the rotation and translation (Only use this when NOT using landmarks).",
-                            &poParameters.strOutputEntireTransformFileName })
+                            &poParameters.strOutputEntireTransformFileName, "" })
     .add_opt<std::string>({ "fixed-landmarks",
                            "",
                            "Name of the file where the fixed Landmarks are saved.",
-                           &poParameters.strInputFixedLandmarksFileName })
+                           &poParameters.strInputFixedLandmarksFileName, "" })
     .add_opt<std::string>({ "moving-landmarks",
                             "",
                             "Name of the file where the moving Landmarks are saved.",
-                            &poParameters.strInputMovingLandmarksFileName })
+                            &poParameters.strInputMovingLandmarksFileName, "" })
     .add_opt<double>({ "landmarks-variance",
                        "v",
                        "The variance that will be used to build the posterior model.",
@@ -303,7 +303,7 @@ main(int argc, char ** argv)
       { "print-fitting-information",
         "p",
         "Prints information (the parameters, metric score and the iteration count) with each iteration while fitting.",
-        &poParameters.bPrintFittingInformation })
+        &poParameters.bPrintFittingInformation, false })
     .add_pos_opt<std::string>({ "Name of the output file where the fitted image will be written to.",
                                 &poParameters.strOutputFittedImageFileName });
 

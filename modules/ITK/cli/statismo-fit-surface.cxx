@@ -66,7 +66,7 @@ using StatisticalModelType = itk::StatisticalModel<DataType> ;
 
 struct _ProgramOptions
 {
-  bool bPrintFittingInformation;
+  bool bPrintFittingInformation{false};
 
   string strInputModelFileName;
   string strInputTargetMeshFileName;
@@ -74,11 +74,11 @@ struct _ProgramOptions
   string strOutputFittedMeshFileName;
   string strOutputProjectedMeshFileName;
 
-  double   dRegularizationWeight;
-  unsigned uNumberOfIterations;
+  double   dRegularizationWeight{0.0};
+  unsigned uNumberOfIterations{0};
   string   strInputFixedLandmarksFileName;
   string   strInputMovingLandmarksFileName;
-  double   dLandmarksVariance;
+  double   dLandmarksVariance{0.0};
 };
 
 bool
@@ -91,7 +91,7 @@ _IsOptionsConflictPresent(const _ProgramOptions & opt)
 }
 
 DistanceImageType::Pointer
-_ComputeDistanceImageForMesh(DataType::Pointer mesh, unsigned distImageResolution = 256)
+_ComputeDistanceImageForMesh(const DataType::Pointer& mesh, unsigned distImageResolution = 256)
 {
   // Compute a bounding box around the reference shape
   using BoundingBoxType = itk::BoundingBox<int, _Dimensions, float, DataType::PointsContainer> ;
@@ -138,18 +138,18 @@ _ComputeDistanceImageForMesh(DataType::Pointer mesh, unsigned distImageResolutio
 }
 
 void
-_SaveMesh(DataType::Pointer pData, const string & strFileName)
+_SaveMesh(const DataType::Pointer& data, const string & strFileName)
 {
   using DataWriterType = itk::MeshFileWriter<DataType> ;
   auto               writer = DataWriterType::New();
   writer->SetFileName(strFileName);
-  writer->SetInput(pData);
+  writer->SetInput(data);
   writer->Update();
 }
 
 template <class PointsLocatorType>
 DataType::Pointer
-_ProjectOnTargetMesh(DataType::Pointer mesh, DataType::Pointer targetMesh)
+_ProjectOnTargetMesh(const DataType::Pointer& mesh, const DataType::Pointer& targetMesh)
 {
   auto ptLocator = PointsLocatorType::New();
   ptLocator->SetPoints(targetMesh->GetPoints());
@@ -190,7 +190,7 @@ using TransformMeshFilterType = itk::TransformMeshFilter<DataType, DataType, Tra
   auto                                representer = RepresenterType::New();
   auto                           model = StatisticalModelType::New();
   model =
-    itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName.c_str());
+    itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
 
   StatisticalModelType::Pointer                                             constrainedModel;
   TransformType::Pointer                                                    transform;
@@ -310,41 +310,41 @@ int
 main(int argc, char ** argv)
 {
   _ProgramOptions                                      poParameters;
-  lpo::program_options<std::string, double, unsigned> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, double, unsigned> parser{ argv[0], "Program help:" };
 
   parser
-    .add_opt<std::string>({ "input-model", "i", "The path to the model file.", &poParameters.strInputModelFileName },
+    .add_opt<std::string>({ "input-model", "i", "The path to the model file.", &poParameters.strInputModelFileName, "" },
                           true)
     .add_opt<std::string>(
-      { "input-targetmesh", "t", "The path to the target mesh.", &poParameters.strInputTargetMeshFileName }, true)
+      { "input-targetmesh", "t", "The path to the target mesh.", &poParameters.strInputTargetMeshFileName, "" }, true)
     .add_opt<unsigned>({ "number-of-iterations", "n", "Number of iterations", &poParameters.uNumberOfIterations, 100 },
                        true)
     .add_opt<double>(
       { "regularization-weight",
         "w",
         "This is the regularization weight to make sure the model parameters don't don't get too big while fitting.",
-        &poParameters.dRegularizationWeight },
+        &poParameters.dRegularizationWeight, 0.0 },
       true)
     .
 
     add_opt<std::string>({ "output-fit",
                            "o",
                            "Name of the output file where the fitted mesh will be written to..",
-                           &poParameters.strOutputFittedMeshFileName })
+                           &poParameters.strOutputFittedMeshFileName, "" })
     .add_opt<std::string>({ "output-projected",
                             "j",
                             "Name of the output file where the projected mesh will be written to.",
-                            &poParameters.strOutputProjectedMeshFileName })
+                            &poParameters.strOutputProjectedMeshFileName, "" })
     .
 
     add_opt<std::string>({ "fixed-landmarks",
                            "f",
                            "Name of the file where the fixed Landmarks are saved.",
-                           &poParameters.strInputFixedLandmarksFileName })
+                           &poParameters.strInputFixedLandmarksFileName, "" })
     .add_opt<std::string>({ "moving-landmarks",
                             "m",
                             "Name of the file where the moving Landmarks are saved.",
-                            &poParameters.strInputMovingLandmarksFileName })
+                            &poParameters.strInputMovingLandmarksFileName, "" })
     .add_opt<double>({ "landmarks-variance",
                        "v",
                        "The variance that will be used to build the posterior model.",
@@ -354,7 +354,7 @@ main(int argc, char ** argv)
       { "print-fitting-information",
         "p",
         "Prints information (the parameters, metric score and the iteration count) with each iteration while fitting.",
-        &poParameters.bPrintFittingInformation });
+        &poParameters.bPrintFittingInformation, false });
 
   if (!parser.parse(argc, argv))
   {

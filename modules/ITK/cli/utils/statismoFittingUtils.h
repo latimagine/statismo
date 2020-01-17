@@ -205,8 +205,8 @@ InitializeOptimizer(typename OptimizerType::Pointer optimizer,
     optimizer->AddObserver(::itk::IterationEvent(), obs);
   }
 
-  unsigned uNrOfRotationComponents;
-  unsigned uNrOfTranslationComponents;
+  unsigned uNrOfRotationComponents{0};
+  unsigned uNrOfTranslationComponents{0};
   switch (totalNumberOfOptimizationParameters - numberOfModelComponents)
   {
     case uNumberOfRigid3DtransformComponents:

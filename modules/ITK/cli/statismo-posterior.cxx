@@ -60,8 +60,8 @@ namespace {
     string strInputMeshFileName;
     string strInputFixedLandmarksFileName;
     string strInputMovingLandmarksFileName;
-    double dVariance;
-    unsigned uNumberOfDimensions;
+    double dVariance{0.0};
+    unsigned uNumberOfDimensions{0};
   };
 
   bool
@@ -86,7 +86,7 @@ _BuildPosteriorShapeModel(const _ProgramOptions & opt)
 
   auto                                     representer = RepresenterType::New();
   auto model =
-    itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName.c_str());
+    itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
 
   StatisticalModelType::Pointer constrainedModel;
   if (opt.strInputMeshFileName.empty())
@@ -120,10 +120,10 @@ _BuildPosteriorDeformationModel(const _ProgramOptions & opt)
   
   auto                                     representer = RepresenterType::New();
   auto model =
-    itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName.c_str());
+    itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
 
   itk::StatismoIO<DataType>::SaveStatisticalModel(statismo::cli::BuildPosteriorDeformationModel<DataType, StatisticalModelType>(
-    model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance), opt.strOutputModelFileName.c_str());
+    model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance), opt.strOutputModelFileName);
 }
 }
 
@@ -131,7 +131,7 @@ int
 main(int argc, char ** argv)
 {
   _ProgramOptions                                      poParameters;
-  lpo::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "type",
@@ -151,20 +151,20 @@ main(int argc, char ** argv)
     .add_opt<std::string>({ "input-file",
                             "i",
                             "The path to the model file from which the posterior model will be built.",
-                            &poParameters.strInputModelFileName },
+                            &poParameters.strInputModelFileName, "" },
                           true)
     .add_opt<std::string>({ "landmarks-fixed",
                             "f",
                             "Name of the file where the fixed Landmarks are saved.",
-                            &poParameters.strInputFixedLandmarksFileName })
+                            &poParameters.strInputFixedLandmarksFileName, "" })
     .add_opt<std::string>({ "landmarks-moving",
                             "m",
                             "Name of the file where the moving Landmarks are saved.",
-                            &poParameters.strInputMovingLandmarksFileName })
+                            &poParameters.strInputMovingLandmarksFileName, "" })
     .add_opt<std::string>({ "corresponding-mesh",
                             "c",
                             "Path to the Mesh in correspondence. This is only available if the type is SHAPE.",
-                            &poParameters.strInputMeshFileName })
+                            &poParameters.strInputMeshFileName, "" })
     .add_opt<double>({ "landmarks-variance",
                        "v",
                        "The variance that will be used to build the posterior model.",

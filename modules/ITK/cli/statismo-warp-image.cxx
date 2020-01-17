@@ -54,7 +54,7 @@ struct _ProgramOptions
   string   strInputImageFileName;
   string   strInputDeformFieldFileName;
   string   strOutputFileName;
-  unsigned uNumberOfDimensions;
+  unsigned uNumberOfDimensions{0};
 };
 
 bool
@@ -115,7 +115,7 @@ int
 main(int argc, char ** argv)
 {
   _ProgramOptions                              poParameters;
-  lpo::program_options<std::string, unsigned> parser{ argv[0], "Program help:" };
+  po::program_options<std::string, unsigned> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<unsigned>({ "dimensionality",
@@ -127,9 +127,9 @@ main(int argc, char ** argv)
                          3 },
                        true)
     .add_opt<std::string>(
-      { "input-image", "i", "The path to the original image.", &poParameters.strInputImageFileName }, true)
+      { "input-image", "i", "The path to the original image.", &poParameters.strInputImageFileName, "" }, true)
     .add_opt<std::string>(
-      { "input-deformation-field", "f", "The path to the original image.", &poParameters.strInputDeformFieldFileName },
+      { "input-deformation-field", "f", "The path to the original image.", &poParameters.strInputDeformFieldFileName, "" },
       true)
     .add_pos_opt<std::string>({ "Name of the warped output image.", &poParameters.strOutputFileName });
 

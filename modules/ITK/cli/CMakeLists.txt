@@ -15,6 +15,14 @@ foreach(e ${CLI_FILES})
   add_executable(${e} "${e}.cxx")
   target_link_libraries(${e} statismo_core statismo_ITK)
   install(TARGETS ${e} DESTINATION ${INSTALL_BIN_DIR})
+  target_compile_options(${e} PRIVATE "${STATISMO_COMPILE_OPTIONS}")
+
+  if(${BUILD_WITH_TIDY})
+    set_target_properties(
+      ${e}  PROPERTIES
+    CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
+    )
+  endif()
 endforeach()
 
 if(${BUILD_CLI_TOOLS_DOC})
