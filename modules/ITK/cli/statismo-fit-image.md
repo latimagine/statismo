@@ -4,21 +4,17 @@
 
 statismo-fit-image - fits a model iteratively to an image.
 
-
 # SYNOPSIS
 
 statismo-fit-image [*options*] -i *input-file* *output-file*
-
 
 # DESCRIPTION
 
 statismo-fit-image iteratively fits a target image with the help of a model and a reference image. It's possible to fit with and without landmarks. The optimizer can get stuck in a local minima that doesn't represent a satisfactory result if no landmarks are provided.
 
-
 # OPTIONS
 
 ## General options
-
 -i, \--input-model *MODEL_FILE*
 :	*MODEL_FILE* is the path to the model.
 
@@ -34,14 +30,19 @@ statismo-fit-image iteratively fits a target image with the help of a model and 
 -n, \--number-of-iterations *NUM_ITERATIONS*
 :	the number of iterations used in the fitting process
 
+
 -d, \--dimensionality 
 :	Specifies the dimensionality of the images and the model (either 2 or 3).
+
+-o, \--output-fit *FITTED_IMAGE_FILE*
+:	*FITTED_IMAGE_FILE* is the path where the fitted image will be saved.
 
 -a, \--output-model-deformationfield *DEFORMATION_FIELD_FILE*
 :	*DEFORMATION_FIELD_FILE* is the path where the deformation field caused by the model will be saved. This is equivalent to the entrie deformation field if landmarks were provided and in the case that no landmarks were provided, it doesn't include the translation and rotation.
 
 -e, \--output-deformationfield *DEFORMATION_FIELD_FILE*
 :	*DEFORMATION_FIELD_FILE* is the path where the entire deformation field will be saved. If no landmarks were provided, this includes the rotation and a translation.
+
 
 ## Landmarks (optional, if one is set then all have to be set)
 
@@ -61,8 +62,7 @@ statismo-fit-image iteratively fits a target image with the help of a model and 
 
 
 # NOTE
-
-The Landmarks format is as follows.
+The Landmarks format is as follows
 :	Landmark name,1.coordinate,2.coordinate,3.coordinate
 
 Example
@@ -75,12 +75,8 @@ Example
 
 Remark
 :	In the case of 2D Images, either set the 3.coordinate to 0 or don't set it at all.
-
-Warning
-:	For now, landmark names with comma are not supported by the parser
  
-# EXAMPLES 
-
+# Examples 
 Fit a 3D image without landmarks:
 
     statismo-fit-image  -i model.h5 -w 0 -m moving-image.vtk  -f fixed-image.vtk -o projection.vtk
@@ -104,8 +100,7 @@ Hint
 
 # SEE ALSO
 
-## Building Models
-
+##Building Models:
 *statismo-build-shape-model* (8).
 Builds shape models from a list of meshes.
 
@@ -115,7 +110,7 @@ Builds deformation models from a list of deformation fields
 *statismo-build-gp-model* (8).
 Builds shape or deformation models from a given gaussian process definition.
 
-## Working with models
+##Working with models:
 
 *statismo-sample* (8).
 Draws samples from a model.

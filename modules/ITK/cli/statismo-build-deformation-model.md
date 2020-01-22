@@ -5,11 +5,9 @@
 
 statismo-build-deformation-model - builds deformation models from a list of deformation fields
 
-
 # SYNOPSIS
 
 statismo-buid-deformation-model [*options*] *output-file*
-
 
 # DESCRIPTION
 
@@ -18,9 +16,11 @@ statismo-build-deformation-model is used to build a deformation model from a giv
 
 
 # OPTIONS
-
 -l, \--data-list *DATA_LIST*
-:	*DATA_LIST* is the path to a file containing a list of files storing deformation fields that will be used to create the deformation model. Please only give the path to **one** file per line in the data list file.
+:	*DATA_LIST* is the path to a file containing a list of files storing deformation fields that will be used to create the deformation model. Please only give the path to **one** file per line in the data-list-file.
+
+-o, \--output-file *OUTPUT_FILE*
+:	*OUTPUT_FILE* is the path where the newly build model should be saved.
 
 -n, \--noise *NOISE*
 :	Specify the noise variance of the PPCA model. Defaults to 0
@@ -29,9 +29,9 @@ statismo-build-deformation-model is used to build a deformation model from a giv
 :	Specifies the dimensionality of the images used to build the model (either 2 or 3).
 
 
-# EXAMPLES
 
-Build a 3D deformation model from the deformation fields specified in the file data-list.txt
+# Examples 
+Build a 3D deformation model from the deformation fields specified in the file data.txt
 
     statismo-build-deformation-model -l data-list.txt deformationmodel.h5
 
@@ -39,11 +39,9 @@ Build a 2D deformation model from the deformation fields specified in the file d
 
     statismo-build-deformation-model -d 2 -l data-list.txt deformationmodel.h5
 
-
 # SEE ALSO
 
-## Building Models
-
+##Building Models:
 *statismo-build-shape-model* (8).
 Builds shape models from a list of meshes.
 
@@ -53,8 +51,7 @@ Builds deformation models from a list of deformation fields
 *statismo-build-gp-model* (8).
 Builds shape or deformation models from a given gaussian process definition.
 
-
-## Working with models
+##Working with models:
 
 *statismo-sample* (8).
 Draws samples from a model.

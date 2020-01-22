@@ -1,13 +1,2 @@
 Simple examples showing the use of statismo from ITK.
 See the runITKExamples.sh file to see how to use the example programs or to run them directly (on unix).
-
-NOTE:
-
-All the example as all-in-one meaning you can copy paste it to have a working example
-at the expense of some code reuse of course...
-
-WARNING: 
-
-The code standard (error handling, coding style and performance) for these examples
-is lower than the true user utilities found in cli. These examples can be seen as code snaphshots
-that can be run!

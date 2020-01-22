@@ -36,62 +36,58 @@
  */
 
 #include <iostream>
+#include <boost/scoped_ptr.hpp>
+
 #include <vtkPolyData.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
 
-#include "statismo/core/ReducedVarianceModelBuilder.h"
-#include "statismo/core/StatisticalModel.h"
-#include "statismo/core/IO.h"
+#include "ReducedVarianceModelBuilder.h"
+#include "StatisticalModel.h"
+#include "StatismoIO.h"
 
-#include "statismo/VTK/vtkStandardMeshRepresenter.h"
-
-#include <memory>
+#include "vtkStandardMeshRepresenter.h"
 
 using namespace statismo;
 
 
 // illustrates how to reduce the variance of a model
-int
-main(int argc, char ** argv)
-{
+int main(int argc, char** argv) {
 
-  if (argc < 3)
-  {
-    std::cout << "Usage " << argv[0] << " inputmodel outputmodel" << std::endl;
-    exit(-1);
-  }
-  std::string inputModelName(argv[1]);
-  std::string outputModelName(argv[2]);
+    if (argc < 3) {
+        std::cout << "Usage " << argv[0] << " inputmodel outputmodel" << std::endl;
+        exit(-1);
+    }
+    std::string inputModelName(argv[1]);
+    std::string outputModelName(argv[2]);
 
 
-  // All the statismo classes have to be parameterized with the RepresenterType.
-  // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
-  typedef vtkStandardMeshRepresenter               RepresenterType;
-  typedef StatisticalModel<vtkPolyData>            StatisticalModelType;
-  typedef ReducedVarianceModelBuilder<vtkPolyData> ReducedVarianceModelBuilderType;
+    // All the statismo classes have to be parameterized with the RepresenterType.
+    // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
+    typedef vtkStandardMeshRepresenter RepresenterType;
+    typedef StatisticalModel<vtkPolyData> StatisticalModelType;
+    typedef ReducedVarianceModelBuilder<vtkPolyData> ReducedVarianceModelBuilderType;
 
 
-  try
-  {
+    try {
 
-    // To load a model, we call the static Load method, which returns (a pointer to) a
-    // new StatisticalModel object
-    RepresenterType * representer = RepresenterType::Create();
-    auto              model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer, inputModelName);
-    std::cout << "loaded model with variance of " << model->GetPCAVarianceVector().sum() << std::endl;
+        // To load a model, we call the static Load method, which returns (a pointer to) a
+        // new StatisticalModel object
+        RepresenterType* representer = RepresenterType::Create();
+        boost::scoped_ptr<StatisticalModelType> model(
+                statismo::IO<vtkPolyData>::LoadStatisticalModel(representer, inputModelName));
+        std::cout << "loaded model with variance of " << model->GetPCAVarianceVector().sum()  << std::endl;
 
-    std::unique_ptr<ReducedVarianceModelBuilderType> reducedVarModelBuilder(ReducedVarianceModelBuilderType::Create());
+        boost::scoped_ptr<ReducedVarianceModelBuilderType> reducedVarModelBuilder(ReducedVarianceModelBuilderType::Create());
 
-    // build a model with only half the variance
-    auto reducedModel = reducedVarModelBuilder->BuildNewModelWithVariance(model.get(), 0.5);
-    std::cout << "new model has variance of " << reducedModel->GetPCAVarianceVector().sum() << std::endl;
+        // build a model with only half the variance
+        boost::scoped_ptr<StatisticalModelType> reducedModel(reducedVarModelBuilder->BuildNewModelWithVariance(model.get(), 0.5));
+        std::cout << "new model has variance of " << reducedModel->GetPCAVarianceVector().sum()  << std::endl;
 
-    statismo::IO<vtkPolyData>::SaveStatisticalModel(reducedModel.get(), outputModelName);
-  }
-  catch (StatisticalModelException & e)
-  {
-    std::cout << "Exception occured while building the shape model" << std::endl;
-    std::cout << e.what() << std::endl;
-  }
+        statismo::IO<vtkPolyData>::SaveStatisticalModel(reducedModel.get(), outputModelName);
+    } catch (StatisticalModelException& e) {
+        std::cout << "Exception occured while building the shape model" << std::endl;
+        std::cout << e.what() << std::endl;
+    }
 }
+

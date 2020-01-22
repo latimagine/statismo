@@ -4,21 +4,17 @@
 
 statismo-fit-surface - fits a model iteratively in to a target mesh.
 
-
 # SYNOPSIS
 
 statismo-fit-surface [*options*] -i *input-file* 
 
-
 # DESCRIPTION
 
-statismo-fit-surface fits a model iteratively in to a target mesh and then saves at least one of the two following: a fitted mesh or a projected mesh. It's possible to fit with or without landmarks. Fitting without landmarks can go wrong when it gets stuck in a local minima that represents an unsatisfactory result. **If you want to fit a model to a mesh that is already in correspondence, use statismo-posterior to do it analytically.**
-
+statismo-fit-surface fits a model iteratively in to a target mesh and then saves at least one of the two following: a fitted mesh or a projected mesh. It's possible to fit with or without landmarks. Fitting without landmarks can go wrong when it gets stuck in a local minima that represents a unsatisfactory result. **If you want to fit a model to a mesh that is already in correspondence, use statismo-posterior to do it analytically.**
 
 # OPTIONS
 
 ## General options
-
 -i, \--input-model *MODEL_FILE*
 :	*MODEL_FILE* is the path to the model.
 
@@ -54,7 +50,6 @@ statismo-fit-surface fits a model iteratively in to a target mesh and then saves
 
 
 # NOTE
-
 The Landmarks format is as follows
 :	Landmark name,1.coordinate,2.coordinate,3.coordinate
 
@@ -64,13 +59,8 @@ Example
 	pointB,3.1,3,-5
 
 	pointC,7,8,9.08
-
-Warning
-:	For now, landmark names with comma are not supported by the parser
  
-
-# EXAMPLES 
-
+# Examples 
 Fit a model in to a mesh without landmarks and save the projected as well as the fitted mesh:
 
     statismo-fit-surface  -i model.h5 -t target-mesh.vtk -w 0.01 -o fitted-mesh.vtk -j projected-mesh.vtk
@@ -84,10 +74,10 @@ Fit a model in to a mesh with landmarks, save the fitted mesh only and print fit
     statismo-fit-surface  -i model.h5 -t target-mesh.vtk -w 0.05 -o fitted-mesh.vtk -f fixed-landmarks.csv  -m moving-landmarks-from-target-mesh.csv -v 0.1  -p
 
 
+
 # SEE ALSO
 
-## Building Models
-
+##Building Models:
 *statismo-build-shape-model* (8).
 Builds shape models from a list of meshes.
 
@@ -97,7 +87,7 @@ Builds deformation models from a list of deformation fields
 *statismo-build-gp-model* (8).
 Builds shape or deformation models from a given gaussian process definition.
 
-## Working with models
+##Working with models:
 
 *statismo-sample* (8).
 Draws samples from a model.

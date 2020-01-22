@@ -37,7 +37,7 @@
 
 #!/bin/sh
 
-export DATADIR=$PWD/../../../data/
+export DATADIR=$PWD/../share/data
 export RESDIR=/tmp/results
 mkdir $RESDIR
 

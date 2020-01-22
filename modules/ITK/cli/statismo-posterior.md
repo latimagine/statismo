@@ -4,16 +4,13 @@
 
 statismo-posterior - creates a posterior model from an existing model.
 
-
 # SYNOPSIS
 
 statismo-posterior [*options*] -i *input-file* *output-file*
 
-
 # DESCRIPTION
 
 statismo-posterior makes it possible to create posterior model for both shape and deformation models. It's possible to create a posterior model by providing landmarks or in the case of a shape model it's also possible to use a mesh that is in correspondence. Using a mesh in correspondence only makes sense if you want to project a model instance in to the provided mesh (see examples).
-
 
 # OPTIONS
 
@@ -38,6 +35,9 @@ statismo-posterior makes it possible to create posterior model for both shape an
 -i, \--input-file *MODEL_FILE*
 :	*MODEL_FILE* is the path to the model.
 
+-o, \--output-file *OUTPUT_FILE*
+:	*OUTPUT_FILE* is the path where the sample will be saved.
+
 
 # NOTE
 The Landmarks format is as follows
@@ -50,15 +50,12 @@ Example
 
 	pointC,7,8,9.08
 
+
 Remark
 :	In the case of 2D Images, either set the 3.coordinate to 0 or don't set it at all.
 
-Warning
-:	For now, landmark names with comma are not supported by the parser
 
-
-# EXAMPLES
-
+# Examples 
 Create a posterior model from a shape model with landmarks:
 
     statismo-posterior -i model.h5 -o posterior-model.h5 -f fixed-landmarks.csv -m moving-landmarks.csv -v 0.1
@@ -80,11 +77,9 @@ Create a posterior model from a 2D deformation model with landmarks:
 
     statismo-posterior -d 2 -i model.h5 -t deformation -f fixed-landmarks.csv -m moving-landmarks.csv -v 0.5 posterior-model.h5
 
-
 # SEE ALSO
 
-## Building Models
-
+##Building Models:
 *statismo-build-shape-model* (8).
 Builds shape models from a list of meshes.
 
@@ -94,7 +89,7 @@ Builds deformation models from a list of deformation fields
 *statismo-build-gp-model* (8).
 Builds shape or deformation models from a given gaussian process definition.
 
-## Working with models
+##Working with models:
 
 *statismo-sample* (8).
 Draws samples from a model.
