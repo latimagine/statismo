@@ -39,6 +39,11 @@
  * This example shows how the fitting of a statistical deformation model can be performed with statismo.
  */
 
+#include "statismo/ITK/itkInterpolatingStatisticalDeformationModelTransform.h"
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkIO.h"
+
 #include <itkCommand.h>
 #include <itkImageFileReader.h>
 #include <itkImageRegistrationMethod.h>
@@ -47,148 +52,137 @@
 #include <itkMeanSquaresImageToImageMetric.h>
 #include <itkNormalizedCorrelationImageToImageMetric.h>
 
-#include "itkInterpolatingStatisticalDeformationModelTransform.h"
-#include "itkStandardImageRepresenter.h"
-#include "itkStatisticalModel.h"
-#include "itkStatismoIO.h"
+namespace
+{
 
 const unsigned Dimensions = 2;
-typedef itk::Image<unsigned short int, Dimensions> ImageType;
-typedef itk::Image< itk::Vector<float, ImageType::ImageDimension> , ImageType::ImageDimension > VectorImageType;
-
-typedef itk::StandardImageRepresenter<itk::Vector<float, Dimensions>, Dimensions> RepresenterType;
-
-typedef itk::ImageFileReader<ImageType> ImageReaderType;
-//typedef itk::MeanSquaresImageToImageMetric<ImageType, ImageType> MetricType;
-typedef itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType> MetricType;
-typedef itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, Dimensions> TransformType;
-typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
-typedef itk::ImageRegistrationMethod<ImageType, ImageType> RegistrationFilterType;
-
-typedef  itk::LBFGSOptimizer OptimizerType;
+using ImageType = itk::Image<uint16_t, Dimensions>;
+using VectorImageType = itk::Image<itk::Vector<float, ImageType::ImageDimension>, ImageType::ImageDimension>;
+using RepresenterType = itk::StandardImageRepresenter<itk::Vector<float, Dimensions>, Dimensions>;
+using ImageReaderType = itk::ImageFileReader<ImageType>;
+// using = itk::MeanSquaresImageToImageMetric<ImageType, ImageType> MetricType;
+using MetricType = itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType>;
+using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, Dimensions>;
+using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+using RegistrationFilterType = itk::ImageRegistrationMethod<ImageType, ImageType>;
+using OptimizerType = itk::LBFGSOptimizer;
+using StatisticalModelType = itk::StatisticalModel<VectorImageType>;
 
 
-typedef itk::StatisticalModel<VectorImageType> StatisticalModelType;
+class _IterationStatusObserver : public itk::Command
+{
+public:
+  using Self = _IterationStatusObserver;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
 
+  itkNewMacro(Self);
 
+  using OptimizerType = itk::LBFGSOptimizer;
+  using OptimizerPointer = const OptimizerType *;
 
-class IterationStatusObserver : public itk::Command {
-  public:
-    typedef  IterationStatusObserver   Self;
-    typedef  itk::Command             Superclass;
-    typedef  itk::SmartPointer<Self>  Pointer;
+  void
+  Execute(itk::Object * caller, const itk::EventObject & event) override
+  {
+    Execute(static_cast<const itk::Object *>(caller), event);
+  }
 
-    itkNewMacro( Self );
+  void
+  Execute(const itk::Object * object, const itk::EventObject & event) override
+  {
+    auto optimizer = dynamic_cast<OptimizerPointer>(object);
 
-    typedef itk::LBFGSOptimizer    OptimizerType;
-
-    typedef const OptimizerType                     *OptimizerPointer;
-
-
-    void Execute(itk::Object *caller, const itk::EventObject & event) {
-        Execute( (const itk::Object *)caller, event);
+    if (!itk::IterationEvent().CheckEvent(&event))
+    {
+      return;
     }
 
-    void Execute(const itk::Object * object, const itk::EventObject & event) {
-        OptimizerPointer optimizer =
-            dynamic_cast< OptimizerPointer >( object );
+    std::cout << "Iteration: " << ++m_iterIdx;
+    std::cout << "; Value: " << optimizer->GetCachedValue();
+    std::cout << "; Current Parameters: " << optimizer->GetCachedCurrentPosition() << std::endl;
+  }
 
-        if( ! itk::IterationEvent().CheckEvent( &event ) ) {
-            return;
-        }
-
-        std::cout << "Iteration: " << ++m_iter_no ;
-        std::cout << "; Value: " << optimizer->GetCachedValue();
-        std::cout << "; Current Parameters: " << optimizer->GetCachedCurrentPosition() << std::endl;
-    }
-
-
-  protected:
-    IterationStatusObserver():
-        m_iter_no(0)     {};
-
-    virtual ~IterationStatusObserver() {};
-
-  private:
-    int m_iter_no;
-
+private:
+  int m_iterIdx{ 0 };
 };
+
+} // namespace
 
 /*
  * The fixedImage needs to correspond to the image that was used to obtain the displacement fields of the model
  * (e.g. the fixed image in the registration that generated the displacement fields).
  */
-int main(int argc, char* argv[]) {
+int
+main(int argc, char * argv[])
+{
+  if (argc < 5)
+  {
+    std::cout << "usage " << argv[0] << " modelname fixedImage movingImage output-df" << std::endl;
+    exit(-1);
+  }
 
-    if (argc < 5) {
-        std::cout << "usage " << argv[0] << " modelname fixedImage movingImage output-df" << std::endl;
-        exit(-1);
-    }
+  const char * modelname = argv[1];
+  const char * referencename = argv[2];
+  const char * targetname = argv[3];
+  const char * outdfname = argv[4];
 
-    char* modelname = argv[1];
-    char* referencename = argv[2];
-    char* targetname = argv[3];
-    char* outdfname = argv[4];
+  auto refReader = ImageReaderType::New();
+  refReader->SetFileName(referencename);
+  refReader->Update();
+  ImageType::Pointer refImage = refReader->GetOutput();
 
+  auto targetReader = ImageReaderType::New();
+  targetReader->SetFileName(targetname);
+  targetReader->Update();
+  ImageType::Pointer targetImage = targetReader->GetOutput();
 
+  auto representer = RepresenterType::New();
+  auto model = StatisticalModelType::New();
+  model = itk::StatismoIO<VectorImageType>::LoadStatisticalModel(representer, modelname);
 
+  // do the fitting
+  auto transform = TransformType::New();
+  transform->SetStatisticalModel(model);
+  transform->SetIdentity();
 
-    ImageReaderType::Pointer refReader = ImageReaderType::New();
-    refReader->SetFileName(referencename);
-    refReader->Update();
-    ImageType::Pointer refImage = refReader->GetOutput();
+  // Setting up the fitting
+  auto optimizer = OptimizerType::New();
+  optimizer->MinimizeOn();
+  optimizer->SetMaximumNumberOfFunctionEvaluations(100);
 
-    ImageReaderType::Pointer targetReader = ImageReaderType::New();
-    targetReader->SetFileName(targetname);
-    targetReader->Update();
-    ImageType::Pointer targetImage = targetReader->GetOutput();
+  using ObserverType = _IterationStatusObserver;
+  auto observer = ObserverType::New();
+  optimizer->AddObserver(itk::IterationEvent(), observer);
 
-    RepresenterType::Pointer representer = RepresenterType::New();
-    StatisticalModelType::Pointer model = StatisticalModelType::New();
-    model = itk::StatismoIO<VectorImageType>::LoadStatisticalModel(representer, modelname);
+  auto metric = MetricType::New();
+  auto interpolator = InterpolatorType::New();
 
-    // do the fitting
-    TransformType::Pointer transform = TransformType::New();
-    transform->SetStatisticalModel(model);
-    transform->SetIdentity();
+  auto registration = RegistrationFilterType::New();
+  registration->SetInitialTransformParameters(transform->GetParameters());
+  registration->SetMetric(metric);
+  registration->SetOptimizer(optimizer);
+  registration->SetTransform(transform);
+  registration->SetInterpolator(interpolator);
+  registration->SetFixedImage(refImage);
+  registration->SetFixedImageRegion(refImage->GetBufferedRegion()); // seems to be necessary for the filter to work
+  registration->SetMovingImage(targetImage);
 
-    // Setting up the fitting
-    OptimizerType::Pointer optimizer = OptimizerType::New();
-    optimizer->MinimizeOn();
-    optimizer->SetMaximumNumberOfFunctionEvaluations(100);
+  try
+  {
+    registration->Update();
+  }
+  catch (itk::ExceptionObject & o)
+  {
+    std::cerr << "failed with exception " << o << std::endl;
+    return 1;
+  }
 
-    typedef  IterationStatusObserver ObserverType;
-    ObserverType::Pointer observer = ObserverType::New();
-    optimizer->AddObserver( itk::IterationEvent(), observer );
+  auto df = model->DrawSample(transform->GetCoefficients());
 
-    MetricType::Pointer metric = MetricType::New();
-    InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  auto writer = itk::ImageFileWriter<VectorImageType>::New();
+  writer->SetFileName(outdfname);
+  writer->SetInput(df);
+  writer->Update();
 
-
-    RegistrationFilterType::Pointer registration = RegistrationFilterType::New();
-    registration->SetInitialTransformParameters(transform->GetParameters());
-    registration->SetMetric(metric);
-    registration->SetOptimizer(   optimizer   );
-    registration->SetTransform(   transform );
-    registration->SetInterpolator( interpolator );
-    registration->SetFixedImage( refImage );
-    registration->SetFixedImageRegion(refImage->GetBufferedRegion() ); // seems to be necessary for the filter to work
-    registration->SetMovingImage( targetImage );
-
-    try {
-
-        registration->Update();
-
-    } catch ( itk::ExceptionObject& o ) {
-        std::cout << "caught exception " << o << std::endl;
-    }
-
-    VectorImageType::Pointer df = model->DrawSample(transform->GetCoefficients());
-
-    itk::ImageFileWriter<VectorImageType>::Pointer writer = itk::ImageFileWriter<VectorImageType>::New();
-    writer->SetFileName(outdfname);
-    writer->SetInput(df);
-    writer->Update();
-
+  return 0;
 }
-

@@ -31,7 +31,17 @@
  *
  */
 
-#include <boost/program_options.hpp>
+#include "utils/itkPenalizingMeanSquaresPointSetToImageMetric.h"
+#include "utils/statismoBuildPosteriorModelUtils.h"
+#include "utils/statismoFittingUtils.h"
+
+#include "statismo/ITK/itkReducedVarianceModelBuilder.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+#include "statismo/ITK/itkIO.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkStatisticalShapeModelTransform.h"
+
+#include "lpo.h"
 
 #include <itkBoundingBox.h>
 #include <itkCompositeTransform.h>
@@ -42,329 +52,344 @@
 #include <itkPointSetToImageFilter.h>
 #include <itkPointSetToImageRegistrationMethod.h>
 #include <itkPointsLocator.h>
-#include <itkReducedVarianceModelBuilder.h>
-#include <itkStandardMeshRepresenter.h>
-#include <itkStatismoIO.h>
-#include <itkStatisticalModel.h>
-#include <itkStatisticalShapeModelTransform.h>
 #include <itkVersorRigid3DTransform.h>
 
-#include "utils/itkPenalizingMeanSquaresPointSetToImageMetric.h"
-#include "utils/statismo-build-models-utils.h"
-#include "utils/statismo-fitting-utils.h"
-
-namespace po = boost::program_options;
+namespace po = lpo;
 using namespace std;
 
-const unsigned Dimensions = 3;
-typedef itk::Mesh<float, Dimensions> DataType;
-typedef itk::Image<float, Dimensions> DistanceImageType;
-typedef itk::StatisticalModel<DataType> StatisticalModelType;
+namespace
+{
 
+constexpr unsigned _Dimensions = 3;
+using DataType = itk::Mesh<float, _Dimensions>;
+using DistanceImageType = itk::Image<float, _Dimensions>;
+using StatisticalModelType = itk::StatisticalModel<DataType>;
 
+struct _ProgramOptions
+{
+  bool bPrintFittingInformation{ false };
 
+  string strInputModelFileName;
+  string strInputTargetMeshFileName;
 
-struct programOptions {
-    bool bDisplayHelp;
-    bool bPrintFittingInformation;
+  string strOutputFittedMeshFileName;
+  string strOutputProjectedMeshFileName;
 
-    string strInputModelFileName;
-    string strInputTargetMeshFileName;
-
-    string strOutputFittedMeshFileName;
-    string strOutputProjectedMeshFileName;
-
-    double dRegularizationWeight;
-    unsigned uNumberOfIterations;
-    string strInputFixedLandmarksFileName;
-    string strInputMovingLandmarksFileName;
-    double dLandmarksVariance;
+  double   dRegularizationWeight{ 0.0 };
+  unsigned uNumberOfIterations{ 0 };
+  string   strInputFixedLandmarksFileName;
+  string   strInputMovingLandmarksFileName;
+  double   dLandmarksVariance{ 0.0 };
 };
 
-po::options_description initializeProgramOptions(programOptions& poParameters);
-bool isOptionsConflictPresent(programOptions& opt);
-void fitMesh(programOptions opt, ConsoleOutputSilencer* pCOSilencer);
-
-
-
-int main(int argc, char** argv) {
-    programOptions poParameters;
-    po::options_description optAllOptions = initializeProgramOptions(poParameters);
-
-
-    po::variables_map vm;
-    try {
-        po::parsed_options parsedOptions = po::command_line_parser(argc, argv).options(optAllOptions).run();
-        po::store(parsedOptions, vm);
-        po::notify(vm);
-    } catch (po::error& e) {
-        cerr << "An exception occurred while parsing the Command line:"<<endl;
-        cerr << e.what() << endl << endl;
-        cout << optAllOptions << endl;
-        return EXIT_FAILURE;
-    }
-
-    if (poParameters.bDisplayHelp == true) {
-        cout << optAllOptions << endl;
-        return EXIT_SUCCESS;
-    }
-    if (isOptionsConflictPresent(poParameters) == true)	{
-        cerr << "A conflict in the options exists or insufficient options were set." << endl;
-        cout << optAllOptions << endl;
-        return EXIT_FAILURE;
-    }
-
-    ConsoleOutputSilencer coSilencer;
-    try {
-        fitMesh(poParameters, &coSilencer);
-    } catch (ifstream::failure & e) {
-        coSilencer.enableOutput();
-        cerr << "Could not read a file:" << endl;
-        cerr << e.what() << endl;
-        return EXIT_FAILURE;
-    } catch (itk::ExceptionObject & e) {
-        coSilencer.enableOutput();
-        cerr << "Could not fit the model:" << endl;
-        cerr << e.what() << endl;
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
+bool
+_IsOptionsConflictPresent(const _ProgramOptions & opt)
+{
+  return ((!opt.strInputFixedLandmarksFileName.empty()) ^ (!opt.strInputMovingLandmarksFileName.empty())) ||
+         (opt.strOutputFittedMeshFileName.empty() && opt.strOutputProjectedMeshFileName.empty()) ||
+         opt.strInputModelFileName.empty() || opt.strInputTargetMeshFileName.empty();
 }
 
-bool isOptionsConflictPresent(programOptions& opt) {
-    //if one set of the landmarks-file is provided, then both have to be provided (-> use XOR)
-    if (((opt.strInputFixedLandmarksFileName != "") ^ (opt.strInputMovingLandmarksFileName != "")) == true) {
-        return true;
-    }
+DistanceImageType::Pointer
+_ComputeDistanceImageForMesh(const DataType::Pointer & mesh, unsigned distImageResolution = 256)
+{
+  // Compute a bounding box around the reference shape
+  using BoundingBoxType = itk::BoundingBox<int, _Dimensions, float, DataType::PointsContainer>;
+  using BinaryImageType = itk::Image<unsigned char, _Dimensions>;
+  using PointSetType = itk::PointSet<float, _Dimensions>;
+  using PointsToImageFilterType = itk::PointSetToImageFilter<PointSetType, BinaryImageType>;
+  using DistanceFilterType = itk::SignedMaurerDistanceMapImageFilter<BinaryImageType, DistanceImageType>;
 
-    //at least one of the outputs needs to be set or the fitting information has to be printed
-    if (opt.strOutputFittedMeshFileName == "" && opt.strOutputProjectedMeshFileName == "") {
-        return true;
-    }
+  auto boundingBox = BoundingBoxType::New();
+  boundingBox->SetPoints(mesh->GetPoints());
+  boundingBox->ComputeBoundingBox();
 
-    if (opt.strInputModelFileName == "" || opt.strInputTargetMeshFileName == "") {
-        return true;
-    }
+  // Compute a binary image from the point set, which is as large as the bounding box plus a margin.
+  auto pointsToImageFilter = PointsToImageFilterType::New();
+  pointsToImageFilter->SetInput(mesh);
+  BinaryImageType::SpacingType spacing;
+  BinaryImageType::SpacingType margin;
+  BinaryImageType::PointType   origin = boundingBox->GetMinimum();
+  BinaryImageType::SpacingType diff = boundingBox->GetMaximum() - boundingBox->GetMinimum();
+  BinaryImageType::SizeType    size;
 
-    return false;
+  for (unsigned i = 0; i < _Dimensions; ++i)
+  {
+    margin[i] = diff[i] * 0.1; // 10 % margin on each side
+    origin[i] -= margin[i];
+    size[i] = distImageResolution + margin[i];
+    spacing[i] = (diff[i] + 2.0 * margin[i]) / distImageResolution;
+  }
+
+  pointsToImageFilter->SetSpacing(spacing);
+  pointsToImageFilter->SetOrigin(origin);
+  pointsToImageFilter->SetSize(size);
+  pointsToImageFilter->Update();
+
+  // compute a distance map to the points in the pointset
+  BinaryImageType::Pointer binaryImage = pointsToImageFilter->GetOutput();
+
+  auto distanceFilter = DistanceFilterType::New();
+  distanceFilter->SetInput(binaryImage);
+  distanceFilter->Update();
+
+  DistanceImageType::Pointer distImage = distanceFilter->GetOutput();
+  return distImage;
 }
 
-
-
-DistanceImageType::Pointer computeDistanceImageForMesh(DataType::Pointer pMesh, const unsigned uDistImageResolution = 256) {
-    // Compute a bounding box around the reference shape
-    typedef  itk::BoundingBox<int, Dimensions, float, DataType::PointsContainer> BoundingBoxType;
-    BoundingBoxType::Pointer pBoundingBox = BoundingBoxType::New();
-    pBoundingBox->SetPoints(pMesh->GetPoints());
-    pBoundingBox->ComputeBoundingBox();
-
-    // Compute a binary image from the point set, which is as large as the bounding box plus a margin.
-    typedef itk::Image< unsigned char, Dimensions > BinaryImageType;
-    typedef itk::PointSet<float, Dimensions  > PointSetType;
-    typedef itk::PointSetToImageFilter<PointSetType, BinaryImageType> PointsToImageFilterType;
-    PointsToImageFilterType::Pointer pointsToImageFilter = PointsToImageFilterType::New();
-    pointsToImageFilter->SetInput(pMesh);
-    BinaryImageType::SpacingType spacing;
-    BinaryImageType::SpacingType margin;
-    BinaryImageType::PointType origin = pBoundingBox->GetMinimum();
-    BinaryImageType::SpacingType diff = pBoundingBox->GetMaximum() - pBoundingBox->GetMinimum();
-    BinaryImageType::SizeType size;
-
-    for (unsigned i = 0; i < Dimensions; ++i) {
-        margin[i] = diff[i] * 0.1; // 10 % margin on each side
-        origin[i] -= margin[i];
-        size[i] = uDistImageResolution + margin[i];
-        spacing[i] = (diff[i] + 2.0 * margin[i]) / uDistImageResolution;
-    }
-
-    pointsToImageFilter->SetSpacing(spacing);
-    pointsToImageFilter->SetOrigin(origin);
-    pointsToImageFilter->SetSize(size);
-    pointsToImageFilter->Update();
-
-    // compute a distance map to the points in the pointset
-    BinaryImageType::Pointer pBinaryImage = pointsToImageFilter->GetOutput();
-    typedef itk::SignedMaurerDistanceMapImageFilter<BinaryImageType, DistanceImageType> DistanceFilterType;
-    DistanceFilterType::Pointer distanceFilter = DistanceFilterType::New();
-    distanceFilter->SetInput(pBinaryImage);
-    distanceFilter->Update();
-    DistanceImageType::Pointer pDistanceImage = distanceFilter->GetOutput();
-    return pDistanceImage;
+void
+_SaveMesh(const DataType::Pointer & data, const string & strFileName)
+{
+  using DataWriterType = itk::MeshFileWriter<DataType>;
+  auto writer = DataWriterType::New();
+  writer->SetFileName(strFileName);
+  writer->SetInput(data);
+  writer->Update();
 }
 
-void saveMesh(DataType::Pointer pData, const string& strFileName) {
-    typedef itk::MeshFileWriter<DataType> DataWriterType;
-    DataWriterType::Pointer pDataWriter = DataWriterType::New();
-    pDataWriter->SetFileName(strFileName);
-    pDataWriter->SetInput(pData);
-    pDataWriter->Update();
+template <class PointsLocatorType>
+DataType::Pointer
+_ProjectOnTargetMesh(const DataType::Pointer & mesh, const DataType::Pointer & targetMesh)
+{
+  auto ptLocator = PointsLocatorType::New();
+  ptLocator->SetPoints(targetMesh->GetPoints());
+  ptLocator->Initialize();
+
+  auto projectedMesh = statismo::itk::CloneMesh<DataType>(mesh);
+  for (DataType::PointsContainer::Iterator pointIter = projectedMesh->GetPoints()->Begin();
+       pointIter != projectedMesh->GetPoints()->End();
+       ++pointIter)
+  {
+    unsigned uClosestPointId = ptLocator->FindClosestPoint(pointIter->Value());
+    pointIter->Value() = targetMesh->GetPoint(uClosestPointId);
+  }
+  return projectedMesh;
 }
 
-template<class PointsLocatorType>
-DataType::Pointer projectOnTargetMesh(DataType::Pointer pMesh, DataType::Pointer pTargetMesh) {
-    typename PointsLocatorType::Pointer ptLocator = PointsLocatorType::New();
-    ptLocator->SetPoints(pTargetMesh->GetPoints());
-    ptLocator->Initialize();
-    DataType::Pointer projectedMesh = cloneMesh<DataType>(pMesh);
-    for (DataType::PointsContainer::Iterator pointIter = projectedMesh->GetPoints()->Begin(); pointIter != projectedMesh->GetPoints()->End(); ++pointIter) {
-        unsigned uClosestPointId = ptLocator->FindClosestPoint(pointIter->Value());
-        pointIter->Value() = pTargetMesh->GetPoint(uClosestPointId);
-    }
-    return projectedMesh;
+void
+_FitMesh(const _ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSilencer)
+{
+  using MeshReaderType = itk::MeshFileReader<DataType>;
+  using RepresenterType = itk::StandardMeshRepresenter<float, _Dimensions>;
+  using StatisticalModelTransformType = itk::StatisticalShapeModelTransform<DataType, double, _Dimensions>;
+  using TransformType = itk::Transform<double, _Dimensions, _Dimensions>;
+  using PointsLocatorType = itk::PointsLocator<DataType::PointsContainer>;
+  using OptimizerType = itk::LBFGSOptimizer;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<DistanceImageType, double>;
+  using PointSetType = itk::PointSet<float, _Dimensions>;
+  using MetricType = itk::PenalizingMeanSquaresPointSetToImageMetric<PointSetType, DistanceImageType>;
+  using RegistrationFilterType = itk::PointSetToImageRegistrationMethod<PointSetType, DistanceImageType>;
+  using TransformMeshFilterType = itk::TransformMeshFilter<DataType, DataType, TransformType>;
+
+  auto meshReader = MeshReaderType::New();
+  meshReader->SetFileName(opt.strInputTargetMeshFileName.c_str());
+  meshReader->Update();
+
+  DataType::Pointer targetMesh = meshReader->GetOutput();
+
+  auto representer = RepresenterType::New();
+  auto model = StatisticalModelType::New();
+  model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
+
+  StatisticalModelType::Pointer constrainedModel;
+  TransformType::Pointer        transform;
+
+  if (opt.strInputFixedLandmarksFileName.empty())
+  {
+    using BoundingBoxType = itk::BoundingBox<int, _Dimensions, float, DataType::PointsContainer>;
+    // Compute bounding box of model mesh
+    auto modelMeshBox = BoundingBoxType::New();
+    modelMeshBox->SetPoints(model->GetRepresenter()->GetReference()->GetPoints());
+    modelMeshBox->ComputeBoundingBox();
+
+    // Compute bounding box of target mesh
+    auto targetMeshBox = BoundingBoxType::New();
+    targetMeshBox->SetPoints(targetMesh->GetPoints());
+    targetMeshBox->ComputeBoundingBox();
+
+    constrainedModel = model;
+
+    auto modelTransform = StatisticalModelTransformType::New();
+    modelTransform->SetStatisticalModel(model);
+    modelTransform->SetIdentity();
+
+    // No Landmarks are available: we also have to allow rotation and translation.
+    using RotationAndTranslationTransformType = itk::VersorRigid3DTransform<double>;
+    auto rotationAndTranslationTransform = RotationAndTranslationTransformType::New();
+    rotationAndTranslationTransform->SetIdentity();
+
+    auto center = modelMeshBox->GetCenter();
+    rotationAndTranslationTransform->SetCenter(center);
+
+    auto translation = targetMeshBox->GetCenter() - modelMeshBox->GetCenter();
+    rotationAndTranslationTransform->SetTranslation(translation);
+
+    using CompositeTransformType = itk::CompositeTransform<double, _Dimensions>;
+    auto compositeTransform = CompositeTransformType::New();
+    compositeTransform->AddTransform(rotationAndTranslationTransform);
+    compositeTransform->AddTransform(modelTransform);
+    compositeTransform->SetAllTransformsToOptimizeOn();
+
+    transform = compositeTransform;
+  }
+  else
+  {
+    constrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
+      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance);
+
+    StatisticalModelTransformType::Pointer modelTransform = StatisticalModelTransformType::New();
+    modelTransform->SetStatisticalModel(constrainedModel);
+    modelTransform->SetIdentity();
+    transform = modelTransform;
+  }
+
+  auto distImage = _ComputeDistanceImageForMesh(targetMesh);
+  auto optimizer = OptimizerType::New();
+  statismo::cli::InitializeOptimizer<OptimizerType>(optimizer,
+                                                    opt.uNumberOfIterations,
+                                                    model->GetNumberOfPrincipalComponents(),
+                                                    transform->GetNumberOfParameters(),
+                                                    opt.bPrintFittingInformation,
+                                                    pCOSilencer);
+
+
+  auto interpolator = InterpolatorType::New();
+  auto metric = MetricType::New();
+  metric->SetRegularizationParameter(opt.dRegularizationWeight);
+  metric->SetNumberOfModelComponents(constrainedModel->GetNumberOfPrincipalComponents());
+
+  DataType::Pointer reference = model->GetRepresenter()->GetReference();
+
+  auto fixedPointSet = PointSetType::New();
+  fixedPointSet->SetPoints(reference->GetPoints());
+
+  auto points = PointSetType::PointDataContainer::New();
+  points->Reserve(reference->GetNumberOfPoints());
+  for (PointSetType::PointDataContainer::Iterator it = points->Begin(); it != points->End(); ++it)
+  {
+    it->Value() = 0;
+  }
+  fixedPointSet->SetPointData(points);
+
+  auto registration = RegistrationFilterType::New();
+  registration->SetInitialTransformParameters(transform->GetParameters());
+  registration->SetMetric(metric);
+  registration->SetInterpolator(interpolator);
+  registration->SetOptimizer(optimizer);
+  registration->SetTransform(transform);
+  registration->SetFixedPointSet(fixedPointSet);
+  registration->SetMovingImage(distImage);
+
+  pCOSilencer->DisableOutput();
+  registration->Update();
+  pCOSilencer->EnableOutput();
+
+  auto transformMeshFilter = TransformMeshFilterType::New();
+  transformMeshFilter->SetInput(model->GetRepresenter()->GetReference());
+  transformMeshFilter->SetTransform(transform);
+  transformMeshFilter->Update();
+
+  DataType::Pointer fittedMesh = transformMeshFilter->GetOutput();
+  if (!opt.strOutputFittedMeshFileName.empty())
+  {
+    _SaveMesh(fittedMesh, opt.strOutputFittedMeshFileName);
+  }
+
+  if (!opt.strOutputProjectedMeshFileName.empty())
+  {
+    _SaveMesh(_ProjectOnTargetMesh<PointsLocatorType>(fittedMesh, targetMesh), opt.strOutputProjectedMeshFileName);
+  }
 }
 
+} // namespace
 
-void fitMesh(programOptions opt, ConsoleOutputSilencer* pCOSilencer) {
-    typedef itk::MeshFileReader<DataType> MeshReaderType;
-    MeshReaderType::Pointer pMeshReader = MeshReaderType::New();
-    pMeshReader->SetFileName(opt.strInputTargetMeshFileName.c_str());
-    pMeshReader->Update();
-    DataType::Pointer pTargetMesh = pMeshReader->GetOutput();
+int
+main(int argc, char ** argv)
+{
+  _ProgramOptions                                    poParameters;
+  po::program_options<std::string, double, unsigned> parser{ argv[0], "Program help:" };
 
-    typedef itk::StandardMeshRepresenter<float, Dimensions> RepresenterType;
-    RepresenterType::Pointer pRepresenter = RepresenterType::New();
-    StatisticalModelType::Pointer pModel = StatisticalModelType::New();
-    pModel = itk::StatismoIO<DataType>::LoadStatisticalModel(pRepresenter.GetPointer(),
-                                                             opt.strInputModelFileName.c_str());
+  parser
+    .add_opt<std::string>(
+      { "input-model", "i", "The path to the model file.", &poParameters.strInputModelFileName, "" }, true)
+    .add_opt<std::string>(
+      { "input-targetmesh", "t", "The path to the target mesh.", &poParameters.strInputTargetMeshFileName, "" }, true)
+    .add_opt<unsigned>({ "number-of-iterations", "n", "Number of iterations", &poParameters.uNumberOfIterations, 100 },
+                       true)
+    .add_opt<double>(
+      { "regularization-weight",
+        "w",
+        "This is the regularization weight to make sure the model parameters don't don't get too big while fitting.",
+        &poParameters.dRegularizationWeight,
+        0.0 },
+      true)
+    .
 
-    StatisticalModelType::Pointer pConstrainedModel;
-    typedef itk::StatisticalShapeModelTransform<DataType, double, Dimensions> StatisticalModelTransformType;
-    typedef itk::Transform<double, Dimensions, Dimensions> TransformType;
-    TransformType::Pointer pTransform;
+    add_opt<std::string>({ "output-fit",
+                           "o",
+                           "Name of the output file where the fitted mesh will be written to..",
+                           &poParameters.strOutputFittedMeshFileName,
+                           "" })
+    .add_opt<std::string>({ "output-projected",
+                            "j",
+                            "Name of the output file where the projected mesh will be written to.",
+                            &poParameters.strOutputProjectedMeshFileName,
+                            "" })
+    .
 
-    typedef itk::PointsLocator< DataType::PointsContainer > PointsLocatorType;
-    if (opt.strInputFixedLandmarksFileName == "") {
-        typedef  itk::BoundingBox<int, Dimensions, float, DataType::PointsContainer> BoundingBoxType;
-        //Compute bounding box of model mesh
-        BoundingBoxType::Pointer pModelMeshBox = BoundingBoxType::New();
-        pModelMeshBox->SetPoints(pModel->GetRepresenter()->GetReference()->GetPoints());
-        pModelMeshBox->ComputeBoundingBox();
+    add_opt<std::string>({ "fixed-landmarks",
+                           "f",
+                           "Name of the file where the fixed Landmarks are saved.",
+                           &poParameters.strInputFixedLandmarksFileName,
+                           "" })
+    .add_opt<std::string>({ "moving-landmarks",
+                            "m",
+                            "Name of the file where the moving Landmarks are saved.",
+                            &poParameters.strInputMovingLandmarksFileName,
+                            "" })
+    .add_opt<double>({ "landmarks-variance",
+                       "v",
+                       "The variance that will be used to build the posterior model.",
+                       &poParameters.dLandmarksVariance,
+                       1.0f })
+    .add_flag(
+      { "print-fitting-information",
+        "p",
+        "Prints information (the parameters, metric score and the iteration count) with each iteration while fitting.",
+        &poParameters.bPrintFittingInformation,
+        false });
 
-        //Compute bounding box of target mesh
-        BoundingBoxType::Pointer pTargetMeshBox = BoundingBoxType::New();
-        pTargetMeshBox->SetPoints(pTargetMesh->GetPoints());
-        pTargetMeshBox->ComputeBoundingBox();
+  if (!parser.parse(argc, argv))
+  {
+    return EXIT_FAILURE;
+  }
 
-        pConstrainedModel = pModel;
-        StatisticalModelTransformType::Pointer pModelTransform = StatisticalModelTransformType::New();
-        pModelTransform->SetStatisticalModel(pModel);
-        pModelTransform->SetIdentity();
+  if (_IsOptionsConflictPresent(poParameters))
+  {
+    cerr << "A conflict in the options exists or insufficient options were set." << endl;
+    cout << parser << endl;
+    return EXIT_FAILURE;
+  }
 
-        //No Landmarks are available: we also have to allow rotation and translation.
-        typedef itk::VersorRigid3DTransform<double> RotationAndTranslationTransformType;
-        RotationAndTranslationTransformType::Pointer pRotationAndTranslationTransform = RotationAndTranslationTransformType::New();
-        pRotationAndTranslationTransform->SetIdentity();
+  statismo::cli::ConsoleOutputSilencer coSilencer;
+  try
+  {
+    _FitMesh(poParameters, &coSilencer);
+  }
+  catch (const ifstream::failure & e)
+  {
+    coSilencer.EnableOutput();
+    cerr << "Could not read a file:" << endl;
+    cerr << e.what() << endl;
+    return EXIT_FAILURE;
+  }
+  catch (itk::ExceptionObject & e)
+  {
+    coSilencer.EnableOutput();
+    cerr << "Could not fit the model:" << endl;
+    cerr << e.what() << endl;
+    return EXIT_FAILURE;
+  }
 
-        RotationAndTranslationTransformType::CenterType center = pModelMeshBox->GetCenter();
-        pRotationAndTranslationTransform->SetCenter(center);
-
-        RotationAndTranslationTransformType::TranslationType translation = pTargetMeshBox->GetCenter() - pModelMeshBox->GetCenter();
-        pRotationAndTranslationTransform->SetTranslation(translation);
-
-        typedef itk::CompositeTransform<double, Dimensions> CompositeTransformType;
-        CompositeTransformType::Pointer pCompositeTransform = CompositeTransformType::New();
-        pCompositeTransform->AddTransform(pRotationAndTranslationTransform);
-        pCompositeTransform->AddTransform(pModelTransform);
-        pCompositeTransform->SetAllTransformsToOptimizeOn();
-
-        pTransform = pCompositeTransform;
-    } else {
-        pConstrainedModel = buildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(pModel, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance);
-        StatisticalModelTransformType::Pointer pModelTransform = StatisticalModelTransformType::New();
-        pModelTransform->SetStatisticalModel(pConstrainedModel);
-        pModelTransform->SetIdentity();
-        pTransform = pModelTransform;
-    }
-
-
-    DistanceImageType::Pointer pDistanceImage = computeDistanceImageForMesh(pTargetMesh);
-
-    typedef itk::LBFGSOptimizer OptimizerType;
-    OptimizerType::Pointer pOptimizer = OptimizerType::New();
-    initializeOptimizer<OptimizerType>(pOptimizer, opt.uNumberOfIterations, pModel->GetNumberOfPrincipalComponents(), pTransform->GetNumberOfParameters(), opt.bPrintFittingInformation, pCOSilencer);
-
-    typedef itk::LinearInterpolateImageFunction<DistanceImageType, double> InterpolatorType;
-    InterpolatorType::Pointer pInterpolator = InterpolatorType::New();
-
-    typedef itk::PointSet<float, Dimensions > PointSetType;
-    typedef itk::PenalizingMeanSquaresPointSetToImageMetric<PointSetType, DistanceImageType> MetricType;
-    MetricType::Pointer pMetric = MetricType::New();
-    pMetric->SetRegularizationParameter(opt.dRegularizationWeight);
-    pMetric->SetNumberOfModelComponents(pConstrainedModel->GetNumberOfPrincipalComponents());
-
-    DataType::Pointer pReference= pModel->GetRepresenter()->GetReference();
-    PointSetType::Pointer pFixedPointSet = PointSetType::New();
-    pFixedPointSet->SetPoints(pReference->GetPoints());
-    PointSetType::PointDataContainer::Pointer pPoints = PointSetType::PointDataContainer::New();
-    pPoints->Reserve(pReference->GetNumberOfPoints());
-    for (PointSetType::PointDataContainer::Iterator it = pPoints->Begin(); it != pPoints->End(); ++it) {
-        it->Value() = 0;
-    }
-    pFixedPointSet->SetPointData(pPoints);
-
-    typedef itk::PointSetToImageRegistrationMethod<PointSetType,DistanceImageType > RegistrationFilterType;
-    RegistrationFilterType::Pointer pRegistration = RegistrationFilterType::New();
-    pRegistration->SetInitialTransformParameters(pTransform->GetParameters());
-    pRegistration->SetMetric(pMetric);
-    pRegistration->SetInterpolator(pInterpolator);
-    pRegistration->SetOptimizer(pOptimizer);
-    pRegistration->SetTransform(pTransform);
-    pRegistration->SetFixedPointSet(pFixedPointSet);
-    pRegistration->SetMovingImage(pDistanceImage);
-
-    pCOSilencer->disableOutput();
-    pRegistration->Update();
-    pCOSilencer->enableOutput();
-
-
-    typedef itk::TransformMeshFilter<DataType, DataType, TransformType> TransformMeshFilterType;
-    TransformMeshFilterType::Pointer pTransformMeshFilter = TransformMeshFilterType::New();
-    pTransformMeshFilter->SetInput(pModel->GetRepresenter()->GetReference());
-    pTransformMeshFilter->SetTransform(pTransform);
-    pTransformMeshFilter->Update();
-
-    DataType::Pointer pFittedMesh = pTransformMeshFilter->GetOutput();
-    if(opt.strOutputFittedMeshFileName != "") {
-        saveMesh(pFittedMesh, opt.strOutputFittedMeshFileName);
-    }
-    if(opt.strOutputProjectedMeshFileName != "") {
-        DataType::Pointer pProjectedMesh = projectOnTargetMesh<PointsLocatorType>(pFittedMesh, pTargetMesh);
-        saveMesh(pProjectedMesh, opt.strOutputProjectedMeshFileName);
-    }
-}
-
-
-po::options_description initializeProgramOptions(programOptions& poParameters) {
-    po::options_description optMandatory("Mandatory options");
-    optMandatory.add_options()
-
-    ("input-model,i", po::value<string>(&poParameters.strInputModelFileName), "The path to the model file.")
-    ("input-targetmesh,t", po::value<string>(&poParameters.strInputTargetMeshFileName), "The path to the target mesh.")
-    ("number-of-iterations,n", po::value<unsigned>(&poParameters.uNumberOfIterations)->default_value(100), "Number of iterations")
-    ("regularization-weight,w", po::value<double>(&poParameters.dRegularizationWeight), "This is the regularization weight to make sure the model parameters don't don't get too big while fitting.")
-    ;
-
-    po::options_description optOutput("Mandatory Output options (set at least one)");
-    optOutput.add_options()
-    ("output-fit,o", po::value<string>(&poParameters.strOutputFittedMeshFileName), "Name of the output file where the fitted mesh will be written to.")
-    ("output-projected,j", po::value<string>(&poParameters.strOutputProjectedMeshFileName), "Name of the output file where the projected mesh will be written to.")
-    ;
-
-    po::options_description optLandmarks("Landmarks (optional - if you set one you have to set all)");
-    optLandmarks.add_options()
-    ("fixed-landmarks,f", po::value<string>(&poParameters.strInputFixedLandmarksFileName), "Name of the file where the fixed Landmarks are saved.")
-    ("moving-landmarks,m", po::value<string>(&poParameters.strInputMovingLandmarksFileName), "Name of the file where the moving Landmarks are saved.")
-    ("landmarks-variance,v", po::value<double>(&poParameters.dLandmarksVariance)->default_value(1), "The variance that will be used to build the posterior model.")
-    ;
-
-    po::options_description optAdditional("Optional options");
-    optAdditional.add_options()
-    ("print-fitting-information,p", po::bool_switch(&poParameters.bPrintFittingInformation), "Prints information (the parameters, metric score and the iteration count) with each iteration while fitting.")
-    ("help,h", po::bool_switch(&poParameters.bDisplayHelp), "Display this help message")
-    ;
-
-    po::options_description optAllOptions;
-    optAllOptions.add(optMandatory).add(optOutput).add(optLandmarks).add(optAdditional);
-    return optAllOptions;
+  return EXIT_SUCCESS;
 }

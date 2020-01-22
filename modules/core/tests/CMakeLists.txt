@@ -1,12 +1,26 @@
-set( _CoreTests
-  basicStatismoTest
+set(_target_tests
+  basicStatismoTest.cxx
+  utilsStatismoTest.cxx
 )
 
-foreach( _test ${_CoreTests} )
-  add_executable( ${_test} ${_test}.cxx )
-  target_link_libraries( ${_test} statismo_core )
-endforeach()
+create_test_sourcelist( 
+    coreStatismoTest
+    coreStatismoTest_driver.cxx
+    ${_target_tests}
+)
 
-add_test( NAME basicStatismoTest
-  COMMAND basicStatismoTest
-  WORKING_DIRECTORY "${TEST_WORKING_DIR}" )
+add_executable(coreStatismoTest coreStatismoTest_driver.cxx ${_target_tests})
+target_link_libraries(coreStatismoTest statismo_core)
+target_compile_options(coreStatismoTest PRIVATE "${STATISMO_COMPILE_OPTIONS}")
+
+if(${BUILD_WITH_TIDY})
+   set_target_properties(
+    coreStatismoTest PROPERTIES
+   CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
+  )
+endif()
+
+foreach(_tst ${_target_tests})
+    get_filename_component(TNAME ${_tst} NAME_WE)
+    add_test(NAME ${TNAME} COMMAND coreStatismoTest ${TNAME} WORKING_DIRECTORY "${TEST_WORKING_DIR}")
+endforeach()

@@ -34,101 +34,106 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+#include "StatismoUnitTest.h"
+#include "statismo/core/Exceptions.h"
+#include "statismo/core/GenericRepresenterValidator.h"
+#include "statismo/ITK/itkStandardImageRepresenter.h"
 
-#include "genericRepresenterTest.hxx"
-#include "itkStandardImageRepresenter.h"
+#include <string>
 
+namespace
+{
+using ScalarImageType = itk::Image<float, 2>;
+using VectorImageType = itk::Image<itk::Vector<float, 2>, 2>;
 
-typedef itk::Image< float,2 > ScalarImageType;
+std::string _s_dataDir;
 
+template <typename T>
+typename T::Pointer
+_LoadImage(const std::string & filename)
+{
+  auto reader = itk::ImageFileReader<T>::New();
+  reader->SetFileName(filename);
+  reader->Update();
 
-ScalarImageType::Pointer loadScalarImage(const std::string& filename) {
-    itk::ImageFileReader<ScalarImageType>::Pointer reader = itk::ImageFileReader<ScalarImageType>::New();
-    reader->SetFileName(filename);
-    reader->Update();
-    ScalarImageType::Pointer img = reader->GetOutput();
-    img->DisconnectPipeline();
-    return img;
+  typename T::Pointer img = reader->GetOutput();
+  img->DisconnectPipeline();
+  return img;
+}
+} // namespace
+
+int
+TestRepresenterForScalarImage()
+{
+  using RepresenterType = itk::StandardImageRepresenter<float, 2>;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
+
+  auto referenceFilename = _s_dataDir + "/hand_images/hand-1.vtk";
+  auto testDatasetFilename = _s_dataDir + "/hand_images/hand-2.vtk";
+
+  auto representer = RepresenterType::New();
+  auto reference = _LoadImage<ScalarImageType>(referenceFilename);
+  representer->SetReference(reference);
+
+  // choose a test dataset, a point and its associate pixel value
+
+  auto                       testDataset = _LoadImage<ScalarImageType>(testDatasetFilename);
+  ScalarImageType::IndexType idx;
+  idx.Fill(0);
+  ScalarImageType::PointType testPt;
+  reference->TransformIndexToPhysicalPoint(idx, testPt);
+  auto testValue = testDataset->GetPixel(idx);
+
+  RepresenterValidatorType validator(representer, testDataset, std::make_pair(testPt, testValue));
+
+  return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
-int testRepresenterForScalarImage(const std::string& datadir) {
-    typedef itk::StandardImageRepresenter<float, 2> RepresenterType;
-    typedef GenericRepresenterTest<RepresenterType> RepresenterTestType;
+int
+TestRepresenterForVectorImage()
+{
+  using RepresenterType = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2>;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
 
-    const std::string referenceFilename = datadir + "/hand_images/hand-1.vtk";
-    const std::string testDatasetFilename = datadir + "/hand_images/hand-2.vtk";
+  auto referenceFilename = _s_dataDir + "/hand_dfs/df-hand-1.vtk";
+  auto testDatasetFilename = _s_dataDir + "/hand_dfs/df-hand-2.vtk";
 
-    RepresenterType::Pointer representer = RepresenterType::New();
-    ScalarImageType::Pointer reference = loadScalarImage(referenceFilename);
-    representer->SetReference(reference);
+  auto representer = RepresenterType::New();
+  auto reference = _LoadImage<VectorImageType>(referenceFilename);
+  representer->SetReference(reference);
 
-    // choose a test dataset, a point and its associate pixel value
+  // choose a test dataset, a point and its associate pixel value
 
-    ScalarImageType::Pointer testDataset = loadScalarImage(testDatasetFilename);
-    ScalarImageType::IndexType idx;
-    idx.Fill(0);
-    ScalarImageType::PointType testPt;
-    reference->TransformIndexToPhysicalPoint(idx, testPt);
-    ScalarImageType::PixelType testValue = testDataset->GetPixel(idx);
+  auto                       testDataset = _LoadImage<VectorImageType>(testDatasetFilename);
+  VectorImageType::IndexType idx;
+  idx.Fill(0);
+  VectorImageType::PointType testPt;
+  reference->TransformIndexToPhysicalPoint(idx, testPt);
+  VectorImageType::PixelType testValue = testDataset->GetPixel(idx);
 
-    RepresenterTestType representerTest(representer, testDataset, std::make_pair(testPt, testValue));
+  RepresenterValidatorType validator(representer, testDataset, std::make_pair(testPt, testValue));
 
-    return (representerTest.runAllTests() == true);
+  return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
+int
+itkStandardImageRepresenterTest(int argc, char ** argv)
+{
+  if (argc < 2)
+  {
+    std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-typedef itk::Image< itk::Vector<float,2>, 2 > VectorImageType;
+  _s_dataDir = argv[1];
 
-VectorImageType::Pointer loadVectorImage(const std::string& filename) {
-    itk::ImageFileReader<VectorImageType>::Pointer reader = itk::ImageFileReader<VectorImageType>::New();
-    reader->SetFileName(filename);
-    reader->Update();
-    VectorImageType::Pointer img = reader->GetOutput();
-    img->DisconnectPipeline();
-    return img;
+  auto res = statismo::Translate([]() {
+    return statismo::test::RunAllTests("itkStandardImageRepresenterTest",
+                                       {
+                                         { "TestRepresenterForScalarImage", TestRepresenterForScalarImage },
+                                         { "TestRepresenterForVectorImage", TestRepresenterForVectorImage },
+                                       });
+  });
+
+  return !statismo::CheckResultAndAssert(res, EXIT_SUCCESS);
 }
-
-int testRepresenterForVectorImage(const std::string& datadir) {
-
-    typedef itk::StandardImageRepresenter<itk::Vector<float, 2>, 2> RepresenterType;
-    typedef GenericRepresenterTest<RepresenterType> RepresenterTestType;
-
-    const std::string referenceFilename = datadir + "/hand_dfs/df-hand-1.vtk";
-    const std::string testDatasetFilename = datadir + "/hand_dfs/df-hand-2.vtk";
-
-    RepresenterType::Pointer representer = RepresenterType::New();
-    VectorImageType::Pointer reference = loadVectorImage(referenceFilename);
-    representer->SetReference(reference);
-
-    // choose a test dataset, a point and its associate pixel value
-
-    VectorImageType::Pointer testDataset = loadVectorImage(testDatasetFilename);
-    VectorImageType::IndexType idx;
-    idx.Fill(0);
-    VectorImageType::PointType testPt;
-    reference->TransformIndexToPhysicalPoint(idx, testPt);
-    VectorImageType::PixelType testValue = testDataset->GetPixel(idx);
-
-    RepresenterTestType representerTest(representer, testDataset, std::make_pair(testPt, testValue));
-
-    return (representerTest.runAllTests() == true);
-}
-
-
-int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::string datadir = std::string(argv[1]);
-    bool resultScalarImage = testRepresenterForScalarImage(datadir);
-    bool resultVectorImage = testRepresenterForVectorImage(datadir);
-
-    if (resultScalarImage == true && resultVectorImage == true) {
-        return EXIT_SUCCESS;
-    } else {
-        return EXIT_FAILURE;
-    }
-}
-
-

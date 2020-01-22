@@ -8,6 +8,7 @@ statismo-build-shape-model - builds shape models from a list of meshes
 
 statismo-buid-shape-model [*options*] *output-file*
 
+
 # DESCRIPTION
 
 statismo-build-model is used to build a shape model from a given list of meshes. 
@@ -19,13 +20,11 @@ In the simplest case, a model can be built from existing meshes with the followi
 
 In this case the file data.txt contains a list of filenames of meshes (which are already in correspondence) and writes a model called shapemodel.h5
 
+
 # OPTIONS
 
 -l, \--data-list *DATA_LIST*
 :	*DATA_LIST* is the path to a file containing a list of mesh-files that will be used to create the shape model. Please only give the path to **one** mesh-file per line  in the data-list-file.
-
--o, \--output-file *OUTPUT_FILE*
-:	*OUTPUT_FILE* is the path where the newly build model should be saved.
 
 -p, \--procrustes *PROCRUSTES_MODE*
 :	Specify how the data is aligned. *PROCRUSTES_MODE* can be **reference** which aligns all datasets rigidly to the reference or **GPA** which aligns all the datasets to the population mean.
@@ -37,7 +36,8 @@ In this case the file data.txt contains a list of filenames of meshes (which are
 :	Specify the noise variance of the PPCA model. Defaults to 0
 
  
-# Examples 
+# EXAMPLES 
+
 Build a model where the data is aligned to the procrustes mean
 
     statismo-build-shape-model -p GPA -l data-list.txt shapemodel.h5
@@ -49,7 +49,8 @@ Build a model where the data is aligned to a given reference
 
 # SEE ALSO
 
-##Building Models:
+## Building Models
+
 *statismo-build-shape-model* (8).
 Builds shape models from a list of meshes.
 
@@ -59,7 +60,7 @@ Builds deformation models from a list of deformation fields
 *statismo-build-gp-model* (8).
 Builds shape or deformation models from a given gaussian process definition.
 
-##Working with models:
+## Working with models
 
 *statismo-sample* (8).
 Draws samples from a model.

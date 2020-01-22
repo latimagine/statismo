@@ -35,59 +35,74 @@
  *
  */
 
+#include "StatismoUnitTest.h"
+#include "statismo/core/GenericRepresenterValidator.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+
 #include <itkMeshFileReader.h>
 
-#include "genericRepresenterTest.hxx"
+namespace
+{
 
-#include "itkStandardMeshRepresenter.h"
+constexpr unsigned Dimensions = 3;
+using MeshType = itk::Mesh<float, Dimensions>;
 
-const unsigned Dimensions = 3;
-typedef itk::Mesh<float, Dimensions  > MeshType;
-typedef itk::StandardMeshRepresenter<float, Dimensions> RepresenterType;
+std::string _s_dataDir;
 
+MeshType::Pointer
+_LoadMesh(const std::string & filename)
+{
+  auto reader = itk::MeshFileReader<MeshType>::New();
+  reader->SetFileName(filename);
+  reader->Update();
+  MeshType::Pointer mesh = reader->GetOutput();
+  mesh->DisconnectPipeline();
+  return mesh;
+}
+} // namespace
 
-typedef GenericRepresenterTest<RepresenterType> RepresenterTestType;
+int
+TestRepresenterForMesh()
+{
 
-MeshType::Pointer loadMesh(const std::string& filename) {
-    itk::MeshFileReader<MeshType>::Pointer reader = itk::MeshFileReader<MeshType>::New();
-    reader->SetFileName(filename);
-    reader->Update();
-    MeshType::Pointer mesh = reader->GetOutput();
-    mesh->DisconnectPipeline();
-    return mesh;
+  using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
+  auto referenceFilename = _s_dataDir + "/hand_polydata/hand-0.vtk";
+  auto testDatasetFilename = _s_dataDir + "/hand_polydata/hand-1.vtk";
+
+  auto representer = RepresenterType::New();
+  auto reference = _LoadMesh(referenceFilename);
+  representer->SetReference(reference);
+
+  // choose a test dataset, a point and its associate pixel value
+
+  auto                testDataset = _LoadMesh(testDatasetFilename);
+  unsigned            testPtId = 0;
+  MeshType::PointType testPt;
+  reference->GetPoint(testPtId, &testPt);
+  MeshType::PointType testValue;
+  testDataset->GetPoint(testPtId, &testValue);
+  RepresenterValidatorType validator(representer, testDataset, std::make_pair(testPt, testValue));
+
+  return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
-int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::string datadir = std::string(argv[1]);
+int
+itkStandardMeshRepresenterTest(int argc, char ** argv)
+{
+  if (argc < 2)
+  {
+    std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  _s_dataDir = argv[1];
 
-    const std::string referenceFilename = datadir + "/hand_polydata/hand-0.vtk";
-    const std::string testDatasetFilename = datadir + "/hand_polydata/hand-1.vtk";
+  auto res = statismo::Translate([]() {
+    return statismo::test::RunAllTests("itkStandardMeshRepresenterTest",
+                                       { { "TestRepresenterForMesh", TestRepresenterForMesh }
 
-    RepresenterType::Pointer representer = RepresenterType::New();
-    MeshType::Pointer reference = loadMesh(referenceFilename);
-    representer->SetReference(reference);
+                                       });
+  });
 
-    // choose a test dataset, a point and its associate pixel value
-
-    MeshType::Pointer testDataset = loadMesh(testDatasetFilename);
-    unsigned testPtId = 0;
-    MeshType::PointType testPt;
-    reference->GetPoint(testPtId, &testPt);
-    MeshType::PointType testValue;
-    testDataset->GetPoint(testPtId, &testValue);
-
-    RepresenterTestType representerTest(representer, testDataset, std::make_pair(testPt, testValue));
-
-    if (representerTest.runAllTests() == true) {
-        return EXIT_SUCCESS;
-    } else {
-        return EXIT_FAILURE;
-    }
-
+  return !statismo::CheckResultAndAssert(res, EXIT_SUCCESS);
 }
-
-
