@@ -1,5 +1,5 @@
 # The idea here is to have an X.cxx and a X.md where X denotes the cli-command name.
-set(CLI_FILES
+set(_cli_files
   statismo-build-shape-model
   statismo-build-deformation-model
   statismo-build-gp-model
@@ -11,7 +11,7 @@ set(CLI_FILES
   statismo-warp-image
 )
 
-foreach(e ${CLI_FILES})
+foreach(e ${_cli_files})
   add_executable(${e} "${e}.cxx")
   target_link_libraries(${e} statismo_core statismo_ITK)
   install(TARGETS ${e} DESTINATION ${INSTALL_BIN_DIR})
@@ -28,13 +28,13 @@ endforeach()
 if(${BUILD_CLI_TOOLS_DOC})
   if(PANDOC)
     message(STATUS "Found pandoc - generating documentation for the CLI tools")
-    #configuring man page install dir
+    # configuring man page install dir
     if(WIN32 AND NOT CYGWIN)
       #put the directory with the manuals in the same directory as the binaries on windows
       set(CLIDOC_INSTALL_DIR ${INSTALL_BIN_DIR})
       set(CLIDOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc-cli")
     else()
-      #use cmake to find the man pages directory on *NIX
+      # use cmake to find the man pages directory on *NIX
       include(GNUInstallDirs)
       if(CMAKE_INSTALL_MANDIR)
         set(CLIDOC_INSTALL_DIR ${CMAKE_INSTALL_MANDIR})
@@ -68,13 +68,13 @@ if(${BUILD_CLI_TOOLS_DOC})
       list(APPEND CLIDOC_TARGET_SOURCES ${CLIDOC_MD_SOURCE})
     endforeach()
 
-    #build the cli documentation by default
+    # build the cli documentation by default
     add_custom_target(
       doc-cli ALL
       DEPENDS ${CLIDOC_TARGET_DEPENDENCIES}
       SOURCES ${CLIDOC_TARGET_SOURCES}
    )
-    #install the entire cli documentation directory
+    # install the entire cli documentation directory
     install(
       DIRECTORY ${CLIDOC_OUTPUT_DIR}
       DESTINATION ${CLIDOC_INSTALL_DIR}
