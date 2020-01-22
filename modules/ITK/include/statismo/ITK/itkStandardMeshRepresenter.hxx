@@ -207,7 +207,7 @@ StandardMeshRepresenter<TPixel, MeshDimension>::SetReference(DatasetPointerType 
 {
   m_reference = reference;
 
-  // We create a list of poitns for the domain.
+  // We create a list of points for the domain.
   // Furthermore, we cache for all the points of the reference, as these are the most likely ones
   // we have to look up later.
   typename DomainType::DomainPointsListType domainPointList;
@@ -222,6 +222,10 @@ StandardMeshRepresenter<TPixel, MeshDimension>::SetReference(DatasetPointerType 
     ++id;
   }
   m_domain = DomainType(domainPointList);
+
+  m_locator = PointsLocatorType::New();
+  m_locator->SetPoints(points);
+  m_locator->Initialize();
 }
 
 template <class TPixel, unsigned MeshDimension>
@@ -401,7 +405,7 @@ StandardMeshRepresenter<TPixel, MeshDimension>::GetPointIdForPoint(const PointTy
   auto got = m_pointCache.find(pt);
   if (got == std::cend(m_pointCache))
   {
-    ptId = FindClosestPoint(m_reference, pt);
+    ptId = FindClosestPoint(pt);
     m_pointCache.insert(std::make_pair(pt, ptId));
   }
   else
@@ -435,9 +439,16 @@ StandardMeshRepresenter<TPixel, MeshDimension>::CloneDataset(DatasetConstPointer
 
 template <class TPixel, unsigned MeshDimension>
 unsigned
-StandardMeshRepresenter<TPixel, MeshDimension>::FindClosestPoint(const MeshType *, const PointType) const
+StandardMeshRepresenter<TPixel, MeshDimension>::FindClosestPoint(const MeshType *, const PointType&) const
 {
   throw statismo::StatisticalModelException("Not implemented. Currently only points of the reference can be used.");
+}
+
+template <class TPixel, unsigned MeshDimension>
+unsigned
+StandardMeshRepresenter<TPixel, MeshDimension>::FindClosestPoint(const PointType& pt) const
+{
+    return m_locator->FindClosestPoint(pt);
 }
 
 } // namespace itk

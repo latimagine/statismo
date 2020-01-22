@@ -35,7 +35,6 @@
  *
  */
 
-
 #ifndef __STATIMO_ITK_STANDARD_MESH_REPRESENTER_H_
 #define __STATIMO_ITK_STANDARD_MESH_REPRESENTER_H_
 
@@ -48,6 +47,7 @@
 
 #include <itkMesh.h>
 #include <itkObject.h>
+#include <itkPointsLocator.h>
 
 #include <unordered_map>
 
@@ -99,6 +99,7 @@ public:
   using DatasetPointerType = typename RepresenterBaseType::DatasetPointerType;
   using DatasetConstPointerType = typename RepresenterBaseType::DatasetConstPointerType;
   using PointsContainerType = typename MeshType::PointsContainer;
+  using PointsLocatorType = itk::PointsLocator<PointsContainerType>;
 
   /// The type of the data set to be used
   using DatasetType = MeshType;
@@ -206,11 +207,16 @@ private:
 
   // returns the closest point for the given mesh
   unsigned
-  FindClosestPoint(const MeshType * mesh, const PointType pt) const;
+  FindClosestPoint(const MeshType * mesh, const PointType& pt) const;
+
+  // return the closest point in reference
+  unsigned
+  FindClosestPoint(const PointType& pt) const;
 
   DatasetConstPointerType m_reference;
   DomainType              m_domain;
   mutable PointCacheType  m_pointCache;
+  typename PointsLocatorType::Pointer m_locator;
 };
 
 

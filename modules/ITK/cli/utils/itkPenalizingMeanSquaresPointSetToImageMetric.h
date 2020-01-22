@@ -93,7 +93,7 @@ public:
 protected:
   PenalizingMeanSquaresPointSetToImageMetric() = default;
   virtual ~PenalizingMeanSquaresPointSetToImageMetric() = default;
-  MeasureType m_RegularizationParameter;
+  MeasureType m_RegularizationParameter{ 0.0 };
   unsigned    m_NumberOfModelComponents{ 0 };
 
 private:
