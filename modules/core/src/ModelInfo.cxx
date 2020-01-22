@@ -49,13 +49,13 @@
 namespace statismo
 {
 
-ModelInfo::ModelInfo(const MatrixType & scores, const ModelInfo::BuilderInfoList & builderInfos)
-  : m_scores(scores)
-  , m_builderInfo(builderInfos)
+ModelInfo::ModelInfo(MatrixType scores, ModelInfo::BuilderInfoList builderInfos)
+  : m_scores(std::move(scores))
+  , m_builderInfo(std::move(builderInfos))
 {}
 
-ModelInfo::ModelInfo(const MatrixType & scores)
-  : m_scores(scores)
+ModelInfo::ModelInfo(MatrixType scores)
+  : m_scores(std::move(scores))
 {}
 
 ModelInfo::BuilderInfoList
@@ -175,7 +175,7 @@ ModelInfo::LoadDataInfoOldStatismoFormat(const H5::H5Location & publicModelGroup
 
   // add the information to a new BuilderInfo object
   // as a first step we need to find the builderName from the parameter list
-  std::string builderName = "";
+  std::string builderName;
   for (auto it = std::begin(paramInfo); it != std::end(paramInfo); ++it)
   {
     if (it->first.find("BuilderName") != std::string::npos)
@@ -193,22 +193,20 @@ ModelInfo::LoadDataInfoOldStatismoFormat(const H5::H5Location & publicModelGroup
 // BuilderInfo
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-BuilderInfo::BuilderInfo(const std::string &                    modelBuilderName,
-                         const std::string &                    buildTime,
-                         const BuilderInfo::DataInfoList &      di,
-                         const BuilderInfo::ParameterInfoList & pi)
-  : m_modelBuilderName(modelBuilderName)
-  , m_buildtime(buildTime)
-  , m_dataInfo(di)
-  , m_parameterInfo(pi)
+BuilderInfo::BuilderInfo(std::string                    modelBuilderName,
+                         std::string                    buildTime,
+                         BuilderInfo::DataInfoList      di,
+                         BuilderInfo::ParameterInfoList pi)
+  : m_modelBuilderName(std::move(modelBuilderName))
+  , m_buildtime(std::move(buildTime))
+  , m_dataInfo(std::move(di))
+  , m_parameterInfo(std::move(pi))
 {}
 
-BuilderInfo::BuilderInfo(const std::string &                    modelBuilderName,
-                         const BuilderInfo::DataInfoList &      di,
-                         const BuilderInfo::ParameterInfoList & pi)
-  : m_modelBuilderName(modelBuilderName)
-  , m_dataInfo(di)
-  , m_parameterInfo(pi)
+BuilderInfo::BuilderInfo(std::string modelBuilderName, BuilderInfo::DataInfoList di, BuilderInfo::ParameterInfoList pi)
+  : m_modelBuilderName(std::move(modelBuilderName))
+  , m_dataInfo(std::move(di))
+  , m_parameterInfo(std::move(pi))
 {
 
   // get time and date
@@ -233,13 +231,13 @@ BuilderInfo::Save(const H5::H5Location & modelBuilderGroup) const
     auto dataInfoGroup = modelBuilderGroup.createGroup("./dataInfo");
     for (const auto & it : m_dataInfo)
     {
-      hdf5utils::WriteString(dataInfoGroup, it.first.c_str(), it.second.c_str());
+      hdf5utils::WriteString(dataInfoGroup, it.first.c_str(), it.second);
     }
 
     auto parameterGroup = modelBuilderGroup.createGroup("./parameters");
     for (const auto & it : m_parameterInfo)
     {
-      hdf5utils::WriteString(parameterGroup, it.first.c_str(), it.second.c_str());
+      hdf5utils::WriteString(parameterGroup, it.first.c_str(), it.second);
     }
   }
   catch (const H5::Exception & e)

@@ -42,12 +42,11 @@
 
 namespace statismo
 {
-
 /*
  * \brief Specialization for an ITK point
  */
 template <typename T, unsigned int Dim>
-struct PointTraits<itk::Point<T, Dim>>
+struct PointTraits<::itk::Point<T, Dim>>
 {
   static constexpr unsigned RealDimension = Dim;
 };

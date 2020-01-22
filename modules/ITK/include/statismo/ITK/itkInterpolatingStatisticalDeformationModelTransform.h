@@ -38,16 +38,16 @@
 #ifndef __STATIMO_ITK_INTERPOLATING_STATISTICAL_DEFORMATION_MODEL_TRANSFORM_H_
 #define __STATIMO_ITK_INTERPOLATING_STATISTICAL_DEFORMATION_MODEL_TRANSFORM_H_
 
-#include <iostream>
+#include "statismo/core/Representer.h"
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkStatisticalModelTransformBase.h"
 
 #include <itkImage.h>
 #include <itkVector.h>
 #include <itkVectorLinearInterpolateImageFunction.h>
 
-#include "statismo/ITK/itkStandardImageRepresenter.h"
-#include "statismo/ITK/itkStatisticalModel.h"
-#include "statismo/ITK/itkStatisticalModelTransformBase.h"
-#include "statismo/core/Representer.h"
+#include <iostream>
 
 namespace itk
 {
@@ -67,35 +67,28 @@ class ITK_EXPORT InterpolatingStatisticalDeformationModelTransform
   : public itk::StatisticalModelTransformBase<TDataset, TScalarType, TDimension>
 {
 public:
-  /* Standard class typedefs. */
-  typedef InterpolatingStatisticalDeformationModelTransform                     Self;
-  typedef itk::StatisticalModelTransformBase<TDataset, TScalarType, TDimension> Superclass;
-  typedef SmartPointer<Self>                                                    Pointer;
-  typedef SmartPointer<const Self>                                              ConstPointer;
-
+  using Self = InterpolatingStatisticalDeformationModelTransform;
+  using Superclass = itk::StatisticalModelTransformBase<TDataset, TScalarType, TDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkSimpleNewMacro(Self);
-
-
   /** Run-time type information (and related methods). */
   itkTypeMacro(InterpolatingStatisticalDeformationModelTransform, Superclass);
 
-
-  typedef typename Superclass::InputPointType       InputPointType;
-  typedef typename Superclass::OutputPointType      OutputPointType;
-  typedef typename Superclass::RepresenterType      RepresenterType;
-  typedef typename Superclass::StatisticalModelType StatisticalModelType;
-  typedef typename Superclass::JacobianType         JacobianType;
-
-
-  typedef typename RepresenterType::DatasetType                                   DeformationFieldType;
-  typedef VectorLinearInterpolateImageFunction<DeformationFieldType, TScalarType> InterpolatorType;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using RepresenterType = typename Superclass::RepresenterType;
+  using StatisticalModelType = typename Superclass::StatisticalModelType;
+  using JacobianType = typename Superclass::JacobianType;
+  using DeformationFieldType = typename RepresenterType::DatasetType;
+  using InterpolatorType = VectorLinearInterpolateImageFunction<DeformationFieldType, TScalarType>;
 
   /**
    * Clone the current transform
    */
   virtual ::itk::LightObject::Pointer
-  CreateAnother() const
+  CreateAnother() const override
   {
     ::itk::LightObject::Pointer smartPtr;
     Pointer                     another = Self::New().GetPointer();
@@ -112,12 +105,13 @@ public:
     this->Superclass::SetStatisticalModel(model);
 
     m_meanDeformation = InterpolatorType::New();
-    typename DeformationFieldType::Pointer meanDf = model->DrawMean();
+
+    auto meanDf = model->DrawMean();
     m_meanDeformation->SetInputImage(meanDf);
-    for (unsigned i = 0; i < model->GetNumberOfPrincipalComponents(); i++)
+    for (unsigned i = 0; i < model->GetNumberOfPrincipalComponents(); ++i)
     {
-      typename DeformationFieldType::Pointer deformationField = model->DrawPCABasisSample(i);
-      typename InterpolatorType::Pointer     basisI = InterpolatorType::New();
+      auto deformationField = model->DrawPCABasisSample(i);
+      auto basisI = InterpolatorType::New();
       basisI->SetInputImage(deformationField);
       m_PCABasisDeformations.push_back(basisI);
     }
@@ -125,17 +119,19 @@ public:
 
 
   void
-  ComputeJacobianWithRespectToParameters(const InputPointType & pt, JacobianType & jacobian) const
+  ComputeJacobianWithRespectToParameters(const InputPointType & pt, JacobianType & jacobian) const override
   {
     jacobian.SetSize(TDimension, m_PCABasisDeformations.size());
     jacobian.Fill(0);
-    if (m_meanDeformation->IsInsideBuffer(pt) == false)
-      return;
-
-    for (unsigned j = 0; j < m_PCABasisDeformations.size(); j++)
+    if (!m_meanDeformation->IsInsideBuffer(pt))
     {
-      typename RepresenterType::ValueType d = m_PCABasisDeformations[j]->Evaluate(pt);
-      for (unsigned i = 0; i < TDimension; i++)
+      return;
+    }
+
+    for (unsigned j = 0; j < m_PCABasisDeformations.size(); ++j)
+    {
+      auto d = m_PCABasisDeformations[j]->Evaluate(pt);
+      for (unsigned i = 0; i < TDimension; ++i)
       {
         jacobian(i, j) += d[i];
       }
@@ -147,7 +143,6 @@ public:
                   << jacobian);
   }
 
-
   /**
    * Transform a given point according to the deformation induced by the StatisticalModel,
    * given the current parameters.
@@ -156,23 +151,24 @@ public:
    * \return The transformed point
    */
   virtual OutputPointType
-  TransformPoint(const InputPointType & pt) const
+  TransformPoint(const InputPointType & pt) const override
   {
-    if (m_meanDeformation->IsInsideBuffer(pt) == false)
+    if (!m_meanDeformation->IsInsideBuffer(pt))
     {
       return pt;
     }
-    assert(this->m_coeff_vector.size() == m_PCABasisDeformations.size());
-    typename RepresenterType::ValueType def = m_meanDeformation->Evaluate(pt);
 
-    for (unsigned i = 0; i < m_PCABasisDeformations.size(); i++)
+    assert(this->m_coeffVector.size() == m_PCABasisDeformations.size());
+    auto def = m_meanDeformation->Evaluate(pt);
+
+    for (unsigned i = 0; i < m_PCABasisDeformations.size(); ++i)
     {
-      typename RepresenterType::ValueType defBasisI = m_PCABasisDeformations[i]->Evaluate(pt);
-      def += (defBasisI * this->m_coeff_vector[i]);
+      auto defBasisI = m_PCABasisDeformations[i]->Evaluate(pt);
+      def += (defBasisI * this->m_coeffVector[i]);
     }
 
     OutputPointType transformedPoint;
-    for (unsigned i = 0; i < pt.GetPointDimension(); i++)
+    for (unsigned i = 0; i < pt.GetPointDimension(); ++i)
     {
       transformedPoint[i] = pt[i] + def[i];
     }
@@ -180,17 +176,7 @@ public:
     return transformedPoint;
   }
 
-  virtual ~InterpolatingStatisticalDeformationModelTransform() {}
-
-  InterpolatingStatisticalDeformationModelTransform() {}
-
 private:
-  InterpolatingStatisticalDeformationModelTransform(
-    const InterpolatingStatisticalDeformationModelTransform & orig); // purposely not implemented
-  InterpolatingStatisticalDeformationModelTransform &
-  operator=(const InterpolatingStatisticalDeformationModelTransform & rhs); // purposely not implemented
-
-
   typename InterpolatorType::Pointer              m_meanDeformation;
   std::vector<typename InterpolatorType::Pointer> m_PCABasisDeformations;
 };
@@ -198,4 +184,4 @@ private:
 
 } // namespace itk
 
-#endif // __ItkInterpolatingStatisticalDeformationModelTransform
+#endif

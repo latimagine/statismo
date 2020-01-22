@@ -38,14 +38,15 @@
 #ifndef __STATIMO_ITK_STATISTICAL_MODEL_TRANSFORM_H_
 #define __STATIMO_ITK_STATISTICAL_MODEL_TRANSFORM_H_
 
-#include <iostream>
+#include "statismo/core/Representer.h"
+#include "statismo/core/NonCopyable.h"
+#include "statismo/ITK/itkStatisticalModel.h"
 
 #include <itkImage.h>
 #include <itkTransform.h>
 #include <itkVector.h>
 
-#include "statismo/core/Representer.h"
-#include "statismo/ITK/itkStatisticalModel.h"
+#include <iostream>
 
 namespace itk
 {
@@ -67,106 +68,72 @@ template <class TDataset,
           class TScalarType,
           unsigned int TInputDimension,
           unsigned int TOutputDimension = TInputDimension>
-class ITK_EXPORT StatisticalModelTransformBase : public itk::Transform<TScalarType, TInputDimension, TOutputDimension>
+class ITK_EXPORT StatisticalModelTransformBase
+  : public itk::Transform<TScalarType, TInputDimension, TOutputDimension>
+  , public statismo::NonCopyable
 {
 public:
-  /* Standard class typedefs. */
-  typedef StatisticalModelTransformBase                                  Self;
-  typedef itk::Transform<TScalarType, TInputDimension, TOutputDimension> Superclass;
-  typedef SmartPointer<Self>                                             Pointer;
-  typedef SmartPointer<const Self>                                       ConstPointer;
-
-  typedef vnl_vector<statismo::ScalarType> VectorType;
-  typedef vnl_matrix<statismo::ScalarType> MatrixType;
-
-
-  /**
-   * Copy the members of the current transform. To be used by subclasses in the CreateAnother method.
-   */
-  virtual void
-  CopyBaseMembers(StatisticalModelTransformBase * another) const
-  {
-    another->m_StatisticalModel = m_StatisticalModel;
-    another->m_coeff_vector = m_coeff_vector;
-    another->m_usedNumberCoefficients = m_usedNumberCoefficients;
-    another->m_FixedParameters = m_FixedParameters;
-    another->m_Parameters = this->m_Parameters;
-  }
-
+  /* Standard class using =s. */
+  using Self = StatisticalModelTransformBase;
+  using Superclass = itk::Transform<TScalarType, TInputDimension, TOutputDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using VectorType = vnl_vector<statismo::ScalarType>;
+  using MatrixType = vnl_matrix<statismo::ScalarType>;
+  /* Parameters Type   */
+  using ParametersType = typename Superclass::ParametersType;
+  using JacobianType = typename Superclass::JacobianType;
+  using ScalarType = typename Superclass::ScalarType;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using InputVectorType = typename Superclass::InputVectorType;
+  using OutputVectorType = typename Superclass::OutputVectorType;
+  using InputVnlVectorType = typename Superclass::InputVnlVectorType;
+  using OutputVnlVectorType = typename Superclass::OutputVnlVectorType;
+  using InputCovariantVectorType = typename Superclass::InputCovariantVectorType;
+  using OutputCovariantVectorType = typename Superclass::OutputCovariantVectorType;
+  using RepresenterType = statismo::Representer<TDataset>;
+  using StatisticalModelType = itk::StatisticalModel<TDataset>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(StatisticalModelTransformBase, Superclass);
 
-  /* Dimension of parameters. */
+  virtual void
+  CopyBaseMembers(StatisticalModelTransformBase * another) const
+  {
+    another->m_statisticalModel = m_statisticalModel;
+    another->m_coeffVector = m_coeffVector;
+    another->m_usedNumberCoefficients = m_usedNumberCoefficients;
+    another->m_fixedParameters = m_fixedParameters;
+    another->m_Parameters = this->m_Parameters;
+  }
+
   itkStaticConstMacro(SpaceDimension, unsigned int, TInputDimension);
   itkStaticConstMacro(InputSpaceDimension, unsigned int, TInputDimension);
   itkStaticConstMacro(OutputSpaceDimension, unsigned int, TOutputDimension);
 
-
-  /* Parameters Type   */
-  typedef typename Superclass::ParametersType            ParametersType;
-  typedef typename Superclass::JacobianType              JacobianType;
-  typedef typename Superclass::ScalarType                ScalarType;
-  typedef typename Superclass::InputPointType            InputPointType;
-  typedef typename Superclass::OutputPointType           OutputPointType;
-  typedef typename Superclass::InputVectorType           InputVectorType;
-  typedef typename Superclass::OutputVectorType          OutputVectorType;
-  typedef typename Superclass::InputVnlVectorType        InputVnlVectorType;
-  typedef typename Superclass::OutputVnlVectorType       OutputVnlVectorType;
-  typedef typename Superclass::InputCovariantVectorType  InputCovariantVectorType;
-  typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType;
-
-  typedef statismo::Representer<TDataset> RepresenterType;
-  typedef itk::StatisticalModel<TDataset> StatisticalModelType;
-
+  virtual void
+  ComputeJacobianWithRespectToParameters(const InputPointType & pt, JacobianType & jacobian) const override;
 
   virtual void
-  ComputeJacobianWithRespectToParameters(const InputPointType & pt, JacobianType & jacobian) const;
+  SetIdentity();
 
-  /**
-   * Transform a given point according to the deformation induced by the StatisticalModel,
-   * given the current parameters.
-   *
-   * \param pt The point to tranform
-   * \return The transformed point
-   */
-  virtual OutputPointType
-  TransformPoint(const InputPointType & pt) const = 0;
-
-  /**
-   *  Set the parameters to the IdentityTransform
-   *  */
   virtual void
-  SetIdentity(void);
+  SetParameters(const ParametersType &) override;
 
-  /**
-   * Set the parameters of the transform
-   */
-  virtual void
-  SetParameters(const ParametersType &);
-
-  /**
-   * Get the parameters of the transform
-   */
   virtual const ParametersType &
-  GetParameters(void) const;
+  GetParameters(void) const override;
 
-  /**
-   * Does nothing - as the transform does not have any fixed parameters
-   */
   virtual void
-  SetFixedParameters(const ParametersType &)
+  SetFixedParameters(const ParametersType &) override
   {
     // there no fixed parameters
   }
 
-  /**
-   * returns an empty Parameter vector, as the tranform does not have any fixed parameters
-   */
   virtual const ParametersType &
-  GetFixedParameters(void) const
+  GetFixedParameters(void) const override
   {
-    return this->m_FixedParameters;
+    return this->m_fixedParameters;
   };
 
   /**
@@ -176,7 +143,7 @@ public:
   virtual VectorType
   GetCoefficients() const
   {
-    return m_coeff_vector;
+    return m_coeffVector;
   }
 
   /**
@@ -186,7 +153,7 @@ public:
   virtual void
   SetCoefficients(VectorType & coefficients)
   {
-    m_coeff_vector = coefficients;
+    m_coeffVector = coefficients;
   }
 
   /**
@@ -223,27 +190,19 @@ public:
 
 protected:
   StatisticalModelTransformBase();
-  virtual ~StatisticalModelTransformBase(){};
 
   void
-  PrintSelf(std::ostream & os, Indent indent) const;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
-  typename StatisticalModelType::ConstPointer m_StatisticalModel;
-  VectorType                                  m_coeff_vector;
+  typename StatisticalModelType::ConstPointer m_statisticalModel;
+  VectorType                                  m_coeffVector;
   unsigned                                    m_usedNumberCoefficients;
-  ParametersType                              m_FixedParameters;
-
-  StatisticalModelTransformBase(const Self & obj); // : Superclass(obj) {} //purposely not implemented
-  void
-  operator=(const Self & rhs); // { return Superclass::operator=(rhs); } //purposely not implemented
+  ParametersType                              m_fixedParameters;
 };
 
 
 } // namespace itk
 
+#include "itkStatisticalModelTransformBase.hxx"
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#  include "itkStatisticalModelTransformBase.hxx"
 #endif
-
-#endif /* __itkStatisticalModelTransform_h */

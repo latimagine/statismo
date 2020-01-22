@@ -40,4 +40,4 @@
 
 #include "statismo/core/Config.h"
 
-#endif // __STATISMO_ITK_CONFIG_H
+#endif

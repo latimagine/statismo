@@ -39,15 +39,14 @@
 #ifndef __STATIMO_ITK_POSTERIOR_MODEL_BUILDER_H_
 #define __STATIMO_ITK_POSTERIOR_MODEL_BUILDER_H_
 
-#include <itkObject.h>
-
+#include "statismo/core/PosteriorModelBuilder.h"
+#include "statismo/core/ImplWrapper.h"
 #include "statismo/ITK/itkDataManager.h"
 #include "statismo/ITK/itkStatisticalModel.h"
-
-#include "statismo/core/PosteriorModelBuilder.h"
 #include "statismo/ITK/itkConfig.h"
-#include "statismo/core/ImplWrapper.h"
 #include "statismo/ITK/itkUtils.h"
+
+#include <itkObject.h>
 
 #include <functional>
 #include <utility>
@@ -65,36 +64,33 @@ class PosteriorModelBuilder
   , public statismo::ImplWrapper<statismo::PosteriorModelBuilder<T>, statismo::SafeInitializer>
 {
 public:
-  typedef PosteriorModelBuilder    Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = PosteriorModelBuilder;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   using ImplType =
     typename statismo::ImplWrapper<statismo::PosteriorModelBuilder<T>, statismo::SafeInitializer>::ImplType;
-
 
   itkNewMacro(Self);
   itkTypeMacro(PosteriorModelBuilder, Object);
 
-  typedef statismo::DataManager<T>                   DataManagerType;
-  typedef typename DataManagerType::DataItemListType DataItemListType;
+  using DataManagerType = statismo::DataManager<T>;
+  using DataItemListType = typename DataManagerType::DataItemListType;
 
-  PosteriorModelBuilder() {}
-
-  virtual ~PosteriorModelBuilder() {}
-
+  PosteriorModelBuilder() = default;
+  virtual ~PosteriorModelBuilder() = default;
 
   // create statismo stuff
-  typedef statismo::Representer<T>                                        RepresenterType;
-  typedef typename RepresenterType::ValueType                             ValueType;
-  typedef typename RepresenterType::PointType                             PointType;
-  typedef typename statismo::PosteriorModelBuilder<T>::PointValueListType PointValueListType;
-  typedef
-    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovariancePairType PointValueWithCovariancePairType;
-  typedef
-    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovarianceListType PointValueWithCovarianceListType;
-  typedef itk::StatisticalModel<T>                                                StatisticalModelType;
-  typedef statismo::StatisticalModel<T>                                           StatismoStatisticalModelType;
+  using RepresenterType = statismo::Representer<T>;
+  using ValueType = typename RepresenterType::ValueType;
+  using PointType = typename RepresenterType::PointType;
+  using PointValueListType = typename statismo::PosteriorModelBuilder<T>::PointValueListType;
+  using PointValueWithCovariancePairType =
+    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovariancePairType;
+  using PointValueWithCovarianceListType =
+    typename statismo::PosteriorModelBuilder<T>::PointValueWithCovarianceListType;
+  using StatisticalModelType = itk::StatisticalModel<T>;
+  using StatismoStatisticalModelType = statismo::StatisticalModel<T>;
 
   typename StatisticalModelType::Pointer
   BuildNewModelFromModel(const StatisticalModelType * model,
@@ -102,21 +98,21 @@ public:
                          double                       pointValuesNoiseVariance,
                          bool                         computeScores = true)
   {
-    const auto * model_statismo = model->GetStatismoImplObj();
+    const auto * statismoModel = model->GetStatismoImplObj();
     using OverloadType =
       statismo::UniquePtrType<StatismoStatisticalModelType> (ImplType::*)(const StatismoStatisticalModelType * model,
                                                                           const PointValueListType & pointValues,
                                                                           double pointValuesNoiseVariance,
                                                                           bool   computeScores) const;
-    auto                                   new_model_statismo = this->CallForwardImplTrans(ExceptionHandler{ *this },
-                                                         static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
-                                                         model_statismo,
-                                                         pointValues,
-                                                         pointValuesNoiseVariance,
-                                                         computeScores);
-    typename StatisticalModelType::Pointer model_itk = StatisticalModelType::New();
-    model_itk->SetStatismoImplObj(std::move(new_model_statismo));
-    return model_itk;
+    auto newStatismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                       static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
+                                                       statismoModel,
+                                                       pointValues,
+                                                       pointValuesNoiseVariance,
+                                                       computeScores);
+    auto itkModel = StatisticalModelType::New();
+    itkModel->SetStatismoImplObj(std::move(newStatismoModel));
+    return itkModel;
   }
 
   typename StatisticalModelType::Pointer
@@ -125,16 +121,15 @@ public:
                 double                     pointValuesNoiseVariance,
                 double                     noiseVariance)
   {
-    auto                                   model_statismo = this->CallForwardImplTrans(ExceptionHandler{ *this },
-                                                     &ImplType::BuildNewModel,
-                                                     model_statismo,
-                                                     DataItemList,
-                                                     pointValues,
-                                                     pointValuesNoiseVariance,
-                                                     noiseVariance);
-    typename StatisticalModelType::Pointer model_itk = StatisticalModelType::New();
-    model_itk->SetStatismoImplObj(std::move(model_statismo));
-    return model_itk;
+    auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                    &ImplType::BuildNewModel,
+                                                    DataItemList,
+                                                    pointValues,
+                                                    pointValuesNoiseVariance,
+                                                    noiseVariance);
+    auto itkModel = StatisticalModelType::New();
+    itkModel->SetStatismoImplObj(std::move(statismoModel));
+    return itkModel;
   }
 
   typename StatisticalModelType::Pointer
@@ -142,21 +137,21 @@ public:
                          const PointValueWithCovarianceListType & pointValuesWithCovariance,
                          bool                                     computeScores = true)
   {
-    const StatismoStatisticalModelType * model_statismo = model->GetStatismoImplObj();
+    const StatismoStatisticalModelType * statismoModel = model->GetStatismoImplObj();
 
     using OverloadType = statismo::UniquePtrType<StatismoStatisticalModelType> (ImplType::*)(
       const StatismoStatisticalModelType *     model,
       const PointValueWithCovarianceListType & pointValuesWithCovariance,
       bool                                     computeScores) const;
-    auto new_model_statismo = this->CallForwardImplTrans(ExceptionHandler{ *this },
-                                                         static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
-                                                         model_statismo,
-                                                         pointValuesWithCovariance,
-                                                         computeScores);
+    auto newStatismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                       static_cast<OverloadType>(&ImplType::BuildNewModelFromModel),
+                                                       statismoModel,
+                                                       pointValuesWithCovariance,
+                                                       computeScores);
 
-    typename StatisticalModelType::Pointer model_itk = StatisticalModelType::New();
-    model_itk->SetStatismoImplObj(std::move(new_model_statismo));
-    return model_itk;
+    auto itkModel = StatisticalModelType::New();
+    itkModel->SetStatismoImplObj(std::move(newStatismoModel));
+    return itkModel;
   }
 
   typename StatisticalModelType::Pointer
@@ -164,15 +159,18 @@ public:
                 const PointValueWithCovarianceListType & pointValuesWithCovariance,
                 double                                   noiseVariance)
   {
-    auto model_statismo = this->CallForwardImplTrans(
-      ExceptionHandler{ *this }, &ImplType::BuildNewModel, DataItemList, pointValuesWithCovariance, noiseVariance);
-    typename StatisticalModelType::Pointer model_itk = StatisticalModelType::New();
-    model_itk->SetStatismoImplObj(std::move(model_statismo));
-    return model_itk;
+    auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+                                                    &ImplType::BuildNewModel,
+                                                    DataItemList,
+                                                    pointValuesWithCovariance,
+                                                    noiseVariance);
+    auto itkModel = StatisticalModelType::New();
+    itkModel->SetStatismoImplObj(std::move(statismoModel));
+    return itkModel;
   }
 };
 
 
 } // namespace itk
 
-#endif /* ITK_POSTERIOR_MODEL_BUILDER */
+#endif

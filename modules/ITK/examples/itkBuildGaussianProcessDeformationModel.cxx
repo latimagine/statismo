@@ -34,53 +34,50 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include <sys/types.h>
-#include <errno.h>
-#include <iostream>
 
-#include <itkDirectory.h>
-#include <itkImageFileReader.h>
-
+#include "statismo/core/Kernels.h"
+#include "statismo/core/KernelCombinators.h"
 #include "statismo/ITK/itkDataManager.h"
 #include "statismo/ITK/itkLowRankGPModelBuilder.h"
 #include "statismo/ITK/itkStandardImageRepresenter.h"
 #include "statismo/ITK/itkIO.h"
 #include "statismo/ITK/itkStatisticalModel.h"
 
-#include "statismo/core/Kernels.h"
-#include "statismo/core/KernelCombinators.h"
+#include <itkImageFileReader.h>
+
+#include <iostream>
 
 /*
  * This example shows the ITK Wrapping of statismo can be used to build a deformation model.
  */
 
+namespace
+{
+using ImageType3D = itk::Image<float, 3>;
+using VectorImageType3D = itk::Image<itk::Vector<float, 3>, 3>;
+using RepresenterType3D = itk::StandardImageRepresenter<itk::Vector<float, 3>, 3>;
 
-typedef itk::Image<float, 3>                                    ImageType3D;
-typedef itk::Image<itk::Vector<float, 3>, 3>                    VectorImageType3D;
-typedef itk::StandardImageRepresenter<itk::Vector<float, 3>, 3> RepresenterType3D;
-
-typedef itk::Image<float, 2>                                    ImageType2D;
-typedef itk::Image<itk::Vector<float, 2>, 2>                    VectorImageType2D;
-typedef itk::StandardImageRepresenter<itk::Vector<float, 2>, 2> RepresenterType2D;
-
+using ImageType2D = itk::Image<float, 2>;
+using VectorImageType2D = itk::Image<itk::Vector<float, 2>, 2>;
+using RepresenterType2D = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2>;
 
 /**
  * A scalar valued gaussian kernel.
  */
 template <class TPoint>
-class GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
+class _GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
-  typedef typename TPoint::CoordRepType CoordRepType;
-  typedef vnl_vector<CoordRepType>      VectorType;
+  using CoordRepType = typename TPoint::CoordRepType;
+  using VectorType = vnl_vector<CoordRepType>;
 
-  GaussianKernel(double sigma)
+  explicit _GaussianKernel(double sigma)
     : m_sigma(sigma)
     , m_sigma2(sigma * sigma)
   {}
 
   inline double
-  operator()(const TPoint & x, const TPoint & y) const
+  operator()(const TPoint & x, const TPoint & y) const override
   {
     VectorType xv = x.GetVnlVector();
     VectorType yv = y.GetVnlVector();
@@ -90,7 +87,7 @@ public:
   }
 
   std::string
-  GetKernelInfo() const
+  GetKernelInfo() const override
   {
     std::ostringstream os;
     os << "GaussianKernel(" << m_sigma << ")";
@@ -102,66 +99,62 @@ private:
   double m_sigma2;
 };
 
-
 template <class RepresenterType, class ImageType>
 void
-itkExample(const char * referenceFilename, double gaussianKernelSigma, const char * modelname)
+_DoRunExample(const char * referenceFilename, double gaussianKernelSigma, const char * modelname)
 {
-
-
-  typedef itk::LowRankGPModelBuilder<ImageType> ModelBuilderType;
-  typedef itk::ImageFileReader<ImageType>       ImageFileReaderType;
-  typedef typename ImageType::PointType         PointType;
+  using ModelBuilderType = itk::LowRankGPModelBuilder<ImageType>;
+  using ImageFileReaderType = itk::ImageFileReader<ImageType>;
+  using PointType = typename ImageType::PointType;
 
   // we take an arbitrary dataset as the reference, as they have all the same resolution anyway
-  typename ImageFileReaderType::Pointer refReader = ImageFileReaderType::New();
+  auto refReader = ImageFileReaderType::New();
   refReader->SetFileName(referenceFilename);
   refReader->Update();
 
-  typename RepresenterType::Pointer representer = RepresenterType::New();
+  auto representer = RepresenterType::New();
   representer->SetReference(refReader->GetOutput());
 
-
-  const GaussianKernel<PointType> gk = GaussianKernel<PointType>(gaussianKernelSigma); // a gk with sigma 100
+  auto gk = _GaussianKernel<PointType>(gaussianKernelSigma); // a gk with sigma 100
   // make the kernel matrix valued and scale it by a factor of 100
-  const statismo::MatrixValuedKernel<PointType> & mvGk =
-    statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
-  const statismo::MatrixValuedKernel<PointType> & scaledGk = statismo::ScaledKernel<PointType>(&mvGk, 100.0);
+  const auto & mvGk = statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
+  const auto & scaledGk = statismo::ScaledKernel<PointType>(&mvGk, 100.0);
 
-
-  typename ModelBuilderType::Pointer gpModelBuilder = ModelBuilderType::New();
+  auto gpModelBuilder = ModelBuilderType::New();
   gpModelBuilder->SetRepresenter(representer);
   auto model = gpModelBuilder->BuildNewZeroMeanModel(scaledGk, 100);
   itk::StatismoIO<ImageType>::SaveStatisticalModel(model, modelname);
 }
+} // namespace
 
 int
 main(int argc, char * argv[])
 {
-
   if (argc < 5)
   {
-    std::cout << "usage " << argv[0] << " dimension referenceFilename gaussianKernelSigma modelname" << std::endl;
-    exit(-1);
+    std::cerr << "usage " << argv[0] << " dimension referenceFilename gaussianKernelSigma modelname" << std::endl;
+    return 1;
   }
 
-  unsigned int dimension = atoi(argv[1]);
+  unsigned int dimension = std::stoul(argv[1]);
   const char * referenceFilename = argv[2];
-  double       gaussianKernelSigma = atof(argv[3]);
+  double       gaussianKernelSigma = std::stod(argv[3]);
   const char * modelname = argv[4];
 
   if (dimension == 2)
   {
-    itkExample<RepresenterType2D, VectorImageType2D>(referenceFilename, gaussianKernelSigma, modelname);
+    _DoRunExample<RepresenterType2D, VectorImageType2D>(referenceFilename, gaussianKernelSigma, modelname);
   }
   else if (dimension == 3)
   {
-    itkExample<RepresenterType3D, VectorImageType3D>(referenceFilename, gaussianKernelSigma, modelname);
+    _DoRunExample<RepresenterType3D, VectorImageType3D>(referenceFilename, gaussianKernelSigma, modelname);
   }
   else
   {
-    assert(0);
+    std::cerr << "invalid dimension" << std::endl;
+    return 1;
   }
 
-  std::cout << "Model building is completed successfully." << std::endl;
+  std::cout << "Model building completed successfully." << std::endl;
+  return 0;
 }

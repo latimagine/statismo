@@ -46,23 +46,24 @@ class ITK_EXPORT PenalizingMeanSquaresImageToImageMetric
 {
 public:
   // Standard class typedefs.
-  typedef PenalizingMeanSquaresImageToImageMetric                  Self;
-  typedef MeanSquaresImageToImageMetric<TFixedImage, TMovingImage> Superclass;
-  typedef SmartPointer<Self>                                       Pointer;
-  typedef SmartPointer<const Self>                                 ConstPointer;
+  using Self = PenalizingMeanSquaresImageToImageMetric;
+  using Superclass = MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   // Method for creation through the object factory.
   itkNewMacro(Self);
+  ITK_DISALLOW_COPY_AND_ASSIGN(PenalizingMeanSquaresImageToImageMetric);
   // Run-time type information (and related methods).
   itkTypeMacro(PenalizingMeanSquaresImageToImageMetric, Object);
-  // Types transferred from the base class
-  typedef typename Superclass::ParametersType ParametersType;
-  typedef typename Superclass::MeasureType    MeasureType;
-  typedef typename Superclass::DerivativeType DerivativeType;
 
+  // Types transferred from the base class
+  using ParametersType = typename Superclass::ParametersType;
+  using MeasureType = typename Superclass::MeasureType;
+  using DerivativeType = typename Superclass::DerivativeType;
 
   // Get the derivatives of the match measure.
   void
-  GetDerivative(const ParametersType & parameters, DerivativeType & derivative) const
+  GetDerivative(const ParametersType & parameters, DerivativeType & derivative) const override
   {
     Superclass::GetDerivative(parameters, derivative);
     CalculateDerivativePenalty(parameters, derivative);
@@ -70,7 +71,7 @@ public:
 
   // Get the value for single valued optimizers.
   MeasureType
-  GetValue(const ParametersType & parameters) const
+  GetValue(const ParametersType & parameters) const override
   {
     MeasureType value = Superclass::GetValue(parameters);
     return value + CalculateValuePenalty(parameters);
@@ -78,24 +79,27 @@ public:
 
   // Get value and derivatives for multiple valued optimizers.
   void
-  GetValueAndDerivative(const ParametersType & parameters, MeasureType & value, DerivativeType & derivative) const
+  GetValueAndDerivative(const ParametersType & parameters,
+                        MeasureType &          value,
+                        DerivativeType &       derivative) const override
   {
     Superclass::GetValueAndDerivative(parameters, value, derivative);
     value += CalculateValuePenalty(parameters);
     CalculateDerivativePenalty(parameters, derivative);
   }
 
-  itkSetMacro(RegularizationParameter, MeasureType) itkGetMacro(RegularizationParameter, MeasureType)
+  itkSetMacro(RegularizationParameter, MeasureType);
+  itkGetMacro(RegularizationParameter, MeasureType);
 
-    itkSetMacro(NumberOfModelComponents, unsigned) itkGetMacro(NumberOfModelComponents, unsigned)
+  itkSetMacro(NumberOfModelComponents, unsigned);
+  itkGetMacro(NumberOfModelComponents, unsigned);
 
-      protected
-    : PenalizingMeanSquaresImageToImageMetric()
-    : m_RegularizationParameter(0)
-  {}
-  virtual ~PenalizingMeanSquaresImageToImageMetric() {}
+protected:
+  PenalizingMeanSquaresImageToImageMetric() = default;
+  virtual ~PenalizingMeanSquaresImageToImageMetric() = default;
+
   MeasureType m_RegularizationParameter;
-  unsigned    m_NumberOfModelComponents{0};
+  unsigned    m_NumberOfModelComponents{ 0 };
 
 private:
   MeasureType
@@ -116,9 +120,6 @@ private:
       derivative[i] += parameters[i] * 2 * m_RegularizationParameter;
     }
   }
-  PenalizingMeanSquaresImageToImageMetric(const Self &); // purposely not implemented
-  void
-  operator=(const Self &); // purposely not implemented
 };
 } // end namespace itk
 #endif

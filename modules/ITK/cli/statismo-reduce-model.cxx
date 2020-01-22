@@ -31,43 +31,85 @@
  *
  */
 
+#include "statismo/ITK/itkReducedVarianceModelBuilder.h"
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+#include "statismo/ITK/itkIO.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+
 #include "lpo.h"
 
 #include <itkImage.h>
 #include <itkMesh.h>
-#include <statismo/ITK/itkReducedVarianceModelBuilder.h>
-#include <statismo/ITK/itkStandardImageRepresenter.h>
-#include <statismo/ITK/itkStandardMeshRepresenter.h>
-#include <statismo/ITK/itkIO.h>
-#include <statismo/ITK/itkStatisticalModel.h>
 
 #include <string>
-
 
 namespace po = lpo;
 using namespace std;
 
-struct ProgramOptions
+namespace
+{
+
+struct _ProgramOptions
 {
   string   strInputFileName;
   string   strOutputFileName;
-  unsigned uNumberOfComponents;
-  unsigned uNumberOfDimensions;
-  double   dTotalVariance;
+  unsigned uNumberOfComponents{ 0 };
+  unsigned uNumberOfDimensions{ 0 };
+  double   dTotalVariance{ 0.0 };
   string   strType;
 };
 
 bool
-isOptionsConflictPresent(ProgramOptions & opt);
+_IsOptionsConflictPresent(_ProgramOptions & opt)
+{
+  statismo::utils::ToLower(opt.strType);
+
+  return (opt.strType != "shape" && opt.strType != "deformation") ||
+         (opt.dTotalVariance != 0 && opt.uNumberOfComponents != 0) ||
+         (opt.dTotalVariance == 0 && opt.uNumberOfComponents == 0) || opt.strInputFileName.empty() ||
+         opt.strOutputFileName.empty() || opt.strInputFileName == opt.strOutputFileName;
+}
+
+
 template <class DataType, class RepresenterType>
 void
-reduceModel(const ProgramOptions & opt);
+_ReduceModel(const _ProgramOptions & opt)
+{
+  using StatisticalModelType = typename itk::StatisticalModel<DataType>;
+  using ReducedVarianceModelBuilderType = typename itk::ReducedVarianceModelBuilder<DataType>;
+
+  auto representer = RepresenterType::New();
+  auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName);
+
+  auto                                   reducedVarModelBuilder = ReducedVarianceModelBuilderType::New();
+  typename StatisticalModelType::Pointer outputModel;
+
+  if (opt.uNumberOfComponents != 0)
+  {
+    if (opt.uNumberOfComponents > model->GetNumberOfPrincipalComponents())
+    {
+      itkGenericExceptionMacro(<< "The model has " << model->GetNumberOfPrincipalComponents()
+                               << " components. Upscaling models to more componenets isn't possible with this tool.");
+    }
+    outputModel =
+      reducedVarModelBuilder->BuildNewModelWithLeadingComponents(model.GetPointer(), opt.uNumberOfComponents);
+  }
+  else
+  {
+    outputModel = reducedVarModelBuilder->BuildNewModelWithVariance(model.GetPointer(), opt.dTotalVariance);
+  }
+
+  itk::StatismoIO<DataType>::SaveStatisticalModel(outputModel, opt.strOutputFileName);
+}
+
+} // namespace
 
 int
 main(int argc, char ** argv)
 {
-  ProgramOptions                                      poParameters;
-  lpo::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
+  _ProgramOptions                                    poParameters;
+  po::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "type",
@@ -84,7 +126,8 @@ main(int argc, char ** argv)
                          2,
                          3 },
                        true)
-    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName }, true)
+    .add_opt<std::string>({ "input-file", "i", "The path to the model file.", &poParameters.strInputFileName, "" },
+                          true)
     .add_opt<unsigned>({ "numcomponents",
                          "n",
                          "Creates a new model with the specified number of components.",
@@ -106,7 +149,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (isOptionsConflictPresent(poParameters))
+  if (_IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -119,25 +162,25 @@ main(int argc, char ** argv)
     const unsigned Dimensionality3D = 3;
     if (poParameters.strType == "shape")
     {
-      typedef itk::Mesh<float, Dimensionality3D>                    DataType;
-      typedef itk::StandardMeshRepresenter<float, Dimensionality3D> RepresenterType;
-      reduceModel<DataType, RepresenterType>(poParameters);
+      using DataType = itk::Mesh<float, Dimensionality3D>;
+      using RepresenterType = itk::StandardMeshRepresenter<float, Dimensionality3D>;
+      _ReduceModel<DataType, RepresenterType>(poParameters);
     }
     else
     {
       if (poParameters.uNumberOfDimensions == Dimensionality2D)
       {
-        typedef itk::Vector<float, Dimensionality2D>                             VectorPixelType;
-        typedef itk::Image<VectorPixelType, Dimensionality2D>                    DataType;
-        typedef itk::StandardImageRepresenter<VectorPixelType, Dimensionality2D> RepresenterType;
-        reduceModel<DataType, RepresenterType>(poParameters);
+        using VectorPixelType = itk::Vector<float, Dimensionality2D>;
+        using DataType = itk::Image<VectorPixelType, Dimensionality2D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality2D>;
+        _ReduceModel<DataType, RepresenterType>(poParameters);
       }
       else
       {
-        typedef itk::Vector<float, Dimensionality3D>                             VectorPixelType;
-        typedef itk::Image<VectorPixelType, Dimensionality3D>                    DataType;
-        typedef itk::StandardImageRepresenter<VectorPixelType, Dimensionality3D> RepresenterType;
-        reduceModel<DataType, RepresenterType>(poParameters);
+        using VectorPixelType = itk::Vector<float, Dimensionality3D>;
+        using DataType = itk::Image<VectorPixelType, Dimensionality3D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality3D>;
+        _ReduceModel<DataType, RepresenterType>(poParameters);
       }
     }
   }
@@ -149,73 +192,4 @@ main(int argc, char ** argv)
   }
 
   return EXIT_SUCCESS;
-}
-
-bool
-isOptionsConflictPresent(ProgramOptions & opt)
-{
-  statismo::utils::ToLower(opt.strType);
-
-  if (opt.strType != "shape" && opt.strType != "deformation")
-  {
-    return true;
-  }
-
-  if (opt.dTotalVariance != 0 && opt.uNumberOfComponents != 0)
-  {
-    return true;
-  }
-
-  if (opt.dTotalVariance == 0 && opt.uNumberOfComponents == 0)
-  {
-    return true;
-  }
-
-  if (opt.strInputFileName == "" || opt.strOutputFileName == "")
-  {
-    return true;
-  }
-
-
-  if (opt.strInputFileName == opt.strOutputFileName)
-  {
-    return true;
-  }
-
-  return false;
-}
-
-
-template <class DataType, class RepresenterType>
-void
-reduceModel(const ProgramOptions & opt)
-{
-  typename RepresenterType::Pointer pRepresenter = RepresenterType::New();
-
-
-  typedef typename itk::StatisticalModel<DataType> StatisticalModelType;
-  typename StatisticalModelType::Pointer           pModel = StatisticalModelType::New();
-
-  pModel = itk::StatismoIO<DataType>::LoadStatisticalModel(pRepresenter, opt.strInputFileName.c_str());
-
-  typedef typename itk::ReducedVarianceModelBuilder<DataType> ReducedVarianceModelBuilderType;
-  typename ReducedVarianceModelBuilderType::Pointer pReducedVarModelBuilder = ReducedVarianceModelBuilderType::New();
-  typename StatisticalModelType::Pointer            pOutputModel;
-
-  if (opt.uNumberOfComponents != 0)
-  {
-    if (opt.uNumberOfComponents > pModel->GetNumberOfPrincipalComponents())
-    {
-      itkGenericExceptionMacro(<< "The model has " << pModel->GetNumberOfPrincipalComponents()
-                               << " components. Upscaling models to more componenets isn't possible with this tool.");
-    }
-    pOutputModel =
-      pReducedVarModelBuilder->BuildNewModelWithLeadingComponents(pModel.GetPointer(), opt.uNumberOfComponents);
-  }
-  else
-  {
-    pOutputModel = pReducedVarModelBuilder->BuildNewModelWithVariance(pModel.GetPointer(), opt.dTotalVariance);
-  }
-
-  itk::StatismoIO<DataType>::SaveStatisticalModel(pOutputModel, opt.strOutputFileName.c_str());
 }

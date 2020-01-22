@@ -38,14 +38,14 @@
 #ifndef __STATIMO_ITK_STATISTICAL_DEFORMATION_MODEL_TRANSFORM_H_
 #define __STATIMO_ITK_STATISTICAL_DEFORMATION_MODEL_TRANSFORM_H_
 
-#include <iostream>
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkStatisticalModelTransformBase.h"
 
 #include <itkImage.h>
 #include <itkVector.h>
 
-#include "statismo/ITK/itkStandardImageRepresenter.h"
-#include "statismo/ITK/itkStatisticalModel.h"
-#include "statismo/ITK/itkStatisticalModelTransformBase.h"
+#include <iostream>
 
 namespace itk
 {
@@ -64,19 +64,17 @@ class ITK_EXPORT StatisticalDeformationModelTransform
 
 public:
   /* Standard class typedefs. */
-  typedef StatisticalDeformationModelTransform                                  Self;
-  typedef itk::StatisticalModelTransformBase<TDataSet, TScalarType, TDimension> Superclass;
-  typedef SmartPointer<Self>                                                    Pointer;
-  typedef SmartPointer<const Self>                                              ConstPointer;
-
+  using Self = StatisticalDeformationModelTransform;
+  using Superclass = itk::StatisticalModelTransformBase<TDataSet, TScalarType, TDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   itkSimpleNewMacro(Self);
-
   /** Run-time type information (and related methods). */
   itkTypeMacro(StatisticalDeformationModelTransform, Superclass);
 
-  typedef typename Superclass::InputPointType  InputPointType;
-  typedef typename Superclass::OutputPointType OutputPointType;
-  typedef typename Superclass::RepresenterType RepresenterType;
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using RepresenterType = typename Superclass::RepresenterType;
 
   /**
    * Clone the current transform
@@ -92,7 +90,6 @@ public:
     return smartPtr;
   }
 
-
   /**
    * Transform a given point according to the deformation induced by the StatisticalModel,
    * given the current parameters.
@@ -101,18 +98,10 @@ public:
    * \return The transformed point
    */
   virtual OutputPointType
-  TransformPoint(const InputPointType & pt) const
+  TransformPoint(const InputPointType & pt) const override
   {
-    typename RepresenterType::ValueType d;
-    try
-    {
-      d = this->m_StatisticalModel->DrawSampleAtPoint(this->m_coeff_vector, pt);
-    }
-    catch (ExceptionObject & e)
-    {
-      std::cout << "exception occured at point " << pt << std::endl;
-      std::cout << "message " << e.what() << std::endl;
-    }
+    auto d = this->m_statisticalModel->DrawSampleAtPoint(this->m_coeffVector, pt);
+
     OutputPointType transformedPoint;
     for (unsigned i = 0; i < pt.GetPointDimension(); i++)
     {
@@ -120,18 +109,9 @@ public:
     }
     return transformedPoint;
   }
-
-  virtual ~StatisticalDeformationModelTransform() {}
-
-  StatisticalDeformationModelTransform() {}
-
-private:
-  StatisticalDeformationModelTransform(const StatisticalDeformationModelTransform & orig); // purposely not implemented
-  StatisticalDeformationModelTransform &
-  operator=(const StatisticalDeformationModelTransform & rhs); // purposely not implemented
 };
 
 
 } // namespace itk
 
-#endif // __ItkStatisticalDeformationModelTransform
+#endif

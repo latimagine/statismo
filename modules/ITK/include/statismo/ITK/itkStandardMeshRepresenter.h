@@ -35,54 +35,34 @@
  *
  */
 
-
 #ifndef __STATIMO_ITK_STANDARD_MESH_REPRESENTER_H_
 #define __STATIMO_ITK_STANDARD_MESH_REPRESENTER_H_
-
-#include <unordered_map>
-
-#include <itkMesh.h>
-#include <itkObject.h>
-
-#include "statismo/ITK/itkConfig.h" // this needs to be the first include file
 
 #include "statismo/core/CommonTypes.h"
 #include "statismo/core/Exceptions.h"
 #include "statismo/core/Representer.h"
 #include "statismo/core/Hash.h"
-
+#include "statismo/ITK/itkConfig.h" // this needs to be the first include file
 #include "statismo/ITK/itkPixelConversionTraits.h"
+
+#include <itkMesh.h>
+#include <itkObject.h>
+#include <itkPointsLocator.h>
+
+#include <unordered_map>
 
 namespace statismo
 {
-template <>
-struct RepresenterTraits<itk::Mesh<float, 3u>>
+template <typename T, auto N>
+struct RepresenterTraits<::itk::Mesh<T, N>>
 {
+  using MeshType = ::itk::Mesh<T, N>;
+  using DatasetPointerType = typename MeshType::Pointer;
+  using DatasetConstPointerType = typename MeshType::Pointer;
+  using PointType = typename MeshType::PointType;
+  using ValueType = typename MeshType::PointType;
 
-  typedef itk::Mesh<float, 3u> MeshType;
-
-  typedef MeshType::Pointer DatasetPointerType;
-  typedef MeshType::Pointer DatasetConstPointerType;
-
-  typedef MeshType::PointType PointType;
-  typedef MeshType::PointType ValueType;
-
-  static constexpr unsigned Dimension = 3;
-};
-
-template <>
-struct RepresenterTraits<itk::Mesh<double, 3u>>
-{
-
-  typedef itk::Mesh<double, 3u> MeshType;
-
-  typedef MeshType::Pointer DatasetPointerType;
-  typedef MeshType::Pointer DatasetConstPointerType;
-
-  typedef MeshType::PointType PointType;
-  typedef MeshType::PointType ValueType;
-
-  static constexpr unsigned Dimension = 3;
+  static constexpr unsigned Dimension = N;
 };
 
 } // namespace statismo
@@ -102,24 +82,30 @@ class StandardMeshRepresenter
 {
 public:
   /* Standard class typedefs. */
-  typedef StandardMeshRepresenter  Self;
-  typedef Object                   Superclass;
-  typedef SmartPointer<Self>       Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  using Self = StandardMeshRepresenter;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
   using Base =
     statismo::RepresenterBase<itk::Mesh<TPixel, MeshDimension>, StandardMeshRepresenter<TPixel, MeshDimension>>;
   friend Base;
   friend typename Base::ObjectFactoryType;
 
+  using MeshType = itk::Mesh<TPixel, MeshDimension>;
+  using RepresenterBaseType = typename statismo::Representer<MeshType>;
+  using DomainType = typename RepresenterBaseType::DomainType;
+  using PointType = typename RepresenterBaseType::PointType;
+  using ValueType = typename RepresenterBaseType::ValueType;
+  using DatasetPointerType = typename RepresenterBaseType::DatasetPointerType;
+  using DatasetConstPointerType = typename RepresenterBaseType::DatasetConstPointerType;
+  using PointsContainerType = typename MeshType::PointsContainer;
+  using PointsLocatorType = itk::PointsLocator<PointsContainerType>;
 
-  typedef itk::Mesh<TPixel, MeshDimension>                      MeshType;
-  typedef typename statismo::Representer<MeshType>              RepresenterBaseType;
-  typedef typename RepresenterBaseType::DomainType              DomainType;
-  typedef typename RepresenterBaseType::PointType               PointType;
-  typedef typename RepresenterBaseType::ValueType               ValueType;
-  typedef typename RepresenterBaseType::DatasetPointerType      DatasetPointerType;
-  typedef typename RepresenterBaseType::DatasetConstPointerType DatasetConstPointerType;
-  typedef typename MeshType::PointsContainer                    PointsContainerType;
+  /// The type of the data set to be used
+  using DatasetType = MeshType;
+
+  // An unordered map is used to cache pointid for corresponding points
+  using PointCacheType = std::unordered_map<PointType, unsigned, statismo::Hash<PointType>>;
 
   /** New macro for creation of through a Smart Pointer. */
   itkSimpleNewMacro(Self);
@@ -127,96 +113,67 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(StandardMeshRepresenter, Object);
 
-
-  void
-  Load(const H5::Group & fg);
-
-  /// The type of the data set to be used
-  typedef MeshType DatasetType;
-
-  // An unordered map is used to cache pointid for corresonding points
-  // TODO: replace by std
-  typedef std::unordered_map<PointType, unsigned, statismo::Hash<PointType>> PointCacheType;
-
   StandardMeshRepresenter();
   virtual ~StandardMeshRepresenter();
 
-  const DomainType &
-  GetDomain() const
+  virtual void
+  Delete() override
+  {
+    this->UnRegister();
+  }
+
+  virtual void DeleteDataset(DatasetPointerType) const override{
+    // no op
+  };
+  virtual DatasetPointerType
+  CloneDataset(DatasetConstPointerType mesh) const override;
+
+  virtual void
+  Load(const H5::Group & fg) override;
+
+  virtual void
+  Save(const H5::Group & fg) const override;
+
+  virtual const DomainType &
+  GetDomain() const override
   {
     return m_domain;
   }
 
-  /** Set the reference that is used to build the model */
-  void
+  virtual void
   SetReference(DatasetPointerType ds);
 
-  statismo::VectorType
-  PointToVector(const PointType & pt) const;
+  virtual DatasetConstPointerType
+  GetReference() const override
+  {
+    return m_reference;
+  }
 
+  virtual statismo::VectorType
+  PointToVector(const PointType & pt) const override;
 
-  /**
-   * Converts a sample to its vectorial representation
-   */
-  statismo::VectorType
-  SampleToSampleVector(DatasetConstPointerType sample) const;
+  virtual statismo::VectorType
+  SampleToSampleVector(DatasetConstPointerType sample) const override;
 
-  /**
-   * Converts the given sample Vector to a Sample (an itk::Mesh)
-   */
-  DatasetPointerType
-  SampleVectorToSample(const statismo::VectorType & sample) const;
+  virtual DatasetPointerType
+  SampleVectorToSample(const statismo::VectorType & sample) const override;
 
-  /**
-   * Returns the value of the sample at the point with the given id.
-   */
-  ValueType
-  PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const;
+  virtual ValueType
+  PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
 
-  /**
-   * Given a vector, represening a points convert it to an itkPoint
-   */
-  ValueType
-  PointSampleVectorToPointSample(const statismo::VectorType & pointSample) const;
+  virtual ValueType
+  PointSampleVectorToPointSample(const statismo::VectorType & pointSample) const override;
 
-  /**
-   * Given an itkPoint, convert it to a sample vector
-   */
-  statismo::VectorType
-  PointSampleToPointSampleVector(const ValueType & v) const;
+  virtual statismo::VectorType
+  PointSampleToPointSampleVector(const ValueType & v) const override;
 
-  /**
-   * Save the state of the representer (this simply saves the reference)
-   */
-  void
-  Save(const H5::Group & fg) const;
-
-  /// return the number of points of the reference
   virtual unsigned
   GetNumberOfPoints() const;
 
   /// return the point id associated with the given point
   /// \warning This works currently only for points that are defined on the reference
   virtual unsigned
-  GetPointIdForPoint(const PointType & point) const;
-
-  /// return the reference used in the representer
-  DatasetConstPointerType
-  GetReference() const
-  {
-    return m_reference;
-  }
-
-  void
-  Delete() const
-  {
-    this->UnRegister();
-  }
-
-
-  void DeleteDataset(DatasetPointerType) const {};
-  DatasetPointerType
-  CloneDataset(DatasetConstPointerType mesh) const;
+  GetPointIdForPoint(const PointType & point) const override;
 
 private:
   static unsigned
@@ -241,7 +198,7 @@ private:
   }
 
   StandardMeshRepresenter *
-  CloneImpl() const;
+  CloneImpl() const override;
 
   typename MeshType::Pointer
   LoadRef(const H5::Group & fg) const;
@@ -250,11 +207,16 @@ private:
 
   // returns the closest point for the given mesh
   unsigned
-  FindClosestPoint(const MeshType * mesh, const PointType pt) const;
+  FindClosestPoint(const MeshType * mesh, const PointType& pt) const;
+
+  // return the closest point in reference
+  unsigned
+  FindClosestPoint(const PointType& pt) const;
 
   DatasetConstPointerType m_reference;
   DomainType              m_domain;
   mutable PointCacheType  m_pointCache;
+  typename PointsLocatorType::Pointer m_locator;
 };
 
 
@@ -263,4 +225,4 @@ private:
 
 #include "itkStandardMeshRepresenter.hxx"
 
-#endif /* ITK_STANDARD_MESH_REPRESENTER */
+#endif

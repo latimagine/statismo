@@ -38,14 +38,14 @@
 #ifndef __STATIMO_ITK_STATISTICAL_SHAPE_MODEL_TRANSFORM_H_
 #define __STATIMO_ITK_STATISTICAL_SHAPE_MODEL_TRANSFORM_H_
 
-#include <iostream>
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkStatisticalModelTransformBase.h"
 
 #include <itkImage.h>
 #include <itkVector.h>
 
-#include "statismo/ITK/itkStandardImageRepresenter.h"
-#include "statismo/ITK/itkStatisticalModel.h"
-#include "statismo/ITK/itkStatisticalModelTransformBase.h"
+#include <iostream>
 
 namespace itk
 {
@@ -62,29 +62,22 @@ class ITK_EXPORT StatisticalShapeModelTransform
   : public itk::StatisticalModelTransformBase<TRepresenter, TScalarType, TDimension>
 {
 public:
-  /* Standard class typedefs. */
-  typedef StatisticalShapeModelTransform                                            Self;
-  typedef itk::StatisticalModelTransformBase<TRepresenter, TScalarType, TDimension> Superclass;
-  typedef SmartPointer<Self>                                                        Pointer;
-  typedef SmartPointer<const Self>                                                  ConstPointer;
-
+  /* Standard class using =s. */
+  using Self = StatisticalShapeModelTransform;
+  using Superclass = itk::StatisticalModelTransformBase<TRepresenter, TScalarType, TDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   itkSimpleNewMacro(Self);
-
-
   /** Run-time type information (and related methods). */
   itkTypeMacro(StatisticalShapeModelTransform, Superclass);
 
+  using InputPointType = typename Superclass::InputPointType;
+  using OutputPointType = typename Superclass::OutputPointType;
+  using RepresenterType = typename Superclass::RepresenterType;
 
-  typedef typename Superclass::InputPointType  InputPointType;
-  typedef typename Superclass::OutputPointType OutputPointType;
-  typedef typename Superclass::RepresenterType RepresenterType;
-
-  /**
-   * Clone the current transform
-   */
   virtual ::itk::LightObject::Pointer
-  CreateAnother() const
+  CreateAnother() const override
   {
     ::itk::LightObject::Pointer smartPtr;
     Pointer                     another = Self::New().GetPointer();
@@ -94,36 +87,13 @@ public:
     return smartPtr;
   }
 
-
-  /**
-   * Transform a given point according to the deformation induced by the StatisticalModel,
-   * given the current parameters.
-   *
-   * \param pt The point to tranform
-   * \return The transformed point
-   */
   virtual OutputPointType
-  TransformPoint(const InputPointType & pt) const
+  TransformPoint(const InputPointType & pt) const override
   {
-    typename RepresenterType::ValueType d;
-    try
-    {
-      d = this->m_StatisticalModel->DrawSampleAtPoint(this->m_coeff_vector, pt);
-    }
-    catch (ExceptionObject & e)
-    {
-      std::cout << "exception occured at point " << pt << std::endl;
-      std::cout << "message " << e.what() << std::endl;
-    }
-    return d;
+    return this->m_statisticalModel->DrawSampleAtPoint(this->m_coeffVector, pt);
   }
 
-  StatisticalShapeModelTransform() {}
-
-private:
-  StatisticalShapeModelTransform(const StatisticalShapeModelTransform & orig); // purposely not implemented
-  StatisticalShapeModelTransform &
-  operator=(const StatisticalShapeModelTransform & rhs); // purposely not implemented
+  StatisticalShapeModelTransform() = default;
 };
 
 

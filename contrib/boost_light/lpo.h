@@ -419,7 +419,7 @@ program_options<Ts...>::parse(int argc, char ** argv)
 
     // check if it is a flag
     match = std::any_of(std::cbegin(m_flag_list), std::cend(m_flag_list), [&arg, this](auto & p) {
-      bool match = has_arg_match(p, arg);
+      bool match = this->has_arg_match(p, arg);
       if (match)
       {
         *(p.val) = true;
@@ -440,7 +440,7 @@ program_options<Ts...>::parse(int argc, char ** argv)
         std::visit(
           [&arg, &match, &args_count, &args, &argc, this](auto && opt) {
             using T = typename std::decay_t<decltype(opt)>::value_type;
-            if (has_arg_match(opt, arg))
+            if (this->has_arg_match(opt, arg))
             {
               if (args_count == (argc - 1))
               {
@@ -458,7 +458,7 @@ program_options<Ts...>::parse(int argc, char ** argv)
 
               if constexpr (std::is_arithmetic_v<T>)
               {
-                if (!in_range(opt))
+                if (!this->in_range(opt))
                 {
                   throw std::runtime_error("out of range value for option <" + opt.name + ">");
                 }
@@ -541,7 +541,7 @@ program_options<Ts...>::parse(int argc, char ** argv)
 
           if constexpr (std::is_arithmetic_v<T>)
           {
-            if (!in_range(opt))
+            if (!this->in_range(opt))
             {
               throw std::runtime_error("out of range value for pos argument number " + std::to_string(i + 1));
             }

@@ -99,11 +99,6 @@ public:
   Load(const H5::Group & fg);
 
   virtual ~vtkStandardImageRepresenter();
-  /*void
-  Delete() const
-  {
-    delete this;
-  }*/
 
   void
   DeleteDataset(DatasetPointerType d) const {

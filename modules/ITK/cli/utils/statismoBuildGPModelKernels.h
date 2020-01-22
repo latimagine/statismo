@@ -31,6 +31,9 @@
  *
  */
 
+#ifndef __STATISMO_BUILD_GP_MODEL_KERNELS_H_
+#define __STATISMO_BUILD_GP_MODEL_KERNELS_H_
+
 #include <statismo/core/KernelCombinators.h>
 #include <statismo/core/Kernels.h>
 
@@ -47,53 +50,69 @@ You can add your kernels here:
   2. Write a function in this file that creates your kernel (create it on the heap and NOT on the stack; it will be
 deleted, don't worry) Your function will receive a vector containing the kernel arguments (vector<string>). You have to
 parse them or thrown an itk::ExceptionObject if something goes wrong.
-  3. Add your kernel to the kernel map (do this in the function createKernelMap(); your kernel name has to be lowercase)
+  3. Add your kernel to the kernel map (do this in the function \a CreateKernelMap(); your kernel name has to be
+lowercase)
   4. Document your kernel in the statismo-build-gp-model.md file. (Examples for kernels with multiple parameters are in
 there, but currently commented out)
 */
 
-
 namespace statismo::cli
 {
 
-const unsigned                                          Dimensionality3D = 3;
-typedef itk::Mesh<float, Dimensionality3D>              DataTypeShape;
-typedef itk::Vector<float, Dimensionality3D>            VectorPixel3DType;
-typedef itk::Image<VectorPixel3DType, Dimensionality3D> DataType3DDeformation;
-const unsigned                                          Dimensionality2D = 2;
-typedef itk::Vector<float, Dimensionality2D>            VectorPixel2DType;
-typedef itk::Image<VectorPixel2DType, Dimensionality2D> DataType2DDeformation;
+//
+// Internal type
+//
+
+constexpr unsigned Dimensionality3D = 3;
+using DataTypeShape = itk::Mesh<float, Dimensionality3D>;
+using VectorPixel3DType = itk::Vector<float, Dimensionality3D>;
+using DataType3DDeformation = itk::Image<VectorPixel3DType, Dimensionality3D>;
+constexpr unsigned Dimensionality2D = 2;
+using VectorPixel2DType = itk::Vector<float, Dimensionality2D>;
+using DataType2DDeformation = itk::Image<VectorPixel2DType, Dimensionality2D>;
+
+//
+// Internal structure
+//
 
 struct KernelContainer
 {
-  // TODO: think of smart pointer in the future?
-  std::function<const statismo::ScalarValuedKernel<DataTypeShape::PointType> *(const std::vector<std::string> &)>
+  std::function<std::unique_ptr<statismo::ScalarValuedKernel<DataTypeShape::PointType>>(
+    const std::vector<std::string> &)>
     createKernelShape;
-  std::function<const statismo::ScalarValuedKernel<DataType3DDeformation::PointType> *(
+  std::function<std::unique_ptr<statismo::ScalarValuedKernel<DataType3DDeformation::PointType>>(
     const std::vector<std::string> &)>
     createKernel3DDeformation;
-  std::function<const statismo::ScalarValuedKernel<DataType2DDeformation::PointType> *(
+  std::function<std::unique_ptr<statismo::ScalarValuedKernel<DataType2DDeformation::PointType>>(
     const std::vector<std::string> &)>
     createKernel2DDeformation;
 };
-typedef std::map<std::string, KernelContainer> KernelMapType;
-static KernelMapType                           sKernelMap;
+
+//
+// Internal kernel map used to retrieve the different kernels
+//
+
+using KernelMapType = std::map<std::string, KernelContainer>;
+static KernelMapType s_kernelMap;
+
+//
+// Kernel definitions
+//
 
 template <class TPoint>
 class GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
-  typedef typename TPoint::CoordRepType CoordRepType;
-  typedef vnl_vector<CoordRepType>      VectorType;
+  using CoordRepType = typename TPoint::CoordRepType;
+  using VectorType = vnl_vector<CoordRepType>;
 
-
-  GaussianKernel(double sigma)
+  explicit GaussianKernel(double sigma)
     : m_sigma(sigma)
     , m_sigma2(-1.0 / (sigma * sigma))
   {}
 
   inline double
-  operator()(const TPoint & x, const TPoint & y) const
+  operator()(const TPoint & x, const TPoint & y) const override
   {
     VectorType xv = x.GetVnlVector();
     VectorType yv = y.GetVnlVector();
@@ -104,7 +123,7 @@ public:
   }
 
   std::string
-  GetKernelInfo() const
+  GetKernelInfo() const override
   {
     std::ostringstream os;
     os << "GaussianKernel(" << m_sigma << ")";
@@ -121,16 +140,13 @@ template <class TPoint>
 class BSplineKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
-  typedef typename TPoint::CoordRepType CoordRepType;
-  typedef vnl_vector<CoordRepType>      VectorType;
+  using CoordRepType = typename TPoint::CoordRepType;
+  using VectorType = vnl_vector<CoordRepType>;
 
-
-  BSplineKernel(double support)
+  explicit BSplineKernel(double support)
     : m_support(support)
   {}
 
-
-  // the 3rd order b-spline basis function
   double
   bspline3(const double & x) const
   {
@@ -154,13 +170,14 @@ public:
     {
       splineValue = 0;
     }
+
     return splineValue;
   }
 
   double
-  tensorProductSpline(const VectorType & x) const
+  TensorProductSpline(const VectorType & x) const
   {
-    double prod = 1;
+    double prod{ 1.0 };
     for (unsigned d = 0; d < x.size(); ++d)
     {
       prod *= bspline3(x[d]);
@@ -168,11 +185,9 @@ public:
     return prod;
   }
 
-
   inline double
-  operator()(const TPoint & x, const TPoint & y) const
+  operator()(const TPoint & x, const TPoint & y) const override
   {
-
     assert(x.Size() == y.Size());
     const unsigned dim = x.Size();
 
@@ -180,7 +195,7 @@ public:
     {
       std::ostringstream os;
       os << "Currently only dimensions 1 - 3 are supported.  ( Received" << dim << ")";
-      throw statismo::StatisticalModelException(os.str().c_str());
+      throw statismo::StatisticalModelException(os.str().c_str(), statismo::Status::BAD_INPUT_ERROR);
     }
 
     const double supportBasisFunction = 4.0;
@@ -197,7 +212,6 @@ public:
       kUpper[d] = static_cast<int>(std::floor(std::min(xScaled[d], yScaled[d]) + 0.5 * supportBasisFunction));
     }
 
-
     // We need to generate the cartesian product k_1 x ... x k_d, where k_i goes through all the integers
     // within the given bounds. A non-recursive solution requires d loops. Here we just write down the cases
     // for 1 2 and 3D
@@ -209,7 +223,7 @@ public:
       {
         VectorType k(1);
         k[0] = kx;
-        sum += (tensorProductSpline(xScaled - k) * tensorProductSpline(yScaled - k));
+        sum += (TensorProductSpline(xScaled - k) * TensorProductSpline(yScaled - k));
       }
       else
       {
@@ -221,7 +235,7 @@ public:
             VectorType k(2);
             k[0] = kx;
             k[1] = ky;
-            sum += (tensorProductSpline(xScaled - k) * tensorProductSpline(yScaled - k));
+            sum += (TensorProductSpline(xScaled - k) * TensorProductSpline(yScaled - k));
           }
           else
           {
@@ -232,7 +246,7 @@ public:
               k[0] = kx;
               k[1] = ky;
               k[2] = kz;
-              sum += (tensorProductSpline(xScaled - k) * tensorProductSpline(yScaled - k));
+              sum += (TensorProductSpline(xScaled - k) * TensorProductSpline(yScaled - k));
               kz += 1;
             }
           }
@@ -247,7 +261,7 @@ public:
   }
 
   std::string
-  GetKernelInfo() const
+  GetKernelInfo() const override
   {
     std::ostringstream os;
     os << "BSplineKernel(" << m_support << ")";
@@ -257,7 +271,6 @@ public:
 private:
   double m_support;
 };
-
 
 //
 // A kernel that represents deformations on different scale levels.
@@ -269,30 +282,25 @@ template <class TPoint>
 class MultiscaleKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
-  typedef typename TPoint::CoordRepType CoordRepType;
-  typedef vnl_vector<CoordRepType>      VectorType;
-
+  using CoordRepType = typename TPoint::CoordRepType;
+  using VectorType = vnl_vector<CoordRepType>;
 
   MultiscaleKernel(double supportBaseLevel, unsigned numberOfLevels)
     : m_supportBaseLevel(supportBaseLevel)
     , m_numberOfLevels(numberOfLevels)
   {
-    double support = supportBaseLevel;
     for (unsigned i = 0; i < numberOfLevels; ++i)
     {
-      m_kernels.push_back(std::make_shared<BSplineKernel<TPoint>>(m_supportBaseLevel * std::pow(2, -1.0 * i)));
+      m_kernels.push_back(std::make_unique<BSplineKernel<TPoint>>(m_supportBaseLevel * std::pow(2, -1.0 * i)));
       m_kernelWeights.push_back(std::pow(2, -1.0 * i));
     }
   }
 
-
   inline double
-  operator()(const TPoint & x, const TPoint & y) const
+  operator()(const TPoint & x, const TPoint & y) const override
   {
-
     assert(x.Size() == y.Size());
-    const unsigned dim = x.Size();
-    double         sum = 0;
+    double sum = 0;
     for (unsigned i = 0; i < m_kernels.size(); ++i)
     {
       sum += (*m_kernels[i])(x, y) * m_kernelWeights[i];
@@ -302,7 +310,7 @@ public:
   }
 
   std::string
-  GetKernelInfo() const
+  GetKernelInfo() const override
   {
     std::ostringstream os;
     os << "MultiscaleKernel(" << m_supportBaseLevel << ", " << m_numberOfLevels << ")";
@@ -312,28 +320,30 @@ public:
 private:
   double                                              m_supportBaseLevel;
   unsigned                                            m_numberOfLevels;
-  std::vector<std::shared_ptr<BSplineKernel<TPoint>>> m_kernels;
+  std::vector<std::unique_ptr<BSplineKernel<TPoint>>> m_kernels;
   std::vector<double>                                 m_kernelWeights;
 };
 
+//
+// Kernel builders
+//
 
 template <class TPoint>
 struct GaussianKernelBuilder
 {
-  static const statismo::ScalarValuedKernel<TPoint> *
-  createKernel(const std::vector<std::string> & kernelArgs)
+  static std::unique_ptr<statismo::ScalarValuedKernel<TPoint>>
+  CreateKernel(const std::vector<std::string> & kernelArgs)
   {
     if (kernelArgs.size() == 1)
     {
       try
       {
-        double sigma = statismo::utils::LexicalCast<double>(kernelArgs[0]);
+        auto sigma = statismo::utils::LexicalCast<double>(kernelArgs[0]);
         if (sigma <= 0)
         {
           itkGenericExceptionMacro(<< "Error: sigma has to be > 0");
         }
-        // The kernel will be deleted automatically once it's no longer being used
-        return new GaussianKernel<TPoint>(sigma);
+        return std::make_unique<GaussianKernel<TPoint>>(sigma);
       }
       catch (const std::bad_cast &)
       {
@@ -348,26 +358,24 @@ struct GaussianKernelBuilder
   }
 };
 
-
 template <class TPoint>
 struct MultiscaleKernelBuilder
 {
-  static const statismo::ScalarValuedKernel<TPoint> *
-  createKernel(const std::vector<std::string> & kernelArgs)
+  static std::unique_ptr<statismo::ScalarValuedKernel<TPoint>>
+  CreateKernel(const std::vector<std::string> & kernelArgs)
   {
     if (kernelArgs.size() == 2)
     {
       try
       {
-        double   baseLevel = statismo::utils::LexicalCast<double>(kernelArgs[0]);
-        unsigned numberOfLevels = statismo::utils::LexicalCast<unsigned>(kernelArgs[1]);
+        auto baseLevel = statismo::utils::LexicalCast<double>(kernelArgs[0]);
+        auto numberOfLevels = statismo::utils::LexicalCast<unsigned>(kernelArgs[1]);
 
         if (baseLevel <= 0)
         {
           itkGenericExceptionMacro(<< "Error: baselevel has to be > 0");
         }
-        // The kernel will be deleted automatically once it's no longer being used
-        return new MultiscaleKernel<TPoint>(baseLevel, numberOfLevels);
+        return std::make_unique<MultiscaleKernel<TPoint>>(baseLevel, numberOfLevels);
       }
       catch (const std::bad_cast &)
       {
@@ -383,25 +391,31 @@ struct MultiscaleKernelBuilder
   }
 };
 
+//
+// Kernel map assessor and initializers
+//
+
 // Create static kernel map
 template <typename T>
 using KernelBuilderType = std::function<const statismo::ScalarValuedKernel<T> *(const std::vector<std::string> &)>;
 
 template <template <typename> typename Builder>
 static void
-addKernelToKernelMap(const std::string & kernelName)
+AddKernelToKernelMap(const std::string & kernelName)
 {
   KernelContainer kernel;
-  kernel.createKernel3DDeformation = &Builder<DataType3DDeformation::PointType>::createKernel;
-  kernel.createKernel2DDeformation = &Builder<DataType2DDeformation::PointType>::createKernel;
-  kernel.createKernelShape = &Builder<DataTypeShape::PointType>::createKernel;
-  sKernelMap[kernelName] = kernel;
+  kernel.createKernel3DDeformation = &Builder<DataType3DDeformation::PointType>::CreateKernel;
+  kernel.createKernel2DDeformation = &Builder<DataType2DDeformation::PointType>::CreateKernel;
+  kernel.createKernelShape = &Builder<DataTypeShape::PointType>::CreateKernel;
+  s_kernelMap[kernelName] = kernel;
 }
 
 static void
-createKernelMap()
+CreateKernelMap()
 {
-  addKernelToKernelMap<GaussianKernelBuilder>("gaussian");
-  addKernelToKernelMap<MultiscaleKernelBuilder>("multiscale");
+  AddKernelToKernelMap<GaussianKernelBuilder>("gaussian");
+  AddKernelToKernelMap<MultiscaleKernelBuilder>("multiscale");
 }
 } // namespace statismo::cli
+
+#endif

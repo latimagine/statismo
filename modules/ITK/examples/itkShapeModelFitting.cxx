@@ -39,6 +39,12 @@
  * This example shows how the fitting of a statistical shape model to a Mesh can be performed with Statismo and the itk
  * Registration framework.
  */
+
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+#include "statismo/ITK/itkIO.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkStatisticalShapeModelTransform.h"
+
 #include <itkCommand.h>
 #include <itkEuclideanDistancePointMetric.h>
 #include <itkLevenbergMarquardtOptimizer.h>
@@ -46,133 +52,108 @@
 #include <itkMeshFileReader.h>
 #include <itkPointSetToPointSetRegistrationMethod.h>
 
-#include "statismo/ITK/itkStandardMeshRepresenter.h"
-#include "statismo/ITK/itkIO.h"
-#include "statismo/ITK/itkStatisticalModel.h"
-#include "statismo/ITK/itkStatisticalShapeModelTransform.h"
-
-
-const unsigned                       Dimensions = 3;
-typedef itk::Mesh<float, Dimensions> MeshType;
-
-typedef itk::StandardMeshRepresenter<float, Dimensions> RepresenterType;
-
-typedef itk::MeshFileReader<MeshType>                         MeshReaderType;
-typedef itk::EuclideanDistancePointMetric<MeshType, MeshType> MetricType;
-
+namespace
+{
+constexpr unsigned Dimensions = 3;
+using MeshType = itk::Mesh<float, Dimensions>;
+using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+using MeshReaderType = itk::MeshFileReader<MeshType>;
+using MetricType = itk::EuclideanDistancePointMetric<MeshType, MeshType>;
 // As a transform, we use the StatisticalShapeModelTransform, that comes with statismo
-typedef itk::StatisticalShapeModelTransform<MeshType, double, Dimensions> TransformType;
+using TransformType = itk::StatisticalShapeModelTransform<MeshType, double, Dimensions>;
+using RegistrationFilterType = itk::PointSetToPointSetRegistrationMethod<MeshType, MeshType>;
+using OptimizerType = itk::LevenbergMarquardtOptimizer;
+using StatisticalModelType = itk::StatisticalModel<MeshType>;
 
-
-typedef itk::PointSetToPointSetRegistrationMethod<MeshType, MeshType> RegistrationFilterType;
-
-typedef itk::LevenbergMarquardtOptimizer OptimizerType;
-
-typedef itk::StatisticalModel<MeshType> StatisticalModelType;
-
-
-class IterationStatusObserver : public itk::Command
+class _IterationStatusObserver : public itk::Command
 {
 public:
-  typedef IterationStatusObserver Self;
-  typedef itk::Command            Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
+  using Self = _IterationStatusObserver;
+  using Superclass = itk::Command;
+  using Pointer = itk::SmartPointer<Self>;
 
   itkNewMacro(Self);
 
-
-  typedef const OptimizerType * OptimizerPointer;
-
+  using OptimizerPointer = const OptimizerType *;
 
   void
-  Execute(itk::Object * caller, const itk::EventObject & event)
+  Execute(itk::Object * caller, const itk::EventObject & event) override
   {
-    Execute((const itk::Object *)caller, event);
+    Execute(static_cast<const itk::Object *>(caller), event);
   }
 
   void
-  Execute(const itk::Object * object, const itk::EventObject & event)
+  Execute(const itk::Object * object, const itk::EventObject & event) override
   {
-    OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>(object);
+    auto optimizer = dynamic_cast<OptimizerPointer>(object);
 
     if (!itk::IterationEvent().CheckEvent(&event))
     {
       return;
     }
 
-    std::cout << "Iteration: " << ++m_iter_no << " model arameters " << optimizer->GetCachedCurrentPosition()
+    std::cout << "Iteration: " << ++m_iterdx << " model arameters " << optimizer->GetCachedCurrentPosition()
               << std::endl;
   }
 
-
-protected:
-  IterationStatusObserver()
-    : m_iter_no(0){};
-
-  virtual ~IterationStatusObserver(){};
-
 private:
-  int m_iter_no;
+  int m_iterdx{ 0 };
 };
 
+} // namespace
 
 int
 main(int argc, char * argv[])
 {
-
   if (argc < 4)
   {
-    std::cout << "usage " << argv[0] << " modelname target outputmesh" << std::endl;
-    exit(-1);
+    std::cerr << "usage " << argv[0] << " modelname target outputmesh" << std::endl;
+    return 1;
   }
 
-  char * modelname = argv[1];
-  char * targetname = argv[2];
-  char * outputmeshname = argv[3];
+  const char * modelname = argv[1];
+  const char * targetname = argv[2];
+  const char * outputmeshname = argv[3];
 
   // load the model
-  RepresenterType::Pointer      representer = RepresenterType::New();
-  StatisticalModelType::Pointer model = StatisticalModelType::New();
-  model = itk::StatismoIO<MeshType>::LoadStatisticalModel(representer, modelname);
+  auto              representer = RepresenterType::New();
+  auto              model = itk::StatismoIO<MeshType>::LoadStatisticalModel(representer, modelname);
   MeshType::Pointer fixedPointSet = model->GetRepresenter()->GetReference();
   std::cout << "model succesully loaded " << std::endl;
 
   // load the image to which we will fit
-  MeshReaderType::Pointer targetReader = MeshReaderType::New();
+  auto targetReader = MeshReaderType::New();
   targetReader->SetFileName(targetname);
   targetReader->Update();
   MeshType::Pointer targetMesh = targetReader->GetOutput();
 
 
   // now we perform the fitting, using the itk registration framework
-  TransformType::Pointer transform = TransformType::New();
+  auto transform = TransformType::New();
   transform->SetStatisticalModel(model);
   transform->SetIdentity();
 
   // Setting up the fitting
-  OptimizerType::Pointer optimizer = OptimizerType::New();
+  auto optimizer = OptimizerType::New();
   optimizer->SetNumberOfIterations(100);
   optimizer->SetUseCostFunctionGradient(false);
   optimizer->SetGradientTolerance(1e-5);
   optimizer->SetValueTolerance(1e-5);
   optimizer->SetEpsilonFunction(1e-6);
 
-
-  typedef IterationStatusObserver ObserverType;
-  ObserverType::Pointer           observer = ObserverType::New();
+  using ObserverType = _IterationStatusObserver;
+  auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 
-  MetricType::Pointer metric = MetricType::New();
+  auto metric = MetricType::New();
 
-
-  RegistrationFilterType::Pointer registration = RegistrationFilterType::New();
+  auto registration = RegistrationFilterType::New();
   registration->SetInitialTransformParameters(transform->GetParameters());
   registration->SetMetric(metric);
   registration->SetOptimizer(optimizer);
   registration->SetTransform(transform);
   registration->SetFixedPointSet(targetMesh);
   registration->SetMovingPointSet(fixedPointSet);
-
 
   try
   {
@@ -181,16 +162,19 @@ main(int argc, char * argv[])
   }
   catch (itk::ExceptionObject & o)
   {
-    std::cout << "caught exception " << o << std::endl;
+    std::cerr << "caught exception " << o << std::endl;
+    return 1;
   }
 
   // We obtain the fitting result by drawing the model instance that belongs to the
   // optimal tranform parameters (coefficients)
-  MeshType::Pointer mesh = model->DrawSample(transform->GetCoefficients());
+  auto mesh = model->DrawSample(transform->GetCoefficients());
 
   // Write out the fitting result
-  itk::MeshFileWriter<MeshType>::Pointer writer = itk::MeshFileWriter<MeshType>::New();
+  auto writer = itk::MeshFileWriter<MeshType>::New();
   writer->SetFileName(outputmeshname);
   writer->SetInput(mesh);
   writer->Update();
+
+  return 0;
 }

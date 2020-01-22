@@ -31,56 +31,107 @@
  *
  */
 
+#include "utils/statismoBuildPosteriorModelUtils.h"
+
+#include "statismo/ITK/itkStandardImageRepresenter.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+#include "statismo/ITK/itkIO.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+
 #include "lpo.h"
 
-#include <itkCompositeTransform.h>
 #include <itkImage.h>
 #include <itkMesh.h>
 #include <itkPointsLocator.h>
-#include <statismo/ITK/itkStandardImageRepresenter.h>
-#include <statismo/ITK/itkStandardMeshRepresenter.h>
-#include <statismo/ITK/itkIO.h>
-#include <statismo/ITK/itkStatisticalModel.h>
 #include <itkVersorRigid3DTransform.h>
-
-#include "utils/statismo-fitting-utils.h"
-
-const unsigned Dimensionality3D = 3;
-const unsigned Dimensionality2D = 2;
 
 namespace po = lpo;
 using namespace std;
 
-struct ProgramOptions
+namespace
 {
-  string strModelType;
-  string strInputModelFileName;
-  string strOutputModelFileName;
+constexpr unsigned _Dimensionality3D = 3;
+constexpr unsigned _Dimensionality2D = 2;
 
-  string strInputMeshFileName;
-
-  string strInputFixedLandmarksFileName;
-  string strInputMovingLandmarksFileName;
-  double dVariance;
-
-  unsigned uNumberOfDimensions;
+struct _ProgramOptions
+{
+  string   strModelType;
+  string   strInputModelFileName;
+  string   strOutputModelFileName;
+  string   strInputMeshFileName;
+  string   strInputFixedLandmarksFileName;
+  string   strInputMovingLandmarksFileName;
+  double   dVariance{ 0.0 };
+  unsigned uNumberOfDimensions{ 0 };
 };
 
 bool
-isOptionsConflictPresent(ProgramOptions & opt);
+_IsOptionsConflictPresent(_ProgramOptions & opt)
+{
+  statismo::utils::ToLower(opt.strModelType);
+  return ((!opt.strInputFixedLandmarksFileName.empty()) ^ (!opt.strInputMovingLandmarksFileName.empty())) ||
+         !((!opt.strInputFixedLandmarksFileName.empty()) ^ (!opt.strInputMeshFileName.empty())) ||
+         (opt.strModelType != "shape" && opt.strModelType != "deformation") || opt.strInputModelFileName.empty() ||
+         opt.strOutputModelFileName.empty() ||
+         (opt.strModelType == "deformation" && !opt.strInputMeshFileName.empty()) ||
+         (opt.strModelType == "shape" && opt.uNumberOfDimensions != 3);
+}
+
 void
-buildPosteriorShapeModel(const ProgramOptions & opt);
+_BuildPosteriorShapeModel(const _ProgramOptions & opt)
+{
+  using DataType = itk::Mesh<float, _Dimensionality3D>;
+  using StatisticalModelType = itk::StatisticalModel<DataType>;
+  using RepresenterType = itk::StandardMeshRepresenter<float, _Dimensionality3D>;
+
+  auto representer = RepresenterType::New();
+  auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
+
+  StatisticalModelType::Pointer constrainedModel;
+  if (opt.strInputMeshFileName.empty())
+  {
+    using PointsLocatorType = itk::PointsLocator<DataType::PointsContainer>;
+    constrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
+      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance);
+  }
+  else
+  {
+    using MeshReaderType = itk::MeshFileReader<DataType>;
+    auto meshReader = MeshReaderType::New();
+    meshReader->SetFileName(opt.strInputMeshFileName);
+    meshReader->Update();
+    DataType::Pointer meshInCorrespondence = meshReader->GetOutput();
+    constrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType>(
+      model, meshInCorrespondence, opt.dVariance);
+  }
+
+  itk::StatismoIO<DataType>::SaveStatisticalModel(constrainedModel, opt.strOutputModelFileName);
+}
+
 template <unsigned Dimensionality>
 void
-buildPosteriorDeformationModel(const ProgramOptions & opt);
+_BuildPosteriorDeformationModel(const _ProgramOptions & opt)
+{
+  using VectorPixelType = itk::Vector<float, Dimensionality>;
+  using DataType = itk::Image<VectorPixelType, Dimensionality>;
+  using StatisticalModelType = itk::StatisticalModel<DataType>;
+  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality>;
 
+  auto representer = RepresenterType::New();
+  auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
+
+  itk::StatismoIO<DataType>::SaveStatisticalModel(
+    statismo::cli::BuildPosteriorDeformationModel<DataType, StatisticalModelType>(
+      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance),
+    opt.strOutputModelFileName);
+}
+} // namespace
 
 int
 main(int argc, char ** argv)
 {
-
-  ProgramOptions                                      poParameters;
-  lpo::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
+  _ProgramOptions                                    poParameters;
+  po::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
 
   parser
     .add_opt<std::string>({ "type",
@@ -100,20 +151,24 @@ main(int argc, char ** argv)
     .add_opt<std::string>({ "input-file",
                             "i",
                             "The path to the model file from which the posterior model will be built.",
-                            &poParameters.strInputModelFileName },
+                            &poParameters.strInputModelFileName,
+                            "" },
                           true)
     .add_opt<std::string>({ "landmarks-fixed",
                             "f",
                             "Name of the file where the fixed Landmarks are saved.",
-                            &poParameters.strInputFixedLandmarksFileName })
+                            &poParameters.strInputFixedLandmarksFileName,
+                            "" })
     .add_opt<std::string>({ "landmarks-moving",
                             "m",
                             "Name of the file where the moving Landmarks are saved.",
-                            &poParameters.strInputMovingLandmarksFileName })
+                            &poParameters.strInputMovingLandmarksFileName,
+                            "" })
     .add_opt<std::string>({ "corresponding-mesh",
                             "c",
                             "Path to the Mesh in correspondence. This is only available if the type is SHAPE.",
-                            &poParameters.strInputMeshFileName })
+                            &poParameters.strInputMeshFileName,
+                            "" })
     .add_opt<double>({ "landmarks-variance",
                        "v",
                        "The variance that will be used to build the posterior model.",
@@ -127,7 +182,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (isOptionsConflictPresent(poParameters))
+  if (_IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -138,21 +193,21 @@ main(int argc, char ** argv)
   {
     if (poParameters.strModelType == "shape")
     {
-      buildPosteriorShapeModel(poParameters);
+      _BuildPosteriorShapeModel(poParameters);
     }
     else
     {
-      if (poParameters.uNumberOfDimensions == Dimensionality2D)
+      if (poParameters.uNumberOfDimensions == _Dimensionality2D)
       {
-        buildPosteriorDeformationModel<Dimensionality2D>(poParameters);
+        _BuildPosteriorDeformationModel<_Dimensionality2D>(poParameters);
       }
       else
       {
-        buildPosteriorDeformationModel<Dimensionality3D>(poParameters);
+        _BuildPosteriorDeformationModel<_Dimensionality3D>(poParameters);
       }
     }
   }
-  catch (ifstream::failure & e)
+  catch (const ifstream::failure & e)
   {
     cerr << "Could not read a file:" << endl;
     cerr << e.what() << endl;
@@ -166,103 +221,4 @@ main(int argc, char ** argv)
   }
 
   return EXIT_SUCCESS;
-}
-
-bool
-isOptionsConflictPresent(ProgramOptions & opt)
-{
-  // if one set of the landmarks-file is provided, then both have to be provided (-> use XOR)
-  if (((opt.strInputFixedLandmarksFileName != "") ^ (opt.strInputMovingLandmarksFileName != "")) == true)
-  {
-    return true;
-  }
-
-  // either a mesh is used as reference or landmarks are used. It's not possible to use both at the same time or use
-  // none. (-> again XOR)
-  if (((opt.strInputFixedLandmarksFileName != "") ^ (opt.strInputMeshFileName != "")) == false)
-  {
-    return true;
-  }
-
-  if (opt.strInputModelFileName == "" || opt.strOutputModelFileName == "")
-  {
-    return true;
-  }
-
-  statismo::utils::ToLower(opt.strModelType);
-  if (opt.strModelType != "shape" && opt.strModelType != "deformation")
-  {
-    return true;
-  }
-
-  // A mesh in correspondence can only be used if the model type is shape
-  if (opt.strModelType == "deformation" && opt.strInputMeshFileName != "")
-  {
-    return true;
-  }
-
-  if (opt.strModelType == "deformation" && opt.uNumberOfDimensions != 2 && opt.uNumberOfDimensions != 3)
-  {
-    return true;
-  }
-
-  if (opt.strModelType == "shape" && opt.uNumberOfDimensions != 3)
-  {
-    return true;
-  }
-
-  return false;
-}
-
-
-void
-buildPosteriorShapeModel(const ProgramOptions & opt)
-{
-  typedef itk::Mesh<float, Dimensionality3D>                    DataType;
-  typedef itk::StatisticalModel<DataType>                       StatisticalModelType;
-  typedef itk::StandardMeshRepresenter<float, Dimensionality3D> RepresenterType;
-  RepresenterType::Pointer                                      pRepresenter = RepresenterType::New();
-  StatisticalModelType::Pointer                                 pModel = StatisticalModelType::New();
-  pModel =
-    itk::StatismoIO<DataType>::LoadStatisticalModel(pRepresenter.GetPointer(), opt.strInputModelFileName.c_str());
-
-  StatisticalModelType::Pointer pConstrainedModel;
-  if (opt.strInputMeshFileName == "")
-  {
-    typedef itk::PointsLocator<DataType::PointsContainer> PointsLocatorType;
-    pConstrainedModel = buildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
-      pModel, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance);
-  }
-  else
-  {
-    typedef itk::MeshFileReader<DataType> MeshReaderType;
-    MeshReaderType::Pointer               pMeshReader = MeshReaderType::New();
-    pMeshReader->SetFileName(opt.strInputMeshFileName.c_str());
-    pMeshReader->Update();
-    DataType::Pointer pMeshInCorrespondence = pMeshReader->GetOutput();
-    pConstrainedModel =
-      buildPosteriorShapeModel<DataType, StatisticalModelType>(pModel, pMeshInCorrespondence, opt.dVariance);
-  }
-
-  itk::StatismoIO<DataType>::SaveStatisticalModel(pConstrainedModel, opt.strOutputModelFileName.c_str());
-}
-
-template <unsigned Dimensionality>
-void
-buildPosteriorDeformationModel(const ProgramOptions & opt)
-{
-  typedef itk::Vector<float, Dimensionality>                             VectorPixelType;
-  typedef itk::Image<VectorPixelType, Dimensionality>                    DataType;
-  typedef itk::StatisticalModel<DataType>                                StatisticalModelType;
-  typedef itk::StandardImageRepresenter<VectorPixelType, Dimensionality> RepresenterType;
-  typename RepresenterType::Pointer                                      pRepresenter = RepresenterType::New();
-  typename StatisticalModelType::Pointer                                 pModel = StatisticalModelType::New();
-  pModel =
-    itk::StatismoIO<DataType>::LoadStatisticalModel(pRepresenter.GetPointer(), opt.strInputModelFileName.c_str());
-
-  typename StatisticalModelType::Pointer pConstrainedModel;
-  pConstrainedModel = buildPosteriorDeformationModel<DataType, StatisticalModelType>(
-    pModel, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance);
-
-  itk::StatismoIO<DataType>::SaveStatisticalModel(pConstrainedModel, opt.strOutputModelFileName.c_str());
 }

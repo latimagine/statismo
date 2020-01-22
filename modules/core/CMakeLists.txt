@@ -32,9 +32,9 @@ set_target_properties(statismo_core PROPERTIES
   VERSION "${statismo_LIB_VERSION}"
   SOVERSION "${statismo_LIB_SOVERSION}"
 )
-if(BUILD_WITH_TIDY)
+if(${BUILD_WITH_TIDY})
    set_target_properties(
-   ${statismo_core} PROPERTIES
+   statismo_core PROPERTIES
    CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
   )
 endif()

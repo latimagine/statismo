@@ -86,12 +86,6 @@ public:
   void
   Load(const H5::Group & fg);
 
-  /*void
-  Delete() const
-  {
-    delete this;
-  }*/
-
   virtual ~vtkStandardMeshRepresenter();
 
   const DomainType &

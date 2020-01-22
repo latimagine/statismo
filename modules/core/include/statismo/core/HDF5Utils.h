@@ -59,14 +59,14 @@ OpenOrCreateFile(const std::string & filename);
 
 /**
  * Opens the hdf5 group or creates it if it doesn't exist.
- * @param fg A file object
+ * @param file A file object
  * @param path An absolute path that defines a group
  * @param createPath if true, creates the path if it does not exist
  *
  * @return the group object representing the path in the hdf5 file
  */
 H5::Group
-OpenPath(H5::H5File & fg, const std::string & path, bool createPath = false);
+OpenPath(H5::H5File & file, const std::string & path, bool createPath = false);
 
 /**
  * Read a Matrix from a HDF5 File
@@ -81,11 +81,11 @@ ReadMatrix(const H5::H5Location & fg, const char * name, MatrixType & matrix);
  * Read a submatrix from the file, with the given number of Columns
  * @param fg The group
  * @param name The name of the entry
- * @param nCols The number of columns to be Read
+ * @param maxNumColumns The number of columns to be Read
  * @param matrix The output matrix
  */
 void
-ReadMatrix(const H5::H5Location & fg, const char * name, unsigned nCols, MatrixType & matrix);
+ReadMatrix(const H5::H5Location & fg, const char * name, unsigned maxNumColumns, MatrixType & matrix);
 
 /**
  * Read a Matrix of a given type from a HDF5 File
@@ -123,17 +123,16 @@ WriteMatrixOfType(const H5::H5Location &                             fg,
  * Read a Vector from a HDF5 File with the given number of elements
  * @param fg The group
  * @param name the name of the entry
- * @param numElements The number of elements to be Read from the file
+ * @param maxNumElements The number of elements to be Read from the file
  * @param the output vector
  */
 void
-ReadVector(const H5::H5Location & fg, const char * name, unsigned nElements, VectorType & vector);
+ReadVector(const H5::H5Location & fg, const char * name, unsigned maxNumElements, VectorType & vector);
 
 /**
  * Read a Vector from a HDF5 File
  * @param fg The group
  * @param name the name of the entry
- * @param numElements The number of elements to be Read from the file
  * @param the output vector
  */
 void
@@ -199,7 +198,7 @@ ReadString(const H5::H5Location & fg, const char * name);
  * @param s The string to be written
  */
 void
-WriteStringAttribute(const H5::H5Object & group, const char * name, const std::string & s);
+WriteStringAttribute(const H5::H5Object & fg, const char * name, const std::string & s);
 
 /** Writes an int attribute for the given group
  * @param fg The hdf5 group
@@ -211,20 +210,20 @@ WriteIntAttribute(const H5::H5Object & fg, const char * name, int value);
 
 
 /** Reads a string attribute from the given group
- * @param group the hdf5 group
+ * @param fg the hdf5 group
  * @param name the name of the entry in the group
  * @return the value
  */
 std::string
-ReadStringAttribute(const H5::H5Object & group, const char * name);
+ReadStringAttribute(const H5::H5Object & fg, const char * name);
 
 /** Reads a int attribute from the given group
- * @param group the hdf5 group
+ * @param fg the hdf5 group
  * @param name the name of the entry in the group
  * @return the value
  */
 int
-ReadIntAttribute(const H5::H5Object & group, const char * name);
+ReadIntAttribute(const H5::H5Object & fg, const char * name);
 
 
 /** Reads an integer from the hdf5 file

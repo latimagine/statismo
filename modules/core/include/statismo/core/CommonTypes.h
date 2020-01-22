@@ -43,6 +43,7 @@
 #include "statismo/core/Config.h"
 
 #include <memory>
+#include <cstdint>
 
 namespace statismo
 {
@@ -76,65 +77,65 @@ static constexpr unsigned FLOAT = 10;
 static constexpr unsigned DOUBLE = 11;
 
 template <class T>
-unsigned
+constexpr unsigned
 GetDataTypeId();
 
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<signed char>()
 {
   return SIGNED_CHAR;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<unsigned char>()
 {
   return UNSIGNED_CHAR;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<signed short>()
 {
   return SIGNED_SHORT;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<unsigned short>()
 {
   return UNSIGNED_SHORT;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<signed int>()
 {
   return SIGNED_INT;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<unsigned int>()
 {
   return UNSIGNED_INT;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<signed long>()
 {
   return SIGNED_LONG;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<unsigned long>()
 {
   return UNSIGNED_LONG;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<float>()
 {
   return FLOAT;
 }
 template <>
-inline unsigned
+inline constexpr unsigned
 GetDataTypeId<double>()
 {
   return DOUBLE;
@@ -231,7 +232,7 @@ public:
 };
 
 template <typename Callable>
-auto
+inline auto
 MakeStackUnwinder(Callable && c)
 {
   return StackUnwinder(std::forward<Callable>(c));

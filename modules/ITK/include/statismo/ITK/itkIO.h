@@ -39,21 +39,25 @@
 #ifndef __STATIMO_ITK_IO_H_
 #define __STATIMO_ITK_IO_H_
 
-#include "statismo/ITK/itkStatisticalModel.h"
 #include "statismo/core/IO.h"
-
+#include "statismo/ITK/itkStatisticalModel.h"
 
 namespace itk
 {
+
+//
+// \todo In core module, static only classes have been replaced
+//       by namespace enclosed free function. See if it is in the itk
+//       spirit to do this here as well.
+//
 
 template <typename T>
 class StatismoIO
 {
 private:
-  // These tyedefs are only used internally and as such are marked as private
-  typedef statismo::StatisticalModel<T>             StatisticalModelType;
-  typedef itk::StatisticalModel<T>                  ITKStatisticalModelType;
-  typedef typename ITKStatisticalModelType::Pointer ITKStatisticalModelTypePointer;
+  using StatisticalModelType = statismo::StatisticalModel<T>;
+  using ITKStatisticalModelType = itk::StatisticalModel<T>;
+  using ITKStatisticalModelTypePointer = typename ITKStatisticalModelType::Pointer;
 
 public:
   static ITKStatisticalModelTypePointer
@@ -63,10 +67,9 @@ public:
   {
     try
     {
-      ITKStatisticalModelTypePointer pModel = ITKStatisticalModelType::New();
-      pModel->SetStatismoImplObj(
-        statismo::IO<T>::LoadStatisticalModel(representer, filename, maxNumberOfPCAComponents));
-      return pModel;
+      auto model = ITKStatisticalModelType::New();
+      model->SetStatismoImplObj(statismo::IO<T>::LoadStatisticalModel(representer, filename, maxNumberOfPCAComponents));
+      return model;
     }
     catch (const statismo::StatisticalModelException & e)
     {
@@ -81,10 +84,10 @@ public:
   {
     try
     {
-      ITKStatisticalModelTypePointer pModel = ITKStatisticalModelType::New();
-      pModel->SetStatismoImplObj(
+      auto model = ITKStatisticalModelType::New();
+      model->SetStatismoImplObj(
         statismo::IO<T>::LoadStatisticalModel(representer, modelRoot, maxNumberOfPCAComponents));
-      return pModel;
+      return model;
     }
     catch (const statismo::StatisticalModelException & e)
     {
@@ -93,7 +96,7 @@ public:
   }
 
   static void
-  SaveStatisticalModel(const ITKStatisticalModelType * const model, const std::string & filename)
+  SaveStatisticalModel(const ITKStatisticalModelType * model, const std::string & filename)
   {
     try
     {
@@ -121,4 +124,4 @@ public:
 
 } // namespace itk
 
-#endif /* ITKSTATISMOIO_H_ */
+#endif

@@ -37,19 +37,33 @@
 
 #include <map>
 #include <algorithm>
+#include <iostream>
 
 namespace
 {
-const std::map<statismo::RepresenterDataType, std::string> RepresenterDataTypeMap = {
-  { statismo::RepresenterDataType::UNKNOWN, "UNKNOWN" },
-  { statismo::RepresenterDataType::POINT_SET, "POINT_SET" },
-  { statismo::RepresenterDataType::POLYGON_MESH, "POLYGON_MESH" },
-  { statismo::RepresenterDataType::VOLUME_MESH, "VOLUME_MESH" },
-  { statismo::RepresenterDataType::IMAGE, "IMAGE" },
-  { statismo::RepresenterDataType::VECTOR, "VECTOR" },
-  { statismo::RepresenterDataType::CUSTOM, "CUSTOM" }
-};
+const std::map<statismo::RepresenterDataType, std::string> &
+_DataTypeMap()
+{
+  try
+  {
+    static std::map<statismo::RepresenterDataType, std::string> representerDataTypeMap = {
+      { statismo::RepresenterDataType::UNKNOWN, "UNKNOWN" },
+      { statismo::RepresenterDataType::POINT_SET, "POINT_SET" },
+      { statismo::RepresenterDataType::POLYGON_MESH, "POLYGON_MESH" },
+      { statismo::RepresenterDataType::VOLUME_MESH, "VOLUME_MESH" },
+      { statismo::RepresenterDataType::IMAGE, "IMAGE" },
+      { statismo::RepresenterDataType::VECTOR, "VECTOR" },
+      { statismo::RepresenterDataType::CUSTOM, "CUSTOM" }
+    };
+    return representerDataTypeMap;
+  }
+  catch (...)
+  {
+    std::cerr << "unrecoverable error in static daat initialization" << std::endl;
+    exit(1);
+  }
 }
+} // namespace
 
 namespace statismo
 {
@@ -57,17 +71,17 @@ namespace statismo
 std::string
 TypeToString(RepresenterDataType type)
 {
-  return RepresenterDataTypeMap.at(type);
+  return _DataTypeMap().at(type);
 }
 
 RepresenterDataType
 TypeFromString(const std::string & s)
 {
-  auto match = std::find_if(std::cbegin(RepresenterDataTypeMap),
-                            std::cend(RepresenterDataTypeMap),
-                            [&](const auto & p) { return p.second == s; });
+  const auto & dataTypeMap = _DataTypeMap();
+  auto         match =
+    std::find_if(std::cbegin(dataTypeMap), std::cend(dataTypeMap), [&](const auto & p) { return p.second == s; });
 
-  if (match != std::cend(RepresenterDataTypeMap))
+  if (match != std::cend(dataTypeMap))
   {
     return match->first;
   }

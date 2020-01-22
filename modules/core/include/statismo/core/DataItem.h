@@ -94,7 +94,7 @@ public:
    * Generic delete function
    */
   virtual void
-  Delete() const = 0;
+  Delete() = 0;
 };
 
 /**
@@ -146,7 +146,7 @@ public:
   }
 
   virtual void
-  Delete() const override
+  Delete() override
   {
     delete this;
   }
