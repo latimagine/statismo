@@ -35,17 +35,16 @@
  *
  */
 
-#include <iostream>
+#include "statismo/core/ReducedVarianceModelBuilder.h"
+#include "statismo/core/StatisticalModel.h"
+#include "statismo/core/IO.h"
+#include "statismo/VTK/vtkStandardMeshRepresenter.h"
+
 #include <vtkPolyData.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
 
-#include "statismo/core/ReducedVarianceModelBuilder.h"
-#include "statismo/core/StatisticalModel.h"
-#include "statismo/core/IO.h"
-
-#include "statismo/VTK/vtkStandardMeshRepresenter.h"
-
+#include <iostream>
 #include <memory>
 
 using namespace statismo;
@@ -55,11 +54,10 @@ using namespace statismo;
 int
 main(int argc, char ** argv)
 {
-
   if (argc < 3)
   {
-    std::cout << "Usage " << argv[0] << " inputmodel outputmodel" << std::endl;
-    exit(-1);
+    std::cerr << "Usage " << argv[0] << " inputmodel outputmodel" << std::endl;
+    return 1;
   }
   std::string inputModelName(argv[1]);
   std::string outputModelName(argv[2]);
@@ -67,21 +65,20 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
-  typedef vtkStandardMeshRepresenter               RepresenterType;
-  typedef StatisticalModel<vtkPolyData>            StatisticalModelType;
-  typedef ReducedVarianceModelBuilder<vtkPolyData> ReducedVarianceModelBuilderType;
-
+  using RepresenterType = vtkStandardMeshRepresenter               ;
+  using StatisticalModelType = StatisticalModel<vtkPolyData>            ;
+  using ReducedVarianceModelBuilderType = ReducedVarianceModelBuilder<vtkPolyData> ;
 
   try
   {
 
     // To load a model, we call the static Load method, which returns (a pointer to) a
     // new StatisticalModel object
-    RepresenterType * representer = RepresenterType::Create();
-    auto              model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer, inputModelName);
+    auto representer = RepresenterType::SafeCreate();
+    auto              model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
     std::cout << "loaded model with variance of " << model->GetPCAVarianceVector().sum() << std::endl;
 
-    std::unique_ptr<ReducedVarianceModelBuilderType> reducedVarModelBuilder(ReducedVarianceModelBuilderType::Create());
+    auto reducedVarModelBuilder = ReducedVarianceModelBuilderType::SafeCreate();
 
     // build a model with only half the variance
     auto reducedModel = reducedVarModelBuilder->BuildNewModelWithVariance(model.get(), 0.5);
@@ -89,9 +86,12 @@ main(int argc, char ** argv)
 
     statismo::IO<vtkPolyData>::SaveStatisticalModel(reducedModel.get(), outputModelName);
   }
-  catch (StatisticalModelException & e)
+  catch (const StatisticalModelException & e)
   {
-    std::cout << "Exception occured while building the shape model" << std::endl;
-    std::cout << e.what() << std::endl;
+    std::cerr << "Exception occured while building the shape model" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }

@@ -34,60 +34,58 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include <iostream>
-#include <ostream>
-
-#include <vtkPolyDataReader.h>
-#include <vtkPolyData.h>
 
 #include "statismo/core/DataManager.h"
 #include "statismo/core/PCAModelBuilder.h"
 #include "statismo/core/StatisticalModel.h"
-
 #include "statismo/VTK/vtkStandardMeshRepresenter.h"
 
+#include <vtkPolyDataReader.h>
+#include <vtkPolyData.h>
+
+#include <iostream>
+#include <ostream>
 #include <memory>
 
 using namespace statismo;
-using std::unique_ptr;
 
+namespace {
 
-vtkPolyData *
-loadVTKPolyData(const std::string & filename)
+vtkSmartPointer<vtkPolyData>
+_LoadVTKPolyData(const std::string & filename)
 {
-  vtkPolyDataReader * reader = vtkPolyDataReader::New();
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.c_str());
   reader->Update();
-  vtkPolyData * pd = vtkPolyData::New();
-  pd->ShallowCopy(reader->GetOutput());
-  return pd;
+  return reader->GetOutput();
+}
 }
 
+//
 // illustrates the crossvalidation functionality of the data manager
+//
 int
 main(int argc, char ** argv)
 {
-
   if (argc < 2)
   {
-    std::cout << "Usage " << argv[0] << " datadir" << std::endl;
-    exit(-1);
+    std::cerr << "Usage " << argv[0] << " datadir" << std::endl;
+    return 1;
   }
   std::string datadir(argv[1]);
 
 
   // All the statismo classes have to be parameterized with the RepresenterType.
-  typedef vtkStandardMeshRepresenter                   RepresenterType;
-  typedef BasicDataManager<vtkPolyData>                DataManagerType;
-  typedef StatisticalModel<vtkPolyData>                StatisticalModelType;
-  typedef PCAModelBuilder<vtkPolyData>                 ModelBuilderType;
-  typedef DataManagerType::CrossValidationFoldListType CVFoldListType;
-  typedef DataManagerType::DataItemListType            DataItemListType;
-
+  using RepresenterType = vtkStandardMeshRepresenter                   ;
+  using DataManagerType = BasicDataManager<vtkPolyData>                ;
+  using StatisticalModelType = StatisticalModel<vtkPolyData>                ;
+  using ModelBuilderType = PCAModelBuilder<vtkPolyData>                 ;
+  using CVFoldListType = DataManagerType::CrossValidationFoldListType ;
+  using DataItemListType = DataManagerType::DataItemListType            ;
 
   try
   {
-    vtkPolyData * reference = loadVTKPolyData(datadir + "/hand-0.vtk");
+    auto reference = _LoadVTKPolyData(datadir + "/hand-0.vtk");
     auto          representer = RepresenterType::SafeCreate(reference);
 
     // create a data manager and add a number of datasets for model building
@@ -95,18 +93,13 @@ main(int argc, char ** argv)
 
     for (unsigned i = 0; i < 17; i++)
     {
-
       std::ostringstream ss;
       ss << datadir + "/hand-" << i << ".vtk";
-      const std::string datasetFilename = ss.str();
-      vtkPolyData *     dataset = loadVTKPolyData(datasetFilename);
+      std::string datasetFilename = ss.str();
 
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
-      dataManager->AddDataset(dataset, datasetFilename);
-
-      // it is save to delete the dataset after it was added, as the datamanager direclty copies it.
-      dataset->Delete();
+      dataManager->AddDataset(_LoadVTKPolyData(datasetFilename), datasetFilename);
     }
 
     std::cout << "succesfully loaded " << dataManager->GetNumberOfSamples() << " samples " << std::endl;
@@ -118,31 +111,27 @@ main(int argc, char ** argv)
     CVFoldListType cvFoldList = dataManager->GetCrossValidationFolds(4, true);
 
     // the CVFoldListType is a standard stl list over which we can iterate to get all the folds
-    for (CVFoldListType::const_iterator it = cvFoldList.begin(); it != cvFoldList.end(); ++it)
+    for (const auto& fold : cvFoldList)
     {
       // build the model as usual
-      auto model = pcaModelBuilder->BuildNewModel(it->GetTrainingData(), 0.01);
+      auto model = pcaModelBuilder->BuildNewModel(fold.GetTrainingData(), 0.01);
       std::cout << "built model with  " << model->GetNumberOfPrincipalComponents() << " principal components"
                 << std::endl;
 
       // Now we can iterate over the test data and do whatever validation we would like to do.
-      const DataItemListType testSamplesList = it->GetTestingData();
-
-      for (DataItemListType::const_iterator it = testSamplesList.begin(); it != testSamplesList.end(); ++it)
+      for (const auto& data : fold.GetTestingData())
       {
-        vtkPolyData * testSample = (*it)->GetSample();
-        std::cout << "probability of test sample under the model: " << model->ComputeProbability(testSample)
+        std::cout << "probability of test sample under the model: " << model->ComputeProbability(data->GetSample())
                   << std::endl;
-
-        // We are responsible for deleting the sample.
-        testSample->Delete();
       }
     }
-    reference->Delete();
   }
-  catch (StatisticalModelException & e)
+  catch (const StatisticalModelException & e)
   {
-    std::cout << "Exception occured while building the shape model" << std::endl;
-    std::cout << e.what() << std::endl;
+    std::cerr << "Exception occured while building the shape model" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }

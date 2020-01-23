@@ -34,29 +34,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include <iostream>
 
 #include "statismo/core/ConditionalModelBuilder.h"
 #include "statismo/core/DataManager.h"
 #include "statismo/core/StatisticalModel.h"
 #include "statismo/core/IO.h"
-
 #include "statismo/VTK/vtkStandardImageRepresenter.h"
 
+#include <vtkStructuredPointsReader.h>
+
 #include <memory>
+#include <iostream>
 
 using namespace statismo;
 
+namespace {
 
-vtkStructuredPoints *
-loadVTKStructuredPointsData(const std::string & filename)
+vtkSmartPointer<vtkStructuredPoints>
+_LoadVTKStructuredPointsData(const std::string & filename)
 {
-  vtkStructuredPointsReader * reader = vtkStructuredPointsReader::New();
+  vtkNew<vtkStructuredPointsReader> reader;
   reader->SetFileName(filename.c_str());
   reader->Update();
-  vtkStructuredPoints * sp = vtkStructuredPoints::New();
-  sp->ShallowCopy(reader->GetOutput());
-  return sp;
+
+  return reader->GetOutput();
+}
 }
 
 //
@@ -67,11 +69,10 @@ loadVTKStructuredPointsData(const std::string & filename)
 int
 main(int argc, char ** argv)
 {
-
   if (argc < 3)
   {
-    std::cout << "Usage " << argv[0] << " datadir modelname" << std::endl;
-    exit(-1);
+    std::cerr << "Usage " << argv[0] << " datadir modelname" << std::endl;
+    return 1;
   }
   std::string datadir(argv[1]);
   std::string modelname(argv[2]);
@@ -81,23 +82,21 @@ main(int argc, char ** argv)
   // For building a intensity model with vtk, we use the vtkStructuredPointsRepresenter.
   // Here, we work with unsigned character images. The second template parameter specifies
   // the pixel dimension (1 means scalar image, whereas 3 is a 3D vector image).
-  typedef vtkStandardImageRepresenter<unsigned char, 1>  RepresenterType;
-  typedef DataManagerWithSurrogates<vtkStructuredPoints> DataManagerWithSurrogatesType;
-  typedef ConditionalModelBuilder<vtkStructuredPoints>   ConditionalModelBuilderType;
-  typedef StatisticalModel<vtkStructuredPoints>          StatisticalModelType;
-
+  using RepresenterType = vtkStandardImageRepresenter<unsigned char, 1>  ;
+  using DataManagerWithSurrogatesType = DataManagerWithSurrogates<vtkStructuredPoints> ;
+  using ConditionalModelBuilderType = ConditionalModelBuilder<vtkStructuredPoints>   ;
+  using StatisticalModelType = StatisticalModel<vtkStructuredPoints>          ;
 
   try
   {
-    vtkStructuredPoints *            reference = loadVTKStructuredPointsData(datadir + "/hand-0.vtk");
-    std::unique_ptr<RepresenterType> representer(RepresenterType::Create(reference));
-
+    auto           reference = _LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
+    auto representer = RepresenterType::SafeCreate(reference);
 
     // We use the SurrogateDataManager, as we need to specify surrogate data in addition to the images.
     // We provide in addition to the representer also a file that contains a description of the surrogate
     // variables (e.g. whether they are categorical or continuous). See the API doc for more details.
-    auto * dataManager =
-      DataManagerWithSurrogatesType::Create(representer.get(), datadir + "/surrogates/hand_surrogates_types.txt");
+    auto dataManager =
+      DataManagerWithSurrogatesType::SafeCreate(representer.get(), datadir + "/surrogates/hand_surrogates_types.txt");
 
     // add the data information. The first argument is the dataset, the second the surrogate information
     // and the 3rd the surrogate type
@@ -108,33 +107,26 @@ main(int argc, char ** argv)
 
       std::ostringstream ssFilename;
       ssFilename << datadir << "/hand-" << i << ".vtk";
-      const std::string datasetFilename = ssFilename.str();
+      std::string datasetFilename = ssFilename.str();
 
       std::ostringstream ssSurrogateFilename;
       ssSurrogateFilename << datadir << "/surrogates/hand-" << i << "_surrogates.txt";
-      const std::string surrogateFilename = ssSurrogateFilename.str();
-
-      vtkStructuredPoints * dataset = loadVTKStructuredPointsData(datasetFilename);
-
 
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
-      dataManager->AddDatasetWithSurrogates(dataset, datasetFilename, surrogateFilename);
-
-      // it is save to delete the dataset after it was added, as the datamanager direclty copies it.
-      dataset->Delete();
+      dataManager->AddDatasetWithSurrogates(_LoadVTKStructuredPointsData(datasetFilename), datasetFilename, ssSurrogateFilename.str());
     }
 
     // Build up a list holding the conditioning information.
-    typedef ConditionalModelBuilder<vtkStructuredPoints>     ConditionalModelBuilderType;
+    using ConditionalModelBuilderType = ConditionalModelBuilder<vtkStructuredPoints>     ;
     ConditionalModelBuilderType::CondVariableValueVectorType conditioningInfo;
-    conditioningInfo.push_back(ConditionalModelBuilderType::CondVariableValuePair(true, 1));
-    conditioningInfo.push_back(ConditionalModelBuilderType::CondVariableValuePair(false, 65));
-    conditioningInfo.push_back(ConditionalModelBuilderType::CondVariableValuePair(true, 86.1));
-    conditioningInfo.push_back(ConditionalModelBuilderType::CondVariableValuePair(true, 162.0));
+    conditioningInfo.emplace_back(true, 1);
+    conditioningInfo.emplace_back(false, 65);
+    conditioningInfo.emplace_back(true, 86.1);
+    conditioningInfo.emplace_back(true, 162.0);
 
     // Create the model builder and build the model
-    std::unique_ptr<ConditionalModelBuilderType> modelBuilder(ConditionalModelBuilderType::Create());
+    auto modelBuilder = ConditionalModelBuilderType::SafeCreate();
 
     auto model =
       modelBuilder->BuildNewModel(dataManager->GetData(), dataManager->GetSurrogateTypeInfo(), conditioningInfo, 0.1);
@@ -144,12 +136,14 @@ main(int argc, char ** argv)
     // The resulting model is a normal statistical model, from which we could for example sample examples.
     // Here we simply  save it to disk for later use.
     statismo::IO<vtkStructuredPoints>::SaveStatisticalModel(model.get(), modelname);
-    reference->Delete();
     std::cout << "save model as " << modelname << std::endl;
   }
-  catch (StatisticalModelException & e)
+  catch (const StatisticalModelException & e)
   {
-    std::cout << "Exception occured while building the conditional model" << std::endl;
-    std::cout << e.what() << std::endl;
+    std::cerr << "Exception occured while building the conditional model" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }

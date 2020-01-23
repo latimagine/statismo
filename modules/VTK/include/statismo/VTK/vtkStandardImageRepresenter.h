@@ -38,17 +38,30 @@
 #ifndef __STATISMO_VTK_STANDARD_IMAGE_REPRESENTER_H_
 #define __STATISMO_VTK_STANDARD_IMAGE_REPRESENTER_H_
 
+#include "statismo/core/CommonTypes.h"
+#include "statismo/core/Domain.h"
+#include "statismo/core/Representer.h"
+#include "statismo/VTK/vtkPoint.h"
+#include "statismo/VTK/vtkNDPixel.h"
+
 #include <H5Cpp.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkStructuredPoints.h>
 
-#include "statismo/core/CommonTypes.h"
-#include "statismo/core/Domain.h"
-#include "statismo/core/Representer.h"
-#include "statismo/VTK/vtkHelper.h"
-#include "statismo/VTK/vtkPoint.h"
+namespace statismo
+{
+template <>
+struct RepresenterTraits<vtkStructuredPoints>
+{
+  using DatasetPointerType = vtkSmartPointer<vtkStructuredPoints>;
+  using DatasetConstPointerType = const vtkStructuredPoints *;
 
+  using PointType = vtkPoint;
+  using ValueType = vtkNDPixel;
+
+  ///@}
+};
 
 /**
  * \brief Representer class for vtkStructuredPoints of arbitrary scalar type and PixelDimension
@@ -60,25 +73,8 @@
  * ensure that the array relevant to the shape model is the first array, i.e. the one returned by
  * sp->GetPointData()->GetArray(0).
  *
- * \sa Representer
+ * \see Representer
  */
-
-namespace statismo
-{
-template <>
-struct RepresenterTraits<vtkStructuredPoints>
-{
-  typedef vtkSmartPointer<vtkStructuredPoints> DatasetPointerType;
-  typedef const vtkStructuredPoints *          DatasetConstPointerType;
-
-  typedef vtkPoint   PointType;
-  typedef vtkNDPixel ValueType;
-
-  // static constexpr unsigned Dimension = 3;
-  ///@}
-};
-
-
 template <class TScalar, unsigned PixelDimensions>
 class vtkStandardImageRepresenter
   : public RepresenterBase<vtkStructuredPoints, vtkStandardImageRepresenter<TScalar, PixelDimensions>>
@@ -96,17 +92,17 @@ public:
   using ValueType = typename RepresenterBaseType::ValueType;
 
   void
-  Load(const H5::Group & fg);
-
-  virtual ~vtkStandardImageRepresenter();
+  Load(const H5::Group & fg) override;
+    void
+  Save(const H5::Group & fg) const override;
 
   void
-  DeleteDataset(DatasetPointerType d) const {
-    // d->Delete();
+  DeleteDataset(DatasetPointerType d) const override {
+    // no op as smart pointers are now use a data type
   };
 
   DatasetPointerType
-  CloneDataset(DatasetConstPointerType d) const
+  CloneDataset(DatasetConstPointerType d) const override
   {
     auto clone = vtkSmartPointer<vtkStructuredPoints>::New();
     clone->DeepCopy(const_cast<vtkStructuredPoints *>(d));
@@ -114,43 +110,40 @@ public:
   }
 
   const DomainType &
-  GetDomain() const
+  GetDomain() const override
   {
     return m_domain;
   }
 
   DatasetConstPointerType
-  GetReference() const
+  GetReference() const override
   {
     return m_reference;
   }
 
   statismo::VectorType
-  PointToVector(const PointType & pt) const;
+  PointToVector(const PointType & pt) const override;
   statismo::VectorType
-  SampleToSampleVector(DatasetConstPointerType sample) const;
+  SampleToSampleVector(DatasetConstPointerType sample) const override;
   DatasetPointerType
-  SampleVectorToSample(const statismo::VectorType & sample) const;
+  SampleVectorToSample(const statismo::VectorType & sample) const override;
 
 
   ValueType
-  PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const;
+  PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
   statismo::VectorType
-  PointSampleToPointSampleVector(const ValueType & v) const;
+  PointSampleToPointSampleVector(const ValueType & v) const override;
   ValueType
-  PointSampleVectorToPointSample(const statismo::VectorType & samplePoint) const;
+  PointSampleVectorToPointSample(const statismo::VectorType & samplePoint) const override;
 
   unsigned
-  GetPointIdForPoint(const PointType & pt) const;
+  GetPointIdForPoint(const PointType & pt) const override;
 
   unsigned
   GetNumberOfPoints() const;
-  void
-  Save(const H5::Group & fg) const;
 
   static unsigned
   GetNumberOfPoints(DatasetPointerType reference);
-
 
 private:
   static unsigned
@@ -181,19 +174,21 @@ private:
   AssertCompatibility(DatasetConstPointerType data) const;
 
   vtkStandardImageRepresenter *
-  CloneImpl() const;
+  CloneImpl() const override;
 
   vtkSmartPointer<vtkStructuredPoints>
   LoadRefLegacy(const H5::Group & fg) const;
   vtkSmartPointer<vtkStructuredPoints>
   LoadRef(const H5::Group & fg) const;
 
-  vtkStandardImageRepresenter(DatasetConstPointerType reference);
+    void
+  SetReference(DatasetConstPointerType reference);
+
+  explicit vtkStandardImageRepresenter(DatasetConstPointerType reference);
+  
   vtkStandardImageRepresenter()
     : m_reference(DatasetPointerType::New())
   {}
-  void
-  SetReference(DatasetConstPointerType reference);
 
   DatasetPointerType m_reference;
   DomainType         m_domain;
@@ -203,4 +198,4 @@ private:
 
 #include "vtkStandardImageRepresenter.hxx"
 
-#endif /* VTKStandardImageRepRESENTER_H_ */
+#endif
