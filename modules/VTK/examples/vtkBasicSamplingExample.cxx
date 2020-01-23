@@ -83,7 +83,6 @@ main(int argc, char ** argv)
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
   using RepresenterType=  vtkStandardMeshRepresenter;
-  using StatisticalModelType =  StatisticalModel<vtkPolyData>;
 
   try
   {

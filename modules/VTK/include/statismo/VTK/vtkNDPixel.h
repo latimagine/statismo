@@ -42,6 +42,7 @@
 
 #include <sstream>
 #include <memory>
+#include <utility>
 
 namespace statismo
 {
@@ -120,7 +121,7 @@ private:
 namespace std
 {
   template <>
-  void swap<statismo::vtkNDPixel>(statismo::vtkNDPixel& lhs, statismo::vtkNDPixel& rhs) noexcept
+  void swap<statismo::vtkNDPixel>(statismo::vtkNDPixel& lhs, statismo::vtkNDPixel& rhs)
   {
       lhs.swap(rhs);
   }

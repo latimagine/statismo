@@ -73,7 +73,7 @@ namespace {
 
 std::vector<std::string> _s_filenames;
 
-bool _testBuildModel(unsigned pointsCount, VectorType baselineVariance) {
+bool _TestBuildModel(unsigned pointsCount, const VectorType& baselineVariance) {
   auto reference = ReducePoints(LoadPolyData(_s_filenames[0]), pointsCount);
   auto representer = RepresenterType::SafeCreate(reference);
   auto dataManager = DataManagerType::SafeCreate(representer.get());
@@ -103,7 +103,7 @@ int TestBuildWithPGreaterThanN()
     36.4659576416015625, 22.3681926727294921875, 11.6593990325927734375, 4.789171695709228515625,
     1.28080332279205322265625, 0.77941668033599853515625;
 
-    return _testBuildModel(5, baselineVariance);
+    return _TestBuildModel(5, baselineVariance);
   }
 
 int TestBuildWithNGreaterThanP()
@@ -114,9 +114,8 @@ int TestBuildWithNGreaterThanP()
     128.6950531005859375, 91.76165008544921875, 80.23679351806640625, 69.49117279052734375, 50.3206024169921875,
     42.5595245361328125;
 
-  return _testBuildModel(100, baselineVariance);
+  return _TestBuildModel(100, baselineVariance);
 }
-
 } // namespace
 
 int

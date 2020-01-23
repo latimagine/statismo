@@ -73,7 +73,6 @@ namespace {
   std::vector<std::string> _s_filenames;
   std::string _s_outdir;
   unsigned _s_pointCount;
-  auto _s_rg = rand::RandGen(0);
 
 /**
  * The test works as follows:
@@ -131,7 +130,7 @@ int  TestBuildModel()
   {
     std::stringstream ss;
     ss << "sample" << i;
-    dataManager2->AddDataset(jacobiModel->DrawSample(), ss.str().c_str());
+    dataManager2->AddDataset(jacobiModel->DrawSample(), ss.str());
   }
 
   // ----------------------------------------------------------
@@ -163,17 +162,18 @@ int  TestBuildModel()
 
     error += std::min(equalDir, oppositeDir);
 
-    if (_s_outdir.size() > 0)
+    if (!_s_outdir.empty())
     {
       std::stringstream ss1;
       ss1 << _s_outdir << "/jacobi-" << i << ".vtk";
-      WritePolyData(jacobiModel->DrawSample(coeff1, false), ss1.str().c_str());
+      WritePolyData(jacobiModel->DrawSample(coeff1, false), ss1.str());
 
       std::stringstream ss2;
       ss2 << _s_outdir << "/saes-" << i << ".vtk";
-      if (equalDir < oppositeDir)
+      if (equalDir < oppositeDir) {
         coeff2[i] = 2;
-      WritePolyData(saesModel->DrawSample(coeff2, false), ss2.str().c_str());
+      }
+      WritePolyData(saesModel->DrawSample(coeff2, false), ss2.str());
     }
   }
 
@@ -203,6 +203,7 @@ PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)
               << "number_of_points(default=100) _s_outdir" << std::endl;
     exit(EXIT_FAILURE);
   }
+
   std::string datadir = argv[1];
 
   // number of points which are used for building the model
@@ -210,7 +211,7 @@ PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)
   // on the full covariance matrix.
   _s_pointCount = 100;
   if (argc == 3) {
-    _s_pointCount = std::atoi(argv[2]);
+    _s_pointCount = std::stoi(argv[2]);
   }
 
   if (argc == 4) {

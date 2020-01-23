@@ -97,7 +97,7 @@ public:
   Save(const H5::Group & fg) const override;
 
   void
-  DeleteDataset(DatasetPointerType d) const override {
+  DeleteDataset(DatasetPointerType) const override {
     // no op as smart pointers are now use a data type
   };
 

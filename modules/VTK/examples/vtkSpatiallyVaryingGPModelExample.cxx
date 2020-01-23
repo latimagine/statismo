@@ -32,10 +32,10 @@ class _MultiscaleGaussianKernel : public MatrixValuedKernel<vtkPoint>
 {
 public:
   _MultiscaleGaussianKernel(float baseWidth, float baseScale, unsigned nLevels)
-    : m_baseWidth(baseWidth)
+    : MatrixValuedKernel<vtkPoint>(3)
+    , m_baseWidth(baseWidth)
     , m_baseScale(baseScale)
     , m_nLevels(nLevels)
-    , MatrixValuedKernel<vtkPoint>(3)
   {}
 
   inline MatrixType
@@ -83,7 +83,7 @@ vtkPoint
 _CenterOfMass(const vtkPolyData * _pd)
 {
   // vtk is not const-correct, but we will not mutate pd here;
-  vtkPolyData * pd = const_cast<vtkPolyData *>(_pd);
+  auto pd = const_cast<vtkPolyData *>(_pd);
 
   vtkIdType numPoints = pd->GetNumberOfPoints();
   vtkPoint  massCenter(0.0, 0.0, 0.0);
@@ -154,9 +154,6 @@ main(int argc, char ** argv)
 
   using RepresenterType = vtkStandardMeshRepresenter         ;
   using ModelBuilderType = LowRankGPModelBuilder<vtkPolyData> ;
-  using StatisticalModelType = StatisticalModel<vtkPolyData>      ;
-  using GaussianKernelType = _MultiscaleGaussianKernel           ;
-  using MatrixValuedKernelType = MatrixValuedKernel<vtkPoint>       ;
 
   try
   {

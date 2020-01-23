@@ -83,15 +83,6 @@ private:
   double m_sigma2;
 };
 
-
-vtkSmartPointer<vtkPolyData>
-_LoadVTKPolyData(const std::string & filename)
-{
-  vtkNew<vtkPolyDataReader> reader;
-  reader->SetFileName(filename.c_str());
-  reader->Update();
-  return reader->GetOutput();
-}
 }
 
 
@@ -116,9 +107,7 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
 
-  using RepresenterType = vtkStandardMeshRepresenter         ;
   using ModelBuilderType = LowRankGPModelBuilder<vtkPolyData> ;
-  using StatisticalModelType = StatisticalModel<vtkPolyData>      ;
   using MatrixValuedKernelType = MatrixValuedKernel<vtkPoint>       ;
 
   try

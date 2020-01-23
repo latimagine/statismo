@@ -443,7 +443,7 @@ template <class TScalar, unsigned Dimensions>
 unsigned
 vtkStandardImageRepresenter<TScalar, Dimensions>::GetNumberOfPoints(DatasetPointerType reference)
 {
-  assert(m_reference);
+  assert(reference);
   return reference->GetNumberOfPoints();
 }
 

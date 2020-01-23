@@ -130,7 +130,7 @@ vtkStandardMeshRepresenter::LoadRef(const H5::Group & fg) const
   }
 
   // read the point and cell data
-  assert(ref->GetPointData() != 0);
+  assert(ref->GetPointData());
   if (hdf5utils::ExistsObjectWithName(fg, "pointData"))
   {
     H5::Group pdGroup = fg.openGroup("./pointData");
@@ -151,7 +151,7 @@ vtkStandardMeshRepresenter::LoadRef(const H5::Group & fg) const
   if (hdf5utils::ExistsObjectWithName(fg, "cellData"))
   {
     H5::Group cdGroup = fg.openGroup("./cellData");
-    assert(ref->GetCellData() != 0);
+    assert(ref->GetCellData());
 
     if (hdf5utils::ExistsObjectWithName(cdGroup, "scalars"))
     {
@@ -228,19 +228,19 @@ vtkStandardMeshRepresenter::Save(const H5::Group & fg) const
   auto pdGroup = fg.createGroup("pointData");
 
   vtkPointData * pd = m_reference->GetPointData();
-  if (pd != 0 && pd->GetScalars() != 0)
+  if (pd && pd->GetScalars())
   {
     vtkDataArray * scalars = pd->GetScalars();
     WriteDataArray(pdGroup, "scalars", scalars);
   }
 
-  if (pd != 0 && pd->GetVectors() != 0)
+  if (pd && pd->GetVectors())
   {
     vtkDataArray * vectors = pd->GetVectors();
     WriteDataArray(pdGroup, "vectors", vectors);
   }
 
-  if (pd != 0 && pd->GetNormals() != 0)
+  if (pd && pd->GetNormals())
   {
     vtkDataArray * normals = pd->GetNormals();
     WriteDataArray(pdGroup, "normals", normals);
@@ -248,19 +248,19 @@ vtkStandardMeshRepresenter::Save(const H5::Group & fg) const
 
   auto     cdGroup = fg.createGroup("cellData");
   vtkCellData * cd = m_reference->GetCellData();
-  if (cd != 0 && cd->GetScalars() != 0)
+  if (cd && cd->GetScalars())
   {
     vtkDataArray * scalars = cd->GetScalars();
     WriteDataArray(cdGroup, "scalars", scalars);
   }
 
-  if (cd != 0 && cd->GetVectors() != 0)
+  if (cd && cd->GetVectors())
   {
     vtkDataArray * vectors = cd->GetVectors();
     WriteDataArray(cdGroup, "vectors", vectors);
   }
 
-  if (cd != 0 && cd->GetNormals() != 0)
+  if (cd && cd->GetNormals())
   {
     vtkDataArray * normals = cd->GetNormals();
     WriteDataArray(cdGroup, "normals", normals);
@@ -408,9 +408,9 @@ vtkStandardMeshRepresenter::SetReference(DatasetConstPointerType reference)
 void
 vtkStandardMeshRepresenter::WriteDataArray(const H5::H5Location & group,
                                            const std::string &    name,
-                                           const vtkDataArray *   _dataArray) const
+                                           const vtkDataArray *   ds) const
 {
-  auto                                           dataArray = const_cast<vtkDataArray *>(_dataArray);
+  auto                                           dataArray = const_cast<vtkDataArray *>(ds);
   unsigned                                                 numComponents = dataArray->GetNumberOfComponents();
   unsigned                                                 numTuples = dataArray->GetNumberOfTuples();
   using DoubleMatrixType = statismo::GenericEigenTraits<double>::MatrixType ;

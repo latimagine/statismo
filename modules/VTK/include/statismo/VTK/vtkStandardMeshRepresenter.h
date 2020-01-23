@@ -87,7 +87,7 @@ public:
   }
 
   void
-  DeleteDataset(DatasetPointerType d) const override {
+  DeleteDataset(DatasetPointerType) const override {
     // no op as smart pointers are now use a data type
   };
 
@@ -116,12 +116,12 @@ public:
   statismo::VectorType
   PointSampleToPointSampleVector(const ValueType & v) const override;
   ValueType
-  PointSampleVectorToPointSample(const statismo::VectorType & pointSample) const override;
+  PointSampleVectorToPointSample(const statismo::VectorType & v) const override;
 
   unsigned
   GetNumberOfPoints() const;
   unsigned
-  GetPointIdForPoint(const PointType & point) const override;
+  GetPointIdForPoint(const PointType & pt) const override;
 
 private:
   vtkStandardMeshRepresenter()

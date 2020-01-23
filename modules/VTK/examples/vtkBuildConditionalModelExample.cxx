@@ -85,7 +85,6 @@ main(int argc, char ** argv)
   using RepresenterType = vtkStandardImageRepresenter<unsigned char, 1>  ;
   using DataManagerWithSurrogatesType = DataManagerWithSurrogates<vtkStructuredPoints> ;
   using ConditionalModelBuilderType = ConditionalModelBuilder<vtkStructuredPoints>   ;
-  using StatisticalModelType = StatisticalModel<vtkStructuredPoints>          ;
 
   try
   {
@@ -118,7 +117,6 @@ main(int argc, char ** argv)
     }
 
     // Build up a list holding the conditioning information.
-    using ConditionalModelBuilderType = ConditionalModelBuilder<vtkStructuredPoints>     ;
     ConditionalModelBuilderType::CondVariableValueVectorType conditioningInfo;
     conditioningInfo.emplace_back(true, 1);
     conditioningInfo.emplace_back(false, 65);

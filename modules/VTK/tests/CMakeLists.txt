@@ -4,7 +4,6 @@ set(TARGET_TESTS
   PCAModelBuilderTest.cxx
   vtkStandardImageRepresenterTest.cxx
   vtkStandardMeshRepresenterTest.cxx
-  vtkUnstructuredGridRepresenterTest.cxx
 )
 
 create_test_sourcelist( 
@@ -15,6 +14,13 @@ create_test_sourcelist(
 
 add_executable(vtkStatismoTest vtkStatismoTest_driver.cxx ${TARGET_TESTS} vtkTestHelper.h)
 target_link_libraries(vtkStatismoTest statismo_VTK)
+
+if(${BUILD_WITH_TIDY})
+   set_target_properties(
+    vtkStatismoTest PROPERTIES
+   CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
+  )
+endif()
 
 foreach( _test ${_VTKTests} )
   add_executable( ${_test} ${_test}.cxx )

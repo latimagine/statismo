@@ -111,7 +111,7 @@ public:
   }
 
   void
-  DeleteDataset(DatasetPointerType d) const override {
+  DeleteDataset(DatasetPointerType) const override {
     // no op as smart pointers are now use a data type
   };
 
@@ -134,19 +134,19 @@ public:
   statismo::VectorType
   SampleToSampleVector(DatasetConstPointerType sample) const override;
   DatasetPointerType
-  SampleVectorToSample(const statismo::VectorType & sample) const override;
+  SampleVectorToSample(const statismo::VectorType & sampleVec) const override;
 
   ValueType
   PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
   statismo::VectorType
   PointSampleToPointSampleVector(const ValueType & v) const override;
   ValueType
-  PointSampleVectorToPointSample(const statismo::VectorType & pointSample) const override;
+  PointSampleVectorToPointSample(const statismo::VectorType & v) const override;
 
   unsigned
   GetNumberOfPoints() const;
   unsigned
-  GetPointIdForPoint(const PointType & point) const;
+  GetPointIdForPoint(const PointType & pt) const override;
 
 private:
   vtkUnstructuredGridRepresenter();

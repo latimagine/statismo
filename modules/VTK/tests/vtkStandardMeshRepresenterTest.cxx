@@ -82,6 +82,7 @@ vtkStandardMeshRepresenterTest(int argc, char ** argv)
     std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
     exit(EXIT_FAILURE);
   }
+
   _s_dataDir = argv[1];
 
   auto res = statismo::Translate([]() {

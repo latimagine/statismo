@@ -222,6 +222,7 @@ PosteriorModelBuilderTest(int argc, char ** argv)
     std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
     exit(EXIT_FAILURE);
   }
+
   std::string datadir = std::string(argv[1]);
 
   for (unsigned i = 0; i <= 4; ++i) {

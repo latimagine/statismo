@@ -59,8 +59,9 @@ _GetDir(const std::string& dir, std::vector<std::string> & files, const std::str
   for (unsigned i = 0; i < directory->GetNumberOfFiles(); i++)
   {
     const char * filename = directory->GetFile(i);
-    if (extension == ".*" || std::string(filename).find(extension) != std::string::npos)
+    if (extension == ".*" || std::string(filename).find(extension) != std::string::npos) {
       files.emplace_back(filename);
+    }
   }
   return 0;
 }
@@ -96,7 +97,6 @@ main(int argc, char ** argv)
   using RepresenterType = vtkStandardMeshRepresenter    ;
   using DataManagerType = BasicDataManager<vtkPolyData> ;
   using ModelBuilderType = PCAModelBuilder<vtkPolyData>  ;
-  using StatisticalModelType = StatisticalModel<vtkPolyData> ;
   using StringVectorType = std::vector<std::string> ;
   StringVectorType                 filenames;
 
@@ -127,7 +127,10 @@ main(int argc, char ** argv)
     {
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
-      dataManager->AddDataset(_LoadVTKPolyData(datadir + "/" + f), f);
+      auto filename = datadir;
+      filename += "/";
+      filename += f;
+      dataManager->AddDataset(_LoadVTKPolyData(filename), f);
     }
 
     // To actually build a model, we need to create a model builder object.

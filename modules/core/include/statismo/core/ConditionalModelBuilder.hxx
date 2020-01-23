@@ -168,7 +168,7 @@ ConditionalModelBuilder<T>::BuildNewModel(const DataItemListType &            sa
     // Thus the i-th row of A contains the PCA parameters b of the i-th sample,
     // together with the conditional information for each sample
     MatrixType A(nSamples, nPCAComponents + nCondVariables);
-    A << (B, X.transpose());
+    A << B, X.transpose();
 
     // Compute the mean and the covariance of the joint data matrix
     auto mu = A.colwise().mean().transpose(); // colwise returns a row vector

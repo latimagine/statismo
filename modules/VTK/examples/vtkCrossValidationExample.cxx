@@ -78,10 +78,8 @@ main(int argc, char ** argv)
   // All the statismo classes have to be parameterized with the RepresenterType.
   using RepresenterType = vtkStandardMeshRepresenter                   ;
   using DataManagerType = BasicDataManager<vtkPolyData>                ;
-  using StatisticalModelType = StatisticalModel<vtkPolyData>                ;
   using ModelBuilderType = PCAModelBuilder<vtkPolyData>                 ;
   using CVFoldListType = DataManagerType::CrossValidationFoldListType ;
-  using DataItemListType = DataManagerType::DataItemListType            ;
 
   try
   {

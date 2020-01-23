@@ -121,7 +121,6 @@ main(int argc, char ** argv)
 
     auto          representer = RepresenterType::SafeCreate();
     auto          inputModel = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
-    auto refPd = inputModel->GetRepresenter()->GetReference();
 
     StatisticalModelType::PointValueListType constraints;
 

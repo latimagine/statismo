@@ -79,7 +79,7 @@ vtkUnstructuredGridRepresenter::Load(const H5::Group & fg)
   statismo::hdf5utils::GetFileFromHDF5(fg, "./reference", tmpfilename.c_str());
 
   m_alignment = static_cast<AlignmentType>(statismo::hdf5utils::ReadInt(fg, "./alignment"));
-  this->SetReference(ReadDataset(tmpfilename.c_str()));
+  this->SetReference(ReadDataset(tmpfilename));
 }
 
 void
@@ -88,7 +88,7 @@ vtkUnstructuredGridRepresenter::Save(const H5::Group & fg) const
   std::string tmpfilename = statismo::utils::CreateTmpName(".vtk");
   auto uw = statismo::MakeStackUnwinder([=]() { statismo::utils::RemoveFile(tmpfilename); });
 
-  WriteDataset(tmpfilename.c_str(), this->m_reference);
+  WriteDataset(tmpfilename, this->m_reference);
 
   statismo::hdf5utils::DumpFileToHDF5(tmpfilename.c_str(), fg, "./reference");
   statismo::hdf5utils::WriteInt(fg, "./alignment", static_cast<int>(m_alignment));

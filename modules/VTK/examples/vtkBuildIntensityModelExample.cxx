@@ -87,7 +87,6 @@ main(int argc, char ** argv)
   using RepresenterType = vtkStandardImageRepresenter<unsigned char, 1> ;
   using DataManagerType = BasicDataManager<vtkStructuredPoints>         ;
   using ModelBuilderType = PCAModelBuilder<vtkStructuredPoints>          ;
-  using StatisticalModelType = StatisticalModel<vtkStructuredPoints>         ;
 
   try
   {
