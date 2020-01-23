@@ -35,32 +35,35 @@
  *
  */
 
-#include <iostream>
-#include <ostream>
-
-#include <vtkStructuredPoints.h>
-#include <vtkStructuredPointsReader.h>
-
 #include "statismo/core/DataManager.h"
 #include "statismo/core/PCAModelBuilder.h"
 #include "statismo/core/StatisticalModel.h"
 #include "statismo/core/IO.h"
 #include "statismo/VTK/vtkStandardImageRepresenter.h"
 
+#include <vtkStructuredPoints.h>
+#include <vtkStructuredPointsReader.h>
+
+#include <iostream>
+#include <ostream>
+
 #include <memory>
 
 using namespace statismo;
 
-vtkStructuredPoints *
-loadVTKStructuredPointsData(const std::string & filename)
+namespace
 {
-  vtkStructuredPointsReader * reader = vtkStructuredPointsReader::New();
+
+vtkSmartPointer<vtkStructuredPoints>
+_LoadVTKStructuredPointsData(const std::string & filename)
+{
+  vtkNew<vtkStructuredPointsReader> reader;
   reader->SetFileName(filename.c_str());
   reader->Update();
-  vtkStructuredPoints * sp = vtkStructuredPoints::New();
-  sp->ShallowCopy(reader->GetOutput());
-  return sp;
+
+  return reader->GetOutput();
 }
+} // namespace
 
 //
 // Build a new shape model from vtkPolyData, given in datadir.
@@ -71,8 +74,8 @@ main(int argc, char ** argv)
 
   if (argc < 3)
   {
-    std::cout << "Usage " << argv[0] << " datadir modelname" << std::endl;
-    exit(-1);
+    std::cerr << "Usage " << argv[0] << " datadir modelname" << std::endl;
+    return 1;
   }
   std::string datadir(argv[1]);
   std::string modelname(argv[2]);
@@ -82,45 +85,45 @@ main(int argc, char ** argv)
   // For building a intensity model with vtk, we use the vtkStructuredPointsRepresenter.
   // Here, we work with unsigned character images. The second template parameter specifies
   // the pixel dimension (1 means scalar image, whereas 3 is a 3D vector image).
-  typedef vtkStandardImageRepresenter<unsigned char, 1> RepresenterType;
-  typedef BasicDataManager<vtkStructuredPoints>         DataManagerType;
-  typedef PCAModelBuilder<vtkStructuredPoints>          ModelBuilderType;
-  typedef StatisticalModel<vtkStructuredPoints>         StatisticalModelType;
+  using RepresenterType = vtkStandardImageRepresenter<unsigned char, 1>;
+  using DataManagerType = BasicDataManager<vtkStructuredPoints>;
+  using ModelBuilderType = PCAModelBuilder<vtkStructuredPoints>;
 
   try
   {
 
     // Model building is exactly the same as for shape models (see BuildShapeModelExample for detailed explanation)
-    vtkStructuredPoints *            reference = loadVTKStructuredPointsData(datadir + "/hand-0.vtk");
-    std::unique_ptr<RepresenterType> representer(RepresenterType::Create(reference));
-    std::unique_ptr<DataManagerType> dataManager(DataManagerType::Create(representer.get()));
+    auto reference = _LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
+    auto representer = RepresenterType::SafeCreate(reference);
+    auto dataManager = DataManagerType::SafeCreate(representer.get());
 
     // load the data and add it to the data manager. We take the first 4 hand shapes that we find in the data folder
     for (unsigned i = 0; i < 4; i++)
     {
-
       std::ostringstream ss;
       ss << datadir + "/hand-" << i << ".vtk";
-      const std::string     datasetFilename = ss.str();
-      vtkStructuredPoints * dataset = loadVTKStructuredPointsData(datasetFilename);
+      std::string datasetFilename = ss.str();
+      auto        dataset = _LoadVTKStructuredPointsData(datasetFilename);
+
+      std::cout << "adding " << datasetFilename << std::endl;
 
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
       dataManager->AddDataset(dataset, datasetFilename);
-
-      // it is save to delete the dataset after it was added, as the datamanager direclty copies it.
-      dataset->Delete();
     }
+
     auto modelBuilder = ModelBuilderType::SafeCreate();
     auto model = modelBuilder->BuildNewModel(dataManager->GetData(), 0.01);
     statismo::IO<vtkStructuredPoints>::SaveStatisticalModel(model.get(), modelname);
 
-    reference->Delete();
     std::cout << "Successfully saved model as " << modelname << std::endl;
   }
-  catch (StatisticalModelException & e)
+  catch (const StatisticalModelException & e)
   {
-    std::cout << "Exception occured while building the intensity model" << std::endl;
-    std::cout << e.what() << std::endl;
+    std::cerr << "Exception occured while building the intensity model" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }

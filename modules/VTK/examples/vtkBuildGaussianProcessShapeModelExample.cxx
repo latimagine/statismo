@@ -35,36 +35,36 @@
  *
  */
 
-#include <iostream>
-
-#include <vtkPolyDataReader.h>
-
 #include "statismo/core/Kernels.h"
 #include "statismo/core/KernelCombinators.h"
 #include "statismo/core/LowRankGPModelBuilder.h"
 #include "statismo/core/StatisticalModel.h"
 #include "statismo/core/IO.h"
-
 #include "statismo/VTK/vtkStandardMeshRepresenter.h"
 
+#include <vtkPolyDataReader.h>
+
+#include <iostream>
 #include <memory>
 
 using namespace statismo;
 
+namespace
+{
 
 /**
  * A scalar valued gaussian kernel.
  */
-class GaussianKernel : public ScalarValuedKernel<vtkPoint>
+class _GaussianKernel : public ScalarValuedKernel<vtkPoint>
 {
 public:
-  GaussianKernel(double sigma)
+  explicit _GaussianKernel(double sigma)
     : m_sigma(sigma)
     , m_sigma2(sigma * sigma)
   {}
 
   inline double
-  operator()(const vtkPoint & x, const vtkPoint & y) const
+  operator()(const vtkPoint & x, const vtkPoint & y) const override
   {
     VectorType r(3);
     r << x[0] - y[0], x[1] - y[1], x[2] - y[2];
@@ -72,10 +72,10 @@ public:
   }
 
   std::string
-  GetKernelInfo() const
+  GetKernelInfo() const override
   {
     std::ostringstream os;
-    os << "GaussianKernel(" << m_sigma << ")";
+    os << "_GaussianKernel(" << m_sigma << ")";
     return os.str();
   }
 
@@ -84,17 +84,7 @@ private:
   double m_sigma2;
 };
 
-
-vtkPolyData *
-loadVTKPolyData(const std::string & filename)
-{
-  vtkPolyDataReader * reader = vtkPolyDataReader::New();
-  reader->SetFileName(filename.c_str());
-  reader->Update();
-  vtkPolyData * pd = vtkPolyData::New();
-  pd->ShallowCopy(reader->GetOutput());
-  return pd;
-}
+} // namespace
 
 
 //
@@ -104,39 +94,35 @@ loadVTKPolyData(const std::string & filename)
 int
 main(int argc, char ** argv)
 {
-
   if (argc < 5)
   {
-    std::cout << "Usage " << argv[0] << " model gaussianKernelWidth numberOfComponents, outputmodelName" << std::endl;
-    exit(-1);
+    std::cerr << "Usage " << argv[0] << " model _GaussianKernelWidth numberOfComponents, outputmodelName" << std::endl;
+    return 1;
   }
+
   std::string modelFilename(argv[1]);
-  double      gaussianKernelSigma = std::atof(argv[2]);
-  int         numberOfComponents = std::atoi(argv[3]);
+  double      _GaussianKernelSigma = std::stof(argv[2]);
+  int         numberOfComponents = std::stoi(argv[3]);
   std::string outputModelFilename(argv[4]);
 
 
   // All the statismo classes have to be parameterized with the RepresenterType.
 
-  typedef vtkStandardMeshRepresenter         RepresenterType;
-  typedef LowRankGPModelBuilder<vtkPolyData> ModelBuilderType;
-  typedef StatisticalModel<vtkPolyData>      StatisticalModelType;
-  typedef GaussianKernel                     GaussianKernelType;
-  typedef MatrixValuedKernel<vtkPoint>       MatrixValuedKernelType;
+  using ModelBuilderType = LowRankGPModelBuilder<vtkPolyData>;
+  using MatrixValuedKernelType = MatrixValuedKernel<vtkPoint>;
 
   try
   {
-
     // we load an existing statistical model and create a StatisticalModelKernel from it. The statisticlModelKernel
     // takes the covariance (matrix) of the model and defines a kernel function from it.
-    vtkStandardMeshRepresenter *   representer = vtkStandardMeshRepresenter::Create();
-    auto                           model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer, modelFilename);
+    auto representer = vtkStandardMeshRepresenter::SafeCreate();
+    auto model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), modelFilename);
     const MatrixValuedKernelType & statModelKernel = StatisticalModelKernel<vtkPolyData>(model.get());
 
     // Create a (scalar valued) gaussian kernel. This kernel is then made matrix-valued. We use a
     // UncorrelatedMatrixValuedKernel, which assumes that each output component is independent.
 
-    const GaussianKernel           gk = GaussianKernel(gaussianKernelSigma);
+    _GaussianKernel                gk{ _GaussianKernelSigma };
     const MatrixValuedKernelType & mvGk =
       UncorrelatedMatrixValuedKernel<vtkPoint>(&gk, model->GetRepresenter()->GetDimensions());
 
@@ -157,9 +143,12 @@ main(int argc, char ** argv)
     statismo::IO<vtkPolyData>::SaveStatisticalModel(combinedModel.get(), outputModelFilename);
     std::cout << "Successfully saved shape model as " << outputModelFilename << std::endl;
   }
-  catch (StatisticalModelException & e)
+  catch (const StatisticalModelException & e)
   {
-    std::cout << "Exception occured while building the shape model" << std::endl;
-    std::cout << e.what() << std::endl;
+    std::cerr << "Exception occured while building the shape model" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }

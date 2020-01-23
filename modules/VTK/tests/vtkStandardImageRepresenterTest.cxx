@@ -35,16 +35,44 @@
  *
  */
 
+#include "StatismoUnitTest.h"
+#include "statismo/core/Exceptions.h"
 #include "statismo/core/GenericRepresenterValidator.h"
 #include "statismo/VTK/vtkStandardImageRepresenter.h"
 
 #include "vtkTestHelper.h"
 
+#include <string>
+
 using namespace statismo::test;
 
+namespace
+{
+std::string _s_dataDir;
 
-typedef statismo::vtkStandardImageRepresenter<float, 2> RepresenterType;
-typedef GenericRepresenterValidator<RepresenterType>    RepresenterTestType;
+int
+TestRepresenterForImage()
+{
+  using RepresenterType = statismo::vtkStandardImageRepresenter<float, 2>;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
+
+  auto referenceFilename = _s_dataDir + "/hand_dfs/df-hand-1.vtk";
+  auto testDatasetFilename = _s_dataDir + "/hand_dfs/df-hand-2.vtk";
+
+  auto reference = LoadStructuredPoints(referenceFilename);
+  auto representer = RepresenterType::SafeCreate(reference);
+
+  // choose a test dataset, a point (on the reference) and the associated point on the test example
+  auto                     testDataset = LoadStructuredPoints(testDatasetFilename);
+  unsigned                 testPtId{ 0 };
+  statismo::vtkPoint       testPt(reference->GetPoint(testPtId));
+  statismo::vtkNDPixel     testValue(testDataset->GetPointData()->GetScalars()->GetTuple2(testPtId), 2);
+  RepresenterValidatorType validator(representer.get(), testDataset, std::make_pair(testPt, testValue));
+
+  return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
+}
+
+} // namespace
 
 int
 vtkStandardImageRepresenterTest(int argc, char ** argv)
@@ -53,32 +81,15 @@ vtkStandardImageRepresenterTest(int argc, char ** argv)
   if (argc < 2)
   {
     std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-  std::string datadir = std::string(argv[1]);
-
-  const std::string referenceFilename = datadir + "/hand_dfs/df-hand-1.vtk";
-  const std::string testDatasetFilename = datadir + "/hand_dfs/df-hand-2.vtk";
-
-  auto reference = LoadStructuredPoints(referenceFilename);
-
-  auto representer = RepresenterType::SafeCreate(reference);
-
-  // choose a test dataset, a point (on the reference) and the associated point on the test example
-  auto                 testDataset = LoadStructuredPoints(testDatasetFilename);
-  unsigned             testPtId = 0;
-  statismo::vtkPoint   testPt(reference->GetPoint(testPtId));
-  statismo::vtkNDPixel testValue(testDataset->GetPointData()->GetScalars()->GetTuple2(testPtId), 2);
-  RepresenterTestType  representerTest(representer.get(), testDataset, std::make_pair(testPt, testValue));
-
-  bool testsOk = representerTest.RunAllTests();
-
-  if (testsOk == true)
-  {
-    return EXIT_SUCCESS;
-  }
-  else
-  {
     return EXIT_FAILURE;
   }
+
+  _s_dataDir = argv[1];
+
+  auto res = statismo::Translate([]() {
+    return statismo::test::RunAllTests("vtkStandardImageRepresenterTest",
+                                       { { "TestRepresenterForImage", TestRepresenterForImage } });
+  });
+
+  return !statismo::CheckResultAndAssert(res, EXIT_SUCCESS);
 }

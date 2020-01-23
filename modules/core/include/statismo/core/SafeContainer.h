@@ -213,13 +213,13 @@ private:
 
 template <typename T>
 void
-SafeQueue<T>::Push(T new_value)
+SafeQueue<T>::Push(T newValue)
 {
-  std::shared_ptr<T>    new_data{ std::make_shared<T>(std::move(new_value)) };
+  std::shared_ptr<T>    newData{ std::make_shared<T>(std::move(newValue)) };
   std::unique_ptr<Node> p(new Node);
   {
     std::lock_guard<std::mutex> tailLock{ m_tailMutex };
-    m_tail->data = new_data;
+    m_tail->data = newData;
     auto * const newTail = p.get();
     m_tail->next = std::move(p);
     m_tail = newTail;

@@ -242,16 +242,16 @@ public:
                          unsigned                              numEigenfunctions,
                          unsigned                              numberOfPointsForApproximation = 0,
                          bool                                  cacheValues = true)
-    : m_representer(representer)
-    , m_eta(eta)
+    : MatrixValuedKernel<PointType>(kernel.GetDimension())
+    , m_representer(representer)
     , m_nystrom(Nystrom<T>::SafeCreateStd(representer,
                                           kernel,
                                           numEigenfunctions,
                                           numberOfPointsForApproximation == 0 ? numEigenfunctions * 2
                                                                               : numberOfPointsForApproximation))
     , m_eigenvalues(m_nystrom->GetEigenvalues())
+    , m_eta(eta)
     , m_doCacheValues(cacheValues)
-    , MatrixValuedKernel<PointType>(kernel.GetDimension())
   {}
 
   inline MatrixType

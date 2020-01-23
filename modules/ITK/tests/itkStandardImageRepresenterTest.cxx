@@ -60,7 +60,6 @@ _LoadImage(const std::string & filename)
   img->DisconnectPipeline();
   return img;
 }
-} // namespace
 
 int
 TestRepresenterForScalarImage()
@@ -115,6 +114,7 @@ TestRepresenterForVectorImage()
 
   return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
+} // namespace
 
 int
 itkStandardImageRepresenterTest(int argc, char ** argv)

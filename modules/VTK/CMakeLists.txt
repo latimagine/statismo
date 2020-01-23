@@ -9,11 +9,21 @@ target_include_directories(statismo_VTK PUBLIC
     $<INSTALL_INTERFACE:include/>
 )
 target_compile_features(statismo_VTK PUBLIC cxx_std_17)
+target_compile_options(statismo_VTK PRIVATE "${STATISMO_COMPILE_OPTIONS}")
 set_target_properties(statismo_VTK PROPERTIES
   DEBUG_POSTFIX "-d"
   VERSION "${statismo_LIB_VERSION}"
   SOVERSION "${statismo_LIB_SOVERSION}"
 )
+if(${BUILD_WITH_TIDY})
+   # Const-cast is used because, in VTK, few routines are const even if
+   # the specific invariant of the class are not modified 
+   set(WITH_CLANG_TIDY "${WITH_CLANG_TIDY},-cppcoreguidelines-pro-type-const-cast")
+   set_target_properties(
+    statismo_VTK PROPERTIES
+   CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
+  )
+endif()
 
 set(TARGET_INCLUDE_DIR_SUFFIX /statismo/VTK)
 set(TARGET_INCLUDE_DIR include/${TARGET_INCLUDE_DIR_SUFFIX})

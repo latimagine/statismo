@@ -35,20 +35,45 @@
  *
  */
 
-#include <vtkPolyDataReader.h>
-#include <vtkSmartPointer.h>
-
+#include "StatismoUnitTest.h"
+#include "statismo/core/Exceptions.h"
 #include "statismo/core/GenericRepresenterValidator.h"
 #include "statismo/VTK/vtkStandardMeshRepresenter.h"
 
 #include "vtkTestHelper.h"
 
+#include <string>
+
 using namespace statismo::test;
 
-using statismo::vtkStandardMeshRepresenter;
-using statismo::vtkPoint;
+namespace
+{
+std::string _s_dataDir;
 
-typedef GenericRepresenterValidator<vtkStandardMeshRepresenter> RepresenterTestType;
+int
+TestRepresenterForMesh()
+{
+  using RepresenterType = statismo::vtkStandardMeshRepresenter;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
+
+  auto referenceFilename = _s_dataDir + "/hand_polydata/hand-0.vtk";
+  auto testDatasetFilename = _s_dataDir + "/hand_polydata/hand-1.vtk";
+
+  auto reference = LoadPolyData(referenceFilename);
+  auto representer = RepresenterType::SafeCreate(reference);
+
+  // choose a test dataset, a point (on the reference) and the associated point on the test example
+  auto               testDataset = LoadPolyData(testDatasetFilename);
+  unsigned           testPtId{ 0 };
+  statismo::vtkPoint testPt(reference->GetPoints()->GetPoint(testPtId));
+  statismo::vtkPoint testValue(testDataset->GetPoints()->GetPoint(testPtId));
+
+  RepresenterValidatorType validator(representer.get(), testDataset, std::make_pair(testPt, testValue));
+
+  return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
+}
+
+} // namespace
 
 int
 vtkStandardMeshRepresenterTest(int argc, char ** argv)
@@ -58,31 +83,13 @@ vtkStandardMeshRepresenterTest(int argc, char ** argv)
     std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
     exit(EXIT_FAILURE);
   }
-  std::string datadir = std::string(argv[1]);
 
-  const std::string referenceFilename = datadir + "/hand_polydata/hand-0.vtk";
-  const std::string testDatasetFilename = datadir + "/hand_polydata/hand-1.vtk";
+  _s_dataDir = argv[1];
 
-  auto reference = LoadPolyData(referenceFilename);
-  auto representer = vtkStandardMeshRepresenter::SafeCreate(reference);
+  auto res = statismo::Translate([]() {
+    return statismo::test::RunAllTests("vtkStandardImageRepresenterTest",
+                                       { { "TestRepresenterForMesh", TestRepresenterForMesh } });
+  });
 
-  // choose a test dataset, a point (on the reference) and the associated point on the test example
-
-  auto     testDataset = LoadPolyData(testDatasetFilename);
-  unsigned testPtId = 0;
-  vtkPoint testPt(reference->GetPoints()->GetPoint(testPtId));
-  vtkPoint testValue(testDataset->GetPoints()->GetPoint(testPtId));
-
-  RepresenterTestType representerTest(representer.get(), testDataset, std::make_pair(testPt, testValue));
-
-  bool testsOk = representerTest.RunAllTests();
-
-  if (testsOk == true)
-  {
-    return EXIT_SUCCESS;
-  }
-  else
-  {
-    return EXIT_FAILURE;
-  }
+  return !statismo::CheckResultAndAssert(res, EXIT_SUCCESS);
 }

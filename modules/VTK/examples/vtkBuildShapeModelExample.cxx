@@ -34,10 +34,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include <iostream>
-
-#include <vtkDirectory.h>
-#include <vtkPolyDataReader.h>
 
 #include "statismo/core/DataManager.h"
 #include "statismo/core/PCAModelBuilder.h"
@@ -45,39 +41,43 @@
 #include "statismo/core/IO.h"
 #include "statismo/VTK/vtkStandardMeshRepresenter.h"
 
+#include <vtkDirectory.h>
+#include <vtkPolyDataReader.h>
+
+#include <iostream>
 #include <memory>
 
 using namespace statismo;
 
-
-int
-getdir(std::string dir, std::vector<std::string> & files, const std::string & extension = ".*")
+namespace
 {
-  vtkDirectory * directory = vtkDirectory::New();
+int
+_GetDir(const std::string & dir, std::vector<std::string> & files, const std::string & extension = ".*")
+{
+  vtkNew<vtkDirectory> directory;
   directory->Open(dir.c_str());
 
   for (unsigned i = 0; i < directory->GetNumberOfFiles(); i++)
   {
     const char * filename = directory->GetFile(i);
     if (extension == ".*" || std::string(filename).find(extension) != std::string::npos)
-      files.push_back(filename);
+    {
+      files.emplace_back(filename);
+    }
   }
-  directory->Delete();
   return 0;
 }
 
-
-vtkPolyData *
-loadVTKPolyData(const std::string & filename)
+vtkSmartPointer<vtkPolyData>
+_LoadVTKPolyData(const std::string & filename)
 {
-  vtkPolyDataReader * reader = vtkPolyDataReader::New();
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.c_str());
   reader->Update();
-  vtkPolyData * pd = vtkPolyData::New();
-  pd->ShallowCopy(reader->GetOutput());
-  return pd;
+  return reader->GetOutput();
 }
 
+} // namespace
 
 //
 // Build a new shape model from vtkPolyData, given in datadir.
@@ -85,11 +85,10 @@ loadVTKPolyData(const std::string & filename)
 int
 main(int argc, char ** argv)
 {
-
   if (argc < 3)
   {
-    std::cout << "Usage " << argv[0] << " datadir modelname" << std::endl;
-    exit(-1);
+    std::cerr << "Usage " << argv[0] << " datadir modelname" << std::endl;
+    return 1;
   }
   std::string datadir(argv[1]);
   std::string modelname(argv[2]);
@@ -97,19 +96,19 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
-  typedef vtkStandardMeshRepresenter    RepresenterType;
-  typedef BasicDataManager<vtkPolyData> DataManagerType;
-  typedef PCAModelBuilder<vtkPolyData>  ModelBuilderType;
-  typedef StatisticalModel<vtkPolyData> StatisticalModelType;
+  using RepresenterType = vtkStandardMeshRepresenter;
+  using DataManagerType = BasicDataManager<vtkPolyData>;
+  using ModelBuilderType = PCAModelBuilder<vtkPolyData>;
+  using StringVectorType = std::vector<std::string>;
+  StringVectorType filenames;
 
-  typedef std::vector<std::string> StringVectorType;
-  StringVectorType                 filenames;
-  getdir(datadir, filenames, ".vtk");
-  if (filenames.size() == 0)
+  _GetDir(datadir, filenames, ".vtk");
+  if (filenames.empty())
   {
     std::cerr << "did not find any vtk files in directory " << datadir << " exiting.";
-    exit(-1);
+    return 1;
   }
+
   try
   {
 
@@ -117,43 +116,40 @@ main(int argc, char ** argv)
     // and the alignmentType. The alignmenttype (which is here RIGID) determines how the dataset that we
     // will use will later be aligned to the reference.
 
-    vtkPolyData *                    reference = loadVTKPolyData(datadir + "/" + filenames[0]);
-    std::unique_ptr<RepresenterType> representer(RepresenterType::Create(reference));
+    auto reference = _LoadVTKPolyData(datadir + "/" + filenames[0]);
+    auto representer = RepresenterType::SafeCreate(reference);
 
     // We create a datamanager and provide it with a pointer  to the representer
-    std::unique_ptr<DataManagerType> dataManager(DataManagerType::Create(representer.get()));
+    auto dataManager = DataManagerType::SafeCreate(representer.get());
 
 
     // Now we add our data to the data manager
     // load the data and add it to the data manager. We take the first 17 hand shapes that we find in the data folder
-    for (unsigned i = 0; i < filenames.size(); i++)
+    for (const auto & f : filenames)
     {
-      vtkPolyData * dataset = loadVTKPolyData(datadir + "/" + filenames[i]);
-
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
-      dataManager->AddDataset(dataset, filenames[i]);
-
-      // it is save to delete the dataset after it was added, as the datamanager direclty copies it.
-      dataset->Delete();
+      auto filename = datadir;
+      filename += "/";
+      filename += f;
+      dataManager->AddDataset(_LoadVTKPolyData(filename), f);
     }
 
     // To actually build a model, we need to create a model builder object.
     // Calling the build model with a list of samples from the data manager, returns a new model.
     // The second parameter to BuildNewModel is the variance of the noise on our data
     auto modelBuilder = ModelBuilderType::SafeCreate();
-
     auto model = modelBuilder->BuildNewModel(dataManager->GetData(), 0.01);
 
     // Once we have built the model, we can save it to disk.
     statismo::IO<vtkPolyData>::SaveStatisticalModel(model.get(), modelname);
     std::cout << "Successfully saved shape model as " << modelname << std::endl;
-
-    reference->Delete();
   }
-  catch (StatisticalModelException & e)
+  catch (const StatisticalModelException & e)
   {
-    std::cout << "Exception occured while building the shape model" << std::endl;
-    std::cout << e.what() << std::endl;
+    std::cerr << "Exception occured while building the shape model" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
+  return 0;
 }

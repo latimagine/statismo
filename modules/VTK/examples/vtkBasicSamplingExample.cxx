@@ -34,91 +34,89 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include <iostream>
+
+#include "statismo/core/StatisticalModel.h"
+#include "statismo/core/IO.h"
+#include "statismo/VTK/vtkStandardMeshRepresenter.h"
 
 #include <vtkPolyData.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkVersion.h>
 
-#include "statismo/core/StatisticalModel.h"
-#include "statismo/core/IO.h"
-#include "statismo/VTK/vtkStandardMeshRepresenter.h"
-
+#include <iostream>
 #include <memory>
 
 using namespace statismo;
 
-void
-saveSample(const vtkPolyData * pd, const std::string & resdir, const std::string & basename)
+namespace
 {
-  std::string filename = resdir + std::string("/") + basename;
 
-  vtkPolyDataWriter * w = vtkPolyDataWriter::New();
-#if (VTK_MAJOR_VERSION == 5)
-  w->SetInput(const_cast<vtkPolyData *>(pd));
-#else
+void
+_SaveSample(const vtkPolyData * pd, const std::string & resdir, const std::string & basename)
+{
+  auto filename = resdir + std::string("/") + basename;
+
+  vtkNew<vtkPolyDataWriter> w;
   w->SetInputData(const_cast<vtkPolyData *>(pd));
-#endif
   w->SetFileName(filename.c_str());
   w->Update();
 }
 
-// illustrates how to load a shape model and the basic sampling functinality
+} // namespace
+
+//
+// Illustrates how to load a shape model and the basic sampling functinality
+//
 int
 main(int argc, char ** argv)
 {
-
   if (argc < 3)
   {
-    std::cout << "Usage " << argv[0] << " modelname resultdir" << std::endl;
-    exit(-1);
+    std::cerr << "Usage " << argv[0] << " modelname resultdir" << std::endl;
+    return 1;
   }
+
   std::string modelname(argv[1]);
   std::string resultdir(argv[2]);
 
 
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
-  typedef vtkStandardMeshRepresenter    RepresenterType;
-  typedef StatisticalModel<vtkPolyData> StatisticalModelType;
+  using RepresenterType = vtkStandardMeshRepresenter;
 
   try
   {
-
     // To load a model, we call the static Load method, which returns (a pointer to) a
     // new StatisticalModel object
-    RepresenterType *                   representer = RepresenterType::Create();
-    UniquePtrType<StatisticalModelType> model(statismo::IO<vtkPolyData>::LoadStatisticalModel(representer, modelname));
-    std::cout << "loaded model with " << model->GetNumberOfPrincipalComponents() << " Principal Components"
+    auto representer = RepresenterType::SafeCreate();
+    auto model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), modelname);
+
+    std::cout << "Loaded model with " << model->GetNumberOfPrincipalComponents() << " Principal Components"
               << std::endl;
 
-
     // get the model mean
-    vtkPolyData * mean = model->DrawMean();
-    saveSample(mean, resultdir, "mean.vtk");
+    auto mean = model->DrawMean();
+    _SaveSample(mean, resultdir, "mean.vtk");
 
     // draw a random sample
-    vtkPolyData * randomSample = model->DrawSample();
-    saveSample(randomSample, resultdir, "randomsample.vtk");
+    auto randomSample = model->DrawSample();
+    _SaveSample(randomSample, resultdir, "randomsample.vtk");
 
     // draw a sample with known pca coefficients (3 stddev in direction of the 1st PC)
     VectorType coefficients = VectorType::Zero(model->GetNumberOfPrincipalComponents());
     coefficients(0) = 3;
-    vtkPolyData * samplePC1 = model->DrawSample(coefficients);
-    saveSample(samplePC1, resultdir, "samplePC1.vtk");
-
-
-    // The vtkPolyDataRepresenter returns naked pointers to vtk objcts. Therefore we have to delete all the samples
-    mean->Delete();
-    randomSample->Delete();
-    samplePC1->Delete();
+    auto samplePC1 = model->DrawSample(coefficients);
+    _SaveSample(samplePC1, resultdir, "samplePC1.vtk");
 
     std::cout << "saved samples to " << resultdir << std::endl;
   }
-  catch (StatisticalModelException & e)
+  catch (const StatisticalModelException & e)
   {
-    std::cout << "Exception occured while building the shape model" << std::endl;
-    std::cout << e.what() << std::endl;
+    std::cerr << "Exception occured while building the shape model" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }

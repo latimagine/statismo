@@ -207,15 +207,15 @@ private:
 
   // returns the closest point for the given mesh
   unsigned
-  FindClosestPoint(const MeshType * mesh, const PointType& pt) const;
+  FindClosestPoint(const MeshType * mesh, const PointType & pt) const;
 
   // return the closest point in reference
   unsigned
-  FindClosestPoint(const PointType& pt) const;
+  FindClosestPoint(const PointType & pt) const;
 
-  DatasetConstPointerType m_reference;
-  DomainType              m_domain;
-  mutable PointCacheType  m_pointCache;
+  DatasetConstPointerType             m_reference;
+  DomainType                          m_domain;
+  mutable PointCacheType              m_pointCache;
   typename PointsLocatorType::Pointer m_locator;
 };
 

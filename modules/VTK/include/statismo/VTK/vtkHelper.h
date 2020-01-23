@@ -38,136 +38,118 @@
 #ifndef __STATISMO_VTK_HELPER_H_
 #define __STATISMO_VTK_HELPER_H_
 
-
-#include <iostream>
-#include <sstream>
-
 #include "statismo/core/CommonTypes.h"
 #include "statismo/core/Exceptions.h"
 
-namespace statismo
+#include <vtkType.h>
+#include <vtkCharArray.h>
+#include <vtkDoubleArray.h>
+#include <vtkFloatArray.h>
+#include <vtkLongArray.h>
+#include <vtkIntArray.h>
+#include <vtkShortArray.h>
+#include <vtkUnsignedCharArray.h>
+#include <vtkUnsignedIntArray.h>
+#include <vtkUnsignedLongArray.h>
+#include <vtkUnsignedShortArray.h>
+
+#include <sstream>
+
+namespace statismo::helper
 {
-
-/**
- * \brief Helper class that represents a vtkPixel or arbitrary type and dimension
- * In vtk a pixel is just of type  T*. The statismo library relies on a proper
- * copy semantics, and hence requires such a wrapper.
- */
-class vtkNDPixel
+inline int
+vtkDataTypeIdToStatismoDataTypeId(int vtkDataTypeId)
 {
-public:
-  vtkNDPixel(unsigned dimensions)
-    : m_pixel(new double[dimensions])
-    , m_dimensions(dimensions)
-  {}
-  ~vtkNDPixel() { delete[] m_pixel; }
-
-  vtkNDPixel(double * x, unsigned dimensions)
-    : m_pixel(new double[dimensions])
-    , m_dimensions(dimensions)
+  switch (vtkDataTypeId)
   {
-    for (unsigned d = 0; d < dimensions; d++)
-      m_pixel[d] = x[d];
+    case VTK_UNSIGNED_CHAR:
+      return statismo::UNSIGNED_CHAR;
+    case VTK_SIGNED_CHAR:
+      return statismo::SIGNED_CHAR;
+    case VTK_FLOAT:
+      return statismo::FLOAT;
+    case VTK_DOUBLE:
+      return statismo::DOUBLE;
+    case VTK_UNSIGNED_INT:
+      return statismo::UNSIGNED_INT;
+    case VTK_INT:
+      return statismo::SIGNED_INT;
+    case VTK_UNSIGNED_SHORT:
+      return statismo::UNSIGNED_SHORT;
+    case VTK_SHORT:
+      return statismo::SIGNED_SHORT;
+    case VTK_UNSIGNED_LONG:
+      return statismo::UNSIGNED_LONG;
+    case VTK_LONG:
+      return statismo::SIGNED_LONG;
+    default:
+      break;
   }
+  throw statismo::StatisticalModelException("Unsupported data type", Status::INVALID_DATA_ERROR);
+}
 
-  double & operator[](unsigned i)
-  {
-    if (i >= m_dimensions)
-    {
-      std::ostringstream os;
-      os << "Invalid index for vtkPixel (index = " << i << ")";
-      throw statismo::StatisticalModelException(os.str().c_str());
-    }
-    else
-    {
-      return m_pixel[i];
-    }
-  }
-
-  const double & operator[](unsigned i) const
-  {
-    if (i >= m_dimensions)
-    {
-      std::ostringstream os;
-      os << "Invalid index for vtkPixel (index = " << i << ")";
-      throw statismo::StatisticalModelException(os.str().c_str());
-    }
-    else
-    {
-      return m_pixel[i];
-    }
-  }
-
-
-  vtkNDPixel &
-  operator=(const vtkNDPixel & rhs)
-  {
-    if (this != &rhs)
-    {
-      m_dimensions = rhs.m_dimensions;
-      m_pixel = new double[rhs.m_dimensions];
-      for (unsigned d = 0; d < rhs.m_dimensions; d++)
-      {
-        m_pixel[d] = rhs.m_pixel[d];
-      }
-    }
-    return *this;
-  }
-
-  vtkNDPixel(const vtkNDPixel & orig) { operator=(orig); }
-
-private:
-  double * m_pixel;
-  unsigned m_dimensions;
-};
-
-class vtkHelper
+inline int
+vtkStatismoDataTypeIdToVtkDataTypeId(unsigned statismoDataTypeId)
 {
-public:
-  static int
-  vtkDataTypeIdToStatismoDataTypeId(int vtkDataTypeId)
+  switch (statismoDataTypeId)
   {
-
-    int dataType = statismo::Void;
-    switch (vtkDataTypeId)
-    {
-      case VTK_UNSIGNED_CHAR:
-        dataType = statismo::UNSIGNED_CHAR;
-        break;
-      case VTK_SIGNED_CHAR:
-        dataType = statismo::SIGNED_CHAR;
-        break;
-      case VTK_FLOAT:
-        dataType = statismo::FLOAT;
-        break;
-      case VTK_DOUBLE:
-        dataType = statismo::DOUBLE;
-        break;
-      case VTK_UNSIGNED_INT:
-        dataType = statismo::UNSIGNED_INT;
-        break;
-      case VTK_INT:
-        dataType = statismo::SIGNED_INT;
-        break;
-      case VTK_UNSIGNED_SHORT:
-        dataType = statismo::UNSIGNED_SHORT;
-        break;
-      case VTK_SHORT:
-        dataType = statismo::SIGNED_SHORT;
-        break;
-      case VTK_UNSIGNED_LONG:
-        dataType = statismo::UNSIGNED_LONG;
-        break;
-      case VTK_LONG:
-        dataType = statismo::SIGNED_LONG;
-        break;
-      default:
-        throw statismo::StatisticalModelException(
-          "Unsupported data type for dataArray in vtkStandardMeshRepresenter::GetAsDataArray.");
-    }
-    return dataType;
+    case statismo::UNSIGNED_CHAR:
+      return VTK_UNSIGNED_CHAR;
+    case statismo::SIGNED_CHAR:
+      return VTK_SIGNED_CHAR;
+    case statismo::FLOAT:
+      return VTK_FLOAT;
+    case statismo::DOUBLE:
+      return VTK_DOUBLE;
+    case statismo::UNSIGNED_INT:
+      return VTK_UNSIGNED_INT;
+    case statismo::SIGNED_INT:
+      return VTK_INT;
+    case statismo::UNSIGNED_SHORT:
+      return VTK_UNSIGNED_SHORT;
+    case statismo::SIGNED_SHORT:
+      return VTK_SHORT;
+    case statismo::UNSIGNED_LONG:
+      return VTK_UNSIGNED_LONG;
+    case statismo::SIGNED_LONG:
+      return VTK_LONG;
+    default:
+      break;
   }
-};
+  throw statismo::StatisticalModelException("Unsupported data type", Status::INVALID_DATA_ERROR);
+}
 
-} // namespace statismo
-#endif // __VTK_HELPER_H
+inline vtkSmartPointer<vtkDataArray>
+vtkDataTypeIdToArray(int vtkDataTypeId)
+{
+  switch (vtkDataTypeId)
+  {
+    case statismo::UNSIGNED_CHAR:
+      return vtkSmartPointer<vtkUnsignedCharArray>::New();
+    case statismo::SIGNED_CHAR:
+      return vtkSmartPointer<vtkCharArray>::New();
+    case statismo::FLOAT:
+      return vtkSmartPointer<vtkFloatArray>::New();
+    case statismo::DOUBLE:
+      return vtkSmartPointer<vtkDoubleArray>::New();
+    case statismo::UNSIGNED_INT:
+      return vtkSmartPointer<vtkUnsignedIntArray>::New();
+    case statismo::SIGNED_INT:
+      return vtkSmartPointer<vtkIntArray>::New();
+    case statismo::UNSIGNED_SHORT:
+      return vtkSmartPointer<vtkUnsignedShortArray>::New();
+    case statismo::SIGNED_SHORT:
+      return vtkSmartPointer<vtkShortArray>::New();
+    case statismo::UNSIGNED_LONG:
+      return vtkSmartPointer<vtkLongArray>::New();
+    case statismo::SIGNED_LONG:
+      return vtkSmartPointer<vtkUnsignedLongArray>::New();
+    default:
+      break;
+  }
+
+  throw StatisticalModelException("Unsupported data type for dataArray", Status::INVALID_DATA_ERROR);
+}
+} // namespace statismo::helper
+
+#endif

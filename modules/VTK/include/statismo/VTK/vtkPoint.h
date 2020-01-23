@@ -38,9 +38,9 @@
 #ifndef __STATISMO_VTK_POINT_H_
 #define __STATISMO_VTK_POINT_H_
 
-#include "statismo/core/CommonTypes.h"
-#include "statismo/core/Exceptions.h"
 #include "statismo/core/CoreTraits.h"
+
+#include <array>
 
 namespace statismo
 {
@@ -52,26 +52,11 @@ namespace statismo
 class vtkPoint
 {
 public:
-  vtkPoint()
-  {
-    m_pt[0] = 0;
-    m_pt[1] = 0;
-    m_pt[2] = 0;
-  }
+  vtkPoint() = default;
 
-  vtkPoint(double x, double y, double z)
-  {
-    m_pt[0] = x;
-    m_pt[1] = y;
-    m_pt[2] = z;
-  }
+  vtkPoint(double x, double y, double z) { m_pt = { x, y, z }; }
 
-  vtkPoint(double * d)
-  {
-    m_pt[0] = d[0];
-    m_pt[1] = d[1];
-    m_pt[2] = d[2];
-  }
+  vtkPoint(const double * d) { m_pt = { d[0], d[1], d[2] }; }
 
   double &       operator[](unsigned i) { return m_pt[i]; }
   const double & operator[](unsigned i) const { return m_pt[i]; }
@@ -79,27 +64,11 @@ public:
   const double *
   data() const
   {
-    return m_pt;
+    return m_pt.data();
   }
-
-
-  vtkPoint &
-  operator=(const vtkPoint & rhs)
-  {
-    if (this != &rhs)
-    {
-      m_pt[0] = rhs.m_pt[0];
-      m_pt[1] = rhs.m_pt[1];
-      m_pt[2] = rhs.m_pt[2];
-    }
-    return *this;
-  }
-
-  vtkPoint(const vtkPoint & orig) { operator=(orig); }
-
 
 private:
-  double m_pt[3];
+  std::array<double, 3> m_pt = { 0, 0, 0 };
 };
 
 /**
