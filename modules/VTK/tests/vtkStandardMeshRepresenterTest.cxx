@@ -48,7 +48,6 @@ using namespace statismo::test;
 
 namespace {
 std::string _s_dataDir;
-}
 
 int
 TestRepresenterForMesh()
@@ -72,6 +71,8 @@ TestRepresenterForMesh()
 
   return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
+
+} // namespace
 
 int
 vtkStandardMeshRepresenterTest(int argc, char ** argv)

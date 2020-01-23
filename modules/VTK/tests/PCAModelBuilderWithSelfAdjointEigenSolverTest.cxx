@@ -74,7 +74,6 @@ namespace {
   std::string _s_outdir;
   unsigned _s_pointCount;
   auto _s_rg = rand::RandGen(0);
-}
 
 /**
  * The test works as follows:
@@ -192,6 +191,8 @@ int  TestBuildModel()
 
   return EXIT_SUCCESS;
 }
+
+} // namespace
 
 int
 PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)

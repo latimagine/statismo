@@ -73,7 +73,6 @@ namespace {
   using MatrixType =  statismo::MatrixType;
     using PCAModelBuilderType =  statismo::PCAModelBuilder<vtkPolyData> ;
 std::vector<std::string> _s_filenames;
-}
 
 int TestPosteriorMain() {
                                 
@@ -213,7 +212,7 @@ int TestPosteriorOnePoint() {
   return EXIT_SUCCESS;
 }
 
-
+} // namespace
 
 int
 PosteriorModelBuilderTest(int argc, char ** argv)

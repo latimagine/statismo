@@ -4,6 +4,7 @@ set(TARGET_TESTS
   PCAModelBuilderTest.cxx
   vtkStandardImageRepresenterTest.cxx
   vtkStandardMeshRepresenterTest.cxx
+  vtkUnstructuredGridRepresenterTest.cxx
 )
 
 create_test_sourcelist( 

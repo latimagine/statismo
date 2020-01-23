@@ -59,7 +59,6 @@ _LoadMesh(const std::string & filename)
   mesh->DisconnectPipeline();
   return mesh;
 }
-} // namespace
 
 int
 TestRepresenterForMesh()
@@ -86,6 +85,8 @@ TestRepresenterForMesh()
 
   return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
+
+} // namespace
 
 int
 itkStandardMeshRepresenterTest(int argc, char ** argv)

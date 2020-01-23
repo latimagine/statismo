@@ -48,7 +48,6 @@ using namespace statismo::test;
 
 namespace {
 std::string _s_dataDir;
-}
 
 int
 TestRepresenterForImage()
@@ -71,6 +70,8 @@ TestRepresenterForImage()
 
   return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
+
+} // namespace
 
 int
 vtkStandardImageRepresenterTest(int argc, char ** argv)

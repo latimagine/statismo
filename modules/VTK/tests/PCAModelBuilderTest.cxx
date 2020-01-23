@@ -95,7 +95,6 @@ bool _testBuildModel(unsigned pointsCount, VectorType baselineVariance) {
 
   return EXIT_SUCCESS;
 }
-}
 
 int TestBuildWithPGreaterThanN()
 {
@@ -117,6 +116,8 @@ int TestBuildWithNGreaterThanP()
 
   return _testBuildModel(100, baselineVariance);
 }
+
+} // namespace
 
 int
 PCAModelBuilderTest(int argc, char ** argv)
