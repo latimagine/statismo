@@ -46,14 +46,15 @@
 
 using namespace statismo::test;
 
-namespace {
+namespace
+{
 std::string _s_dataDir;
 
 int
 TestRepresenterForImage()
 {
-  using RepresenterType = statismo::vtkStandardImageRepresenter<float, 2> ;
-  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>    ;
+  using RepresenterType = statismo::vtkStandardImageRepresenter<float, 2>;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
 
   auto referenceFilename = _s_dataDir + "/hand_dfs/df-hand-1.vtk";
   auto testDatasetFilename = _s_dataDir + "/hand_dfs/df-hand-2.vtk";
@@ -62,11 +63,11 @@ TestRepresenterForImage()
   auto representer = RepresenterType::SafeCreate(reference);
 
   // choose a test dataset, a point (on the reference) and the associated point on the test example
-  auto                 testDataset = LoadStructuredPoints(testDatasetFilename);
-  unsigned             testPtId{0};
-  statismo::vtkPoint   testPt(reference->GetPoint(testPtId));
-  statismo::vtkNDPixel testValue(testDataset->GetPointData()->GetScalars()->GetTuple2(testPtId), 2);
-  RepresenterValidatorType  validator(representer.get(), testDataset, std::make_pair(testPt, testValue));
+  auto                     testDataset = LoadStructuredPoints(testDatasetFilename);
+  unsigned                 testPtId{ 0 };
+  statismo::vtkPoint       testPt(reference->GetPoint(testPtId));
+  statismo::vtkNDPixel     testValue(testDataset->GetPointData()->GetScalars()->GetTuple2(testPtId), 2);
+  RepresenterValidatorType validator(representer.get(), testDataset, std::make_pair(testPt, testValue));
 
   return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
@@ -87,9 +88,7 @@ vtkStandardImageRepresenterTest(int argc, char ** argv)
 
   auto res = statismo::Translate([]() {
     return statismo::test::RunAllTests("vtkStandardImageRepresenterTest",
-                                       {
-                                         { "TestRepresenterForImage", TestRepresenterForImage }
-                                       });
+                                       { { "TestRepresenterForImage", TestRepresenterForImage } });
   });
 
   return !statismo::CheckResultAndAssert(res, EXIT_SUCCESS);

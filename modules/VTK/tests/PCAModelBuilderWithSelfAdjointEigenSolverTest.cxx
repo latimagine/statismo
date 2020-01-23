@@ -61,18 +61,19 @@
 using namespace statismo;
 using namespace statismo::test;
 
-namespace {
-  using RepresenterType = vtkStandardMeshRepresenter              ;
-  using DataManagerType = statismo::BasicDataManager<vtkPolyData> ;
-  using PointType = vtkStandardMeshRepresenter::PointType   ;
-  using DomainType = vtkStandardMeshRepresenter::DomainType  ;
-  using DomainPointsListType = DomainType::DomainPointsListType        ;
-  using StatisticalModelType = statismo::StatisticalModel<vtkPolyData> ;
-  using PCAModelBuilderType = statismo::PCAModelBuilder<vtkPolyData> ;
+namespace
+{
+using RepresenterType = vtkStandardMeshRepresenter;
+using DataManagerType = statismo::BasicDataManager<vtkPolyData>;
+using PointType = vtkStandardMeshRepresenter::PointType;
+using DomainType = vtkStandardMeshRepresenter::DomainType;
+using DomainPointsListType = DomainType::DomainPointsListType;
+using StatisticalModelType = statismo::StatisticalModel<vtkPolyData>;
+using PCAModelBuilderType = statismo::PCAModelBuilder<vtkPolyData>;
 
-  std::vector<std::string> _s_filenames;
-  std::string _s_outdir;
-  unsigned _s_pointCount;
+std::vector<std::string> _s_filenames;
+std::string              _s_outdir;
+unsigned                 _s_pointCount;
 
 /**
  * The test works as follows:
@@ -89,22 +90,24 @@ namespace {
  *    components of the model are sampled and stored in this directory. This is meant for visual inspection.
  */
 
-int  TestBuildModel()
+int
+TestBuildModel()
 {
   auto reference = ReducePoints(LoadPolyData(_s_filenames[0]), _s_pointCount);
   auto representer = RepresenterType::SafeCreate(reference);
   auto dataManager = DataManagerType::SafeCreate(representer.get());
 
-  for (const auto& f : _s_filenames) {
+  for (const auto & f : _s_filenames)
+  {
     dataManager->AddDataset(ReducePoints(LoadPolyData(f), _s_pointCount), "dataset");
   }
 
-  const double                                         dataNoise = 0.0;
+  const double dataNoise = 0.0;
 
   // ----------------------------------------------------------
   // First compute PCA model using standard JacobiSVD
   // ----------------------------------------------------------
-  auto                                           pcaModelBuilder = PCAModelBuilderType::SafeCreate();
+  auto pcaModelBuilder = PCAModelBuilderType::SafeCreate();
 
   // perform with standard argument
   auto       jacobiModel = pcaModelBuilder->BuildNewModel(dataManager->GetData(), dataNoise, false);
@@ -143,7 +146,7 @@ int  TestBuildModel()
   // Comparing the models
   // - compare each principal component
   // ----------------------------------------------------------
-  double error{0.0};
+  double error{ 0.0 };
   for (unsigned i = 0;
        i < std::min(jacobiModel->GetNumberOfPrincipalComponents(), saesModel->GetNumberOfPrincipalComponents());
        i++)
@@ -170,7 +173,8 @@ int  TestBuildModel()
 
       std::stringstream ss2;
       ss2 << _s_outdir << "/saes-" << i << ".vtk";
-      if (equalDir < oppositeDir) {
+      if (equalDir < oppositeDir)
+      {
         coeff2[i] = 2;
       }
       WritePolyData(saesModel->DrawSample(coeff2, false), ss2.str());
@@ -179,7 +183,7 @@ int  TestBuildModel()
 
   STATISMO_ASSERT_LT(error, 150.0);
 
-  double varError{0.0};
+  double varError{ 0.0 };
   for (unsigned i = 0;
        i < std::min(jacobiModel->GetNumberOfPrincipalComponents(), saesModel->GetNumberOfPrincipalComponents());
        i++)
@@ -210,20 +214,24 @@ PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)
   // the number of points is reduced since the SelfAdjointEigenSolver operates
   // on the full covariance matrix.
   _s_pointCount = 100;
-  if (argc == 3) {
+  if (argc == 3)
+  {
     _s_pointCount = std::stoi(argv[2]);
   }
 
-  if (argc == 4) {
+  if (argc == 4)
+  {
     _s_outdir = argv[3];
   }
 
-  for (unsigned i = 0; i <= 16; ++i) {
+  for (unsigned i = 0; i <= 16; ++i)
+  {
     _s_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
   }
 
   auto res = statismo::Translate([]() {
-    return statismo::test::RunAllTests("PCAModelBuilderWithSelfAdjointEigenSolverTest", { { "TestBuildModel", TestBuildModel }});
+    return statismo::test::RunAllTests("PCAModelBuilderWithSelfAdjointEigenSolverTest",
+                                       { { "TestBuildModel", TestBuildModel } });
   });
 
   return !CheckResultAndAssert(res, EXIT_SUCCESS);

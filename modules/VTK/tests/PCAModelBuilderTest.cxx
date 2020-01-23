@@ -61,24 +61,28 @@
 using namespace statismo;
 using namespace statismo::test;
 
-namespace {
+namespace
+{
 
-  using RepresenterType = vtkStandardMeshRepresenter              ;
-  using DataManagerType = statismo::BasicDataManager<vtkPolyData> ;
-  using PointType = vtkStandardMeshRepresenter::PointType   ;
-  using DomainType = vtkStandardMeshRepresenter::DomainType  ;
-  using DomainPointsListType = DomainType::DomainPointsListType        ;
-  using StatisticalModelType = statismo::StatisticalModel<vtkPolyData> ;
-    using PCAModelBuilderType = statismo::PCAModelBuilder<vtkPolyData> ;
+using RepresenterType = vtkStandardMeshRepresenter;
+using DataManagerType = statismo::BasicDataManager<vtkPolyData>;
+using PointType = vtkStandardMeshRepresenter::PointType;
+using DomainType = vtkStandardMeshRepresenter::DomainType;
+using DomainPointsListType = DomainType::DomainPointsListType;
+using StatisticalModelType = statismo::StatisticalModel<vtkPolyData>;
+using PCAModelBuilderType = statismo::PCAModelBuilder<vtkPolyData>;
 
 std::vector<std::string> _s_filenames;
 
-bool _TestBuildModel(unsigned pointsCount, const VectorType& baselineVariance) {
+bool
+_TestBuildModel(unsigned pointsCount, const VectorType & baselineVariance)
+{
   auto reference = ReducePoints(LoadPolyData(_s_filenames[0]), pointsCount);
   auto representer = RepresenterType::SafeCreate(reference);
   auto dataManager = DataManagerType::SafeCreate(representer.get());
 
-  for (const auto& f : _s_filenames) {
+  for (const auto & f : _s_filenames)
+  {
     dataManager->AddDataset(ReducePoints(LoadPolyData(f), pointsCount), "dataset");
   }
 
@@ -96,17 +100,19 @@ bool _TestBuildModel(unsigned pointsCount, const VectorType& baselineVariance) {
   return EXIT_SUCCESS;
 }
 
-int TestBuildWithPGreaterThanN()
+int
+TestBuildWithPGreaterThanN()
 {
   VectorType baselineVariance(10);
   baselineVariance << 460.601104736328125, 211.22674560546875, 107.32666015625, 71.84774017333984375,
     36.4659576416015625, 22.3681926727294921875, 11.6593990325927734375, 4.789171695709228515625,
     1.28080332279205322265625, 0.77941668033599853515625;
 
-    return _TestBuildModel(5, baselineVariance);
-  }
+  return _TestBuildModel(5, baselineVariance);
+}
 
-int TestBuildWithNGreaterThanP()
+int
+TestBuildWithNGreaterThanP()
 {
   VectorType baselineVariance(16);
   baselineVariance << 5175.92236328125, 3022.61181640625, 1786.9608154296875, 1131.9517822265625, 727.96649169921875,
@@ -129,13 +135,15 @@ PCAModelBuilderTest(int argc, char ** argv)
 
   std::string datadir = argv[1];
 
-  for (unsigned i = 0; i <= 16; ++i) {
+  for (unsigned i = 0; i <= 16; ++i)
+  {
     _s_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
   }
 
   auto res = statismo::Translate([]() {
-    return statismo::test::RunAllTests("PCAModelBuilderTest", { { "TestBuildWithPGreaterThanN", TestBuildWithPGreaterThanN },
-    { "TestBuildWithNGreaterThanP", TestBuildWithNGreaterThanP } });
+    return statismo::test::RunAllTests("PCAModelBuilderTest",
+                                       { { "TestBuildWithPGreaterThanN", TestBuildWithPGreaterThanN },
+                                         { "TestBuildWithNGreaterThanP", TestBuildWithNGreaterThanP } });
   });
 
   return !CheckResultAndAssert(res, EXIT_SUCCESS);

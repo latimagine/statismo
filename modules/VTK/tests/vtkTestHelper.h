@@ -14,7 +14,7 @@
 
 namespace statismo::test
 {
-  
+
 inline vtkSmartPointer<vtkPolyData>
 LoadPolyData(const std::string & filename)
 {

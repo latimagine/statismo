@@ -439,16 +439,16 @@ StandardMeshRepresenter<TPixel, MeshDimension>::CloneDataset(DatasetConstPointer
 
 template <class TPixel, unsigned MeshDimension>
 unsigned
-StandardMeshRepresenter<TPixel, MeshDimension>::FindClosestPoint(const MeshType *, const PointType&) const
+StandardMeshRepresenter<TPixel, MeshDimension>::FindClosestPoint(const MeshType *, const PointType &) const
 {
   throw statismo::StatisticalModelException("Not implemented. Currently only points of the reference can be used.");
 }
 
 template <class TPixel, unsigned MeshDimension>
 unsigned
-StandardMeshRepresenter<TPixel, MeshDimension>::FindClosestPoint(const PointType& pt) const
+StandardMeshRepresenter<TPixel, MeshDimension>::FindClosestPoint(const PointType & pt) const
 {
-    return m_locator->FindClosestPoint(pt);
+  return m_locator->FindClosestPoint(pt);
 }
 
 } // namespace itk

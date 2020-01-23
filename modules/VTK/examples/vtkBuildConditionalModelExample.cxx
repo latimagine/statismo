@@ -48,7 +48,8 @@
 
 using namespace statismo;
 
-namespace {
+namespace
+{
 
 vtkSmartPointer<vtkStructuredPoints>
 _LoadVTKStructuredPointsData(const std::string & filename)
@@ -59,7 +60,7 @@ _LoadVTKStructuredPointsData(const std::string & filename)
 
   return reader->GetOutput();
 }
-}
+} // namespace
 
 //
 // This example shows the use of the classes for
@@ -82,13 +83,13 @@ main(int argc, char ** argv)
   // For building a intensity model with vtk, we use the vtkStructuredPointsRepresenter.
   // Here, we work with unsigned character images. The second template parameter specifies
   // the pixel dimension (1 means scalar image, whereas 3 is a 3D vector image).
-  using RepresenterType = vtkStandardImageRepresenter<unsigned char, 1>  ;
-  using DataManagerWithSurrogatesType = DataManagerWithSurrogates<vtkStructuredPoints> ;
-  using ConditionalModelBuilderType = ConditionalModelBuilder<vtkStructuredPoints>   ;
+  using RepresenterType = vtkStandardImageRepresenter<unsigned char, 1>;
+  using DataManagerWithSurrogatesType = DataManagerWithSurrogates<vtkStructuredPoints>;
+  using ConditionalModelBuilderType = ConditionalModelBuilder<vtkStructuredPoints>;
 
   try
   {
-    auto           reference = _LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
+    auto reference = _LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
     auto representer = RepresenterType::SafeCreate(reference);
 
     // We use the SurrogateDataManager, as we need to specify surrogate data in addition to the images.
@@ -113,7 +114,8 @@ main(int argc, char ** argv)
 
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
-      dataManager->AddDatasetWithSurrogates(_LoadVTKStructuredPointsData(datasetFilename), datasetFilename, ssSurrogateFilename.str());
+      dataManager->AddDatasetWithSurrogates(
+        _LoadVTKStructuredPointsData(datasetFilename), datasetFilename, ssSurrogateFilename.str());
     }
 
     // Build up a list holding the conditioning information.

@@ -58,70 +58,71 @@
 namespace statismo::helper
 {
 inline int
-  vtkDataTypeIdToStatismoDataTypeId(int vtkDataTypeId)
+vtkDataTypeIdToStatismoDataTypeId(int vtkDataTypeId)
+{
+  switch (vtkDataTypeId)
   {
-    switch (vtkDataTypeId)
-    {
-      case VTK_UNSIGNED_CHAR:
-        return statismo::UNSIGNED_CHAR;
-      case VTK_SIGNED_CHAR:
-        return statismo::SIGNED_CHAR;
-      case VTK_FLOAT:
-        return statismo::FLOAT;
-      case VTK_DOUBLE:
-        return statismo::DOUBLE;
-      case VTK_UNSIGNED_INT:
-        return statismo::UNSIGNED_INT;
-      case VTK_INT:
-        return statismo::SIGNED_INT;
-      case VTK_UNSIGNED_SHORT:
-        return statismo::UNSIGNED_SHORT;
-      case VTK_SHORT:
-        return statismo::SIGNED_SHORT;
-      case VTK_UNSIGNED_LONG:
-        return statismo::UNSIGNED_LONG;
-      case VTK_LONG:
-        return statismo::SIGNED_LONG;
-      default:
-        break;
-    }
-  throw statismo::StatisticalModelException(
-          "Unsupported data type", Status::INVALID_DATA_ERROR);
+    case VTK_UNSIGNED_CHAR:
+      return statismo::UNSIGNED_CHAR;
+    case VTK_SIGNED_CHAR:
+      return statismo::SIGNED_CHAR;
+    case VTK_FLOAT:
+      return statismo::FLOAT;
+    case VTK_DOUBLE:
+      return statismo::DOUBLE;
+    case VTK_UNSIGNED_INT:
+      return statismo::UNSIGNED_INT;
+    case VTK_INT:
+      return statismo::SIGNED_INT;
+    case VTK_UNSIGNED_SHORT:
+      return statismo::UNSIGNED_SHORT;
+    case VTK_SHORT:
+      return statismo::SIGNED_SHORT;
+    case VTK_UNSIGNED_LONG:
+      return statismo::UNSIGNED_LONG;
+    case VTK_LONG:
+      return statismo::SIGNED_LONG;
+    default:
+      break;
   }
-
-    inline int vtkStatismoDataTypeIdToVtkDataTypeId(unsigned statismoDataTypeId)
-    {
-      switch (statismoDataTypeId)
-      {
-        case statismo::UNSIGNED_CHAR:
-          return VTK_UNSIGNED_CHAR;
-        case statismo::SIGNED_CHAR:
-          return VTK_SIGNED_CHAR;
-        case statismo::FLOAT:
-          return VTK_FLOAT;
-        case statismo::DOUBLE:
-          return VTK_DOUBLE;
-        case statismo::UNSIGNED_INT:
-          return VTK_UNSIGNED_INT;
-        case statismo::SIGNED_INT:
-          return VTK_INT;
-        case statismo::UNSIGNED_SHORT:
-          return VTK_UNSIGNED_SHORT;
-        case statismo::SIGNED_SHORT:
-          return VTK_SHORT;
-        case statismo::UNSIGNED_LONG:
-          return VTK_UNSIGNED_LONG;
-        case statismo::SIGNED_LONG:
-          return VTK_LONG;
-        default:
-          break;
-      }
-  throw statismo::StatisticalModelException(
-          "Unsupported data type", Status::INVALID_DATA_ERROR);
+  throw statismo::StatisticalModelException("Unsupported data type", Status::INVALID_DATA_ERROR);
 }
 
-inline vtkSmartPointer<vtkDataArray> vtkDataTypeIdToArray(int vtkDataTypeId) {
-switch (vtkDataTypeId)
+inline int
+vtkStatismoDataTypeIdToVtkDataTypeId(unsigned statismoDataTypeId)
+{
+  switch (statismoDataTypeId)
+  {
+    case statismo::UNSIGNED_CHAR:
+      return VTK_UNSIGNED_CHAR;
+    case statismo::SIGNED_CHAR:
+      return VTK_SIGNED_CHAR;
+    case statismo::FLOAT:
+      return VTK_FLOAT;
+    case statismo::DOUBLE:
+      return VTK_DOUBLE;
+    case statismo::UNSIGNED_INT:
+      return VTK_UNSIGNED_INT;
+    case statismo::SIGNED_INT:
+      return VTK_INT;
+    case statismo::UNSIGNED_SHORT:
+      return VTK_UNSIGNED_SHORT;
+    case statismo::SIGNED_SHORT:
+      return VTK_SHORT;
+    case statismo::UNSIGNED_LONG:
+      return VTK_UNSIGNED_LONG;
+    case statismo::SIGNED_LONG:
+      return VTK_LONG;
+    default:
+      break;
+  }
+  throw statismo::StatisticalModelException("Unsupported data type", Status::INVALID_DATA_ERROR);
+}
+
+inline vtkSmartPointer<vtkDataArray>
+vtkDataTypeIdToArray(int vtkDataTypeId)
+{
+  switch (vtkDataTypeId)
   {
     case statismo::UNSIGNED_CHAR:
       return vtkSmartPointer<vtkUnsignedCharArray>::New();
@@ -147,9 +148,8 @@ switch (vtkDataTypeId)
       break;
   }
 
-  throw StatisticalModelException(
-        "Unsupported data type for dataArray", Status::INVALID_DATA_ERROR);
+  throw StatisticalModelException("Unsupported data type for dataArray", Status::INVALID_DATA_ERROR);
 }
-}
+} // namespace statismo::helper
 
 #endif

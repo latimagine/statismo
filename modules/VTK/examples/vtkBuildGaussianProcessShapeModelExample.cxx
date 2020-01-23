@@ -49,7 +49,8 @@
 
 using namespace statismo;
 
-namespace {
+namespace
+{
 
 /**
  * A scalar valued gaussian kernel.
@@ -83,7 +84,7 @@ private:
   double m_sigma2;
 };
 
-}
+} // namespace
 
 
 //
@@ -107,21 +108,21 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
 
-  using ModelBuilderType = LowRankGPModelBuilder<vtkPolyData> ;
-  using MatrixValuedKernelType = MatrixValuedKernel<vtkPoint>       ;
+  using ModelBuilderType = LowRankGPModelBuilder<vtkPolyData>;
+  using MatrixValuedKernelType = MatrixValuedKernel<vtkPoint>;
 
   try
   {
     // we load an existing statistical model and create a StatisticalModelKernel from it. The statisticlModelKernel
     // takes the covariance (matrix) of the model and defines a kernel function from it.
-    auto   representer = vtkStandardMeshRepresenter::SafeCreate();
-    auto                           model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), modelFilename);
+    auto representer = vtkStandardMeshRepresenter::SafeCreate();
+    auto model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), modelFilename);
     const MatrixValuedKernelType & statModelKernel = StatisticalModelKernel<vtkPolyData>(model.get());
 
     // Create a (scalar valued) gaussian kernel. This kernel is then made matrix-valued. We use a
     // UncorrelatedMatrixValuedKernel, which assumes that each output component is independent.
 
-    _GaussianKernel           gk{_GaussianKernelSigma};
+    _GaussianKernel                gk{ _GaussianKernelSigma };
     const MatrixValuedKernelType & mvGk =
       UncorrelatedMatrixValuedKernel<vtkPoint>(&gk, model->GetRepresenter()->GetDimensions());
 

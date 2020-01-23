@@ -56,15 +56,16 @@
 // case, a more sophisticated method for establishing correspondence needs to be used.
 //
 
-namespace {
+namespace
+{
 
-using VectorType = statismo::VectorType                             ;
-using MatrixType = statismo::MatrixType                             ;
-using RepresenterType = statismo::vtkStandardMeshRepresenter             ;
-using StatisticalModelType = statismo::StatisticalModel<vtkPolyData>          ;
-using PosteriorModelBuilderType = statismo::PosteriorModelBuilder<vtkPolyData>     ;
-using DomainType = StatisticalModelType::DomainType                 ;
-using DomainPointsConstIterator = DomainType::DomainPointsListType::const_iterator ;
+using VectorType = statismo::VectorType;
+using MatrixType = statismo::MatrixType;
+using RepresenterType = statismo::vtkStandardMeshRepresenter;
+using StatisticalModelType = statismo::StatisticalModel<vtkPolyData>;
+using PosteriorModelBuilderType = statismo::PosteriorModelBuilder<vtkPolyData>;
+using DomainType = StatisticalModelType::DomainType;
+using DomainPointsConstIterator = DomainType::DomainPointsListType::const_iterator;
 
 vtkSmartPointer<vtkPolyData>
 _LoadVTKPolyData(const std::string & filename)
@@ -94,7 +95,7 @@ _MahalanobisDistance(const StatisticalModelType * model, unsigned ptId, const st
   return x.transpose() * cov.inverse() * x;
 }
 
-}
+} // namespace
 
 
 /**
@@ -119,8 +120,8 @@ main(int argc, char ** argv)
   {
     auto partialShape = _LoadVTKPolyData(partialShapeMeshName);
 
-    auto          representer = RepresenterType::SafeCreate();
-    auto          inputModel = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
+    auto representer = RepresenterType::SafeCreate();
+    auto inputModel = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
 
     StatisticalModelType::PointValueListType constraints;
 
@@ -154,7 +155,7 @@ main(int argc, char ** argv)
     std::cout << "successfully saved the model to " << posteriorModelName << std::endl;
 
     // The mean of the constraint model is the optimal reconstruction
-    auto       pmean = constraintModel->DrawMean();
+    auto pmean = constraintModel->DrawMean();
 
     vtkNew<vtkPolyDataWriter> writer;
     writer->SetInputData(pmean);

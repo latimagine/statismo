@@ -68,12 +68,14 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::AssertCompatibility(Datas
   {
     std::cout << "sizeof(TScalar) = " << sizeof(TScalar) << std::endl;
     std::cout << "sizeof(TScalar) = " << const_cast<vtkStructuredPoints *>(data)->GetScalarSize() << std::endl;
-    throw StatisticalModelException("incompatible data (bad scalar type) given to representer", statismo::Status::INVALID_DATA_ERROR);
+    throw StatisticalModelException("incompatible data (bad scalar type) given to representer",
+                                    statismo::Status::INVALID_DATA_ERROR);
   }
 
   if (PixelDimensions != const_cast<vtkStructuredPoints *>(data)->GetNumberOfScalarComponents())
   {
-    throw StatisticalModelException("incompatible data (bad scalar components count) given to representer", statismo::Status::INVALID_DATA_ERROR);
+    throw StatisticalModelException("incompatible data (bad scalar components count) given to representer",
+                                    statismo::Status::INVALID_DATA_ERROR);
   }
 }
 
@@ -115,7 +117,8 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRef(const H5::Group &
     throw StatisticalModelException((std::string("Cannot load representer data: The ") +
                                      "representer specified in the given hdf5 file is of the wrong type: (" + type +
                                      ", expected IMAGE)")
-                                      .c_str(), Status::INVALID_H5DATA_ERROR);
+                                      .c_str(),
+                                    Status::INVALID_H5DATA_ERROR);
   }
 
   statismo::VectorType originVec;
@@ -153,8 +156,8 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRef(const H5::Group &
 
   typename statismo::GenericEigenTraits<double>::MatrixType pixelMat;
   hdf5utils::ReadMatrixOfType<double>(pdGroup, "pixelValues", pixelMat);
-  
-  auto  ds = pdGroup.openDataSet("pixelValues");
+
+  auto ds = pdGroup.openDataSet("pixelValues");
   auto datatype = static_cast<unsigned>(hdf5utils::ReadIntAttribute(ds, "datatype"));
 
   if (statismo::GetDataTypeId<TScalar>() != datatype)
@@ -326,7 +329,8 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::PointSampleVectorToPointS
   const VectorType & pointSample) const
 {
   ValueType value(PixelDimensions);
-  for (unsigned i = 0; i < PixelDimensions; i++) {
+  for (unsigned i = 0; i < PixelDimensions; i++)
+  {
     value[i] = pointSample[i];
   }
 
@@ -342,13 +346,16 @@ vtkStandardImageRepresenter<TScalar, Dimensions>::Save(const H5::Group & fg) con
   // get the effective image dimension, by check the size
   int *    size = m_reference->GetDimensions();
   unsigned imageDimension = 0;
-  if (size[2] == 1 && size[1] == 1) {
+  if (size[2] == 1 && size[1] == 1)
+  {
     imageDimension = 1;
   }
-  else if (size[2] == 1) {
+  else if (size[2] == 1)
+  {
     imageDimension = 2;
   }
-  else {
+  else
+  {
     imageDimension = 3;
   }
 

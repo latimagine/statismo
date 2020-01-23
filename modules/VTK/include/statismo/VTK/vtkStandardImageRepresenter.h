@@ -93,11 +93,10 @@ public:
 
   void
   Load(const H5::Group & fg) override;
-    void
+  void
   Save(const H5::Group & fg) const override;
 
-  void
-  DeleteDataset(DatasetPointerType) const override {
+  void DeleteDataset(DatasetPointerType) const override{
     // no op as smart pointers are now use a data type
   };
 
@@ -181,11 +180,11 @@ private:
   vtkSmartPointer<vtkStructuredPoints>
   LoadRef(const H5::Group & fg) const;
 
-    void
+  void
   SetReference(DatasetConstPointerType reference);
 
   explicit vtkStandardImageRepresenter(DatasetConstPointerType reference);
-  
+
   vtkStandardImageRepresenter()
     : m_reference(DatasetPointerType::New())
   {}

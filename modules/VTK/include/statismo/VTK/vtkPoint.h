@@ -54,15 +54,9 @@ class vtkPoint
 public:
   vtkPoint() = default;
 
-  vtkPoint(double x, double y, double z)
-  {
-    m_pt = {x, y, z};
-  }
+  vtkPoint(double x, double y, double z) { m_pt = { x, y, z }; }
 
-  vtkPoint(const double * d)
-  {
-    m_pt = {d[0], d[1], d[2]};
-  }
+  vtkPoint(const double * d) { m_pt = { d[0], d[1], d[2] }; }
 
   double &       operator[](unsigned i) { return m_pt[i]; }
   const double & operator[](unsigned i) const { return m_pt[i]; }
@@ -74,7 +68,7 @@ public:
   }
 
 private:
-  std::array<double, 3> m_pt = {0, 0, 0};
+  std::array<double, 3> m_pt = { 0, 0, 0 };
 };
 
 /**

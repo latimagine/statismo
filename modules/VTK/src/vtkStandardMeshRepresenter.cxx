@@ -89,7 +89,7 @@ vtkStandardMeshRepresenter::LoadRef(const H5::Group & fg) const
   hdf5utils::ReadMatrix(fg, "./points", vertexMat);
 
   using UIntMatrixType = statismo::GenericEigenTraits<unsigned int>::MatrixType;
-  UIntMatrixType                                                 cellsMat;
+  UIntMatrixType cellsMat;
   hdf5utils::ReadMatrixOfType<unsigned int>(fg, "./cells", cellsMat);
 
   // create the reference from this information
@@ -176,7 +176,7 @@ vtkStandardMeshRepresenter::LoadRefLegacy(const H5::Group & fg) const
   std::string tmpfilename = statismo::utils::CreateTmpName(".vtk");
 
   hdf5utils::GetFileFromHDF5(fg, "./reference", tmpfilename.c_str());
-  
+
   vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(tmpfilename.c_str());
   reader->Update();
@@ -206,7 +206,7 @@ vtkStandardMeshRepresenter::Save(const H5::Group & fg) const
 
   // check the dimensionality of a face (i.e. the number of points it has). We assume that
   // all the cells are the same.
-  unsigned numPointsPerCell{0};
+  unsigned numPointsPerCell{ 0 };
   if (m_reference->GetNumberOfCells() > 0)
   {
     numPointsPerCell = m_reference->GetCell(0)->GetNumberOfPoints();
@@ -246,7 +246,7 @@ vtkStandardMeshRepresenter::Save(const H5::Group & fg) const
     WriteDataArray(pdGroup, "normals", normals);
   }
 
-  auto     cdGroup = fg.createGroup("cellData");
+  auto          cdGroup = fg.createGroup("cellData");
   vtkCellData * cd = m_reference->GetCellData();
   if (cd && cd->GetScalars())
   {
@@ -297,7 +297,7 @@ vtkStandardMeshRepresenter::SampleVectorToSample(const VectorType & sample) cons
   assert(m_reference);
 
   auto reference = const_cast<vtkPolyData *>(m_reference.GetPointer());
-  auto          pd = vtkSmartPointer<vtkPolyData>::New();
+  auto pd = vtkSmartPointer<vtkPolyData>::New();
   pd->DeepCopy(reference);
 
   vtkPoints * points = pd->GetPoints();
@@ -364,7 +364,7 @@ vtkSmartPointer<vtkDataArray>
 vtkStandardMeshRepresenter::GetAsDataArray(const H5::Group & group, const std::string & name)
 {
   using DoubleMatrixType = statismo::GenericEigenTraits<double>::MatrixType;
-  DoubleMatrixType                                         m;
+  DoubleMatrixType m;
   hdf5utils::ReadMatrixOfType<double>(group, name.c_str(), m);
 
   // we open the dataset once more to be able to read its attribute
@@ -410,11 +410,11 @@ vtkStandardMeshRepresenter::WriteDataArray(const H5::H5Location & group,
                                            const std::string &    name,
                                            const vtkDataArray *   ds) const
 {
-  auto                                           dataArray = const_cast<vtkDataArray *>(ds);
-  unsigned                                                 numComponents = dataArray->GetNumberOfComponents();
-  unsigned                                                 numTuples = dataArray->GetNumberOfTuples();
-  using DoubleMatrixType = statismo::GenericEigenTraits<double>::MatrixType ;
-  DoubleMatrixType                                         m = DoubleMatrixType::Zero(numComponents, numTuples);
+  auto     dataArray = const_cast<vtkDataArray *>(ds);
+  unsigned numComponents = dataArray->GetNumberOfComponents();
+  unsigned numTuples = dataArray->GetNumberOfTuples();
+  using DoubleMatrixType = statismo::GenericEigenTraits<double>::MatrixType;
+  DoubleMatrixType m = DoubleMatrixType::Zero(numComponents, numTuples);
 
   for (unsigned i = 0; i < numTuples; i++)
   {
@@ -425,7 +425,9 @@ vtkStandardMeshRepresenter::WriteDataArray(const H5::H5Location & group,
     }
   }
 
-  hdf5utils::WriteIntAttribute(hdf5utils::WriteMatrixOfType<double>(group, name.c_str(), m), "datatype", statismo::helper::vtkDataTypeIdToStatismoDataTypeId(dataArray->GetDataType()));
+  hdf5utils::WriteIntAttribute(hdf5utils::WriteMatrixOfType<double>(group, name.c_str(), m),
+                               "datatype",
+                               statismo::helper::vtkDataTypeIdToStatismoDataTypeId(dataArray->GetDataType()));
 }
 
 } // namespace statismo

@@ -64,7 +64,7 @@ struct RepresenterTraits<vtkPolyData>
 /**
  * \brief A representer for vtkPolyData, which stores the representer data in the standard
  * mesh format defined for statismo.
- * 
+ *
  * \see Representer
  */
 class vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
@@ -86,8 +86,7 @@ public:
     return m_domain;
   }
 
-  void
-  DeleteDataset(DatasetPointerType) const override {
+  void DeleteDataset(DatasetPointerType) const override{
     // no op as smart pointers are now use a data type
   };
 
@@ -167,10 +166,10 @@ private:
   static vtkSmartPointer<vtkDataArray>
   GetAsDataArray(const H5::Group & group, const std::string & name);
   static void
-                     FillDataArray(const statismo::GenericEigenTraits<double>::MatrixType & m, vtkDataArray * dataArray);
-  
+  FillDataArray(const statismo::GenericEigenTraits<double>::MatrixType & m, vtkDataArray * dataArray);
+
   DatasetPointerType m_reference;
-  DomainType m_domain;
+  DomainType         m_domain;
 };
 
 } // namespace statismo

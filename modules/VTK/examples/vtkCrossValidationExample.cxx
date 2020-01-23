@@ -49,7 +49,8 @@
 
 using namespace statismo;
 
-namespace {
+namespace
+{
 
 vtkSmartPointer<vtkPolyData>
 _LoadVTKPolyData(const std::string & filename)
@@ -59,7 +60,7 @@ _LoadVTKPolyData(const std::string & filename)
   reader->Update();
   return reader->GetOutput();
 }
-}
+} // namespace
 
 //
 // illustrates the crossvalidation functionality of the data manager
@@ -76,15 +77,15 @@ main(int argc, char ** argv)
 
 
   // All the statismo classes have to be parameterized with the RepresenterType.
-  using RepresenterType = vtkStandardMeshRepresenter                   ;
-  using DataManagerType = BasicDataManager<vtkPolyData>                ;
-  using ModelBuilderType = PCAModelBuilder<vtkPolyData>                 ;
-  using CVFoldListType = DataManagerType::CrossValidationFoldListType ;
+  using RepresenterType = vtkStandardMeshRepresenter;
+  using DataManagerType = BasicDataManager<vtkPolyData>;
+  using ModelBuilderType = PCAModelBuilder<vtkPolyData>;
+  using CVFoldListType = DataManagerType::CrossValidationFoldListType;
 
   try
   {
     auto reference = _LoadVTKPolyData(datadir + "/hand-0.vtk");
-    auto          representer = RepresenterType::SafeCreate(reference);
+    auto representer = RepresenterType::SafeCreate(reference);
 
     // create a data manager and add a number of datasets for model building
     auto dataManager = DataManagerType::SafeCreate(representer.get());
@@ -109,7 +110,7 @@ main(int argc, char ** argv)
     CVFoldListType cvFoldList = dataManager->GetCrossValidationFolds(4, true);
 
     // the CVFoldListType is a standard stl list over which we can iterate to get all the folds
-    for (const auto& fold : cvFoldList)
+    for (const auto & fold : cvFoldList)
     {
       // build the model as usual
       auto model = pcaModelBuilder->BuildNewModel(fold.GetTrainingData(), 0.01);
@@ -117,7 +118,7 @@ main(int argc, char ** argv)
                 << std::endl;
 
       // Now we can iterate over the test data and do whatever validation we would like to do.
-      for (const auto& data : fold.GetTestingData())
+      for (const auto & data : fold.GetTestingData())
       {
         std::cout << "probability of test sample under the model: " << model->ComputeProbability(data->GetSample())
                   << std::endl;

@@ -49,9 +49,10 @@
 
 using namespace statismo;
 
-namespace {
+namespace
+{
 int
-_GetDir(const std::string& dir, std::vector<std::string> & files, const std::string & extension = ".*")
+_GetDir(const std::string & dir, std::vector<std::string> & files, const std::string & extension = ".*")
 {
   vtkNew<vtkDirectory> directory;
   directory->Open(dir.c_str());
@@ -59,7 +60,8 @@ _GetDir(const std::string& dir, std::vector<std::string> & files, const std::str
   for (unsigned i = 0; i < directory->GetNumberOfFiles(); i++)
   {
     const char * filename = directory->GetFile(i);
-    if (extension == ".*" || std::string(filename).find(extension) != std::string::npos) {
+    if (extension == ".*" || std::string(filename).find(extension) != std::string::npos)
+    {
       files.emplace_back(filename);
     }
   }
@@ -75,7 +77,7 @@ _LoadVTKPolyData(const std::string & filename)
   return reader->GetOutput();
 }
 
-}
+} // namespace
 
 //
 // Build a new shape model from vtkPolyData, given in datadir.
@@ -94,11 +96,11 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
-  using RepresenterType = vtkStandardMeshRepresenter    ;
-  using DataManagerType = BasicDataManager<vtkPolyData> ;
-  using ModelBuilderType = PCAModelBuilder<vtkPolyData>  ;
-  using StringVectorType = std::vector<std::string> ;
-  StringVectorType                 filenames;
+  using RepresenterType = vtkStandardMeshRepresenter;
+  using DataManagerType = BasicDataManager<vtkPolyData>;
+  using ModelBuilderType = PCAModelBuilder<vtkPolyData>;
+  using StringVectorType = std::vector<std::string>;
+  StringVectorType filenames;
 
   _GetDir(datadir, filenames, ".vtk");
   if (filenames.empty())
@@ -114,7 +116,7 @@ main(int argc, char ** argv)
     // and the alignmentType. The alignmenttype (which is here RIGID) determines how the dataset that we
     // will use will later be aligned to the reference.
 
-    auto                    reference = _LoadVTKPolyData(datadir + "/" + filenames[0]);
+    auto reference = _LoadVTKPolyData(datadir + "/" + filenames[0]);
     auto representer = RepresenterType::SafeCreate(reference);
 
     // We create a datamanager and provide it with a pointer  to the representer
@@ -123,7 +125,7 @@ main(int argc, char ** argv)
 
     // Now we add our data to the data manager
     // load the data and add it to the data manager. We take the first 17 hand shapes that we find in the data folder
-    for (const auto& f : filenames)
+    for (const auto & f : filenames)
     {
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.

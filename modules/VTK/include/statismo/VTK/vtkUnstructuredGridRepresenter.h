@@ -110,8 +110,7 @@ public:
     return m_domain;
   }
 
-  void
-  DeleteDataset(DatasetPointerType) const override {
+  void DeleteDataset(DatasetPointerType) const override{
     // no op as smart pointers are now use a data type
   };
 
@@ -187,12 +186,12 @@ private:
   void
   SetReference(DatasetConstPointerType reference);
 
-  DatasetPointerType m_reference;
+  DatasetPointerType                          m_reference;
   vtkSmartPointer<vtkTransformPolyDataFilter> m_pdTransform;
-  AlignmentType                m_alignment;
-  DomainType                   m_domain;
+  AlignmentType                               m_alignment;
+  DomainType                                  m_domain;
 };
 
-}
+} // namespace statismo
 
 #endif

@@ -23,7 +23,8 @@
 
 using namespace statismo;
 
-namespace {
+namespace
+{
 
 /*
  * We use a sum of gaussian kernels as our main model.
@@ -45,7 +46,7 @@ public:
     r << x[0] - y[0], x[1] - y[1], x[2] - y[2];
 
     float minusRDotR = -r.dot(r);
-    float kernelValue{0.0f};
+    float kernelValue{ 0.0f };
     for (unsigned l = 1; l <= m_nLevels; ++l)
     {
       float scaleOnLevel = m_baseScale / static_cast<float>(l);
@@ -109,11 +110,11 @@ _CenterOfMass(const vtkPolyData * _pd)
 struct _MyTemperingFunction : public TemperingFunction<vtkPoint>
 {
   explicit _MyTemperingFunction(const vtkPoint & massCenter)
-    : m_centerOfMass{massCenter}
+    : m_centerOfMass{ massCenter }
   {}
 
-  static constexpr double a{0.5};
-  
+  static constexpr double a{ 0.5 };
+
   double
   operator()(const vtkPoint & pt) const override
   {
@@ -124,7 +125,7 @@ struct _MyTemperingFunction : public TemperingFunction<vtkPoint>
 private:
   vtkPoint m_centerOfMass;
 };
-}
+} // namespace
 
 //
 // Computes a multi-scale gaussian model and uses spatial tempering to make the smoothness spatially varying.
@@ -143,8 +144,8 @@ main(int argc, char ** argv)
   }
 
   std::string refFilename(argv[1]);
-  auto      baseKernelWidth = std::stof(argv[2]);
-  auto      baseScale = std::stof(argv[3]);
+  auto        baseKernelWidth = std::stof(argv[2]);
+  auto        baseScale = std::stof(argv[3]);
   unsigned    numLevels = std::stoi(argv[4]);
   int         numberOfComponents = std::stoi(argv[5]);
   std::string outputModelFilename(argv[6]);
@@ -152,17 +153,17 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
 
-  using RepresenterType = vtkStandardMeshRepresenter         ;
-  using ModelBuilderType = LowRankGPModelBuilder<vtkPolyData> ;
+  using RepresenterType = vtkStandardMeshRepresenter;
+  using ModelBuilderType = LowRankGPModelBuilder<vtkPolyData>;
 
   try
   {
 
-    auto                referenceMesh = _LoadVTKPolyData(refFilename);
+    auto referenceMesh = _LoadVTKPolyData(refFilename);
     auto representer = vtkStandardMeshRepresenter::SafeCreate(referenceMesh);
 
-    _MultiscaleGaussianKernel gk{baseKernelWidth, baseScale, numLevels};
-    _MyTemperingFunction temperingFun{_CenterOfMass(referenceMesh)};
+    _MultiscaleGaussianKernel gk{ baseKernelWidth, baseScale, numLevels };
+    _MyTemperingFunction      temperingFun{ _CenterOfMass(referenceMesh) };
 
     SpatiallyVaryingKernel<RepresenterType::DatasetType> temperedKernel(
       representer.get(), gk, temperingFun, numberOfComponents, numberOfComponents * 2, true);

@@ -65,8 +65,8 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
-  using RepresenterType = vtkStandardMeshRepresenter               ;
-  using ReducedVarianceModelBuilderType = ReducedVarianceModelBuilder<vtkPolyData> ;
+  using RepresenterType = vtkStandardMeshRepresenter;
+  using ReducedVarianceModelBuilderType = ReducedVarianceModelBuilder<vtkPolyData>;
 
   try
   {
@@ -74,7 +74,7 @@ main(int argc, char ** argv)
     // To load a model, we call the static Load method, which returns (a pointer to) a
     // new StatisticalModel object
     auto representer = RepresenterType::SafeCreate();
-    auto              model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
+    auto model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
     std::cout << "loaded model with variance of " << model->GetPCAVarianceVector().sum() << std::endl;
 
     auto reducedVarModelBuilder = ReducedVarianceModelBuilderType::SafeCreate();

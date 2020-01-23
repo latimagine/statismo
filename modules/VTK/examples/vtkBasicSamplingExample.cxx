@@ -49,10 +49,11 @@
 
 using namespace statismo;
 
-namespace {
+namespace
+{
 
 void
-_SaveSample (const vtkPolyData * pd, const std::string & resdir, const std::string & basename)
+_SaveSample(const vtkPolyData * pd, const std::string & resdir, const std::string & basename)
 {
   auto filename = resdir + std::string("/") + basename;
 
@@ -62,7 +63,7 @@ _SaveSample (const vtkPolyData * pd, const std::string & resdir, const std::stri
   w->Update();
 }
 
-}
+} // namespace
 
 //
 // Illustrates how to load a shape model and the basic sampling functinality
@@ -82,25 +83,25 @@ main(int argc, char ** argv)
 
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
-  using RepresenterType=  vtkStandardMeshRepresenter;
+  using RepresenterType = vtkStandardMeshRepresenter;
 
   try
   {
     // To load a model, we call the static Load method, which returns (a pointer to) a
     // new StatisticalModel object
-    auto                   representer = RepresenterType::SafeCreate();
+    auto representer = RepresenterType::SafeCreate();
     auto model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), modelname);
-    
+
     std::cout << "Loaded model with " << model->GetNumberOfPrincipalComponents() << " Principal Components"
               << std::endl;
 
     // get the model mean
     auto mean = model->DrawMean();
-    _SaveSample (mean, resultdir, "mean.vtk");
+    _SaveSample(mean, resultdir, "mean.vtk");
 
     // draw a random sample
     auto randomSample = model->DrawSample();
-    _SaveSample (randomSample, resultdir, "randomsample.vtk");
+    _SaveSample(randomSample, resultdir, "randomsample.vtk");
 
     // draw a sample with known pca coefficients (3 stddev in direction of the 1st PC)
     VectorType coefficients = VectorType::Zero(model->GetNumberOfPrincipalComponents());

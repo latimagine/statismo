@@ -46,7 +46,8 @@
 
 using namespace statismo::test;
 
-namespace {
+namespace
+{
 std::string _s_dataDir;
 
 int
@@ -62,8 +63,8 @@ TestRepresenterForMesh()
   auto representer = RepresenterType::SafeCreate(reference);
 
   // choose a test dataset, a point (on the reference) and the associated point on the test example
-  auto                 testDataset = LoadPolyData(testDatasetFilename);
-  unsigned             testPtId{0};
+  auto               testDataset = LoadPolyData(testDatasetFilename);
+  unsigned           testPtId{ 0 };
   statismo::vtkPoint testPt(reference->GetPoints()->GetPoint(testPtId));
   statismo::vtkPoint testValue(testDataset->GetPoints()->GetPoint(testPtId));
 
@@ -87,9 +88,7 @@ vtkStandardMeshRepresenterTest(int argc, char ** argv)
 
   auto res = statismo::Translate([]() {
     return statismo::test::RunAllTests("vtkStandardImageRepresenterTest",
-                                       {
-                                         { "TestRepresenterForMesh", TestRepresenterForMesh }
-                                       });
+                                       { { "TestRepresenterForMesh", TestRepresenterForMesh } });
   });
 
   return !statismo::CheckResultAndAssert(res, EXIT_SUCCESS);

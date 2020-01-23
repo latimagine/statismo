@@ -56,46 +56,47 @@ class vtkNDPixel
 {
 public:
   explicit vtkNDPixel(unsigned dimensions)
-    : m_pixel{std::make_unique<double []>(dimensions)}
+    : m_pixel{ std::make_unique<double[]>(dimensions) }
     , m_dimensions(dimensions)
   {}
 
   vtkNDPixel(const double * x, unsigned dimensions)
-    : m_pixel{std::make_unique<double []>(dimensions)}
+    : m_pixel{ std::make_unique<double[]>(dimensions) }
     , m_dimensions(dimensions)
   {
-    for (unsigned d = 0; d < dimensions; d++) {
+    for (unsigned d = 0; d < dimensions; d++)
+    {
       m_pixel[d] = x[d];
     }
   }
 
   ~vtkNDPixel() = default;
 
-  vtkNDPixel(const vtkNDPixel& rhs) : vtkNDPixel{rhs.m_pixel.get(), rhs.m_dimensions}
+  vtkNDPixel(const vtkNDPixel & rhs)
+    : vtkNDPixel{ rhs.m_pixel.get(), rhs.m_dimensions }
+  {}
+
+  vtkNDPixel(vtkNDPixel && rhs) noexcept
+    : m_pixel{ std::move(rhs.m_pixel) }
+    , m_dimensions{ rhs.m_dimensions }
+  {}
+
+  vtkNDPixel &
+  operator=(vtkNDPixel rhs)
   {
+    swap(rhs);
+    return *this;
   }
 
-  vtkNDPixel(vtkNDPixel&& rhs) noexcept : m_pixel{std::move(rhs.m_pixel)}, m_dimensions{rhs.m_dimensions}
+  void
+  swap(vtkNDPixel & rhs) noexcept
   {
+    using std::swap;
+    swap(m_pixel, rhs.m_pixel);
+    swap(m_dimensions, rhs.m_dimensions);
   }
 
-  vtkNDPixel& operator=(vtkNDPixel rhs)
-  {
-      swap(rhs);
-      return *this;
-  }
-
-  void swap(vtkNDPixel& rhs) noexcept
-  {
-      using std::swap;
-      swap(m_pixel, rhs.m_pixel);
-      swap(m_dimensions, rhs.m_dimensions);
-  }
-
-  double & operator[](unsigned i)
-  {
-    return const_cast<double&>(static_cast<const vtkNDPixel&>(*this)[i]);
-  }
+  double & operator[](unsigned i) { return const_cast<double &>(static_cast<const vtkNDPixel &>(*this)[i]); }
 
   const double & operator[](unsigned i) const
   {
@@ -113,18 +114,19 @@ public:
 
 private:
   std::unique_ptr<double[]> m_pixel;
-  unsigned m_dimensions;
+  unsigned                  m_dimensions;
 };
 
 } // namespace statismo
 
 namespace std
 {
-  template <>
-  void swap<statismo::vtkNDPixel>(statismo::vtkNDPixel& lhs, statismo::vtkNDPixel& rhs)
-  {
-      lhs.swap(rhs);
-  }
+template <>
+void
+swap<statismo::vtkNDPixel>(statismo::vtkNDPixel & lhs, statismo::vtkNDPixel & rhs)
+{
+  lhs.swap(rhs);
 }
+} // namespace std
 
 #endif
