@@ -93,6 +93,9 @@ unsigned                 _s_pointCount;
 int
 TestBuildModel()
 {
+  // Necessary to have deterministic results
+  rand::RandGen(0);
+
   auto reference = ReducePoints(LoadPolyData(_s_filenames[0]), _s_pointCount);
   auto representer = RepresenterType::SafeCreate(reference);
   auto dataManager = DataManagerType::SafeCreate(representer.get());
