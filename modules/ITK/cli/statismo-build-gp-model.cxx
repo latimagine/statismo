@@ -56,7 +56,7 @@ using namespace std;
 namespace
 {
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   string         strOptionalModelPath;
   string         strReferenceFile;
@@ -70,7 +70,7 @@ struct _ProgramOptions
 };
 
 string
-_GetAvailableKernelsStr()
+GetAvailableKernelsStr()
 {
   string ret;
 
@@ -84,7 +84,7 @@ _GetAvailableKernelsStr()
 }
 
 bool
-_IsOptionsConflictPresent(_ProgramOptions & opt)
+IsOptionsConflictPresent(ProgramOptions & opt)
 {
   statismo::utils::ToLower(opt.strKernel);
   statismo::utils::ToLower(opt.strType);
@@ -95,15 +95,15 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
          opt.strOutputFileName == opt.strReferenceFile || (opt.strType == "shape" && opt.uNumberOfDimensions != 3);
 }
 
-template <class DataType, class RepresenterType, class DataReaderType, bool isShapeModel, unsigned Dim>
+template <class DataType, class RepresenterType, class DataReaderType, bool IS_SHAPE_MODEL, unsigned DIM>
 void
-_BuildAndSaveModel(const _ProgramOptions & opt)
+BuildAndSaveModel(const ProgramOptions & opt)
 {
   auto it = statismo::cli::s_kernelMap.find(opt.strKernel);
   if (it == std::end(statismo::cli::s_kernelMap))
   {
     itkGenericExceptionMacro(<< "The kernel '" << opt.strKernel
-                             << "' isn't available. Available kernels: " << _GetAvailableKernelsStr());
+                             << "' isn't available. Available kernels: " << GetAvailableKernelsStr());
   }
 
   using PointType = typename DataType::PointType;
@@ -114,20 +114,20 @@ _BuildAndSaveModel(const _ProgramOptions & opt)
   using DatasetPointerType = typename RepresenterType::DatasetPointerType;
 
   MatrixPointerType kernel;
-  if constexpr ((std::is_same_v<DataType, statismo::cli::DataTypeShape>))
+  if constexpr ((std::is_same_v<DataType, statismo::cli::DataTypeShape>)) // NOLINT
   {
     kernel = std::move(it->second.createKernelShape(opt.vKernelParameters));
   }
-  else if constexpr ((std::is_same_v<DataType, statismo::cli::DataType2DDeformation>))
+  else if constexpr ((std::is_same_v<DataType, statismo::cli::DataType2DDeformation>)) // NOLINT
   {
     kernel = std::move(it->second.createKernel2DDeformation(opt.vKernelParameters));
   }
-  else if constexpr ((std::is_same_v<DataType, statismo::cli::DataType3DDeformation>))
+  else if constexpr ((std::is_same_v<DataType, statismo::cli::DataType3DDeformation>)) // NOLINT
   {
     kernel = std::move(it->second.createKernel3DDeformation(opt.vKernelParameters));
   }
 
-  KernelPointerType unscaledKernel(new statismo::UncorrelatedMatrixValuedKernel<PointType>(kernel.get(), Dim));
+  KernelPointerType unscaledKernel(new statismo::UncorrelatedMatrixValuedKernel<PointType>(kernel.get(), DIM));
   KernelPointerType scaledKernel(new statismo::ScaledKernel<PointType>(unscaledKernel.get(), opt.fKernelScale));
 
   KernelPointerType   statModelKernel;
@@ -179,9 +179,9 @@ main(int argc, char ** argv)
 {
   statismo::cli::CreateKernelMap();
 
-  _ProgramOptions poParameters;
+  ProgramOptions poParameters;
   string          kernelHelp =
-    "Specifies the kernel (covariance function). The following kernels are available: " + _GetAvailableKernelsStr();
+    "Specifies the kernel (covariance function). The following kernels are available: " + GetAvailableKernelsStr();
   po::program_options<std::string, float, int, unsigned, std::vector<std::string>> parser{ argv[0], "Program help:" };
 
   parser
@@ -231,7 +231,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -242,37 +242,37 @@ main(int argc, char ** argv)
   {
     if (poParameters.strType == "shape")
     {
-      using RepresenterType = itk::StandardMeshRepresenter<float, statismo::cli::Dimensionality3D>;
+      using RepresenterType = itk::StandardMeshRepresenter<float, statismo::cli::gk_dimensionality3D>;
       using DataReaderType = itk::MeshFileReader<statismo::cli::DataTypeShape>;
-      _BuildAndSaveModel<statismo::cli::DataTypeShape,
+      BuildAndSaveModel<statismo::cli::DataTypeShape,
                          RepresenterType,
                          DataReaderType,
                          true,
-                         statismo::cli::Dimensionality3D>(poParameters);
+                         statismo::cli::gk_dimensionality3D>(poParameters);
     }
     else
     {
       if (poParameters.uNumberOfDimensions == 2)
       {
         using RepresenterType =
-          itk::StandardImageRepresenter<statismo::cli::VectorPixel2DType, statismo::cli::Dimensionality2D>;
+          itk::StandardImageRepresenter<statismo::cli::VectorPixel2DType, statismo::cli::gk_dimensionality2D>;
         using DataReaderType = itk::ImageFileReader<statismo::cli::DataType2DDeformation>;
-        _BuildAndSaveModel<statismo::cli::DataType2DDeformation,
+        BuildAndSaveModel<statismo::cli::DataType2DDeformation,
                            RepresenterType,
                            DataReaderType,
                            false,
-                           statismo::cli::Dimensionality2D>(poParameters);
+                           statismo::cli::gk_dimensionality2D>(poParameters);
       }
       else
       {
         using RepresenterType =
-          itk::StandardImageRepresenter<statismo::cli::VectorPixel3DType, statismo::cli::Dimensionality3D>;
+          itk::StandardImageRepresenter<statismo::cli::VectorPixel3DType, statismo::cli::gk_dimensionality3D>;
         using DataReaderType = itk::ImageFileReader<statismo::cli::DataType3DDeformation>;
-        _BuildAndSaveModel<statismo::cli::DataType3DDeformation,
+        BuildAndSaveModel<statismo::cli::DataType3DDeformation,
                            RepresenterType,
                            DataReaderType,
                            false,
-                           statismo::cli::Dimensionality3D>(poParameters);
+                           statismo::cli::gk_dimensionality3D>(poParameters);
       }
     }
   }

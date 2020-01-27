@@ -39,7 +39,7 @@ namespace statismo::rand
 std::minstd_rand &
 RandGen(unsigned seed)
 {
-  static std::minstd_rand rg{ seed };
-  return rg;
+  static std::minstd_rand s_rg{ seed };
+  return s_rg;
 }
 } // namespace statismo::rand

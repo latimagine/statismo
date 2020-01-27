@@ -71,9 +71,9 @@ using DomainPointsListType = DomainType::DomainPointsListType;
 using StatisticalModelType = statismo::StatisticalModel<vtkPolyData>;
 using PCAModelBuilderType = statismo::PCAModelBuilder<vtkPolyData>;
 
-std::vector<std::string> _s_filenames;
-std::string              _s_outdir;
-unsigned                 _s_pointCount;
+std::vector<std::string> g_filenames;
+std::string              g_outdir;
+unsigned                 g_pointCount;
 
 /**
  * The test works as follows:
@@ -96,16 +96,16 @@ TestBuildModel()
   // Necessary to have deterministic results
   rand::RandGen(0);
 
-  auto reference = ReducePoints(LoadPolyData(_s_filenames[0]), _s_pointCount);
+  auto reference = ReducePoints(LoadPolyData(g_filenames[0]), g_pointCount);
   auto representer = RepresenterType::SafeCreate(reference);
   auto dataManager = DataManagerType::SafeCreate(representer.get());
 
-  for (const auto & f : _s_filenames)
+  for (const auto & f : g_filenames)
   {
-    dataManager->AddDataset(ReducePoints(LoadPolyData(f), _s_pointCount), "dataset");
+    dataManager->AddDataset(ReducePoints(LoadPolyData(f), g_pointCount), "dataset");
   }
 
-  const double dataNoise = 0.0;
+  const double kDataNoise = 0.0;
 
   // ----------------------------------------------------------
   // First compute PCA model using standard JacobiSVD
@@ -113,13 +113,13 @@ TestBuildModel()
   auto pcaModelBuilder = PCAModelBuilderType::SafeCreate();
 
   // perform with standard argument
-  auto       jacobiModel = pcaModelBuilder->BuildNewModel(dataManager->GetData(), dataNoise, false);
+  auto       jacobiModel = pcaModelBuilder->BuildNewModel(dataManager->GetData(), kDataNoise, false);
   VectorType variance1 = jacobiModel->GetPCAVarianceVector();
   MatrixType pcbasis1 = jacobiModel->GetPCABasisMatrix();
 
   // perform with providing JacobiSVD
   jacobiModel =
-    pcaModelBuilder->BuildNewModel(dataManager->GetData(), dataNoise, false, PCAModelBuilderType::JacobiSVD);
+    pcaModelBuilder->BuildNewModel(dataManager->GetData(), kDataNoise, false, PCAModelBuilderType::EigenValueMethod::JACOBI_SVD);
 
   VectorType variance2 = jacobiModel->GetPCAVarianceVector();
   MatrixType pcbasis2 = jacobiModel->GetPCABasisMatrix();
@@ -143,7 +143,7 @@ TestBuildModel()
   // Compute PCA model using the SelfAdjointEigenSolver
   // ----------------------------------------------------------
   auto saesModel = pcaModelBuilder->BuildNewModel(
-    dataManager2->GetData(), dataNoise, false, PCAModelBuilderType::SelfAdjointEigenSolver);
+    dataManager2->GetData(), kDataNoise, false, PCAModelBuilderType::EigenValueMethod::SELF_ADJOINT_EIGEN_SOLVER);
 
   // ----------------------------------------------------------
   // Comparing the models
@@ -168,14 +168,14 @@ TestBuildModel()
 
     error += std::min(equalDir, oppositeDir);
 
-    if (!_s_outdir.empty())
+    if (!g_outdir.empty())
     {
       std::stringstream ss1;
-      ss1 << _s_outdir << "/jacobi-" << i << ".vtk";
+      ss1 << g_outdir << "/jacobi-" << i << ".vtk";
       WritePolyData(jacobiModel->DrawSample(coeff1, false), ss1.str());
 
       std::stringstream ss2;
-      ss2 << _s_outdir << "/saes-" << i << ".vtk";
+      ss2 << g_outdir << "/saes-" << i << ".vtk";
       if (equalDir < oppositeDir)
       {
         coeff2[i] = 2;
@@ -202,12 +202,12 @@ TestBuildModel()
 } // namespace
 
 int
-PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)
+PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)  // NOLINT
 {
   if (argc < 2)
   {
     std::cout << "Usage: " << argv[0] << " datadir "
-              << "number_of_points(default=100) _s_outdir" << std::endl;
+              << "number_of_points(default=100) g_outdir" << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -216,20 +216,20 @@ PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)
   // number of points which are used for building the model
   // the number of points is reduced since the SelfAdjointEigenSolver operates
   // on the full covariance matrix.
-  _s_pointCount = 100;
+  g_pointCount = 100;
   if (argc == 3)
   {
-    _s_pointCount = std::stoi(argv[2]);
+    g_pointCount = std::stoi(argv[2]);
   }
 
   if (argc == 4)
   {
-    _s_outdir = argv[3];
+    g_outdir = argv[3];
   }
 
   for (unsigned i = 0; i <= 16; ++i)
   {
-    _s_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
+    g_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
   }
 
   auto res = statismo::Translate([]() {

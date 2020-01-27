@@ -52,7 +52,7 @@ namespace
 {
 
 vtkSmartPointer<vtkStructuredPoints>
-_LoadVTKStructuredPointsData(const std::string & filename)
+LoadVTKStructuredPointsData(const std::string & filename)
 {
   vtkNew<vtkStructuredPointsReader> reader;
   reader->SetFileName(filename.c_str());
@@ -89,7 +89,7 @@ main(int argc, char ** argv)
 
   try
   {
-    auto reference = _LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
+    auto reference = LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
     auto representer = RepresenterType::SafeCreate(reference);
 
     // We use the SurrogateDataManager, as we need to specify surrogate data in addition to the images.
@@ -115,7 +115,7 @@ main(int argc, char ** argv)
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
       dataManager->AddDatasetWithSurrogates(
-        _LoadVTKStructuredPointsData(datasetFilename), datasetFilename, ssSurrogateFilename.str());
+        LoadVTKStructuredPointsData(datasetFilename), datasetFilename, ssSurrogateFilename.str());
     }
 
     // Build up a list holding the conditioning information.

@@ -40,14 +40,14 @@
  */
 namespace itk
 {
-template <class TFixedImage, class TMovingImage>
+template <typename FixedImage, typename MovingImage>
 class ITK_EXPORT PenalizingMeanSquaresImageToImageMetric
-  : public MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>
+  : public MeanSquaresImageToImageMetric<FixedImage, MovingImage>
 {
 public:
   // Standard class typedefs.
   using Self = PenalizingMeanSquaresImageToImageMetric;
-  using Superclass = MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>;
+  using Superclass = MeanSquaresImageToImageMetric<FixedImage, MovingImage>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   // Method for creation through the object factory.

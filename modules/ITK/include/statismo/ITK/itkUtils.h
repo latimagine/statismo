@@ -58,8 +58,7 @@ struct ExceptionHandler
   {
     std::ostringstream message;
     message << "itk::ERROR: " << m_obj.GetNameOfClass() << "(" << &m_obj << "): " << str;
-    ::itk::ExceptionObject e_(__FILE__, __LINE__, message.str().c_str(), ITK_LOCATION);
-    throw e_;
+    throw ::itk::ExceptionObject{__FILE__, __LINE__, message.str().c_str(), ITK_LOCATION};
   }
 
 private:
@@ -76,8 +75,9 @@ GetDirFiles(const std::string & dir, const std::string & extension = ".*")
   for (unsigned i = 0; i < directory->GetNumberOfFiles(); i++)
   {
     const char * filename = directory->GetFile(i);
-    if (extension == ".*" || std::string(filename).find(extension) != std::string::npos)
-      files.push_back(filename);
+    if (extension == ".*" || std::string(filename).find(extension) != std::string::npos) {
+      files.emplace_back(filename);
+    }
   }
 
   return files;

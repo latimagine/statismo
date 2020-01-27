@@ -56,12 +56,12 @@
 
 namespace
 {
-constexpr unsigned Dimensions = 3;
-using MeshType = itk::Mesh<float, Dimensions>;
-using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+constexpr unsigned gk_dimensions = 3;
+using MeshType = itk::Mesh<float, gk_dimensions>;
+using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensions>;
 
 void
-_DoRunExample(const char * referenceFilename, const char * dir, const char * modelname)
+DoRunExample(const char * referenceFilename, const char * dir, const char * modelname)
 {
   using ModelBuilderType = itk::PCAModelBuilder<MeshType>;
   using ReducedVarianceModelBuilderType = itk::ReducedVarianceModelBuilder<MeshType>;
@@ -115,7 +115,7 @@ main(int argc, char * argv[])
   const char * dir = argv[2];
   const char * modelname = argv[3];
 
-  _DoRunExample(reference, dir, modelname);
+  DoRunExample(reference, dir, modelname);
 
   std::cout << "Model building completed successfully." << std::endl;
   return 0;

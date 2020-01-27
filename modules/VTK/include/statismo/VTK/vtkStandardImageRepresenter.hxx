@@ -53,16 +53,16 @@
 namespace statismo
 {
 
-template <class TScalar, unsigned PixelDimensions>
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::vtkStandardImageRepresenter(DatasetConstPointerType reference)
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::vtkStandardImageRepresenter(DatasetConstPointerType reference)
   : vtkStandardImageRepresenter()
 {
   this->SetReference(reference);
 }
 
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 void
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::AssertCompatibility(DatasetConstPointerType data) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::AssertCompatibility(DatasetConstPointerType data) const
 {
   if (sizeof(TScalar) != const_cast<vtkStructuredPoints *>(data)->GetScalarSize())
   {
@@ -72,24 +72,24 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::AssertCompatibility(Datas
                                     statismo::Status::INVALID_DATA_ERROR);
   }
 
-  if (PixelDimensions != const_cast<vtkStructuredPoints *>(data)->GetNumberOfScalarComponents())
+  if (PIXEL_DIMENSIONS != const_cast<vtkStructuredPoints *>(data)->GetNumberOfScalarComponents())
   {
     throw StatisticalModelException("incompatible data (bad scalar components count) given to representer",
                                     statismo::Status::INVALID_DATA_ERROR);
   }
 }
 
-template <class TScalar, unsigned PixelDimensions>
-vtkStandardImageRepresenter<TScalar, PixelDimensions> *
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::CloneImpl() const
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS> *
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::CloneImpl() const
 {
   // this works since Create deep copies the reference
-  return vtkStandardImageRepresenter<TScalar, PixelDimensions>::Create(m_reference);
+  return vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::Create(m_reference);
 }
 
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 void
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::Load(const H5::Group & fg)
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::Load(const H5::Group & fg)
 {
   vtkSmartPointer<vtkStructuredPoints> ref;
 
@@ -106,9 +106,9 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::Load(const H5::Group & fg
   this->SetReference(ref);
 }
 
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 vtkSmartPointer<vtkStructuredPoints>
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRef(const H5::Group & fg) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::LoadRef(const H5::Group & fg) const
 {
 
   auto type = hdf5utils::ReadStringAttribute(fg, "datasetType");
@@ -172,7 +172,7 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRef(const H5::Group &
   newImage->SetExtent(0, size[0] - 1, 0, size[1] - 1, 0, size[2] - 1);
   newImage->SetOrigin(origin[0], origin[1], origin[2]);
   newImage->SetSpacing(spacing[0], spacing[1], spacing[2]);
-  newImage->AllocateScalars(helper::vtkStatismoDataTypeIdToVtkDataTypeId(datatype), PixelDimensions);
+  newImage->AllocateScalars(helper::vtkStatismoDataTypeIdToVtkDataTypeId(datatype), PIXEL_DIMENSIONS);
 
   for (int i = 0; i < size[2]; i++)
   {
@@ -181,8 +181,8 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRef(const H5::Group &
       for (int k = 0; k < size[0]; k++)
       {
         unsigned  index = size[1] * size[0] * i + size[0] * j + k;
-        TScalar * scalarPtr = static_cast<TScalar *>(newImage->GetScalarPointer(k, j, i));
-        for (unsigned d = 0; d < PixelDimensions; d++)
+        auto scalarPtr = static_cast<TScalar *>(newImage->GetScalarPointer(k, j, i));
+        for (unsigned d = 0; d < PIXEL_DIMENSIONS; d++)
         {
           scalarPtr[d] = pixelMat(d, index);
         }
@@ -194,9 +194,9 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRef(const H5::Group &
 }
 
 
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 vtkSmartPointer<vtkStructuredPoints>
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRefLegacy(const H5::Group & fg) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::LoadRefLegacy(const H5::Group & fg) const
 {
   auto tmpfilename = statismo::utils::CreateTmpName(".vtk");
 
@@ -217,9 +217,9 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::LoadRefLegacy(const H5::G
 }
 
 
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 statismo::VectorType
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::PointToVector(const PointType & pt) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::PointToVector(const PointType & pt) const
 {
   // a vtk point is always 3 dimensional
   VectorType v(3);
@@ -230,21 +230,21 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::PointToVector(const Point
   return v;
 }
 
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 VectorType
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::SampleToSampleVector(DatasetConstPointerType sample) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::SampleToSampleVector(DatasetConstPointerType sample) const
 {
   AssertCompatibility(sample);
 
-  vtkStructuredPoints * reference = const_cast<vtkStructuredPoints *>(this->m_reference.GetPointer());
-  vtkStructuredPoints * sp = const_cast<vtkStructuredPoints *>(sample);
+  auto reference = const_cast<vtkStructuredPoints *>(this->m_reference.GetPointer());
+  auto sp = const_cast<vtkStructuredPoints *>(sample);
 
   if (reference->GetNumberOfPoints() != sp->GetNumberOfPoints())
   {
     throw StatisticalModelException("The sample does not have the correct number of points");
   }
 
-  VectorType sampleVector = VectorType::Zero(m_reference->GetNumberOfPoints() * PixelDimensions);
+  VectorType sampleVector = VectorType::Zero(m_reference->GetNumberOfPoints() * PIXEL_DIMENSIONS);
 
   vtkDataArray * dataArray = sp->GetPointData()->GetArray(0);
 
@@ -253,9 +253,9 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::SampleToSampleVector(Data
   // vtkStructuredPoints to have the same data type, e.g. float or int.
   for (unsigned i = 0; i < m_reference->GetNumberOfPoints(); i++)
   {
-    double val[PixelDimensions];
+    double val[PIXEL_DIMENSIONS];
     dataArray->GetTuple(i, val);
-    for (unsigned d = 0; d < PixelDimensions; d++)
+    for (unsigned d = 0; d < PIXEL_DIMENSIONS; d++)
     {
       sampleVector(vtkStandardImageRepresenter::MapPointIdToInternalIdx(i, d)) = val[d];
     }
@@ -264,19 +264,19 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::SampleToSampleVector(Data
   return sampleVector;
 }
 
-template <class TScalar, unsigned PixelDimensions>
-typename vtkStandardImageRepresenter<TScalar, PixelDimensions>::DatasetPointerType
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::SampleVectorToSample(const VectorType & sampleVector) const
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
+typename vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::DatasetPointerType
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::SampleVectorToSample(const VectorType & sampleVector) const
 {
   auto                  sample = vtkSmartPointer<vtkStructuredPoints>::New();
-  vtkStructuredPoints * reference = const_cast<vtkStructuredPoints *>(m_reference.GetPointer());
+  auto reference = const_cast<vtkStructuredPoints *>(m_reference.GetPointer());
   sample->DeepCopy(reference);
 
   vtkDataArray * dataArray = sample->GetPointData()->GetArray(0);
   for (unsigned i = 0; i < GetNumberOfPoints(); i++)
   {
-    double val[PixelDimensions];
-    for (unsigned d = 0; d < PixelDimensions; d++)
+    double val[PIXEL_DIMENSIONS];
+    for (unsigned d = 0; d < PIXEL_DIMENSIONS; d++)
     {
       val[d] = sampleVector(vtkStandardImageRepresenter::MapPointIdToInternalIdx(i, d));
     }
@@ -286,50 +286,50 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::SampleVectorToSample(cons
   return sample;
 }
 
-template <class TScalar, unsigned PixelDimensions>
-typename vtkStandardImageRepresenter<TScalar, PixelDimensions>::ValueType
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::PointSampleFromSample(DatasetConstPointerType sample,
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
+typename vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::ValueType
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::PointSampleFromSample(DatasetConstPointerType sample,
                                                                              unsigned                ptid) const
 {
   AssertCompatibility(sample);
 
-  vtkStructuredPoints * mutableSample = const_cast<vtkStructuredPoints *>(sample);
+  auto mutableSample = const_cast<vtkStructuredPoints *>(sample);
   if (ptid >= mutableSample->GetNumberOfPoints())
   {
     throw StatisticalModelException("invalid ptid provided to PointSampleFromSample");
   }
 
-  double doubleVal[PixelDimensions];
+  double doubleVal[PIXEL_DIMENSIONS];
   mutableSample->GetPointData()->GetScalars()->GetTuple(ptid, doubleVal);
-  ValueType val(PixelDimensions);
+  ValueType val(PIXEL_DIMENSIONS);
 
   // vtk returns double. We need to convert it to whatever precision we are using in NDPixel
-  for (unsigned i = 0; i < PixelDimensions; i++)
+  for (unsigned i = 0; i < PIXEL_DIMENSIONS; i++)
   {
     val[i] = static_cast<TScalar>(doubleVal[i]);
   }
   return val;
 }
 
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 statismo::VectorType
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::PointSampleToPointSampleVector(const ValueType & v) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::PointSampleToPointSampleVector(const ValueType & v) const
 {
-  VectorType vec(PixelDimensions);
-  for (unsigned i = 0; i < PixelDimensions; i++)
+  VectorType vec(PIXEL_DIMENSIONS);
+  for (unsigned i = 0; i < PIXEL_DIMENSIONS; i++)
   {
     vec(i) = v[i];
   }
   return vec;
 }
 
-template <class TScalar, unsigned PixelDimensions>
-typename vtkStandardImageRepresenter<TScalar, PixelDimensions>::ValueType
-vtkStandardImageRepresenter<TScalar, PixelDimensions>::PointSampleVectorToPointSample(
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
+typename vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::ValueType
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::PointSampleVectorToPointSample(
   const VectorType & pointSample) const
 {
-  ValueType value(PixelDimensions);
-  for (unsigned i = 0; i < PixelDimensions; i++)
+  ValueType value(PIXEL_DIMENSIONS);
+  for (unsigned i = 0; i < PIXEL_DIMENSIONS; i++)
   {
     value[i] = pointSample[i];
   }
@@ -337,9 +337,9 @@ vtkStandardImageRepresenter<TScalar, PixelDimensions>::PointSampleVectorToPointS
   return value;
 }
 
-template <class TScalar, unsigned Dimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 void
-vtkStandardImageRepresenter<TScalar, Dimensions>::Save(const H5::Group & fg) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::Save(const H5::Group & fg) const
 {
   using namespace H5;
 
@@ -399,7 +399,7 @@ vtkStandardImageRepresenter<TScalar, Dimensions>::Save(const H5::Group & fg) con
       for (unsigned k = 0; k < static_cast<unsigned>(size[0]); k++)
       {
         unsigned  ind = i * size[1] * size[0] + j * size[0] + k;
-        TScalar * pixel = static_cast<TScalar *>(m_reference->GetScalarPointer(k, j, i));
+        auto pixel = static_cast<TScalar *>(m_reference->GetScalarPointer(k, j, i));
         for (unsigned d = 0; d < vtkStandardImageRepresenter::GetDimensions(); d++)
         {
           pixelMat(d, ind) = pixel[d];
@@ -415,16 +415,16 @@ vtkStandardImageRepresenter<TScalar, Dimensions>::Save(const H5::Group & fg) con
   hdf5utils::WriteIntAttribute(ds, "datatype", statismo::GetDataTypeId<TScalar>());
 }
 
-template <class TScalar, unsigned Dimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 unsigned
-vtkStandardImageRepresenter<TScalar, Dimensions>::GetNumberOfPoints() const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::GetNumberOfPoints() const
 {
   return this->GetNumberOfPoints(this->m_reference);
 }
 
-template <class TScalar, unsigned Dimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 void
-vtkStandardImageRepresenter<TScalar, Dimensions>::SetReference(DatasetConstPointerType reference)
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::SetReference(DatasetConstPointerType reference)
 {
   AssertCompatibility(reference);
 
@@ -438,17 +438,17 @@ vtkStandardImageRepresenter<TScalar, Dimensions>::SetReference(DatasetConstPoint
   m_domain = DomainType(ptList);
 }
 
-template <class TScalar, unsigned Dimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 unsigned
-vtkStandardImageRepresenter<TScalar, Dimensions>::GetPointIdForPoint(const PointType & pt) const
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::GetPointIdForPoint(const PointType & pt) const
 {
   assert(m_reference);
-  return this->m_reference->FindPoint(const_cast<double *>(pt.data()));
+  return this->m_reference->FindPoint(const_cast<double *>(pt.Data()));
 }
 
-template <class TScalar, unsigned Dimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 unsigned
-vtkStandardImageRepresenter<TScalar, Dimensions>::GetNumberOfPoints(DatasetPointerType reference)
+vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::GetNumberOfPoints(DatasetPointerType reference)
 {
   assert(reference);
   return reference->GetNumberOfPoints();

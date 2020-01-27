@@ -57,15 +57,15 @@ namespace itk
  *
  * \ingroup Transforms
  */
-template <class TDataSet, class TScalarType, unsigned int TDimension>
+template <typename DataSet, typename ScalarType, unsigned int DIMENSION>
 class ITK_EXPORT StatisticalDeformationModelTransform
-  : public itk::StatisticalModelTransformBase<TDataSet, TScalarType, TDimension>
+  : public itk::StatisticalModelTransformBase<DataSet, ScalarType, DIMENSION>
 {
 
 public:
   /* Standard class typedefs. */
   using Self = StatisticalDeformationModelTransform;
-  using Superclass = itk::StatisticalModelTransformBase<TDataSet, TScalarType, TDimension>;
+  using Superclass = itk::StatisticalModelTransformBase<DataSet, ScalarType, DIMENSION>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   itkSimpleNewMacro(Self);

@@ -52,7 +52,7 @@ namespace statismo::cli
 {
 namespace details
 {
-template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
+template <typename MeshType, typename LandmarkBasedTransformInitializerType, typename TransformType, typename FilterType>
 std::vector<typename MeshType::Pointer> static SuperimposeMeshes(
   const std::vector<typename MeshType::Pointer> & originalMeshes,
   typename MeshType::Pointer                      referenceMesh,
@@ -102,8 +102,8 @@ std::vector<typename MeshType::Pointer> static SuperimposeMeshes(
 }
 
 
-template <class MeshType>
-float static CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
+template <typename MeshType>
+static float CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
 {
   if (mesh1->GetNumberOfPoints() != mesh2->GetNumberOfPoints() ||
       mesh1->GetNumberOfCells() != mesh2->GetNumberOfCells())
@@ -123,7 +123,7 @@ float static CalculateMeshDistance(typename MeshType::Pointer mesh1, typename Me
   return fDifference;
 }
 
-template <class MeshType>
+template <typename MeshType>
 typename MeshType::Pointer static CalculateMeanMesh(const std::vector<typename MeshType::Pointer> & meshes)
 {
   if (meshes.size() == 0)
@@ -185,8 +185,8 @@ typename MeshType::Pointer static CalculateMeanMesh(const std::vector<typename M
 } // namespace details
 
 
-template <class MeshType, class LandmarkBasedTransformInitializerType, class TransformType, class FilterType>
-typename MeshType::Pointer static CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer> & meshes,
+template <typename MeshType, typename LandmarkBasedTransformInitializerType, typename TransformType, typename FilterType>
+static typename MeshType::Pointer CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer> & meshes,
                                                               unsigned maxIterations,
                                                               unsigned nrOfLandmarks,
                                                               float    breakIfChangeBelow)

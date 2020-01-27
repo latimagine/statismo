@@ -38,8 +38,8 @@
 namespace statismo
 {
 
-thread_local WorkStealingQueue * ThreadPool::s_localQueue = nullptr;
-thread_local std::size_t         ThreadPool::s_tid = 0;
+thread_local WorkStealingQueue * ThreadPool::m_localQueue = nullptr;
+thread_local std::size_t         ThreadPool::m_tid = 0;
 
 ThreadPool::ThreadPool(unsigned maxThreads)
   : ThreadPool{ maxThreads, WaitingMode::YIELD, 0 }
@@ -49,16 +49,16 @@ ThreadPool::ThreadPool(unsigned maxThreads, WaitingMode m, unsigned waitTime)
   : m_waitMode{ m }
   , m_waitTime{ waitTime }
 {
-  const auto threadCount = std::min(std::thread::hardware_concurrency(), maxThreads);
+  const auto kThreadCount = std::min(std::thread::hardware_concurrency(), maxThreads);
 
-  for (std::remove_cv_t<decltype(threadCount)> i = 0; i < threadCount; ++i)
+  for (std::remove_cv_t<decltype(kThreadCount)> i = 0; i < kThreadCount; ++i)
   {
     m_queues.push_back(std::make_unique<WorkStealingQueue>());
   }
 
   try
   {
-    for (std::remove_cv_t<decltype(threadCount)> i = 0; i < threadCount; ++i)
+    for (std::remove_cv_t<decltype(kThreadCount)> i = 0; i < kThreadCount; ++i)
     {
       m_threads.push_back(RaiiThread{ std::thread{ &ThreadPool::DoThreadJob, this, i } });
     }
@@ -73,8 +73,8 @@ ThreadPool::ThreadPool(unsigned maxThreads, WaitingMode m, unsigned waitTime)
 void
 ThreadPool::DoThreadJob(std::size_t idx)
 {
-  s_tid = idx;
-  s_localQueue = m_queues[s_tid].get();
+  m_tid = idx;
+  m_localQueue = m_queues[m_tid].get();
 
   while (!m_isDone)
   {
@@ -85,7 +85,7 @@ ThreadPool::DoThreadJob(std::size_t idx)
 bool
 ThreadPool::PopTaskFromLocalQueue(TaskType & t)
 {
-  return s_localQueue->TryPop(t);
+  return m_localQueue->TryPop(t);
 }
 
 bool
@@ -99,9 +99,7 @@ ThreadPool::PopTaskFromOtherLocalQueues(TaskType & t)
 {
   for (std::size_t i = 0; i < m_queues.size(); ++i)
   {
-    const auto idx = (s_tid + i + 1) % m_queues.size();
-
-    if (m_queues[idx]->TrySteal(t))
+    if (m_queues[(m_tid + i + 1) % m_queues.size()]->TrySteal(t))
     {
       return true;
     }

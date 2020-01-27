@@ -84,12 +84,12 @@ public:
   vtkNDPixel &
   operator=(vtkNDPixel rhs)
   {
-    swap(rhs);
+    Swap(rhs);
     return *this;
   }
 
   void
-  swap(vtkNDPixel & rhs) noexcept
+  Swap(vtkNDPixel & rhs) noexcept
   {
     using std::swap;
     swap(m_pixel, rhs.m_pixel);
@@ -106,10 +106,9 @@ public:
       os << "Invalid index for vtkPixel (index = " << i << ")";
       throw statismo::StatisticalModelException(os.str().c_str(), statismo::Status::OUT_OF_RANGE_ERROR);
     }
-    else
-    {
-      return m_pixel[i];
-    }
+
+    return m_pixel[i];
+
   }
 
 private:
@@ -122,10 +121,10 @@ private:
 namespace std
 {
 template <>
-void
-swap<statismo::vtkNDPixel>(statismo::vtkNDPixel & lhs, statismo::vtkNDPixel & rhs)
+inline void
+swap<statismo::vtkNDPixel>(statismo::vtkNDPixel & lhs, statismo::vtkNDPixel & rhs) // NOLINT
 {
-  lhs.swap(rhs);
+  lhs.Swap(rhs);
 }
 } // namespace std
 

@@ -53,6 +53,7 @@ class GenericFactory
 {
 public:
   virtual ~GenericFactory() = default;
+  
   /**
    * Generic object factory for model
    */

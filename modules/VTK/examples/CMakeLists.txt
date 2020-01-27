@@ -1,4 +1,4 @@
-set(TARGET_EXAMPLES
+set(_target_examples
   vtkBasicSamplingExample
   vtkBuildConditionalModelExample
   vtkBuildGaussianProcessShapeModelExample
@@ -10,14 +10,14 @@ set(TARGET_EXAMPLES
   vtkSpatiallyVaryingGPModelExample
 )
 
-foreach(e ${TARGET_EXAMPLES})
-  add_executable(${e} ${e}.cxx)
-  target_link_libraries(${e} statismo_VTK statismo_core ${VTK_LIBRARIES})
-  target_compile_options(${e} PRIVATE "${STATISMO_COMPILE_OPTIONS}")
+foreach(_ex ${_target_examples})
+  add_executable(${_ex} ${_ex}.cxx)
+  target_link_libraries(${_ex} statismo_VTK statismo_core ${VTK_LIBRARIES})
+  target_compile_options(${_ex} PRIVATE "${STATISMO_COMPILE_OPTIONS}")
 
   if(${BUILD_WITH_TIDY})
     set_target_properties(
-      ${e}  PROPERTIES
+      ${_ex}  PROPERTIES
     CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
     )
   endif()

@@ -54,21 +54,21 @@
 
 namespace
 {
-constexpr unsigned Dimensions = 3;
-using MeshType = itk::Mesh<float, Dimensions>;
-using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+constexpr unsigned gk_dimensions = 3;
+using MeshType = itk::Mesh<float, gk_dimensions>;
+using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensions>;
 using MeshReaderType = itk::MeshFileReader<MeshType>;
 using MetricType = itk::EuclideanDistancePointMetric<MeshType, MeshType>;
 // As a transform, we use the StatisticalShapeModelTransform, that comes with statismo
-using TransformType = itk::StatisticalShapeModelTransform<MeshType, double, Dimensions>;
+using TransformType = itk::StatisticalShapeModelTransform<MeshType, double, gk_dimensions>;
 using RegistrationFilterType = itk::PointSetToPointSetRegistrationMethod<MeshType, MeshType>;
 using OptimizerType = itk::LevenbergMarquardtOptimizer;
 using StatisticalModelType = itk::StatisticalModel<MeshType>;
 
-class _IterationStatusObserver : public itk::Command
+class IterationStatusObserver : public itk::Command
 {
 public:
-  using Self = _IterationStatusObserver;
+  using Self = IterationStatusObserver;
   using Superclass = itk::Command;
   using Pointer = itk::SmartPointer<Self>;
 
@@ -141,7 +141,7 @@ main(int argc, char * argv[])
   optimizer->SetValueTolerance(1e-5);
   optimizer->SetEpsilonFunction(1e-6);
 
-  using ObserverType = _IterationStatusObserver;
+  using ObserverType = IterationStatusObserver;
   auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 

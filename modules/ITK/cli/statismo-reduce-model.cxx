@@ -50,7 +50,7 @@ using namespace std;
 namespace
 {
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   string   strInputFileName;
   string   strOutputFileName;
@@ -61,7 +61,7 @@ struct _ProgramOptions
 };
 
 bool
-_IsOptionsConflictPresent(_ProgramOptions & opt)
+IsOptionsConflictPresent(ProgramOptions & opt)
 {
   statismo::utils::ToLower(opt.strType);
 
@@ -74,7 +74,7 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
 
 template <class DataType, class RepresenterType>
 void
-_ReduceModel(const _ProgramOptions & opt)
+ReduceModel(const ProgramOptions & opt)
 {
   using StatisticalModelType = typename itk::StatisticalModel<DataType>;
   using ReducedVarianceModelBuilderType = typename itk::ReducedVarianceModelBuilder<DataType>;
@@ -108,7 +108,7 @@ _ReduceModel(const _ProgramOptions & opt)
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                                    poParameters;
+  ProgramOptions                                    poParameters;
   po::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
 
   parser
@@ -149,7 +149,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -158,29 +158,29 @@ main(int argc, char ** argv)
 
   try
   {
-    const unsigned Dimensionality2D = 2;
-    const unsigned Dimensionality3D = 3;
+    const unsigned kDimensionality2D = 2;
+    const unsigned kDimensionality3D = 3;
     if (poParameters.strType == "shape")
     {
-      using DataType = itk::Mesh<float, Dimensionality3D>;
-      using RepresenterType = itk::StandardMeshRepresenter<float, Dimensionality3D>;
-      _ReduceModel<DataType, RepresenterType>(poParameters);
+      using DataType = itk::Mesh<float, kDimensionality3D>;
+      using RepresenterType = itk::StandardMeshRepresenter<float, kDimensionality3D>;
+      ReduceModel<DataType, RepresenterType>(poParameters);
     }
     else
     {
-      if (poParameters.uNumberOfDimensions == Dimensionality2D)
+      if (poParameters.uNumberOfDimensions == kDimensionality2D)
       {
-        using VectorPixelType = itk::Vector<float, Dimensionality2D>;
-        using DataType = itk::Image<VectorPixelType, Dimensionality2D>;
-        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality2D>;
-        _ReduceModel<DataType, RepresenterType>(poParameters);
+        using VectorPixelType = itk::Vector<float, kDimensionality2D>;
+        using DataType = itk::Image<VectorPixelType, kDimensionality2D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, kDimensionality2D>;
+        ReduceModel<DataType, RepresenterType>(poParameters);
       }
       else
       {
-        using VectorPixelType = itk::Vector<float, Dimensionality3D>;
-        using DataType = itk::Image<VectorPixelType, Dimensionality3D>;
-        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality3D>;
-        _ReduceModel<DataType, RepresenterType>(poParameters);
+        using VectorPixelType = itk::Vector<float, kDimensionality3D>;
+        using DataType = itk::Image<VectorPixelType, kDimensionality3D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, kDimensionality3D>;
+        ReduceModel<DataType, RepresenterType>(poParameters);
       }
     }
   }

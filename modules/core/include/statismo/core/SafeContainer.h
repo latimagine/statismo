@@ -96,11 +96,9 @@ public:
     {
       return false;
     }
-    else
-    {
-      value = got->second;
-      return true;
-    }
+
+    value = got->second;
+    return true;
   }
 
 private:
@@ -132,7 +130,7 @@ public:
   void
   WaitPop(T & value);
   void
-  Push(T new_value);
+  Push(T newValue);
   bool
   Empty() const;
 
@@ -220,9 +218,9 @@ SafeQueue<T>::Push(T newValue)
   {
     std::lock_guard<std::mutex> tailLock{ m_tailMutex };
     m_tail->data = newData;
-    auto * const newTail = p.get();
+    auto * const kNewTail = p.get();
     m_tail->next = std::move(p);
-    m_tail = newTail;
+    m_tail = kNewTail;
   }
   m_dataCond.notify_one();
 }
@@ -231,31 +229,31 @@ template <typename T>
 std::shared_ptr<T>
 SafeQueue<T>::WaitPop()
 {
-  const auto oldHead = WaitPopHead();
-  return oldHead->data;
+  const auto kOldHead = WaitPopHead();
+  return kOldHead->data;
 }
 
 template <typename T>
 void
 SafeQueue<T>::WaitPop(T & value)
 {
-  const auto oldHead = WaitPopHead(value);
+  [[maybe_unused]] const auto kOldHead = WaitPopHead(value);
 }
 
 template <typename T>
 std::shared_ptr<T>
 SafeQueue<T>::TryPop()
 {
-  const auto oldHead = TryPopHead();
-  return oldHead ? oldHead->data : std::shared_ptr<T>();
+  const auto kOldHead = TryPopHead();
+  return kOldHead ? kOldHead->data : std::shared_ptr<T>();
 }
 
 template <typename T>
 bool
 SafeQueue<T>::TryPop(T & value)
 {
-  const auto old_head = TryPopHead(value);
-  return (old_head != nullptr);
+  const auto kOldHead = TryPopHead(value);
+  return (kOldHead != nullptr);
 }
 
 template <typename T>

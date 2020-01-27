@@ -62,13 +62,13 @@ namespace itk
  *
  * \ingroup Transforms
  */
-template <class TDataset, class TScalarType, unsigned int TDimension>
+template <typename Dataset, typename ScalarType, unsigned int DIMENSION>
 class ITK_EXPORT InterpolatingStatisticalDeformationModelTransform
-  : public itk::StatisticalModelTransformBase<TDataset, TScalarType, TDimension>
+  : public itk::StatisticalModelTransformBase<Dataset, ScalarType, DIMENSION>
 {
 public:
   using Self = InterpolatingStatisticalDeformationModelTransform;
-  using Superclass = itk::StatisticalModelTransformBase<TDataset, TScalarType, TDimension>;
+  using Superclass = itk::StatisticalModelTransformBase<Dataset, ScalarType, DIMENSION>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
@@ -82,19 +82,19 @@ public:
   using StatisticalModelType = typename Superclass::StatisticalModelType;
   using JacobianType = typename Superclass::JacobianType;
   using DeformationFieldType = typename RepresenterType::DatasetType;
-  using InterpolatorType = VectorLinearInterpolateImageFunction<DeformationFieldType, TScalarType>;
+  using InterpolatorType = VectorLinearInterpolateImageFunction<DeformationFieldType, ScalarType>;
 
   /**
    * Clone the current transform
    */
-  virtual ::itk::LightObject::Pointer
+  ::itk::LightObject::Pointer
   CreateAnother() const override
   {
     ::itk::LightObject::Pointer smartPtr;
     Pointer                     another = Self::New().GetPointer();
     this->CopyBaseMembers(another);
     another->m_meanDeformation = this->m_meanDeformation;
-    another->m_PCABasisDeformations = this->m_PCABasisDeformations;
+    another->m_pcaBasisDeformations = this->m_pcaBasisDeformations;
     smartPtr = static_cast<Pointer>(another);
     return smartPtr;
   }
@@ -113,7 +113,7 @@ public:
       auto deformationField = model->DrawPCABasisSample(i);
       auto basisI = InterpolatorType::New();
       basisI->SetInputImage(deformationField);
-      m_PCABasisDeformations.push_back(basisI);
+      m_pcaBasisDeformations.push_back(basisI);
     }
   }
 
@@ -121,17 +121,17 @@ public:
   void
   ComputeJacobianWithRespectToParameters(const InputPointType & pt, JacobianType & jacobian) const override
   {
-    jacobian.SetSize(TDimension, m_PCABasisDeformations.size());
+    jacobian.SetSize(DIMENSION, m_pcaBasisDeformations.size());
     jacobian.Fill(0);
     if (!m_meanDeformation->IsInsideBuffer(pt))
     {
       return;
     }
 
-    for (unsigned j = 0; j < m_PCABasisDeformations.size(); ++j)
+    for (unsigned j = 0; j < m_pcaBasisDeformations.size(); ++j)
     {
-      auto d = m_PCABasisDeformations[j]->Evaluate(pt);
-      for (unsigned i = 0; i < TDimension; ++i)
+      auto d = m_pcaBasisDeformations[j]->Evaluate(pt);
+      for (unsigned i = 0; i < DIMENSION; ++i)
       {
         jacobian(i, j) += d[i];
       }
@@ -150,7 +150,7 @@ public:
    * \param pt The point to tranform
    * \return The transformed point
    */
-  virtual OutputPointType
+  OutputPointType
   TransformPoint(const InputPointType & pt) const override
   {
     if (!m_meanDeformation->IsInsideBuffer(pt))
@@ -158,12 +158,12 @@ public:
       return pt;
     }
 
-    assert(this->m_coeffVector.size() == m_PCABasisDeformations.size());
+    assert(this->m_coeffVector.size() == m_pcaBasisDeformations.size());
     auto def = m_meanDeformation->Evaluate(pt);
 
-    for (unsigned i = 0; i < m_PCABasisDeformations.size(); ++i)
+    for (unsigned i = 0; i < m_pcaBasisDeformations.size(); ++i)
     {
-      auto defBasisI = m_PCABasisDeformations[i]->Evaluate(pt);
+      auto defBasisI = m_pcaBasisDeformations[i]->Evaluate(pt);
       def += (defBasisI * this->m_coeffVector[i]);
     }
 
@@ -178,7 +178,7 @@ public:
 
 private:
   typename InterpolatorType::Pointer              m_meanDeformation;
-  std::vector<typename InterpolatorType::Pointer> m_PCABasisDeformations;
+  std::vector<typename InterpolatorType::Pointer> m_pcaBasisDeformations;
 };
 
 

@@ -29,10 +29,10 @@ namespace
 /*
  * We use a sum of gaussian kernels as our main model.
  */
-class _MultiscaleGaussianKernel : public MatrixValuedKernel<vtkPoint>
+class MultiscaleGaussianKernel : public MatrixValuedKernel<vtkPoint> // NOLINT
 {
 public:
-  _MultiscaleGaussianKernel(float baseWidth, float baseScale, unsigned nLevels)
+  MultiscaleGaussianKernel(float baseWidth, float baseScale, unsigned nLevels)
     : MatrixValuedKernel<vtkPoint>(3)
     , m_baseWidth(baseWidth)
     , m_baseScale(baseScale)
@@ -71,7 +71,7 @@ private:
 };
 
 vtkSmartPointer<vtkPolyData>
-_LoadVTKPolyData(const std::string & filename)
+LoadVTKPolyData(const std::string & filename)
 {
   vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.c_str());
@@ -81,25 +81,25 @@ _LoadVTKPolyData(const std::string & filename)
 
 // compute the center of mass for the given mesh
 vtkPoint
-_CenterOfMass(const vtkPolyData * _pd)
+CenterOfMass(const vtkPolyData * pd)
 {
   // vtk is not const-correct, but we will not mutate pd here;
-  auto pd = const_cast<vtkPolyData *>(_pd);
+  auto mutablePd = const_cast<vtkPolyData *>(pd);
 
-  vtkIdType numPoints = pd->GetNumberOfPoints();
+  vtkIdType numPoints = mutablePd->GetNumberOfPoints();
   vtkPoint  massCenter(0.0, 0.0, 0.0);
   for (vtkIdType i = 0; i < numPoints; ++i)
   {
-    double * ithPoint = pd->GetPoint(i);
+    double * ithPoint = mutablePd->GetPoint(i);
     for (unsigned d = 0; d < 3; ++d)
     {
       massCenter[d] += ithPoint[d];
     }
   }
-  double V = 1.0 / static_cast<double>(numPoints);
+  double v = 1.0 / static_cast<double>(numPoints);
   for (unsigned d = 0; d < 3; ++d)
   {
-    massCenter[d] *= V;
+    massCenter[d] *= v;
   }
   return massCenter;
 }
@@ -107,19 +107,19 @@ _CenterOfMass(const vtkPolyData * _pd)
 // As an example of a tempering function, we use a function which is more smooth for points whose
 // x-component is smaller than the x-component of the center of mass. To achieve a smooth transition between the areas,
 // we use a sigmoid function. The variable a controls how fast the value of the tempering function changes from 0 to 1.
-struct _MyTemperingFunction : public TemperingFunction<vtkPoint>
+struct MyTemperingFunction : public TemperingFunction<vtkPoint>
 {
-  explicit _MyTemperingFunction(const vtkPoint & massCenter)
+  explicit MyTemperingFunction(const vtkPoint & massCenter)
     : m_centerOfMass{ massCenter }
   {}
 
-  static constexpr double a{ 0.5 };
+  static constexpr double sk_a{ 0.5 };
 
   double
   operator()(const vtkPoint & pt) const override
   {
     double xDiffToCenter = m_centerOfMass[0] - pt[0];
-    return (1.0 / (1.0 + std::exp(-xDiffToCenter * a)) + 1.0);
+    return (1.0 / (1.0 + std::exp(-xDiffToCenter * sk_a)) + 1.0);
   }
 
 private:
@@ -159,11 +159,11 @@ main(int argc, char ** argv)
   try
   {
 
-    auto referenceMesh = _LoadVTKPolyData(refFilename);
+    auto referenceMesh = LoadVTKPolyData(refFilename);
     auto representer = vtkStandardMeshRepresenter::SafeCreate(referenceMesh);
 
-    _MultiscaleGaussianKernel gk{ baseKernelWidth, baseScale, numLevels };
-    _MyTemperingFunction      temperingFun{ _CenterOfMass(referenceMesh) };
+    MultiscaleGaussianKernel gk{ baseKernelWidth, baseScale, numLevels };
+    MyTemperingFunction      temperingFun{ CenterOfMass(referenceMesh) };
 
     SpatiallyVaryingKernel<RepresenterType::DatasetType> temperedKernel(
       representer.get(), gk, temperingFun, numberOfComponents, numberOfComponents * 2, true);

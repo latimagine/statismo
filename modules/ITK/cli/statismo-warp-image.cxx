@@ -47,10 +47,10 @@ using namespace std;
 namespace
 {
 
-constexpr unsigned _Dimensionality3D = 3;
-constexpr unsigned _Dimensionality2D = 2;
+constexpr unsigned gk_dimensionality3D = 3;
+constexpr unsigned gk_dimensionality2D = 2;
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   string   strInputImageFileName;
   string   strInputDeformFieldFileName;
@@ -59,19 +59,19 @@ struct _ProgramOptions
 };
 
 bool
-_IsOptionsConflictPresent(const _ProgramOptions & opt)
+IsOptionsConflictPresent(const ProgramOptions & opt)
 {
   return opt.strInputDeformFieldFileName.empty() || opt.strInputImageFileName.empty() || opt.strOutputFileName.empty();
 }
 
-template <unsigned Dimensions>
+template <unsigned DIMENSIONS>
 void
-_ApplyDeformationFieldToImage(const _ProgramOptions & opt)
+ApplyDeformationFieldToImage(const ProgramOptions & opt)
 {
-  using ImageType = itk::Image<float, Dimensions>;
+  using ImageType = itk::Image<float, DIMENSIONS>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
-  using VectorPixelType = itk::Vector<float, Dimensions>;
-  using VectorImageType = itk::Image<VectorPixelType, Dimensions>;
+  using VectorPixelType = itk::Vector<float, DIMENSIONS>;
+  using VectorImageType = itk::Image<VectorPixelType, DIMENSIONS>;
   using VectorImageReaderType = itk::ImageFileReader<VectorImageType>;
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
   using WarpFilterType = itk::WarpImageFilter<ImageType, ImageType, VectorImageType>;
@@ -113,7 +113,7 @@ _ApplyDeformationFieldToImage(const _ProgramOptions & opt)
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                            poParameters;
+  ProgramOptions                            poParameters;
   po::program_options<std::string, unsigned> parser{ argv[0], "Program help:" };
 
   parser
@@ -140,7 +140,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -151,11 +151,11 @@ main(int argc, char ** argv)
   {
     if (poParameters.uNumberOfDimensions == 2)
     {
-      _ApplyDeformationFieldToImage<_Dimensionality2D>(poParameters);
+      ApplyDeformationFieldToImage<gk_dimensionality2D>(poParameters);
     }
     else
     {
-      _ApplyDeformationFieldToImage<_Dimensionality3D>(poParameters);
+      ApplyDeformationFieldToImage<gk_dimensionality3D>(poParameters);
     }
   }
   catch (itk::ExceptionObject & e)

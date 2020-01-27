@@ -59,7 +59,7 @@ namespace itk
  * \brief ITK Wrapper for statismo::PCAModelBuilder class.
  * \see statismo::PCAModelBuilder for detailed documentation.
  */
-template <class Representer>
+template <typename Representer>
 class PCAModelBuilder
   : public Object
   , public statismo::ImplWrapper<statismo::PCAModelBuilder<Representer>, statismo::SafeInitializer>
@@ -79,18 +79,15 @@ public:
   using DataItemListType = typename DataManagerType::DataItemListType;
   using EigenValueMethod = typename ImplType::EigenValueMethod;
 
-  PCAModelBuilder() = default;
-  virtual ~PCAModelBuilder() = default;
-
   typename StatisticalModel<Representer>::Pointer
-  BuildNewModel(DataItemListType DataItemList,
+  BuildNewModel(DataItemListType dataItemList,
                 float            noiseVariance,
                 bool             computeScores = true,
-                EigenValueMethod method = ImplType::JacobiSVD)
+                EigenValueMethod method = ImplType::EigenValueMethod::JACOBI_SVD)
   {
     auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                                     &ImplType::BuildNewModel,
-                                                    DataItemList,
+                                                    dataItemList,
                                                     noiseVariance,
                                                     computeScores,
                                                     method);

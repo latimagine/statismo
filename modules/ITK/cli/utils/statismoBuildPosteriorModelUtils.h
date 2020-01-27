@@ -44,7 +44,7 @@ namespace statismo::cli
 {
 namespace details
 {
-template <class DataType>
+template <typename DataType>
 static std::vector<typename DataType::PointType>
 ReadLandmarksFile(const std::string & path)
 {
@@ -128,7 +128,7 @@ ReadLandmarksFile(const std::string & path)
 }
 } // namespace details
 
-template <class DataType, class StatisticalModelType>
+template <typename DataType, typename StatisticalModelType>
 static typename StatisticalModelType::Pointer
 BuildPosteriorDeformationModel(typename StatisticalModelType::Pointer model,
                                const std::string &                    fixedLandmarksFileName,
@@ -162,7 +162,7 @@ BuildPosteriorDeformationModel(typename StatisticalModelType::Pointer model,
 }
 
 
-template <class DataType, class StatisticalModelType>
+template <typename DataType, typename StatisticalModelType>
 static typename StatisticalModelType::Pointer
 BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
                          typename DataType::Pointer             mesh,
@@ -186,7 +186,7 @@ BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
   return posteriorModelBuilder->BuildNewModelFromModel(model, constraints, dVariance, false);
 }
 
-template <class DataType, class StatisticalModelType, class PointsLocatorType>
+template <typename DataType, typename StatisticalModelType, typename PointsLocatorType>
 static typename StatisticalModelType::Pointer
 BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
                          const std::string &                    fixedLandmarksFileName,

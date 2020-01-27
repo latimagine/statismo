@@ -69,9 +69,8 @@ enum class Status
 class IException : public virtual std::exception
 {
 public:
-  virtual ~IException() = default;
   virtual void
-  rethrow() const = 0;
+  Rethrow() const = 0;
 };
 
 /**
@@ -83,61 +82,31 @@ class Rethrowable : public Base
 public:
   using Base::Base;
 
-  virtual void
-  rethrow() const
+  void
+  Rethrow() const override
   {
     throw static_cast<const Derived &>(*this);
   }
 };
 
 /**
- * \brief Used to indicate that a method has not yet been implemented
- */
-class NotImplementedException : public Rethrowable<IException, NotImplementedException>
-{
-public:
-  NotImplementedException(const char * classname, const char * methodname)
-    : m_classname(classname)
-    , m_methodname(methodname)
-  {}
-  virtual ~NotImplementedException() = default;
-
-  const char *
-  what() const noexcept
-  {
-    return (m_classname + "::" + m_methodname).c_str();
-  }
-
-private:
-  std::string m_classname;
-  std::string m_methodname;
-};
-
-/**
  * \brief Generic Exception class for the statismo Library.
  */
-class StatisticalModelException : public Rethrowable<IException, StatisticalModelException>
+class StatisticalModelException : public std::runtime_error
 {
 public:
   explicit StatisticalModelException(const char * message, Status status = Status::INTERNAL_ERROR)
-    : m_message(message)
+    : std::runtime_error(message)
     , m_status(status)
   {}
 
-  const char *
-  what() const noexcept
-  {
-    return m_message.c_str();
-  }
-
   Status
-  status() const noexcept
+  GetStatus() const noexcept
   {
     return m_status;
   }
 
 private:
-  std::string m_message;
   Status      m_status;
 };
 
@@ -160,7 +129,7 @@ struct TranslateImpl
     }
     catch (const StatisticalModelException & ex)
     {
-      return std::make_tuple(ex.status(), std::nullopt);
+      return std::make_tuple(ex.GetStatus(), std::nullopt);
     }
     catch (...)
     {
@@ -182,7 +151,7 @@ struct TranslateImpl<Callable, void>
     }
     catch (const StatisticalModelException & ex)
     {
-      return ex.status();
+      return ex.GetStatus();
     }
     catch (...)
     {

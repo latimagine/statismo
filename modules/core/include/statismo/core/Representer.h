@@ -125,7 +125,7 @@ public:
   /// the points used to store data could be a 3 dimension vector (with last dimension unused).
   /// In this case, the real dimension (used for computation) is 3.
   ///
-  static constexpr unsigned RealPointDimension = PointTraits<PointType>::RealDimension;
+  static constexpr unsigned sk_realPointDimension = PointTraits<PointType>::sk_realDimension;
 
   ///@}
 
@@ -310,20 +310,20 @@ public:
   using ObjectFactoryType = GenericFactory<Derived>;
 
   /// Delete basic implementation
-  virtual void
+  void
   Delete() override
   {
     delete this;
   }
 
   /// Returns a name that identifies the representer
-  virtual std::string
+  std::string
   GetName() const final
   {
     return Derived::GetNameImpl();
   }
 
-  virtual RepresenterDataType
+  RepresenterDataType
   GetType() const final
   {
     return Derived::GetTypeImpl();
@@ -331,25 +331,25 @@ public:
 
   /// Returns the dimensionality of the dataset (for a mesh this is 3, for a scalar image
   /// this would be 1)
-  virtual unsigned
+  unsigned
   GetDimensions() const final
   {
     return Derived::GetDimensionsImpl();
   }
 
-  virtual std::string
+  std::string
   GetVersion() const final
   {
     return Derived::GetVersionImpl();
   }
 
-  virtual unsigned
+  unsigned
   MapPointIdToInternalIdx(unsigned ptId, unsigned componentInd) const override
   {
     return ptId * GetDimensions() + componentInd;
   }
 
-  virtual DatasetPointerType
+  DatasetPointerType
   IdentitySample() const override
   {
 

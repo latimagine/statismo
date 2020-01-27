@@ -64,20 +64,20 @@ using RepresenterType2D = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2
 /**
  * A scalar valued gaussian kernel.
  */
-template <class TPoint>
-class _GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
+template <typename Point>
+class GaussianKernel : public statismo::ScalarValuedKernel<Point>
 {
 public:
-  using CoordRepType = typename TPoint::CoordRepType;
+  using CoordRepType = typename Point::CoordRepType;
   using VectorType = vnl_vector<CoordRepType>;
 
-  explicit _GaussianKernel(double sigma)
+  explicit GaussianKernel(double sigma)
     : m_sigma(sigma)
     , m_sigma2(sigma * sigma)
   {}
 
   inline double
-  operator()(const TPoint & x, const TPoint & y) const override
+  operator()(const Point & x, const Point & y) const override
   {
     VectorType xv = x.GetVnlVector();
     VectorType yv = y.GetVnlVector();
@@ -99,9 +99,9 @@ private:
   double m_sigma2;
 };
 
-template <class RepresenterType, class ImageType>
+template <typename RepresenterType, typename ImageType>
 void
-_DoRunExample(const char * referenceFilename, double gaussianKernelSigma, const char * modelname)
+DoRunExample(const char * referenceFilename, double gaussianKernelSigma, const char * modelname)
 {
   using ModelBuilderType = itk::LowRankGPModelBuilder<ImageType>;
   using ImageFileReaderType = itk::ImageFileReader<ImageType>;
@@ -115,7 +115,7 @@ _DoRunExample(const char * referenceFilename, double gaussianKernelSigma, const 
   auto representer = RepresenterType::New();
   representer->SetReference(refReader->GetOutput());
 
-  auto gk = _GaussianKernel<PointType>(gaussianKernelSigma); // a gk with sigma 100
+  auto gk = GaussianKernel<PointType>(gaussianKernelSigma); // a gk with sigma 100
   // make the kernel matrix valued and scale it by a factor of 100
   const auto & mvGk = statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
   const auto & scaledGk = statismo::ScaledKernel<PointType>(&mvGk, 100.0);
@@ -143,11 +143,11 @@ main(int argc, char * argv[])
 
   if (dimension == 2)
   {
-    _DoRunExample<RepresenterType2D, VectorImageType2D>(referenceFilename, gaussianKernelSigma, modelname);
+    DoRunExample<RepresenterType2D, VectorImageType2D>(referenceFilename, gaussianKernelSigma, modelname);
   }
   else if (dimension == 3)
   {
-    _DoRunExample<RepresenterType3D, VectorImageType3D>(referenceFilename, gaussianKernelSigma, modelname);
+    DoRunExample<RepresenterType3D, VectorImageType3D>(referenceFilename, gaussianKernelSigma, modelname);
   }
   else
   {

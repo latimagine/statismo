@@ -57,7 +57,7 @@ namespace itk
  * \brief ITK Wrapper for statismo::DataManager class.
  * \see statismo::DataManager for detailed documentation.
  */
-template <class T>
+template <typename T>
 class DataManager
   : public Object
   , public statismo::ImplWrapper<statismo::BasicDataManager<T>>

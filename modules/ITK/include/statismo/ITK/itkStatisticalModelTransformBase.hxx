@@ -47,8 +47,8 @@ namespace itk
 /*!
  * Constructor with default arguments.
  */
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
-StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
+StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::
   StatisticalModelTransformBase()
   : Superclass(0)
   , // we don't know the number of parameters at this point.
@@ -61,9 +61,9 @@ StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutpu
   this->m_fixedParameters.SetSize(0);
 }
 
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
 void
-StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::SetStatisticalModel(
+StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::SetStatisticalModel(
   const StatisticalModelType * model)
 {
   itkDebugMacro(<< "Setting statistical model ");
@@ -75,19 +75,19 @@ StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutpu
   this->m_coeffVector.set_size(model->GetNumberOfPrincipalComponents());
 }
 
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
-typename StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
+typename StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::
   StatisticalModelType::ConstPointer
-  StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::GetStatisticalModel()
+  StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::GetStatisticalModel()
     const
 {
   itkDebugMacro(<< "Getting statistical model ");
   return m_statisticalModel;
 }
 
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
 void
-StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::SetIdentity()
+StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::SetIdentity()
 {
   itkDebugMacro(<< "Setting Identity");
 
@@ -99,18 +99,18 @@ StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutpu
   this->Modified();
 }
 
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
 void
-StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::SetParameters(
+StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::SetParameters(
   const ParametersType & parameters)
 {
   itkDebugMacro(<< "Setting parameters " << parameters);
 
-  for (unsigned int i = 0; i < std::min(m_usedNumberCoefficients, (unsigned)this->GetNumberOfParameters()); i++)
+  for (unsigned int i = 0; i < std::min(m_usedNumberCoefficients, static_cast<unsigned>(this->GetNumberOfParameters())); i++)
   {
     m_coeffVector[i] = parameters[i];
   }
-  for (unsigned int i = std::min(m_usedNumberCoefficients, (unsigned)this->GetNumberOfParameters());
+  for (unsigned int i = std::min(m_usedNumberCoefficients, static_cast<unsigned>(this->GetNumberOfParameters()));
        i < this->GetNumberOfParameters();
        i++)
   {
@@ -124,10 +124,10 @@ StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutpu
   itkDebugMacro(<< "After setting parameters ");
 }
 
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
-const typename StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
+const typename StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::
   ParametersType &
-  StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::GetParameters(void) const
+  StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::GetParameters() const
 {
   itkDebugMacro(<< "Getting parameters ");
 
@@ -140,9 +140,9 @@ const typename StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDi
   return this->m_Parameters;
 }
 
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
 void
-StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::
+StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::
   ComputeJacobianWithRespectToParameters(const InputPointType & pt, JacobianType & jacobian) const
 {
   jacobian.SetSize(OutputSpaceDimension, m_statisticalModel->GetNumberOfPrincipalComponents());
@@ -152,7 +152,7 @@ StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutpu
 
   for (unsigned i = 0; i < statModelJacobian.rows(); i++)
   {
-    for (unsigned j = 0; j < std::min(m_usedNumberCoefficients, (unsigned)this->GetNumberOfParameters()); j++)
+    for (unsigned j = 0; j < std::min(m_usedNumberCoefficients, static_cast<unsigned>(this->GetNumberOfParameters())); j++)
     {
       jacobian[i][j] = statModelJacobian[i][j];
     }
@@ -164,9 +164,9 @@ StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutpu
                 << jacobian);
 }
 
-template <class TRepresenter, class TScalarType, unsigned int TInputDimension, unsigned int TOutputDimension>
+template <typename Dataset, typename TransformScalarType, unsigned int INPUT_DIMENSION, unsigned int OUTPUT_DIMENSION>
 void
-StatisticalModelTransformBase<TRepresenter, TScalarType, TInputDimension, TOutputDimension>::PrintSelf(
+StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>::PrintSelf(
   std::ostream & os,
   Indent         indent) const
 {

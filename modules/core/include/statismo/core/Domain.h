@@ -61,8 +61,8 @@ public:
   /**
    * Create a new domain from the given list of points (copy version)
    */
-  explicit Domain(const DomainPointsListType & domainPoints)
-    : m_domainPoints(domainPoints)
+  explicit Domain(DomainPointsListType domainPoints)
+    : m_domainPoints(std::move(domainPoints))
   {}
 
   /**

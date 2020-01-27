@@ -55,14 +55,12 @@ namespace statismo
 // the methods.
 struct PointIdType
 {
-  PointIdType(unsigned ptId_)
-    : ptId(ptId_)
+  explicit PointIdType(unsigned pid)
+    : ptId(pid)
   {}
-  PointIdType()
-    : ptId(0)
-  {}
+  PointIdType() = default;
 
-  unsigned ptId;
+  unsigned ptId{0};
 };
 
 
@@ -94,8 +92,7 @@ public:
   void
   Load(const H5::Group & fg) override
   {
-    unsigned numPoints = static_cast<unsigned>(statismo::hdf5utils::ReadInt(fg, "numberOfPoints"));
-    InitializeObject(numPoints);
+    InitializeObject(static_cast<unsigned>(statismo::hdf5utils::ReadInt(fg, "numberOfPoints")));
   }
 
   void DeleteDataset(DatasetPointerType) const override{};
@@ -200,7 +197,7 @@ private:
   }
 
   TrivialVectorialRepresenter() = default;
-  TrivialVectorialRepresenter(unsigned numberOfPoints) { InitializeObject(numberOfPoints); }
+  explicit TrivialVectorialRepresenter(unsigned numberOfPoints) { InitializeObject(numberOfPoints); }
 
   void
   InitializeObject(unsigned numberOfPoints)

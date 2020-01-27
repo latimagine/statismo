@@ -73,28 +73,28 @@ using PointValueWithCovariancePairType = PosteriorModelBuilderType::PointValueWi
 using PointValueWithCovarianceListType = PosteriorModelBuilderType::PointValueWithCovarianceListType;
 using MatrixType = statismo::MatrixType;
 using PCAModelBuilderType = statismo::PCAModelBuilder<vtkPolyData>;
-std::vector<std::string> _s_filenames;
+std::vector<std::string> g_filenames;
 
 int
 TestPosteriorMain()
 {
 
-  const unsigned nPointsFixed = 100;
-  const unsigned nPointsTest = 1000;
-  const double   tolerance = 0.01;
-  const double   pointValueNoiseVariance = 0.1;
+  const unsigned kNPointsFixed = 100;
+  const unsigned kNPointsTest = 1000;
+  const double   kTolerance = 0.01;
+  const double   kPointValueNoiseVariance = 0.1;
 
-  auto reference = LoadPolyData(_s_filenames[0]);
+  auto reference = LoadPolyData(g_filenames[0]);
   auto representer = RepresenterType::SafeCreate(reference);
   auto dataManager = DataManagerType::SafeCreate(representer.get());
 
   // dataManager->AddDataset(reference, "ref");
-  for (const auto & f : _s_filenames)
+  for (const auto & f : g_filenames)
   {
     dataManager->AddDataset(LoadPolyData(f), "dataset");
   }
 
-  const MatrixType                 pointCovarianceMatrix = pointValueNoiseVariance * MatrixType::Identity(3, 3);
+  const MatrixType                 kPointCovarianceMatrix = kPointValueNoiseVariance * MatrixType::Identity(3, 3);
   PointValueWithCovarianceListType pvcList;
 
   auto testSample = dataManager->GetData().back()->GetSample();
@@ -102,10 +102,10 @@ TestPosteriorMain()
   auto     domaintPointsList = representer->GetDomain().GetDomainPoints();
   unsigned nDomainPoints = representer->GetDomain().GetNumberOfPoints();
 
-  for (unsigned ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / nPointsFixed)
+  for (unsigned ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / kNPointsFixed)
   {
     pvcList.emplace_back(PointValuePairType(domaintPointsList[ptId], testSample->GetPoint(ptId)),
-                         pointCovarianceMatrix);
+                         kPointCovarianceMatrix);
   }
 
   auto pModelBuilder = PosteriorModelBuilderType::SafeCreate();
@@ -113,10 +113,10 @@ TestPosteriorMain()
 
   auto posteriorMean = posteriorModel->DrawMean();
 
-  for (unsigned ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / nPointsTest)
+  for (unsigned ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / kNPointsTest)
   {
     STATISMO_ASSERT_LTE(vtkMath::Distance2BetweenPoints(posteriorMean->GetPoint(ptId), testSample->GetPoint(ptId)),
-                        tolerance * tolerance);
+                        kTolerance * kTolerance);
   }
 
   auto pcaModelBuilder = PCAModelBuilderType::SafeCreate();
@@ -145,7 +145,7 @@ TestPosteriorMain()
   VectorType coeffs = fullModel->ComputeCoefficientsForPointValuesWithCovariance(pointValueWithCovarianceList);
   VectorType coeffsFromPosteriorMean = fullModel->ComputeCoefficients(posteriorMean);
 
-  STATISMO_ASSERT_LTE((coeffs - coeffsFromPosteriorMean).norm(), tolerance);
+  STATISMO_ASSERT_LTE((coeffs - coeffsFromPosteriorMean).norm(), kTolerance);
 
   return EXIT_SUCCESS;
 }
@@ -224,7 +224,7 @@ TestPosteriorOnePoint()
 } // namespace
 
 int
-PosteriorModelBuilderTest(int argc, char ** argv)
+PosteriorModelBuilderTest(int argc, char ** argv)  // NOLINT
 {
   if (argc < 2)
   {
@@ -236,7 +236,7 @@ PosteriorModelBuilderTest(int argc, char ** argv)
 
   for (unsigned i = 0; i <= 4; ++i)
   {
-    _s_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
+    g_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
   }
 
   auto res = statismo::Translate([]() {

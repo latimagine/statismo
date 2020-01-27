@@ -118,13 +118,13 @@ public:
   static UniquePtrType<DataItemBase>
   Load(const RepresenterType * representer, const H5::Group & dsGroup);
 
-  virtual void
+  void
   Save(const H5::Group & dsGroup) const override;
 
   std::string
   GetDatasetURI() const override
   {
-    return m_URI;
+    return m_uri;
   }
 
   const RepresenterType *
@@ -145,17 +145,17 @@ public:
     return m_representer->SampleVectorToSample(m_sampleVector);
   }
 
-  virtual void
+  void
   Delete() override
   {
     delete this;
   }
 
 protected:
-  DataItemBase(const RepresenterType * representer, const std::string & URI, const VectorType & sampleVector)
+  DataItemBase(const RepresenterType * representer, std::string uri, VectorType sampleVector)
     : m_representer(representer)
-    , m_URI(URI)
-    , m_sampleVector(sampleVector)
+    , m_uri(std::move(uri))
+    , m_sampleVector(std::move(sampleVector))
   {}
 
   explicit DataItemBase(const RepresenterType * representer)
@@ -167,14 +167,14 @@ protected:
   LoadInternal(const H5::Group & dsGroup)
   {
     hdf5utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
-    m_URI = hdf5utils::ReadString(dsGroup, "./URI");
+    m_uri = hdf5utils::ReadString(dsGroup, "./URI");
   }
 
   void
   SaveInternal(const H5::Group & dsGroup) const
   {
     hdf5utils::WriteVector(dsGroup, "./samplevector", m_sampleVector);
-    hdf5utils::WriteString(dsGroup, "./URI", m_URI);
+    hdf5utils::WriteString(dsGroup, "./URI", m_uri);
 
     SaveInternalImpl(dsGroup);
   }
@@ -186,7 +186,7 @@ protected:
   }
 
   const RepresenterType * m_representer;
-  std::string             m_URI;
+  std::string             m_uri;
   VectorType              m_sampleVector;
 };
 
@@ -202,8 +202,8 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
 private:
-  BasicDataItem(const RepresenterType * representer, const std::string & URI, const VectorType & sampleVector)
-    : Superclass(representer, URI, sampleVector)
+  BasicDataItem(const RepresenterType * representer, std::string uri, const VectorType& sampleVector)
+    : Superclass(representer, std::move(uri), sampleVector)
   {}
 
   explicit BasicDataItem(const RepresenterType * representer)
@@ -228,8 +228,8 @@ class DataItemWithSurrogates : public DataItemBase<T, DataItemWithSurrogates<T>>
 public:
   enum class SurrogateType
   {
-    Categorical = 0, // e.g. Gender
-    Continuous = 1   // e.g. Size, weight
+    CATEGORICAL = 0, // e.g. Gender
+    CONTINUOUS = 1   // e.g. Size, weight
   };
   using SurrogateTypeVectorType = std::vector<SurrogateType>;
 
@@ -247,13 +247,13 @@ public:
 
 private:
   DataItemWithSurrogates(const RepresenterType * representer,
-                         const std::string &     datasetURI,
-                         const VectorType &      sampleVector,
-                         const std::string &     surrogateFilename,
-                         const VectorType &      surrogateVector)
-    : Superclass(representer, datasetURI, sampleVector)
-    , m_surrogateFilename(surrogateFilename)
-    , m_surrogateVector(surrogateVector)
+                         std::string     datasetURI,
+                         VectorType      sampleVector,
+                         std::string     surrogateFilename,
+                         VectorType      surrogateVector)
+    : Superclass(representer, std::move(datasetURI), std::move(sampleVector))
+    , m_surrogateFilename(std::move(surrogateFilename))
+    , m_surrogateVector(std::move(surrogateVector))
   {}
 
   explicit DataItemWithSurrogates(const RepresenterType * representer)
@@ -261,7 +261,7 @@ private:
   {}
 
   // loads the internal state from the hdf5 file
-  virtual void
+  void
   LoadInternal(const H5::Group & dsGroup) override
   {
     Superclass::LoadInternal(dsGroup);
@@ -269,7 +269,7 @@ private:
     m_surrogateFilename = hdf5utils::ReadString(dsGroup, "./surrogateFilename");
   }
 
-  virtual void
+  void
   SaveInternalImpl(const H5::Group & dsGroup) const override
   {
     hdf5utils::WriteString(dsGroup, "./sampletype", "DataItemWithSurrogates");

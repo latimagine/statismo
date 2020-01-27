@@ -104,7 +104,7 @@ public:
   /**
    * Destructor
    */
-  virtual ~StatisticalModel();
+  virtual ~StatisticalModel(); // NOLINT
 
   /**
    * Destroy the object.
@@ -165,7 +165,7 @@ public:
    * \returns The value of the sample, at the specified point
    */
   ValueType
-  EvaluateSampleAtPoint(DatasetConstPointerType sample, const PointType & pt) const;
+  EvaluateSampleAtPoint(DatasetConstPointerType sample, const PointType & point) const;
 
 
   /**
@@ -202,12 +202,12 @@ public:
   /**
    * Draws the sample corresponding to the ith pca matrix
    *
-   * \param componentNumber The number of the PCA Basis to be retrieved
+   * \param pcaComponentCount The number of the PCA Basis to be retrieved
    *
    * \return A new sample
    * */
   DatasetPointerType
-  DrawPCABasisSample(unsigned componentNumber) const;
+  DrawPCABasisSample(unsigned pcaComponentCount) const;
 
 
   /**
@@ -255,7 +255,7 @@ public:
    * \param addNoise If true, the Gaussian noise assumed in the model is added to the sample
    */
   ValueType
-  DrawSampleAtPoint(const VectorType & coefficients, unsigned pointId, bool addNoise = false) const;
+  DrawSampleAtPoint(const VectorType & coefficients, unsigned ptId, bool addNoise = false) const;
 
 
   /**
@@ -383,12 +383,12 @@ public:
    * Probabilistic Modeling and Visualization of the Flexibility in Morphable Models,
    * M. Luethi, T. Albrecht and T. Vetter, Mathematics of Surfaces, 2009
    *
-   * \param pointValues A list with PointValuePairs .
+   * \param pointValueList A list with PointValuePairs .
    * \param pointValueNoiseVariance The variance of estimated (gaussian) noise at the known points
    *
    */
   VectorType
-  ComputeCoefficientsForPointValues(const PointValueListType & pointValues, double pointValueNoiseVariance = 0.0) const;
+  ComputeCoefficientsForPointValues(const PointValueListType & pointValueList, double pointValueNoiseVariance = 0.0) const;
 
   /**
    * Similar to ComputeCoefficientsForPointValues, only here there is no global pointValueNoiseVariance.
@@ -413,13 +413,13 @@ public:
    * Same as ComputeCoefficientsForPointValues(const PointValueListType&  pointValues), but used when the
    * point ids, rather than the points are known.
    *
-   * \param pointValues A list with (Point,Value) pairs, a list of (PointId, Value) is provided.
+   * \param pointIdValueList A list with (Point,Value) pairs, a list of (PointId, Value) is provided.
    * \param pointValueNoiseVariance The variance of estimated (gaussian) noise at the known points
    */
   // RB: I had to modify the method name, to avoid prototype collisions when the PointType corresponds to unsigned (=
   // type of the point id)
   VectorType
-  ComputeCoefficientsForPointIDValues(const PointIdValueListType & pointValues,
+  ComputeCoefficientsForPointIDValues(const PointIdValueListType & pointIdValueList,
                                       double                       pointValueNoiseVariance = 0.0) const;
 
 
@@ -525,10 +525,10 @@ private:
    * @param representer An instance of the representer, used to convert the samples to dataset of the represented type.
    */
   StatisticalModel(const RepresenterType * representer,
-                   const VectorType &      m,
-                   const MatrixType &      orthonormalPCABasis,
-                   const VectorType &      pcaVariance,
-                   double                  noiseVariance);
+                  VectorType      m,
+                  const MatrixType&      orthonormalPCABasis,
+                  VectorType      pcaVariance,
+                  double                  noiseVariance);
 
 
   const RepresenterType * m_representer;
@@ -539,7 +539,7 @@ private:
   // caching
   mutable bool m_cachedValuesValid;
   // the matrix M^{-1} in Bishops PRML book. This is roughly the Latent Covariance matrix (but not exactly)
-  mutable MatrixType m_MInverseMatrix;
+  mutable MatrixType m_matMInverse;
   ModelInfo          m_modelInfo;
 };
 

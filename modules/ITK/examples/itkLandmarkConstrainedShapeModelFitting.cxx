@@ -79,19 +79,19 @@ namespace
 // Internal types
 //
 
-constexpr unsigned Dimensions = 3;
-using PointSetType = itk::PointSet<float, Dimensions>;
-using MeshType = itk::Mesh<float, Dimensions>;
+constexpr unsigned gk_dimensions = 3;
+using PointSetType = itk::PointSet<float, gk_dimensions>;
+using MeshType = itk::Mesh<float, gk_dimensions>;
 using PointType = itk::Point<double, 3>;
-using CTImageType = itk::Image<float, Dimensions>;
-using DistanceImageType = itk::Image<float, Dimensions>;
+using CTImageType = itk::Image<float, gk_dimensions>;
+using DistanceImageType = itk::Image<float, gk_dimensions>;
 using CTImageReaderType = itk::ImageFileReader<CTImageType>;
 using DistanceImageWriterType = itk::ImageFileWriter<DistanceImageType>;
-using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
+using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensions>;
 using MeshReaderType = itk::MeshFileReader<MeshType>;
-using GradientImageType = itk::Image<itk::CovariantVector<float, Dimensions>, Dimensions>;
+using GradientImageType = itk::Image<itk::CovariantVector<float, gk_dimensions>, gk_dimensions>;
 using MetricType = itk::MeanSquaresPointSetToImageMetric<PointSetType, DistanceImageType>;
-using StatisticalModelTransformType = itk::StatisticalShapeModelTransform<MeshType, double, Dimensions>;
+using StatisticalModelTransformType = itk::StatisticalShapeModelTransform<MeshType, double, gk_dimensions>;
 using StatisticalModelType = itk::StatisticalModel<MeshType>;
 using RegistrationFilterType = itk::PointSetToImageRegistrationMethod<PointSetType, DistanceImageType>;
 using OptimizerType = itk::LBFGSOptimizer;
@@ -110,19 +110,19 @@ using PointsLocatorType = itk::PointsLocator<MeshType::PointsContainer>;
 // Static variables
 //
 
-constexpr int16_t _k_maxNumberOfIterations = 10000; // the maximum number of iterations to use in the optimization
-constexpr double  _k_translationScale = 1;          // dynamic range of translations
-constexpr double  _k_rotationScale = 0.1;           // dynamic range of rotations
-constexpr double  _k_smScale = 3;                   // dynamic range of statistical model parameters
+constexpr int16_t gk_maxNumberOfIterations = 10000; // the maximum number of iterations to use in the optimization
+constexpr double  gk_translationScale = 1;          // dynamic range of translations
+constexpr double  gk_rotationScale = 0.1;           // dynamic range of rotations
+constexpr double  gk_smScale = 3;                   // dynamic range of statistical model parameters
 
 //
 // This class is used to track the progress of the optimization
 // (its method Execute is called in each iteration of the optimization)
 //
-class _IterationStatusObserver : public itk::Command
+class IterationStatusObserver : public itk::Command
 {
 public:
-  using Self = _IterationStatusObserver;
+  using Self = IterationStatusObserver;
   using Superclass = itk::Command;
   using Pointer = itk::SmartPointer<Self>;
 
@@ -171,7 +171,7 @@ private:
  * \return A list of itk points
  */
 std::vector<PointType>
-_ReadLandmarks(const std::string & filename)
+ReadLandmarks(const std::string & filename)
 {
   std::vector<PointType> ptList;
 
@@ -211,7 +211,7 @@ _ReadLandmarks(const std::string & filename)
 // Returns a new model, that is restricted to go through the proints specified in targetLandmarks..
 //
 StatisticalModelType::Pointer
-computePosteriorModel(const RigidTransformType *     rigidTransform,
+ComputePosteriorModel(const RigidTransformType *     rigidTransform,
                       const StatisticalModelType *   statisticalModel,
                       const std::vector<PointType> & modelLandmarks,
                       const std::vector<PointType> & targetLandmarks,
@@ -295,8 +295,8 @@ main(int argc, char * argv[])
   DistanceImageType::Pointer distanceImage = dm->GetOutput();
 
   // read the landmarks
-  auto fixedLandmarks = _ReadLandmarks(fixedLandmarksName);
-  auto movingLandmarks = _ReadLandmarks(movingLandmarksName);
+  auto fixedLandmarks = ReadLandmarks(fixedLandmarksName);
+  auto movingLandmarks = ReadLandmarks(movingLandmarksName);
 
   // initialize the rigid transform
   auto rigidTransform = RigidTransformType::New();
@@ -310,7 +310,7 @@ main(int argc, char * argv[])
   auto representer = RepresenterType::New();
   auto model = itk::StatismoIO<MeshType>::LoadStatisticalModel(representer, modelName);
 
-  auto constraintModel = computePosteriorModel(rigidTransform, model, fixedLandmarks, movingLandmarks, lmVariance);
+  auto constraintModel = ComputePosteriorModel(rigidTransform, model, fixedLandmarks, movingLandmarks, lmVariance);
 
   auto statModelTransform = StatisticalModelTransformType::New();
   statModelTransform->SetStatisticalModel(constraintModel);
@@ -326,7 +326,7 @@ main(int argc, char * argv[])
 
   // Setting up the fitting
   auto optimizer = OptimizerType::New();
-  optimizer->SetMaximumNumberOfFunctionEvaluations(_k_maxNumberOfIterations);
+  optimizer->SetMaximumNumberOfFunctionEvaluations(gk_maxNumberOfIterations);
   optimizer->MinimizeOn();
 
   unsigned numStatmodelParameters = statModelTransform->GetNumberOfParameters();
@@ -337,21 +337,21 @@ main(int argc, char * argv[])
   OptimizerType::ScalesType scales(totalNumParameters);
   for (unsigned i = 0; i < numStatmodelParameters; i++)
   {
-    scales[i] = 1.0 / (_k_smScale);
+    scales[i] = 1.0 / (gk_smScale);
   }
   for (unsigned i = numStatmodelParameters; i < numStatmodelParameters + 3; i++)
   {
-    scales[i] = 1.0 / (_k_rotationScale);
+    scales[i] = 1.0 / (gk_rotationScale);
   }
   for (unsigned i = numStatmodelParameters + 3; i < statModelTransform->GetNumberOfParameters() + 6; i++)
   {
-    scales[i] = 1.0 / (_k_translationScale);
+    scales[i] = 1.0 / (gk_translationScale);
   }
   optimizer->SetScales(scales);
 
 
   // set up the observer to keep track of the progress
-  using ObserverType = _IterationStatusObserver;
+  using ObserverType = IterationStatusObserver;
   auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 

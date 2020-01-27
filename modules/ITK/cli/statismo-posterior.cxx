@@ -50,10 +50,10 @@ using namespace std;
 
 namespace
 {
-constexpr unsigned _Dimensionality3D = 3;
-constexpr unsigned _Dimensionality2D = 2;
+constexpr unsigned gk_dimensionality3D = 3;
+constexpr unsigned gk_dimensionality2D = 2;
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   string   strModelType;
   string   strInputModelFileName;
@@ -66,7 +66,7 @@ struct _ProgramOptions
 };
 
 bool
-_IsOptionsConflictPresent(_ProgramOptions & opt)
+IsOptionsConflictPresent(ProgramOptions & opt)
 {
   statismo::utils::ToLower(opt.strModelType);
   return ((!opt.strInputFixedLandmarksFileName.empty()) ^ (!opt.strInputMovingLandmarksFileName.empty())) ||
@@ -78,11 +78,11 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
 }
 
 void
-_BuildPosteriorShapeModel(const _ProgramOptions & opt)
+BuildPosteriorShapeModel(const ProgramOptions & opt)
 {
-  using DataType = itk::Mesh<float, _Dimensionality3D>;
+  using DataType = itk::Mesh<float, gk_dimensionality3D>;
   using StatisticalModelType = itk::StatisticalModel<DataType>;
-  using RepresenterType = itk::StandardMeshRepresenter<float, _Dimensionality3D>;
+  using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensionality3D>;
 
   auto representer = RepresenterType::New();
   auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
@@ -108,14 +108,14 @@ _BuildPosteriorShapeModel(const _ProgramOptions & opt)
   itk::StatismoIO<DataType>::SaveStatisticalModel(constrainedModel, opt.strOutputModelFileName);
 }
 
-template <unsigned Dimensionality>
+template <unsigned DIMENSIONALITY>
 void
-_BuildPosteriorDeformationModel(const _ProgramOptions & opt)
+BuildPosteriorDeformationModel(const ProgramOptions & opt)
 {
-  using VectorPixelType = itk::Vector<float, Dimensionality>;
-  using DataType = itk::Image<VectorPixelType, Dimensionality>;
+  using VectorPixelType = itk::Vector<float, DIMENSIONALITY>;
+  using DataType = itk::Image<VectorPixelType, DIMENSIONALITY>;
   using StatisticalModelType = itk::StatisticalModel<DataType>;
-  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensionality>;
+  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, DIMENSIONALITY>;
 
   auto representer = RepresenterType::New();
   auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
@@ -130,7 +130,7 @@ _BuildPosteriorDeformationModel(const _ProgramOptions & opt)
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                                    poParameters;
+  ProgramOptions                                    poParameters;
   po::program_options<std::string, unsigned, double> parser{ argv[0], "Program help:" };
 
   parser
@@ -142,7 +142,7 @@ main(int argc, char ** argv)
                           true)
     .add_opt<unsigned>({ "dimensionality",
                          "d",
-                         "Dimensionality of the input image (only available if you're building a deformation model)",
+                         "DIMENSIONALITY of the input image (only available if you're building a deformation model)",
                          &poParameters.uNumberOfDimensions,
                          3,
                          2,
@@ -182,7 +182,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -193,17 +193,17 @@ main(int argc, char ** argv)
   {
     if (poParameters.strModelType == "shape")
     {
-      _BuildPosteriorShapeModel(poParameters);
+      BuildPosteriorShapeModel(poParameters);
     }
     else
     {
-      if (poParameters.uNumberOfDimensions == _Dimensionality2D)
+      if (poParameters.uNumberOfDimensions == gk_dimensionality2D)
       {
-        _BuildPosteriorDeformationModel<_Dimensionality2D>(poParameters);
+        BuildPosteriorDeformationModel<gk_dimensionality2D>(poParameters);
       }
       else
       {
-        _BuildPosteriorDeformationModel<_Dimensionality3D>(poParameters);
+        BuildPosteriorDeformationModel<gk_dimensionality3D>(poParameters);
       }
     }
   }

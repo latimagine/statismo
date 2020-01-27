@@ -45,10 +45,10 @@ namespace statismo
 /*
  * \brief Specialization for an ITK point
  */
-template <typename T, unsigned int Dim>
-struct PointTraits<::itk::Point<T, Dim>>
+template <typename T, unsigned int DIM>
+struct PointTraits<::itk::Point<T, DIM>>
 {
-  static constexpr unsigned RealDimension = Dim;
+  static constexpr unsigned sk_realDimension = DIM;
 };
 } // namespace statismo
 

@@ -68,7 +68,7 @@ using DomainType = StatisticalModelType::DomainType;
 using DomainPointsConstIterator = DomainType::DomainPointsListType::const_iterator;
 
 vtkSmartPointer<vtkPolyData>
-_LoadVTKPolyData(const std::string & filename)
+LoadVTKPolyData(const std::string & filename)
 {
   vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.c_str());
@@ -80,7 +80,7 @@ _LoadVTKPolyData(const std::string & filename)
  * Computes the mahalanobis distance of the targetPt, to the model point with the given pointId.
  */
 double
-_MahalanobisDistance(const StatisticalModelType * model, unsigned ptId, const statismo::vtkPoint & targetPt)
+MahalanobisDistance(const StatisticalModelType * model, unsigned ptId, const statismo::vtkPoint & targetPt)
 {
   statismo::MatrixType cov = model->GetCovarianceAtPoint(ptId, ptId);
   statismo::vtkPoint   meanPt = model->DrawMeanAtPoint(ptId);
@@ -118,7 +118,7 @@ main(int argc, char ** argv)
 
   try
   {
-    auto partialShape = _LoadVTKPolyData(partialShapeMeshName);
+    auto partialShape = LoadVTKPolyData(partialShapeMeshName);
 
     auto representer = RepresenterType::SafeCreate();
     auto inputModel = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
@@ -134,7 +134,7 @@ main(int argc, char ** argv)
 
       unsigned           closestPointId = ptId;
       statismo::vtkPoint closestPointOnPartialShape = partialShape->GetPoint(closestPointId);
-      double             mhdist = _MahalanobisDistance(inputModel.get(), ptId, closestPointOnPartialShape);
+      double             mhdist = MahalanobisDistance(inputModel.get(), ptId, closestPointOnPartialShape);
       if (mhdist < 5)
       {
         constraints.emplace_back(domainPoint, closestPointOnPartialShape);

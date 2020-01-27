@@ -63,13 +63,13 @@ namespace statismo::cli
 // Internal type
 //
 
-constexpr unsigned Dimensionality3D = 3;
-using DataTypeShape = itk::Mesh<float, Dimensionality3D>;
-using VectorPixel3DType = itk::Vector<float, Dimensionality3D>;
-using DataType3DDeformation = itk::Image<VectorPixel3DType, Dimensionality3D>;
-constexpr unsigned Dimensionality2D = 2;
-using VectorPixel2DType = itk::Vector<float, Dimensionality2D>;
-using DataType2DDeformation = itk::Image<VectorPixel2DType, Dimensionality2D>;
+constexpr unsigned gk_dimensionality3D = 3;
+using DataTypeShape = ::itk::Mesh<float, gk_dimensionality3D>;
+using VectorPixel3DType = ::itk::Vector<float, gk_dimensionality3D>;
+using DataType3DDeformation = ::itk::Image<VectorPixel3DType, gk_dimensionality3D>;
+constexpr unsigned gk_dimensionality2D = 2;
+using VectorPixel2DType = ::itk::Vector<float, gk_dimensionality2D>;
+using DataType2DDeformation = ::itk::Image<VectorPixel2DType, gk_dimensionality2D>;
 
 //
 // Internal structure

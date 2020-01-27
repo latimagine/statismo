@@ -127,7 +127,7 @@ public:
   }
 };
 
-template <class OptimizerType>
+template <typename OptimizerType>
 class IterationStatusObserver : public ::itk::Command
 {
 public:
@@ -183,7 +183,7 @@ private:
 };
 
 
-template <class OptimizerType>
+template <typename OptimizerType>
 static void
 InitializeOptimizer(typename OptimizerType::Pointer        optimizer,
                     unsigned                               numberOfIterations,

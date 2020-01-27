@@ -61,7 +61,7 @@ namespace itk
  * \brief ITK Wrapper for the statismo::StatisticalModel class.
  * \see statismo::StatisticalModel for detailed documentation.
  */
-template <class T>
+template <typename T>
 class StatisticalModel
   : public Object
   , public statismo::ImplWrapper<statismo::StatisticalModel<T>>
@@ -90,9 +90,6 @@ public:
   using PointValueWithCovariancePairType = typename statismo::StatisticalModel<T>::PointValueWithCovariancePairType;
   using PointValueWithCovarianceListType = typename statismo::StatisticalModel<T>::PointValueWithCovarianceListType;
   using DomainType = typename statismo::StatisticalModel<T>::DomainType;
-
-  StatisticalModel() = default;
-  virtual ~StatisticalModel() = default;
 
   const RepresenterType *
   GetRepresenter() const
@@ -134,7 +131,7 @@ public:
     using OverloadType = DatasetPointerType (ImplType::*)(const statismo::VectorType &, bool) const;
     return this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                       static_cast<OverloadType>(&ImplType::DrawSample),
-                                      fromVnlVector(coeffs),
+                                      FromVnlVector(coeffs),
                                       addNoise);
   }
 
@@ -161,7 +158,7 @@ public:
     using OverloadType = ValueType (ImplType::*)(const statismo::VectorType &, const PointType &, bool) const;
     return this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                       static_cast<OverloadType>(&ImplType::DrawSampleAtPoint),
-                                      fromVnlVector(coeffs),
+                                      FromVnlVector(coeffs),
                                       pt,
                                       addNoise);
   }
@@ -172,7 +169,7 @@ public:
     using OverloadType = ValueType (ImplType::*)(const statismo::VectorType &, unsigned, bool) const;
     return this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                       static_cast<OverloadType>(&ImplType::DrawSampleAtPoint),
-                                      fromVnlVector(coeffs),
+                                      FromVnlVector(coeffs),
                                       ptid,
                                       addNoise);
   }
@@ -180,7 +177,7 @@ public:
   VectorType
   ComputeCoefficients(DatasetConstPointerType ds) const
   {
-    return toVnlVector(
+    return ToVnlVector(
       this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this }, &ImplType::ComputeCoefficients, ds));
   }
 
@@ -200,14 +197,14 @@ public:
   ComputeLogProbabilityOfCoefficients(const VectorType & coeffs) const
   {
     return this->CallForwardImplTrans(
-      statismo::itk::ExceptionHandler{ *this }, &ImplType::ComputeLogProbabilityOfCoefficients, fromVnlVector(coeffs));
+      statismo::itk::ExceptionHandler{ *this }, &ImplType::ComputeLogProbabilityOfCoefficients, FromVnlVector(coeffs));
   }
 
   double
   ComputeProbabilityOfCoefficients(const VectorType & coeffs) const
   {
     return this->CallForwardImplTrans(
-      statismo::itk::ExceptionHandler{ *this }, &ImplType::ComputeProbabilityOfCoefficients, fromVnlVector(coeffs));
+      statismo::itk::ExceptionHandler{ *this }, &ImplType::ComputeProbabilityOfCoefficients, FromVnlVector(coeffs));
   }
 
   double
@@ -221,7 +218,7 @@ public:
   ComputeCoefficientsForPointValues(const PointValueListType & pvlist, double variance) const
   {
     using OverloadType = statismo::VectorType (ImplType::*)(const PointValueListType &, double) const;
-    return toVnlVector(
+    return ToVnlVector(
       this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                  static_cast<OverloadType>(&ImplType::ComputeCoefficientsForPointValues),
                                  pvlist,
@@ -232,7 +229,7 @@ public:
   ComputeCoefficientsForPointValuesWithCovariance(const PointValueWithCovarianceListType & pvclist) const
   {
     using OverloadType = statismo::VectorType (ImplType::*)(const PointValueWithCovarianceListType &) const;
-    return toVnlVector(
+    return ToVnlVector(
       this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                  static_cast<OverloadType>(&ImplType::ComputeCoefficientsForPointValuesWithCovariance),
                                  pvclist));
@@ -255,7 +252,7 @@ public:
   GetCovarianceAtPoint(const PointType & pt1, const PointType & pt2) const
   {
     using OverloadType = statismo::MatrixType (ImplType::*)(const PointType &, const PointType &) const;
-    return toVnlMatrix(this->CallForwardImplTrans(
+    return ToVnlMatrix(this->CallForwardImplTrans(
       statismo::itk::ExceptionHandler{ *this }, static_cast<OverloadType>(&ImplType::GetCovarianceAtPoint), pt1, pt2));
   }
 
@@ -263,7 +260,7 @@ public:
   GetCovarianceAtPoint(unsigned ptid1, unsigned ptid2) const
   {
     using OverloadType = statismo::MatrixType (ImplType::*)(unsigned, unsigned) const;
-    return toVnlMatrix(this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
+    return ToVnlMatrix(this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                                   static_cast<OverloadType>(&ImplType::GetCovarianceAtPoint),
                                                   ptid1,
                                                   ptid2));
@@ -273,7 +270,7 @@ public:
   GetJacobian(const PointType & pt) const
   {
     using OverloadType = statismo::MatrixType (ImplType::*)(const PointType &) const;
-    return toVnlMatrix(this->CallForwardImplTrans(
+    return ToVnlMatrix(this->CallForwardImplTrans(
       statismo::itk::ExceptionHandler{ *this }, static_cast<OverloadType>(&ImplType::GetJacobian), pt));
   }
 
@@ -281,35 +278,35 @@ public:
   GetJacobian(unsigned ptId) const
   {
     using OverloadType = statismo::MatrixType (ImplType::*)(unsigned) const;
-    return toVnlMatrix(this->CallForwardImplTrans(
+    return ToVnlMatrix(this->CallForwardImplTrans(
       statismo::itk::ExceptionHandler{ *this }, static_cast<OverloadType>(&ImplType::GetJacobian), ptId));
   }
 
   MatrixType
   GetPCABasisMatrix() const
   {
-    return toVnlMatrix(
+    return ToVnlMatrix(
       this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this }, &ImplType::GetPCABasisMatrix));
   }
 
   MatrixType
   GetOrthonormalPCABasisMatrix() const
   {
-    return toVnlMatrix(
+    return ToVnlMatrix(
       this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this }, &ImplType::GetOrthonormalPCABasisMatrix));
   }
 
   VectorType
   GetPCAVarianceVector() const
   {
-    return toVnlVector(
+    return ToVnlVector(
       this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this }, &ImplType::GetPCAVarianceVector));
   }
 
   VectorType
   GetMeanVector() const
   {
-    return toVnlVector(this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this }, &ImplType::GetMeanVector));
+    return ToVnlVector(this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this }, &ImplType::GetMeanVector));
   }
 
   const statismo::ModelInfo &
@@ -320,19 +317,19 @@ public:
 
 private:
   static MatrixType
-  toVnlMatrix(const statismo::MatrixType & M)
+  ToVnlMatrix(const statismo::MatrixType & mat)
   {
-    return MatrixType(M.data(), M.rows(), M.cols());
+    return MatrixType(mat.data(), mat.rows(), mat.cols());
   }
 
   static VectorType
-  toVnlVector(const statismo::VectorType & v)
+  ToVnlVector(const statismo::VectorType & v)
   {
     return VectorType(v.data(), v.rows());
   }
 
   static statismo::VectorType
-  fromVnlVector(const VectorType & v)
+  FromVnlVector(const VectorType & v)
   {
     return Eigen::Map<const statismo::VectorType>(v.data_block(), v.size());
   }

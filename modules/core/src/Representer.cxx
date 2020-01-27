@@ -42,11 +42,11 @@
 namespace
 {
 const std::map<statismo::RepresenterDataType, std::string> &
-_DataTypeMap()
+DataTypeMap()
 {
   try
   {
-    static std::map<statismo::RepresenterDataType, std::string> representerDataTypeMap = {
+    static std::map<statismo::RepresenterDataType, std::string> s_representerDataTypeMap = {
       { statismo::RepresenterDataType::UNKNOWN, "UNKNOWN" },
       { statismo::RepresenterDataType::POINT_SET, "POINT_SET" },
       { statismo::RepresenterDataType::POLYGON_MESH, "POLYGON_MESH" },
@@ -55,7 +55,7 @@ _DataTypeMap()
       { statismo::RepresenterDataType::VECTOR, "VECTOR" },
       { statismo::RepresenterDataType::CUSTOM, "CUSTOM" }
     };
-    return representerDataTypeMap;
+    return s_representerDataTypeMap;
   }
   catch (...)
   {
@@ -71,13 +71,13 @@ namespace statismo
 std::string
 TypeToString(RepresenterDataType type)
 {
-  return _DataTypeMap().at(type);
+  return DataTypeMap().at(type);
 }
 
 RepresenterDataType
 TypeFromString(const std::string & s)
 {
-  const auto & dataTypeMap = _DataTypeMap();
+  const auto & dataTypeMap = DataTypeMap();
   auto         match =
     std::find_if(std::cbegin(dataTypeMap), std::cend(dataTypeMap), [&](const auto & p) { return p.second == s; });
 

@@ -62,10 +62,10 @@ using namespace std;
 namespace
 {
 
-constexpr unsigned _Dimensionality2D = 2;
-constexpr unsigned _Dimensionality3D = 3;
+constexpr unsigned gk_dimensionality2D = 2;
+constexpr unsigned gk_dimensionality3D = 3;
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   string strInputModelFileName;
   string strInputMovingImageFileName;
@@ -79,7 +79,7 @@ struct _ProgramOptions
   string strInputMovingLandmarksFileName;
   double dLandmarksVariance{ 0.0 };
 
-  unsigned uNumberOfDimensions{ 0 };
+  unsigned uNumberOfDIMENSIONS{ 0 };
   unsigned uNumberOfIterations{ 0 };
   double   dRegularizationWeight{ 0.0 };
 
@@ -87,7 +87,7 @@ struct _ProgramOptions
 };
 
 bool
-_IsOptionsConflictPresent(const _ProgramOptions & opt)
+IsOptionsConflictPresent(const ProgramOptions & opt)
 {
   return ((!opt.strInputFixedLandmarksFileName.empty()) ^ (!opt.strInputMovingLandmarksFileName.empty())) ||
          opt.strInputFixedImageFileName.empty() || opt.strInputModelFileName.empty() ||
@@ -98,7 +98,7 @@ _IsOptionsConflictPresent(const _ProgramOptions & opt)
 
 template <class ImageType>
 void
-_SaveImage(typename ImageType::Pointer img, const std::string & outputFileName)
+SaveImage(typename ImageType::Pointer img, const std::string & outputFileName)
 {
   using ImageWriter = itk::ImageFileWriter<ImageType>;
   auto writer = ImageWriter::New();
@@ -109,7 +109,7 @@ _SaveImage(typename ImageType::Pointer img, const std::string & outputFileName)
 
 template <class DisplacementFieldImageType, class ReferenceImageType, class TransformType>
 typename DisplacementFieldImageType::Pointer
-_GenerateAndSaveDisplacementField(typename ReferenceImageType::Pointer refImg,
+GenerateAndSaveDisplacementField(typename ReferenceImageType::Pointer refImg,
                                   typename TransformType::Pointer      tf,
                                   const std::string &                  outputFileName)
 {
@@ -124,28 +124,28 @@ _GenerateAndSaveDisplacementField(typename ReferenceImageType::Pointer refImg,
 
   if (!outputFileName.empty())
   {
-    _SaveImage<DisplacementFieldImageType>(dispField, outputFileName);
+    SaveImage<DisplacementFieldImageType>(dispField, outputFileName);
   }
 
   return dispField;
 }
 
-template <unsigned Dimensions, class RotationAndTranslationTransformType>
+template <unsigned DIMENSIONS, typename RotationAndTranslationTransformType>
 void
-_FitImage(const _ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSilencer)
+FitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSilencer)
 {
-  using ImageType = itk::Image<float, Dimensions>;
+  using ImageType = itk::Image<float, DIMENSIONS>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
-  using VectorPixelType = itk::Vector<float, Dimensions>;
-  using VectorImageType = itk::Image<VectorPixelType, Dimensions>;
-  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensions>;
+  using VectorPixelType = itk::Vector<float, DIMENSIONS>;
+  using VectorImageType = itk::Image<VectorPixelType, DIMENSIONS>;
+  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, DIMENSIONS>;
   using TransformInitializerType =
     itk::CenteredTransformInitializer<RotationAndTranslationTransformType, ImageType, ImageType>;
-  using CompositeTransformType = itk::CompositeTransform<double, Dimensions>;
+  using CompositeTransformType = itk::CompositeTransform<double, DIMENSIONS>;
   using StatisticalModelType = itk::StatisticalModel<VectorImageType>;
-  using TransformType = itk::Transform<double, Dimensions, Dimensions>;
+  using TransformType = itk::Transform<double, DIMENSIONS, DIMENSIONS>;
   using ModelTransformType =
-    itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, Dimensions>;
+    itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, DIMENSIONS>;
   using OptimizerType = itk::LBFGSOptimizer;
   using MetricType = itk::PenalizingMeanSquaresImageToImageMetric<ImageType, ImageType>;
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
@@ -224,10 +224,10 @@ _FitImage(const _ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * co
   registration->Update();
   coSilencer->EnableOutput();
 
-  auto displacementField = _GenerateAndSaveDisplacementField<VectorImageType, ImageType, TransformType>(
+  auto displacementField = GenerateAndSaveDisplacementField<VectorImageType, ImageType, TransformType>(
     fixedImage, transform, opt.strOutputEntireTransformFileName);
 
-  _GenerateAndSaveDisplacementField<VectorImageType, ImageType, TransformType>(
+  GenerateAndSaveDisplacementField<VectorImageType, ImageType, TransformType>(
     fixedImage, static_cast<typename TransformType::Pointer>(modelTransform), opt.strOutputModelTransformFileName);
 
   if (!opt.strOutputFittedImageFileName.empty())
@@ -242,7 +242,7 @@ _FitImage(const _ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * co
     warper->SetDisplacementField(displacementField);
     warper->Update();
 
-    _SaveImage<ImageType>(warper->GetOutput(), opt.strOutputFittedImageFileName);
+    SaveImage<ImageType>(warper->GetOutput(), opt.strOutputFittedImageFileName);
   }
 }
 } // namespace
@@ -250,7 +250,7 @@ _FitImage(const _ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * co
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                                    poParameters;
+  ProgramOptions                                    poParameters;
   po::program_options<std::string, double, unsigned> parser{ argv[0], "Program help:" };
 
   parser
@@ -263,7 +263,7 @@ main(int argc, char ** argv)
     .add_opt<unsigned>({ "dimensionality",
                          "d",
                          "Dimensionality of the input image and model",
-                         &poParameters.uNumberOfDimensions,
+                         &poParameters.uNumberOfDIMENSIONS,
                          3,
                          2,
                          3 },
@@ -317,7 +317,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -327,15 +327,15 @@ main(int argc, char ** argv)
   statismo::cli::ConsoleOutputSilencer coSilencer;
   try
   {
-    if (poParameters.uNumberOfDimensions == _Dimensionality2D)
+    if (poParameters.uNumberOfDIMENSIONS == gk_dimensionality2D)
     {
       using RotationAndTranslationTransformType = itk::Rigid2DTransform<double>;
-      _FitImage<_Dimensionality2D, RotationAndTranslationTransformType>(poParameters, &coSilencer);
+      FitImage<gk_dimensionality2D, RotationAndTranslationTransformType>(poParameters, &coSilencer);
     }
     else
     {
       using RotationAndTranslationTransformType = itk::VersorRigid3DTransform<double>;
-      _FitImage<_Dimensionality3D, RotationAndTranslationTransformType>(poParameters, &coSilencer);
+      FitImage<gk_dimensionality3D, RotationAndTranslationTransformType>(poParameters, &coSilencer);
     }
   }
   catch (const ifstream::failure & e)

@@ -81,15 +81,15 @@ PCAModelBuilder<T>::BuildNewModel(const DataItemListType & sampleDataList,
   mu /= n;
 
   // Build the mean free sample matrix X0
-  MatrixType X0(n, p);
+  MatrixType matX0(n, p);
   unsigned   i{ 0 };
   for (const auto & item : sampleDataList)
   {
-    X0.row(i++) = item->GetSampleVector() - mu;
+    matX0.row(i++) = item->GetSampleVector() - mu;
   }
 
   // build the model
-  auto model = BuildNewModelInternal(representer, X0, mu, noiseVariance, method);
+  auto model = BuildNewModelInternal(representer, matX0, mu, noiseVariance, method);
 
   // compute the scores if requested
   MatrixType scores;
@@ -123,18 +123,18 @@ PCAModelBuilder<T>::BuildNewModel(const DataItemListType & sampleDataList,
 template <typename T>
 UniquePtrType<typename PCAModelBuilder<T>::StatisticalModelType>
 PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
-                                          const MatrixType &     X0,
+                                          const MatrixType &     matX0,
                                           const VectorType &     mu,
                                           double                 noiseVariance,
                                           EigenValueMethod       method) const
 {
 
-  unsigned n = X0.rows();
-  unsigned p = X0.cols();
+  unsigned n = matX0.rows();
+  unsigned p = matX0.cols();
 
   switch (method)
   {
-    case JacobiSVD:
+    case EigenValueMethod::JACOBI_SVD:
 
       using SVDType = Eigen::JacobiSVD<MatrixType>;
       using SVDDoublePrecisionType = Eigen::JacobiSVD<MatrixTypeDoublePrecision>;
@@ -150,13 +150,13 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
       {
         // we compute the eigenvectors of the covariance matrix by computing an SVD of the
         // n x n inner product matrix 1/(n-1) X0X0^T
-        MatrixType             Cov = X0 * X0.transpose() * 1.0 / (n - 1);
-        SVDDoublePrecisionType SVD(Cov.cast<double>(), Eigen::ComputeThinV);
-        VectorType             singularValues = SVD.singularValues().cast<ScalarType>();
-        MatrixType             V = SVD.matrixV().cast<ScalarType>();
+        MatrixType             cov = matX0 * matX0.transpose() * 1.0 / (n - 1);
+        SVDDoublePrecisionType svd(cov.cast<double>(), Eigen::ComputeThinV);
+        VectorType             singularValues = svd.singularValues().cast<ScalarType>();
+        MatrixType             matV = svd.matrixV().cast<ScalarType>();
 
         unsigned numComponentsAboveTolerance =
-          ((singularValues.array() - noiseVariance - Superclass::TOLERANCE) > 0).count();
+          ((singularValues.array() - noiseVariance - Superclass::sk_tolerance) > 0).count();
 
         // there can be at most n-1 nonzero singular values in this case. Everything else must be due to numerical
         // inaccuracies
@@ -167,7 +167,7 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
         VectorType singSqrtInv = VectorType::Zero(singSqrt.rows());
         for (unsigned i = 0; i < numComponentsToKeep; i++)
         {
-          assert(singSqrt(i) > Superclass::TOLERANCE);
+          assert(singSqrt(i) > Superclass::sk_tolerance);
           singSqrtInv(i) = 1.0 / singSqrt(i);
         }
 
@@ -181,7 +181,7 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
         // (exploiting the orthogonormality of the matrix U and V from the SVD). The additional factor sqrt(n-1) is to
         // compensate for the 1/sqrt(n-1) in the formula for the covariance matrix.
 
-        MatrixType pcaBasis = X0.transpose() * V * singSqrtInv.asDiagonal();
+        MatrixType pcaBasis = matX0.transpose() * matV * singSqrtInv.asDiagonal();
         pcaBasis /= sqrt(n - 1.0);
         pcaBasis.conservativeResize(Eigen::NoChange, numComponentsToKeep);
 
@@ -193,14 +193,14 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
 
         return model;
       }
-      else
+      else // NOLINT
       {
         // we compute an SVD of the full p x p  covariance matrix 1/(n-1) X0^TX0 directly
-        SVDType    SVD(X0.transpose() * X0, Eigen::ComputeThinU);
-        VectorType singularValues = SVD.singularValues();
+        SVDType    svd(matX0.transpose() * matX0, Eigen::ComputeThinU);
+        VectorType singularValues = svd.singularValues();
         singularValues /= (n - 1.0);
-        unsigned   numComponentsToKeep = ((singularValues.array() - noiseVariance - Superclass::TOLERANCE) > 0).count();
-        MatrixType pcaBasis = SVD.matrixU();
+        unsigned   numComponentsToKeep = ((singularValues.array() - noiseVariance - Superclass::sk_tolerance) > 0).count();
+        MatrixType pcaBasis = svd.matrixU();
 
         pcaBasis.conservativeResize(Eigen::NoChange, numComponentsToKeep);
 
@@ -216,18 +216,18 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
       }
       break;
 
-    case SelfAdjointEigenSolver:
+    case EigenValueMethod::SELF_ADJOINT_EIGEN_SOLVER:
     {
       // we compute the eigenvalues/eigenvectors of the full p x p  covariance matrix 1/(n-1) X0^TX0 directly
 
-      typedef Eigen::SelfAdjointEigenSolver<MatrixType> SelfAdjointEigenSolver;
+      using SelfAdjointEigenSolver = Eigen::SelfAdjointEigenSolver<MatrixType> ;
       SelfAdjointEigenSolver                            es;
-      es.compute(X0.transpose() * X0);
+      es.compute(matX0.transpose() * matX0);
       VectorType eigenValues =
         es.eigenvalues().reverse(); // SelfAdjointEigenSolver orders the eigenvalues in increasing order
       eigenValues /= (n - 1.0);
 
-      unsigned   numComponentsToKeep = ((eigenValues.array() - noiseVariance - Superclass::TOLERANCE) > 0).count();
+      unsigned   numComponentsToKeep = ((eigenValues.array() - noiseVariance - Superclass::sk_tolerance) > 0).count();
       MatrixType pcaBasis = es.eigenvectors().rowwise().reverse();
       pcaBasis.conservativeResize(Eigen::NoChange, numComponentsToKeep);
 
@@ -245,8 +245,7 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
 
     default:
       throw StatisticalModelException("Unrecognized decomposition/eigenvalue solver method.");
-      return 0;
-      break;
+      return nullptr;
   }
 }
 

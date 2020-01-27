@@ -64,16 +64,16 @@ public:
   using DataItemListType = typename DataManagerType::DataItemListType;
 
   // Values below this tolerance are treated as 0.
-  static constexpr double TOLERANCE = 1e-5;
+  static constexpr double sk_tolerance = 1e-5;
 
 protected:
   MatrixType
-  ComputeScores(const MatrixType & X, const StatisticalModelType * model) const
+  ComputeScores(const MatrixType & matX, const StatisticalModelType * model) const
   {
-    MatrixType scores(model->GetNumberOfPrincipalComponents(), X.rows());
+    MatrixType scores(model->GetNumberOfPrincipalComponents(), matX.rows());
     for (unsigned i = 0; i < scores.cols(); i++)
     {
-      scores.col(i) = model->ComputeCoefficientsForSampleVector(X.row(i));
+      scores.col(i) = model->ComputeCoefficientsForSampleVector(matX.row(i));
     }
     return scores;
   }

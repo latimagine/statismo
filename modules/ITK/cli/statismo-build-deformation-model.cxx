@@ -49,7 +49,7 @@ using namespace std;
 namespace
 {
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   bool     bComputeScores{ true };
   string   strDataListFile;
@@ -59,18 +59,18 @@ struct _ProgramOptions
 };
 
 bool
-_IsOptionsConflictPresent(const _ProgramOptions & opt)
+IsOptionsConflictPresent(const ProgramOptions & opt)
 {
   return opt.strDataListFile.empty() || opt.strOutputFileName.empty() || (opt.strDataListFile == opt.strOutputFileName);
 }
 
-template <unsigned Dimensions>
+template <unsigned DIMENSIONS>
 void
-_BuildAndSaveDeformationModel(const _ProgramOptions & opt)
+BuildAndSaveDeformationModel(const ProgramOptions & opt)
 {
-  using VectorPixelType = itk::Vector<float, Dimensions>;
-  using ImageType = itk::Image<VectorPixelType, Dimensions>;
-  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, Dimensions>;
+  using VectorPixelType = itk::Vector<float, DIMENSIONS>;
+  using ImageType = itk::Image<VectorPixelType, DIMENSIONS>;
+  using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, DIMENSIONS>;
   using DataManagerType = itk::DataManager<ImageType>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
   using ModelBuilderType = itk::PCAModelBuilder<ImageType>;
@@ -110,7 +110,7 @@ _BuildAndSaveDeformationModel(const _ProgramOptions & opt)
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                                         poParameters;
+  ProgramOptions                                         poParameters;
   po::program_options<std::string, float, unsigned, bool> parser{ argv[0], "Program help:" };
 
   parser
@@ -131,7 +131,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -142,11 +142,11 @@ main(int argc, char ** argv)
   {
     if (poParameters.uNumberOfDimensions == 2)
     {
-      _BuildAndSaveDeformationModel<2>(poParameters);
+      BuildAndSaveDeformationModel<2>(poParameters);
     }
     else
     {
-      _BuildAndSaveDeformationModel<3>(poParameters);
+      BuildAndSaveDeformationModel<3>(poParameters);
     }
   }
   catch (const ifstream::failure & e)

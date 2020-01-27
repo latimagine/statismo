@@ -190,13 +190,13 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
 
 template <typename T, typename Derived>
 void
-DataManagerBase<T, Derived>::AddDataset(DatasetConstPointerType dataset, const std::string & URI)
+DataManagerBase<T, Derived>::AddDataset(DatasetConstPointerType dataset, const std::string & uri)
 {
   auto sample = m_representer->CloneDataset(dataset);
   auto uw = MakeStackUnwinder([&]() { m_representer->DeleteDataset(sample); });
 
   m_dataItemList.push_back(MakeSharedPointer<DataItemType>(
-    ConcreteDataItemType::Create(m_representer.get(), URI, m_representer->SampleToSampleVector(sample))));
+    ConcreteDataItemType::Create(m_representer.get(), uri, m_representer->SampleToSampleVector(sample))));
 }
 
 template <typename T, typename Derived>

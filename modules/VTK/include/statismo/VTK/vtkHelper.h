@@ -63,25 +63,25 @@ vtkDataTypeIdToStatismoDataTypeId(int vtkDataTypeId)
   switch (vtkDataTypeId)
   {
     case VTK_UNSIGNED_CHAR:
-      return statismo::UNSIGNED_CHAR;
+      return statismo::gk_unsignedChar;
     case VTK_SIGNED_CHAR:
-      return statismo::SIGNED_CHAR;
+      return statismo::gk_signedChar;
     case VTK_FLOAT:
-      return statismo::FLOAT;
+      return statismo::gk_float;
     case VTK_DOUBLE:
-      return statismo::DOUBLE;
+      return statismo::gk_double;
     case VTK_UNSIGNED_INT:
-      return statismo::UNSIGNED_INT;
+      return statismo::gk_unsignedInt;
     case VTK_INT:
-      return statismo::SIGNED_INT;
+      return statismo::gk_signedInt;
     case VTK_UNSIGNED_SHORT:
-      return statismo::UNSIGNED_SHORT;
+      return statismo::gk_unsignedShort;
     case VTK_SHORT:
-      return statismo::SIGNED_SHORT;
+      return statismo::gk_signedShort;
     case VTK_UNSIGNED_LONG:
-      return statismo::UNSIGNED_LONG;
+      return statismo::gk_unsignedLong;
     case VTK_LONG:
-      return statismo::SIGNED_LONG;
+      return statismo::gk_signedLong;
     default:
       break;
   }
@@ -93,25 +93,25 @@ vtkStatismoDataTypeIdToVtkDataTypeId(unsigned statismoDataTypeId)
 {
   switch (statismoDataTypeId)
   {
-    case statismo::UNSIGNED_CHAR:
+    case statismo::gk_unsignedChar:
       return VTK_UNSIGNED_CHAR;
-    case statismo::SIGNED_CHAR:
+    case statismo::gk_signedChar:
       return VTK_SIGNED_CHAR;
-    case statismo::FLOAT:
+    case statismo::gk_float:
       return VTK_FLOAT;
-    case statismo::DOUBLE:
+    case statismo::gk_double:
       return VTK_DOUBLE;
-    case statismo::UNSIGNED_INT:
+    case statismo::gk_unsignedInt:
       return VTK_UNSIGNED_INT;
-    case statismo::SIGNED_INT:
+    case statismo::gk_signedInt:
       return VTK_INT;
-    case statismo::UNSIGNED_SHORT:
+    case statismo::gk_unsignedShort:
       return VTK_UNSIGNED_SHORT;
-    case statismo::SIGNED_SHORT:
+    case statismo::gk_signedShort:
       return VTK_SHORT;
-    case statismo::UNSIGNED_LONG:
+    case statismo::gk_unsignedLong:
       return VTK_UNSIGNED_LONG;
-    case statismo::SIGNED_LONG:
+    case statismo::gk_signedLong:
       return VTK_LONG;
     default:
       break;
@@ -124,25 +124,25 @@ vtkDataTypeIdToArray(int vtkDataTypeId)
 {
   switch (vtkDataTypeId)
   {
-    case statismo::UNSIGNED_CHAR:
+    case statismo::gk_unsignedChar:
       return vtkSmartPointer<vtkUnsignedCharArray>::New();
-    case statismo::SIGNED_CHAR:
+    case statismo::gk_signedChar:
       return vtkSmartPointer<vtkCharArray>::New();
-    case statismo::FLOAT:
+    case statismo::gk_float:
       return vtkSmartPointer<vtkFloatArray>::New();
-    case statismo::DOUBLE:
+    case statismo::gk_double:
       return vtkSmartPointer<vtkDoubleArray>::New();
-    case statismo::UNSIGNED_INT:
+    case statismo::gk_unsignedInt:
       return vtkSmartPointer<vtkUnsignedIntArray>::New();
-    case statismo::SIGNED_INT:
+    case statismo::gk_signedInt:
       return vtkSmartPointer<vtkIntArray>::New();
-    case statismo::UNSIGNED_SHORT:
+    case statismo::gk_unsignedShort:
       return vtkSmartPointer<vtkUnsignedShortArray>::New();
-    case statismo::SIGNED_SHORT:
+    case statismo::gk_signedShort:
       return vtkSmartPointer<vtkShortArray>::New();
-    case statismo::UNSIGNED_LONG:
+    case statismo::gk_signedLong:
       return vtkSmartPointer<vtkLongArray>::New();
-    case statismo::SIGNED_LONG:
+    case statismo::gk_unsignedLong:
       return vtkSmartPointer<vtkUnsignedLongArray>::New();
     default:
       break;

@@ -72,16 +72,16 @@ using DomainPointsListType = DomainType::DomainPointsListType;
 using StatisticalModelType = statismo::StatisticalModel<vtkPolyData>;
 using PCAModelBuilderType = statismo::PCAModelBuilder<vtkPolyData>;
 
-std::vector<std::string> _s_filenames;
+std::vector<std::string> g_filenames;
 
 bool
-_TestBuildModel(unsigned pointsCount, const VectorType & baselineVariance)
+TestBuildModel(unsigned pointsCount, const VectorType & baselineVariance)
 {
-  auto reference = ReducePoints(LoadPolyData(_s_filenames[0]), pointsCount);
+  auto reference = ReducePoints(LoadPolyData(g_filenames[0]), pointsCount);
   auto representer = RepresenterType::SafeCreate(reference);
   auto dataManager = DataManagerType::SafeCreate(representer.get());
 
-  for (const auto & f : _s_filenames)
+  for (const auto & f : g_filenames)
   {
     dataManager->AddDataset(ReducePoints(LoadPolyData(f), pointsCount), "dataset");
   }
@@ -89,8 +89,8 @@ _TestBuildModel(unsigned pointsCount, const VectorType & baselineVariance)
   auto pcaModelBuilder = PCAModelBuilderType::SafeCreate();
 
   // perform with standard argument
-  auto       PCAModel = pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0, false);
-  VectorType variance = PCAModel->GetPCAVarianceVector();
+  auto       pcaModel = pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0, false);
+  VectorType variance = pcaModel->GetPCAVarianceVector();
 
   // max. acceptable difference between expected and calculated values in percent
   VectorType::Scalar maxPermittedDifference = 0.1; // 1%
@@ -108,7 +108,7 @@ TestBuildWithPGreaterThanN()
     36.4659576416015625, 22.3681926727294921875, 11.6593990325927734375, 4.789171695709228515625,
     1.28080332279205322265625, 0.77941668033599853515625;
 
-  return _TestBuildModel(5, baselineVariance);
+  return TestBuildModel(5, baselineVariance);
 }
 
 int
@@ -120,12 +120,12 @@ TestBuildWithNGreaterThanP()
     128.6950531005859375, 91.76165008544921875, 80.23679351806640625, 69.49117279052734375, 50.3206024169921875,
     42.5595245361328125;
 
-  return _TestBuildModel(100, baselineVariance);
+  return TestBuildModel(100, baselineVariance);
 }
 } // namespace
 
 int
-PCAModelBuilderTest(int argc, char ** argv)
+PCAModelBuilderTest(int argc, char ** argv) // NOLINT
 {
   if (argc < 2)
   {
@@ -137,7 +137,7 @@ PCAModelBuilderTest(int argc, char ** argv)
 
   for (unsigned i = 0; i <= 16; ++i)
   {
-    _s_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
+    g_filenames.emplace_back(datadir + "/hand_polydata/hand-" + std::to_string(i) + ".vtk");
   }
 
   auto res = statismo::Translate([]() {

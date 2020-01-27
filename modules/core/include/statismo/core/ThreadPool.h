@@ -44,6 +44,7 @@
 #include <mutex>
 #include <deque>
 #include <future>
+#include <type_traits>
 
 namespace statismo
 {
@@ -63,7 +64,7 @@ class FunctionWrapper : public NonCopyable
   struct Impl : ImplBase
   {
     F f;
-    Impl(F && f)
+    explicit Impl(F && f)
       : f{ std::move(f) }
     {}
     void
@@ -74,8 +75,8 @@ class FunctionWrapper : public NonCopyable
   };
 
 public:
-  template <typename F>
-  FunctionWrapper(F && f)
+  template <typename F, typename Dummy = std::enable_if_t<!std::is_base_of_v<FunctionWrapper, std::decay_t<F>>>>
+  FunctionWrapper(F && f) // NOLINT
     : m_impl{ std::make_unique<Impl<F>>(std::forward<F>(f)) }
   {}
 
@@ -85,11 +86,11 @@ public:
     m_impl->Call();
   }
   FunctionWrapper() = default;
-  FunctionWrapper(FunctionWrapper && other)
+  FunctionWrapper(FunctionWrapper && other) noexcept
     : m_impl{ std::move(other.m_impl) }
   {}
   FunctionWrapper &
-  operator=(FunctionWrapper && other)
+  operator=(FunctionWrapper && other) noexcept
   {
     m_impl = std::move(other.m_impl);
     return *this;
@@ -163,11 +164,11 @@ public:
     DETACH
   };
   RaiiThread() = default;
-  RaiiThread(std::thread && t, Action a = Action::JOIN)
+  explicit RaiiThread(std::thread && t, Action a = Action::JOIN)
     : m_thread{ std::move(t) }
     , m_action{ a }
   {}
-  ~RaiiThread()
+  virtual ~RaiiThread() //NOLINT
   {
     if (m_action == Action::JOIN)
     {
@@ -179,13 +180,13 @@ public:
     }
   }
 
-  RaiiThread(RaiiThread && other)
+  RaiiThread(RaiiThread && other) noexcept
     : m_thread{ std::move(other.m_thread) }
   {
     std::swap(other.m_action, m_action);
   }
   RaiiThread &
-  operator=(RaiiThread && other)
+  operator=(RaiiThread && other) noexcept
   {
     m_thread = std::move(other.m_thread);
     std::swap(other.m_action, m_action);
@@ -222,7 +223,7 @@ public:
   explicit ThreadPool(unsigned maxThreads = std::numeric_limits<unsigned int>::max());
   explicit ThreadPool(unsigned maxThreads, WaitingMode m, unsigned waitTime = 25);
 
-  virtual ~ThreadPool() { m_isDone = true; }
+  virtual ~ThreadPool() { m_isDone = true; } // NOLINT
 
   template <typename F>
   std::future<std::invoke_result_t<F>>
@@ -231,9 +232,9 @@ public:
     std::packaged_task<std::invoke_result_t<F>()> task{ t };
     std::future<std::invoke_result_t<F>>          res{ task.get_future() };
 
-    if (s_localQueue != nullptr)
+    if (m_localQueue != nullptr)
     {
-      s_localQueue->Push(std::move(task));
+      m_localQueue->Push(std::move(task));
     }
     else
     {
@@ -262,8 +263,8 @@ private:
   std::vector<std::unique_ptr<WorkStealingQueue>> m_queues;
   std::vector<RaiiThread>                         m_threads;
 
-  static thread_local WorkStealingQueue * s_localQueue;
-  static thread_local std::size_t         s_tid;
+  static thread_local WorkStealingQueue * m_localQueue;
+  static thread_local std::size_t         m_tid;
 };
 
 } // namespace statismo

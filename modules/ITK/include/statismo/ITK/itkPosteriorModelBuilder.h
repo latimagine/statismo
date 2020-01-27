@@ -58,7 +58,7 @@ namespace itk
  * \brief ITK Wrapper for the statismo::PosteriorModelBuilder class.
  * \see statismo::PosteriorModelBuilder for detailed documentation.
  */
-template <class T>
+template <typename T>
 class PosteriorModelBuilder
   : public Object
   , public statismo::ImplWrapper<statismo::PosteriorModelBuilder<T>, statismo::SafeInitializer>
@@ -76,9 +76,6 @@ public:
 
   using DataManagerType = statismo::DataManager<T>;
   using DataItemListType = typename DataManagerType::DataItemListType;
-
-  PosteriorModelBuilder() = default;
-  virtual ~PosteriorModelBuilder() = default;
 
   // create statismo stuff
   using RepresenterType = statismo::Representer<T>;
@@ -116,14 +113,14 @@ public:
   }
 
   typename StatisticalModelType::Pointer
-  BuildNewModel(DataItemListType           DataItemList,
+  BuildNewModel(DataItemListType           dataItemList,
                 const PointValueListType & pointValues,
                 double                     pointValuesNoiseVariance,
                 double                     noiseVariance)
   {
     auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                                     &ImplType::BuildNewModel,
-                                                    DataItemList,
+                                                    dataItemList,
                                                     pointValues,
                                                     pointValuesNoiseVariance,
                                                     noiseVariance);
@@ -155,13 +152,13 @@ public:
   }
 
   typename StatisticalModelType::Pointer
-  BuildNewModel(const DataItemListType &                 DataItemList,
+  BuildNewModel(const DataItemListType &                 dataItemList,
                 const PointValueWithCovarianceListType & pointValuesWithCovariance,
                 double                                   noiseVariance)
   {
     auto statismoModel = this->CallForwardImplTrans(statismo::itk::ExceptionHandler{ *this },
                                                     &ImplType::BuildNewModel,
-                                                    DataItemList,
+                                                    dataItemList,
                                                     pointValuesWithCovariance,
                                                     noiseVariance);
     auto itkModel = StatisticalModelType::New();

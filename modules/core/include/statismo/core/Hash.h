@@ -43,9 +43,9 @@ namespace statismo
 {
 namespace details
 {
-inline constexpr auto HasSize = is_valid([](auto x) -> decltype((void)value_t(x).size()) {});
+inline constexpr auto HasSize = gk_isValid([](auto x) -> decltype((void)ValueT(x).size()) {});
 
-inline constexpr auto HasGetPointDimension = is_valid([](auto x) -> decltype((void)value_t(x).GetPointDimension()) {});
+inline constexpr auto HasGetPointDimension = gk_isValid([](auto x) -> decltype((void)ValueT(x).GetPointDimension()) {});
 
 template <typename T>
 inline void
@@ -57,7 +57,7 @@ HashCombine(std::size_t & seed, const T & v)
 
 template <typename T>
 inline auto
-HashImpl(const T & v) -> std::enable_if_t<HasSize(type<T>), std::size_t>
+HashImpl(const T & v) -> std::enable_if_t<HasSize(gk_type<T>), std::size_t>
 {
   size_t value = 0;
   for (unsigned i = 0; i < v.size(); i++)
@@ -69,7 +69,7 @@ HashImpl(const T & v) -> std::enable_if_t<HasSize(type<T>), std::size_t>
 
 template <typename T>
 inline auto
-HashImpl(const T & v) -> std::enable_if_t<HasGetPointDimension(type<T>), size_t>
+HashImpl(const T & v) -> std::enable_if_t<HasGetPointDimension(gk_type<T>), size_t>
 {
   size_t value = 0;
   for (unsigned i = 0; i < v.GetPointDimension(); i++)

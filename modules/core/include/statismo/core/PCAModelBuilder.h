@@ -72,17 +72,17 @@ public:
    * sould be used. Default is JacobiSVD which is the most accurate but for larger systems quite slow. In this case the
    * SelfAdjointEigensolver is more appropriate (especially, if there are more examples than variables).
    */
-  typedef enum
+  enum class EigenValueMethod
   {
-    JacobiSVD,
-    SelfAdjointEigenSolver
-  } EigenValueMethod;
+    JACOBI_SVD,
+    SELF_ADJOINT_EIGEN_SOLVER
+  };
 
-  virtual ~PCAModelBuilder() = default;
+  virtual ~PCAModelBuilder() = default; // NOLINT
 
   /**
    * Build a new model from the training data provided in the dataManager.
-   * \param samples A sampleSet holding the data
+   * \param sampleDataList A sampleSet holding the data
    * \param noiseVariance The variance of N(0, noiseVariance) distributed noise on the points.
    * If this parameter is set to 0, we have a standard PCA model. For values > 0 we have a PPCA model.
    * \param computeScores Determines whether the scores (the pca coefficients of the examples) are computed and stored
@@ -93,10 +93,10 @@ public:
    * \warning The method allocates a new Statistical Model object, that needs to be deleted by the user.
    */
   UniquePtrType<StatisticalModelType>
-  BuildNewModel(const DataItemListType & samples,
+  BuildNewModel(const DataItemListType & sampleDataList,
                 double                   noiseVariance,
                 bool                     computeScores = true,
-                EigenValueMethod         method = JacobiSVD) const;
+                EigenValueMethod         method = EigenValueMethod::JACOBI_SVD) const;
 
 
 private:
@@ -105,10 +105,10 @@ private:
 
   UniquePtrType<StatisticalModelType>
   BuildNewModelInternal(const Representer<T> * representer,
-                        const MatrixType &     X,
+                        const MatrixType &     matX0,
                         const VectorType &     mu,
                         double                 noiseVariance,
-                        EigenValueMethod       method = JacobiSVD) const;
+                        EigenValueMethod       method = EigenValueMethod::JACOBI_SVD) const;
 };
 
 } // namespace statismo

@@ -55,7 +55,7 @@ namespace
 {
 
 vtkSmartPointer<vtkStructuredPoints>
-_LoadVTKStructuredPointsData(const std::string & filename)
+LoadVTKStructuredPointsData(const std::string & filename)
 {
   vtkNew<vtkStructuredPointsReader> reader;
   reader->SetFileName(filename.c_str());
@@ -93,7 +93,7 @@ main(int argc, char ** argv)
   {
 
     // Model building is exactly the same as for shape models (see BuildShapeModelExample for detailed explanation)
-    auto reference = _LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
+    auto reference = LoadVTKStructuredPointsData(datadir + "/hand-0.vtk");
     auto representer = RepresenterType::SafeCreate(reference);
     auto dataManager = DataManagerType::SafeCreate(representer.get());
 
@@ -103,7 +103,7 @@ main(int argc, char ** argv)
       std::ostringstream ss;
       ss << datadir + "/hand-" << i << ".vtk";
       std::string datasetFilename = ss.str();
-      auto        dataset = _LoadVTKStructuredPointsData(datasetFilename);
+      auto        dataset = LoadVTKStructuredPointsData(datasetFilename);
 
       std::cout << "adding " << datasetFilename << std::endl;
 
