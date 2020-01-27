@@ -110,8 +110,8 @@ SaveImage(typename ImageType::Pointer img, const std::string & outputFileName)
 template <class DisplacementFieldImageType, class ReferenceImageType, class TransformType>
 typename DisplacementFieldImageType::Pointer
 GenerateAndSaveDisplacementField(typename ReferenceImageType::Pointer refImg,
-                                  typename TransformType::Pointer      tf,
-                                  const std::string &                  outputFileName)
+                                 typename TransformType::Pointer      tf,
+                                 const std::string &                  outputFileName)
 {
   using DisplacementFieldGeneratorType = itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType, double>;
   auto fieldGen = DisplacementFieldGeneratorType::New();
@@ -250,7 +250,7 @@ FitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSi
 int
 main(int argc, char ** argv)
 {
-  ProgramOptions                                    poParameters;
+  ProgramOptions                                     poParameters;
   po::program_options<std::string, double, unsigned> parser{ argv[0], "Program help:" };
 
   parser

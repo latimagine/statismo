@@ -41,8 +41,7 @@
 namespace itk
 {
 template <typename FixedImage, typename MovingImage>
-class ITK_EXPORT PenalizingMeanSquaresImageToImageMetric
-  : public MeanSquaresImageToImageMetric<FixedImage, MovingImage>
+class ITK_EXPORT PenalizingMeanSquaresImageToImageMetric : public MeanSquaresImageToImageMetric<FixedImage, MovingImage>
 {
 public:
   // Standard class typedefs.

@@ -113,7 +113,7 @@ ApplyDeformationFieldToImage(const ProgramOptions & opt)
 int
 main(int argc, char ** argv)
 {
-  ProgramOptions                            poParameters;
+  ProgramOptions                             poParameters;
   po::program_options<std::string, unsigned> parser{ argv[0], "Program help:" };
 
   parser

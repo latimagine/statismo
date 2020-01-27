@@ -106,7 +106,8 @@ StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUT
 {
   itkDebugMacro(<< "Setting parameters " << parameters);
 
-  for (unsigned int i = 0; i < std::min(m_usedNumberCoefficients, static_cast<unsigned>(this->GetNumberOfParameters())); i++)
+  for (unsigned int i = 0; i < std::min(m_usedNumberCoefficients, static_cast<unsigned>(this->GetNumberOfParameters()));
+       i++)
   {
     m_coeffVector[i] = parameters[i];
   }
@@ -152,7 +153,8 @@ StatisticalModelTransformBase<Dataset, TransformScalarType, INPUT_DIMENSION, OUT
 
   for (unsigned i = 0; i < statModelJacobian.rows(); i++)
   {
-    for (unsigned j = 0; j < std::min(m_usedNumberCoefficients, static_cast<unsigned>(this->GetNumberOfParameters())); j++)
+    for (unsigned j = 0; j < std::min(m_usedNumberCoefficients, static_cast<unsigned>(this->GetNumberOfParameters()));
+         j++)
     {
       jacobian[i][j] = statModelJacobian[i][j];
     }

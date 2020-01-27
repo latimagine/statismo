@@ -52,8 +52,7 @@ namespace statismo
 ModelInfo::ModelInfo(MatrixType scores, ModelInfo::BuilderInfoList builderInfos)
   : m_scores(std::move(scores))
   , m_builderInfo(std::move(builderInfos))
-{
-}
+{}
 
 ModelInfo::ModelInfo(MatrixType scores)
   : m_scores(std::move(scores))

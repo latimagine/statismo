@@ -108,7 +108,6 @@ public:
     }
 
     return m_pixel[i];
-
   }
 
 private:

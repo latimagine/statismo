@@ -168,7 +168,7 @@ public:
     : m_thread{ std::move(t) }
     , m_action{ a }
   {}
-  virtual ~RaiiThread() //NOLINT
+  virtual ~RaiiThread() // NOLINT
   {
     if (m_action == Action::JOIN)
     {

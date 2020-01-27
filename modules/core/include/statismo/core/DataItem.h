@@ -202,7 +202,7 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
 private:
-  BasicDataItem(const RepresenterType * representer, std::string uri, const VectorType& sampleVector)
+  BasicDataItem(const RepresenterType * representer, std::string uri, const VectorType & sampleVector)
     : Superclass(representer, std::move(uri), sampleVector)
   {}
 
@@ -247,10 +247,10 @@ public:
 
 private:
   DataItemWithSurrogates(const RepresenterType * representer,
-                         std::string     datasetURI,
-                         VectorType      sampleVector,
-                         std::string     surrogateFilename,
-                         VectorType      surrogateVector)
+                         std::string             datasetURI,
+                         VectorType              sampleVector,
+                         std::string             surrogateFilename,
+                         VectorType              surrogateVector)
     : Superclass(representer, std::move(datasetURI), std::move(sampleVector))
     , m_surrogateFilename(std::move(surrogateFilename))
     , m_surrogateVector(std::move(surrogateVector))

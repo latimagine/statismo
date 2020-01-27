@@ -107,7 +107,7 @@ public:
   }
 
 private:
-  Status      m_status;
+  Status m_status;
 };
 
 } // namespace statismo

@@ -180,7 +180,7 @@ main(int argc, char ** argv)
   statismo::cli::CreateKernelMap();
 
   ProgramOptions poParameters;
-  string          kernelHelp =
+  string         kernelHelp =
     "Specifies the kernel (covariance function). The following kernels are available: " + GetAvailableKernelsStr();
   po::program_options<std::string, float, int, unsigned, std::vector<std::string>> parser{ argv[0], "Program help:" };
 
@@ -245,10 +245,10 @@ main(int argc, char ** argv)
       using RepresenterType = itk::StandardMeshRepresenter<float, statismo::cli::gk_dimensionality3D>;
       using DataReaderType = itk::MeshFileReader<statismo::cli::DataTypeShape>;
       BuildAndSaveModel<statismo::cli::DataTypeShape,
-                         RepresenterType,
-                         DataReaderType,
-                         true,
-                         statismo::cli::gk_dimensionality3D>(poParameters);
+                        RepresenterType,
+                        DataReaderType,
+                        true,
+                        statismo::cli::gk_dimensionality3D>(poParameters);
     }
     else
     {
@@ -258,10 +258,10 @@ main(int argc, char ** argv)
           itk::StandardImageRepresenter<statismo::cli::VectorPixel2DType, statismo::cli::gk_dimensionality2D>;
         using DataReaderType = itk::ImageFileReader<statismo::cli::DataType2DDeformation>;
         BuildAndSaveModel<statismo::cli::DataType2DDeformation,
-                           RepresenterType,
-                           DataReaderType,
-                           false,
-                           statismo::cli::gk_dimensionality2D>(poParameters);
+                          RepresenterType,
+                          DataReaderType,
+                          false,
+                          statismo::cli::gk_dimensionality2D>(poParameters);
       }
       else
       {
@@ -269,10 +269,10 @@ main(int argc, char ** argv)
           itk::StandardImageRepresenter<statismo::cli::VectorPixel3DType, statismo::cli::gk_dimensionality3D>;
         using DataReaderType = itk::ImageFileReader<statismo::cli::DataType3DDeformation>;
         BuildAndSaveModel<statismo::cli::DataType3DDeformation,
-                           RepresenterType,
-                           DataReaderType,
-                           false,
-                           statismo::cli::gk_dimensionality3D>(poParameters);
+                          RepresenterType,
+                          DataReaderType,
+                          false,
+                          statismo::cli::gk_dimensionality3D>(poParameters);
       }
     }
   }

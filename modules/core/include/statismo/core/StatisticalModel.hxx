@@ -52,9 +52,9 @@ namespace statismo
 
 template <typename T>
 StatisticalModel<T>::StatisticalModel(const RepresenterType * representer,
-                                       VectorType      m,
-                                      const MatrixType&      orthonormalPCABasis,
-                                       VectorType      pcaVariance,
+                                      VectorType              m,
+                                      const MatrixType &      orthonormalPCABasis,
+                                      VectorType              pcaVariance,
                                       double                  noiseVariance)
   : m_representer(representer->CloneSelf())
   , m_mean(std::move(m))
@@ -248,7 +248,8 @@ StatisticalModel<T>::GetCovarianceAtPoint(unsigned ptId1, unsigned ptId2) const
       unsigned   idxj = m_representer->MapPointIdToInternalIdx(ptId2, j);
       VectorType vj = m_pcaBasisMatrix.row(idxj);
       cov(i, j) = vi.dot(vj);
-      if (i == j) {
+      if (i == j)
+      {
         cov(i, j) += m_noiseVariance;
       }
     }
@@ -382,7 +383,7 @@ StatisticalModel<T>::ComputeCoefficientsForPointValuesWithCovariance(
     i++;
   }
 
-  VectorType d2 = m_pcaVariance.array();
+  VectorType         d2 = m_pcaVariance.array();
   const MatrixType & matQgT = matQg.transpose();
 
   MatrixType matM = matQgT * matLQg;

@@ -199,7 +199,8 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
         SVDType    svd(matX0.transpose() * matX0, Eigen::ComputeThinU);
         VectorType singularValues = svd.singularValues();
         singularValues /= (n - 1.0);
-        unsigned   numComponentsToKeep = ((singularValues.array() - noiseVariance - Superclass::sk_tolerance) > 0).count();
+        unsigned numComponentsToKeep =
+          ((singularValues.array() - noiseVariance - Superclass::sk_tolerance) > 0).count();
         MatrixType pcaBasis = svd.matrixU();
 
         pcaBasis.conservativeResize(Eigen::NoChange, numComponentsToKeep);
@@ -220,8 +221,8 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
     {
       // we compute the eigenvalues/eigenvectors of the full p x p  covariance matrix 1/(n-1) X0^TX0 directly
 
-      using SelfAdjointEigenSolver = Eigen::SelfAdjointEigenSolver<MatrixType> ;
-      SelfAdjointEigenSolver                            es;
+      using SelfAdjointEigenSolver = Eigen::SelfAdjointEigenSolver<MatrixType>;
+      SelfAdjointEigenSolver es;
       es.compute(matX0.transpose() * matX0);
       VectorType eigenValues =
         es.eigenvalues().reverse(); // SelfAdjointEigenSolver orders the eigenvalues in increasing order

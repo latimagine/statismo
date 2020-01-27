@@ -185,9 +185,9 @@ private:
 template <typename Representer, typename Image, typename StatisticalModel>
 typename StatisticalModel::Pointer
 BuildLowRankGPModel(const char * referenceFilename,
-                     double       gaussianKernelSigma,
-                     double       gaussianKernelScale,
-                     unsigned     numberOfBasisFunctions)
+                    double       gaussianKernelSigma,
+                    double       gaussianKernelScale,
+                    unsigned     numberOfBasisFunctions)
 {
 
   using ModelBuilderType = itk::LowRankGPModelBuilder<Image>;
@@ -246,7 +246,7 @@ ReadLandmarkFile(const std::string & landmarkFilename)
 {
   std::vector<PointType> pointVector;
 
-  double             p[3];
+  double p[3];
 
   std::ifstream infile{ landmarkFilename.c_str() };
   std::string   line;
@@ -293,9 +293,9 @@ ReadLandmarkFile(const std::string & landmarkFilename)
 template <typename Image, typename StatisticalModel, unsigned int IMAGE_DIM>
 typename StatisticalModel::Pointer
 ConstrainModel(typename StatisticalModel::Pointer model,
-                const std::string &                 referenceLandmarkFilename,
-                const std::string &                 targetLandmarkFilename,
-                double                              landmarkUncertainty)
+               const std::string &                referenceLandmarkFilename,
+               const std::string &                targetLandmarkFilename,
+               double                             landmarkUncertainty)
 {
   using PosteriorModelBuilderType = typename itk::PosteriorModelBuilder<Image>;
 
@@ -303,8 +303,7 @@ ConstrainModel(typename StatisticalModel::Pointer model,
 
   auto referencePointVector =
     ReadLandmarkFile<typename StatisticalModel::PointType, IMAGE_DIM>(referenceLandmarkFilename);
-  auto targetPointVector =
-    ReadLandmarkFile<typename StatisticalModel::PointType, IMAGE_DIM>(targetLandmarkFilename);
+  auto targetPointVector = ReadLandmarkFile<typename StatisticalModel::PointType, IMAGE_DIM>(targetLandmarkFilename);
 
   assert(referencePointVector.size() != targetPointVector.size());
 
@@ -345,11 +344,11 @@ ConstrainModel(typename StatisticalModel::Pointer model,
 
 template <typename Image, typename VectorImage, typename StatisticalModel, typename Metric, unsigned int IMAGE_DIM>
 typename Image::Pointer
-ModelBasedImageToImageRegistration(const std::string &                 referenceFilename,
-                                    const std::string &                 targetFilename,
-                                    typename StatisticalModel::Pointer model,
-                                    const std::string &                 outputDfFilename,
-                                    unsigned                            numberOfIterations)
+ModelBasedImageToImageRegistration(const std::string &                referenceFilename,
+                                   const std::string &                targetFilename,
+                                   typename StatisticalModel::Pointer model,
+                                   const std::string &                outputDfFilename,
+                                   unsigned                           numberOfIterations)
 {
 
 
@@ -496,19 +495,19 @@ RunImageToImageRegistration(const std::string & referenceFilename,
   if (similarityMetric == "MeanSquares")
   {
     registeredImage = ModelBasedImageToImageRegistration<ImageType,
-                                                          VectorImageType,
-                                                          StatisticalModelType,
-                                                          MeanSquaresMetricType,
-                                                          IMAGE_DIM>(
+                                                         VectorImageType,
+                                                         StatisticalModelType,
+                                                         MeanSquaresMetricType,
+                                                         IMAGE_DIM>(
       referenceFilename, targetFilename, model, outputDfFilename, numberOfIterations);
   }
   else if (similarityMetric == "NormalizedCorrelation")
   {
     registeredImage = ModelBasedImageToImageRegistration<ImageType,
-                                                          VectorImageType,
-                                                          StatisticalModelType,
-                                                          NormalizedCorrelationMetricType,
-                                                          IMAGE_DIM>(
+                                                         VectorImageType,
+                                                         StatisticalModelType,
+                                                         NormalizedCorrelationMetricType,
+                                                         IMAGE_DIM>(
       referenceFilename, targetFilename, model, outputDfFilename, numberOfIterations);
   }
 

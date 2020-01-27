@@ -52,7 +52,10 @@ namespace statismo::cli
 {
 namespace details
 {
-template <typename MeshType, typename LandmarkBasedTransformInitializerType, typename TransformType, typename FilterType>
+template <typename MeshType,
+          typename LandmarkBasedTransformInitializerType,
+          typename TransformType,
+          typename FilterType>
 std::vector<typename MeshType::Pointer> static SuperimposeMeshes(
   const std::vector<typename MeshType::Pointer> & originalMeshes,
   typename MeshType::Pointer                      referenceMesh,
@@ -103,7 +106,8 @@ std::vector<typename MeshType::Pointer> static SuperimposeMeshes(
 
 
 template <typename MeshType>
-static float CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
+static float
+CalculateMeshDistance(typename MeshType::Pointer mesh1, typename MeshType::Pointer mesh2)
 {
   if (mesh1->GetNumberOfPoints() != mesh2->GetNumberOfPoints() ||
       mesh1->GetNumberOfCells() != mesh2->GetNumberOfCells())
@@ -185,11 +189,15 @@ typename MeshType::Pointer static CalculateMeanMesh(const std::vector<typename M
 } // namespace details
 
 
-template <typename MeshType, typename LandmarkBasedTransformInitializerType, typename TransformType, typename FilterType>
-static typename MeshType::Pointer CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer> & meshes,
-                                                              unsigned maxIterations,
-                                                              unsigned nrOfLandmarks,
-                                                              float    breakIfChangeBelow)
+template <typename MeshType,
+          typename LandmarkBasedTransformInitializerType,
+          typename TransformType,
+          typename FilterType>
+static typename MeshType::Pointer
+CalculateProcrustesMeanMesh(const std::vector<typename MeshType::Pointer> & meshes,
+                            unsigned                                        maxIterations,
+                            unsigned                                        nrOfLandmarks,
+                            float                                           breakIfChangeBelow)
 {
   // the initial mesh to which all others will be aligned to is the first one in the list here. Any other mesh could be
   // chosen as well

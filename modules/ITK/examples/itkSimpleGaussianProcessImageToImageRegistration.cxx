@@ -171,8 +171,8 @@ BuildLowRankGPModel(const char * referenceFilename)
  */
 template <typename Image, typename VectorImage, typename StatisticalModelType, typename Metric, unsigned int IMAGE_DIM>
 typename VectorImage::Pointer
-ModelBasedImageToImageRegistration(const std::string &                     referenceFilename,
-                                   const std::string &                     targetFilename,
+ModelBasedImageToImageRegistration(const std::string &                    referenceFilename,
+                                   const std::string &                    targetFilename,
                                    typename StatisticalModelType::Pointer model)
 {
 

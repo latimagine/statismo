@@ -68,8 +68,8 @@ template <typename Pixel, unsigned IMAGE_DIMENSION>
 StandardImageRepresenter<Pixel, IMAGE_DIMENSION> *
 StandardImageRepresenter<Pixel, IMAGE_DIMENSION>::CloneImpl() const
 {
-  auto clone = new StandardImageRepresenter();
-  DatasetPointerType         clonedReference = this->CloneDataset(m_reference);
+  auto               clone = new StandardImageRepresenter();
+  DatasetPointerType clonedReference = this->CloneDataset(m_reference);
   clone->SetReference(clonedReference);
   return clone;
 }
@@ -150,7 +150,7 @@ StandardImageRepresenter<Pixel, IMAGE_DIMENSION>::LoadRef(const H5::Group & fg) 
   typename ImageType::IndexType start;
   start.Fill(0);
 
-  auto  ds = pdGroup.openDataSet("pixelValues");
+  auto ds = pdGroup.openDataSet("pixelValues");
   auto type = static_cast<unsigned>(statismo::hdf5utils::ReadIntAttribute(ds, "datatype"));
   if (type != PixelConversionTrait<Pixel>::GetDataType())
   {

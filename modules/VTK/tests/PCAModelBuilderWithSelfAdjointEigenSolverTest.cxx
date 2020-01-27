@@ -118,8 +118,8 @@ TestBuildModel()
   MatrixType pcbasis1 = jacobiModel->GetPCABasisMatrix();
 
   // perform with providing JacobiSVD
-  jacobiModel =
-    pcaModelBuilder->BuildNewModel(dataManager->GetData(), kDataNoise, false, PCAModelBuilderType::EigenValueMethod::JACOBI_SVD);
+  jacobiModel = pcaModelBuilder->BuildNewModel(
+    dataManager->GetData(), kDataNoise, false, PCAModelBuilderType::EigenValueMethod::JACOBI_SVD);
 
   VectorType variance2 = jacobiModel->GetPCAVarianceVector();
   MatrixType pcbasis2 = jacobiModel->GetPCABasisMatrix();
@@ -202,7 +202,7 @@ TestBuildModel()
 } // namespace
 
 int
-PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv)  // NOLINT
+PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv) // NOLINT
 {
   if (argc < 2)
   {

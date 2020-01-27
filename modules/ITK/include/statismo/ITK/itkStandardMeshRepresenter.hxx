@@ -65,7 +65,7 @@ template <typename Pixel, unsigned MESH_DIMENSION>
 StandardMeshRepresenter<Pixel, MESH_DIMENSION> *
 StandardMeshRepresenter<Pixel, MESH_DIMENSION>::CloneImpl() const
 {
-  auto  clone = new StandardMeshRepresenter();
+  auto                       clone = new StandardMeshRepresenter();
   typename MeshType::Pointer clonedReference = this->CloneDataset(m_reference);
   clone->SetReference(clonedReference);
   return clone;

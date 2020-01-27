@@ -207,7 +207,7 @@ public:
   static UniquePtrType<DataManagerBase>
   Load(Representer<T> * representer, const std::string & filename);
 
-  //virtual ~DataManagerBase() = default;
+  // virtual ~DataManagerBase() = default;
 
   void
   AddDataset(DatasetConstPointerType dataset, const std::string & uri) override;

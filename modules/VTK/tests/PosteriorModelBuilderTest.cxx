@@ -224,7 +224,7 @@ TestPosteriorOnePoint()
 } // namespace
 
 int
-PosteriorModelBuilderTest(int argc, char ** argv)  // NOLINT
+PosteriorModelBuilderTest(int argc, char ** argv) // NOLINT
 {
   if (argc < 2)
   {

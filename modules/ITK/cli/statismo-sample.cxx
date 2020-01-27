@@ -179,7 +179,7 @@ int
 main(int argc, char ** argv)
 {
 
-  ProgramOptions                                                  poParameters;
+  ProgramOptions                                                   poParameters;
   po::program_options<std::string, StringListType, bool, unsigned> parser{ argv[0], "Program help:" };
 
   parser

@@ -122,7 +122,7 @@ main(int argc, char ** argv)
     // Create a (scalar valued) gaussian kernel. This kernel is then made matrix-valued. We use a
     // UncorrelatedMatrixValuedKernel, which assumes that each output component is independent.
 
-    GaussianKernel                gk{ gaussianKernelSigma };
+    GaussianKernel                 gk{ gaussianKernelSigma };
     const MatrixValuedKernelType & mvGk =
       UncorrelatedMatrixValuedKernel<vtkPoint>(&gk, model->GetRepresenter()->GetDimensions());
 

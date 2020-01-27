@@ -60,7 +60,7 @@ struct PointIdType
   {}
   PointIdType() = default;
 
-  unsigned ptId{0};
+  unsigned ptId{ 0 };
 };
 
 

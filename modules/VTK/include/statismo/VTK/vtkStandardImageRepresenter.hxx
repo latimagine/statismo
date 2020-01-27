@@ -180,8 +180,8 @@ vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::LoadRef(const H5::Group 
     {
       for (int k = 0; k < size[0]; k++)
       {
-        unsigned  index = size[1] * size[0] * i + size[0] * j + k;
-        auto scalarPtr = static_cast<TScalar *>(newImage->GetScalarPointer(k, j, i));
+        unsigned index = size[1] * size[0] * i + size[0] * j + k;
+        auto     scalarPtr = static_cast<TScalar *>(newImage->GetScalarPointer(k, j, i));
         for (unsigned d = 0; d < PIXEL_DIMENSIONS; d++)
         {
           scalarPtr[d] = pixelMat(d, index);
@@ -268,7 +268,7 @@ template <class TScalar, unsigned PIXEL_DIMENSIONS>
 typename vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::DatasetPointerType
 vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::SampleVectorToSample(const VectorType & sampleVector) const
 {
-  auto                  sample = vtkSmartPointer<vtkStructuredPoints>::New();
+  auto sample = vtkSmartPointer<vtkStructuredPoints>::New();
   auto reference = const_cast<vtkStructuredPoints *>(m_reference.GetPointer());
   sample->DeepCopy(reference);
 
@@ -289,7 +289,7 @@ vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::SampleVectorToSample(con
 template <class TScalar, unsigned PIXEL_DIMENSIONS>
 typename vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::ValueType
 vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::PointSampleFromSample(DatasetConstPointerType sample,
-                                                                             unsigned                ptid) const
+                                                                              unsigned                ptid) const
 {
   AssertCompatibility(sample);
 
@@ -398,8 +398,8 @@ vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::Save(const H5::Group & f
     {
       for (unsigned k = 0; k < static_cast<unsigned>(size[0]); k++)
       {
-        unsigned  ind = i * size[1] * size[0] + j * size[0] + k;
-        auto pixel = static_cast<TScalar *>(m_reference->GetScalarPointer(k, j, i));
+        unsigned ind = i * size[1] * size[0] + j * size[0] + k;
+        auto     pixel = static_cast<TScalar *>(m_reference->GetScalarPointer(k, j, i));
         for (unsigned d = 0; d < vtkStandardImageRepresenter::GetDimensions(); d++)
         {
           pixelMat(d, ind) = pixel[d];

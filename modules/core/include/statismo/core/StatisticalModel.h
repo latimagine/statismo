@@ -388,7 +388,8 @@ public:
    *
    */
   VectorType
-  ComputeCoefficientsForPointValues(const PointValueListType & pointValueList, double pointValueNoiseVariance = 0.0) const;
+  ComputeCoefficientsForPointValues(const PointValueListType & pointValueList,
+                                    double                     pointValueNoiseVariance = 0.0) const;
 
   /**
    * Similar to ComputeCoefficientsForPointValues, only here there is no global pointValueNoiseVariance.
@@ -525,10 +526,10 @@ private:
    * @param representer An instance of the representer, used to convert the samples to dataset of the represented type.
    */
   StatisticalModel(const RepresenterType * representer,
-                  VectorType      m,
-                  const MatrixType&      orthonormalPCABasis,
-                  VectorType      pcaVariance,
-                  double                  noiseVariance);
+                   VectorType              m,
+                   const MatrixType &      orthonormalPCABasis,
+                   VectorType              pcaVariance,
+                   double                  noiseVariance);
 
 
   const RepresenterType * m_representer;
