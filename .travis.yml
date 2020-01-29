@@ -49,14 +49,14 @@ matrix:
           packages: 
             - g++-7
             - clang-tidy-6.0
-            - clang-format
+            - clang-format-6.0
           sources:
             - ubuntu-toolchain-r-test
       after_install:
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
         - sudo update-alternatives --config gcc
-        - gcc --version
-        - g++ --version
+        - sudo ln -s /usr/bin/clang-format-6.0 /usr/bin/clang-format
+        - clang-format --version
     ##########################################################################
     # Clang on Linux Bionic with:
     # - VTK support
