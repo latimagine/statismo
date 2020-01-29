@@ -71,7 +71,7 @@ public:
 
   /**
    * Returns a new statistical model, which is loaded from the given HDF5 file
-   * 
+   *
    * \param representer Representer bound to the model
    * \param filename Path to hdf5 file
    * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded

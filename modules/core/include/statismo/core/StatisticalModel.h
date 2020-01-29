@@ -278,7 +278,7 @@ public:
    * Returns the variance in the model for point pt
    * \param pt1 point 1
    * \param pt2 point 2
-   * 
+   *
    * @returns a d x d covariance matrix
    */
   MatrixType
