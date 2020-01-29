@@ -52,7 +52,7 @@ using namespace statismo;
 namespace
 {
 int
-_GetDir(const std::string & dir, std::vector<std::string> & files, const std::string & extension = ".*")
+GetDir(const std::string & dir, std::vector<std::string> & files, const std::string & extension = ".*")
 {
   vtkNew<vtkDirectory> directory;
   directory->Open(dir.c_str());
@@ -69,7 +69,7 @@ _GetDir(const std::string & dir, std::vector<std::string> & files, const std::st
 }
 
 vtkSmartPointer<vtkPolyData>
-_LoadVTKPolyData(const std::string & filename)
+LoadVTKPolyData(const std::string & filename)
 {
   vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.c_str());
@@ -102,7 +102,7 @@ main(int argc, char ** argv)
   using StringVectorType = std::vector<std::string>;
   StringVectorType filenames;
 
-  _GetDir(datadir, filenames, ".vtk");
+  GetDir(datadir, filenames, ".vtk");
   if (filenames.empty())
   {
     std::cerr << "did not find any vtk files in directory " << datadir << " exiting.";
@@ -116,7 +116,7 @@ main(int argc, char ** argv)
     // and the alignmentType. The alignmenttype (which is here RIGID) determines how the dataset that we
     // will use will later be aligned to the reference.
 
-    auto reference = _LoadVTKPolyData(datadir + "/" + filenames[0]);
+    auto reference = LoadVTKPolyData(datadir + "/" + filenames[0]);
     auto representer = RepresenterType::SafeCreate(reference);
 
     // We create a datamanager and provide it with a pointer  to the representer
@@ -132,7 +132,7 @@ main(int argc, char ** argv)
       auto filename = datadir;
       filename += "/";
       filename += f;
-      dataManager->AddDataset(_LoadVTKPolyData(filename), f);
+      dataManager->AddDataset(LoadVTKPolyData(filename), f);
     }
 
     // To actually build a model, we need to create a model builder object.

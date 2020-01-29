@@ -56,12 +56,12 @@ Test1()
   using StatisticalModelType = statismo::StatisticalModel<statismo::VectorType>;
   using DataManagerType = statismo::BasicDataManager<statismo::VectorType>;
 
-  const unsigned                   Dim = 3;
-  std::unique_ptr<RepresenterType> representer(RepresenterType::Create(Dim));
+  const unsigned                   kDim = 3;
+  std::unique_ptr<RepresenterType> representer(RepresenterType::Create(kDim));
   std::unique_ptr<DataManagerType> dataManager(DataManagerType::Create(representer.get()));
 
   // we create three simple datasets
-  statismo::VectorType dataset1(Dim), dataset2(Dim), dataset3(Dim);
+  statismo::VectorType dataset1(kDim), dataset2(kDim), dataset3(kDim);
   dataset1 << 1, 0, 0;
   dataset2 << 0, 2, 0;
   dataset3 << 0, 0, 4;
@@ -96,7 +96,7 @@ Test1()
  * Real unit tests that test the functionality of statismo are provided in the statismoTests directory (these tests
  * require VTK to be installed and the statismo python wrapping to be working).
  */
-int basicStatismoTest([[maybe_unused]] int argc, [[maybe_unused]] char * argv[])
+int basicStatismoTest([[maybe_unused]] int argc, [[maybe_unused]] char * argv[]) // NOLINT
 {
   auto res = statismo::Translate([]() {
     return statismo::test::RunAllTests("basicStatismoTest", { { "Test1", Test1 } });

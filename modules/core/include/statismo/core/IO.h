@@ -71,7 +71,9 @@ public:
 
   /**
    * Returns a new statistical model, which is loaded from the given HDF5 file
-   * \param filename The filename
+   *
+   * \param representer Representer bound to the model
+   * \param filename Path to hdf5 file
    * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
    * to create the model.
    */
@@ -100,7 +102,8 @@ public:
   /**
    * Returns a new statistical model, which is stored in the given HDF5 Group
    *
-   * \param modelroot A h5 group where the model is saved
+   * \param representer Representer bound to the model
+   * \param modelRoot H5 group where the model is saved
    * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
    * to create the model.
    */
@@ -120,13 +123,13 @@ public:
       int minorVersion = 0;
       int majorVersion = 0;
 
-      if (hdf5utils::ExistsObjectWithName(modelRoot, "version") == false)
+      if (!hdf5utils::ExistsObjectWithName(modelRoot, "version"))
       {
         // this is an old statismo format, that had not been versioned. We set the version to 0.8 as this is the last
         // version that stores the old format
         std::cout << "Warning: version attribute does not exist in hdf5 file. Assuming version 0.8" << std::endl;
-        minorVersion = s_oldFileVersionMinor;
-        majorVersion = s_oldFileVersionMajor;
+        minorVersion = gk_oldFileVersionMinor;
+        majorVersion = gk_oldFileVersionMajor;
       }
       else
       {
@@ -147,15 +150,15 @@ public:
       // Basis functions and D the standard deviations). Here we make sure that we fill the pcaBasisMatrix (which
       // statismo stores as U*D) with the right values.
       MatrixType pcaBasisMatrix;
-      if (majorVersion == s_oldFileVersionMinor && minorVersion == s_oldFileVersionMajor)
+      if (majorVersion == gk_oldFileVersionMinor && minorVersion == gk_oldFileVersionMajor)
       {
         hdf5utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
-        VectorType D = pcaVariance.array().sqrt();
+        VectorType D = pcaVariance.array().sqrt(); // NOLINT
         MatrixType orthonormalPCABasisMatrix = pcaBasisMatrix * DiagMatrixType(D).inverse();
         newModel =
           StatisticalModelType::SafeCreate(representer, mean, orthonormalPCABasisMatrix, pcaVariance, noiseVariance);
       }
-      else if (majorVersion == s_currenFileVersionMajor && minorVersion == s_currentFileVersionMinor)
+      else if (majorVersion == gk_currenFileVersionMajor && minorVersion == gk_currentFileVersionMinor)
       {
         hdf5utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
         newModel = StatisticalModelType::SafeCreate(representer, mean, pcaBasisMatrix, pcaVariance, noiseVariance);
@@ -192,7 +195,7 @@ public:
   {
     if (!model)
     {
-      throw new StatisticalModelException("invalid null model", Status::BAD_INPUT_ERROR);
+      throw StatisticalModelException("invalid null model", Status::BAD_INPUT_ERROR);
     }
     SaveStatisticalModel(*model, filename);
   }

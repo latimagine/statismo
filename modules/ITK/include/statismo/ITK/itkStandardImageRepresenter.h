@@ -72,11 +72,11 @@ namespace itk
  * \sa Representer
  */
 
-template <class TPixel, unsigned ImageDimension>
+template <typename Pixel, unsigned IMAGE_DIMENSION>
 class StandardImageRepresenter
   : public Object
-  , public statismo::RepresenterBase<itk::Image<TPixel, ImageDimension>,
-                                     StandardImageRepresenter<TPixel, ImageDimension>>
+  , public statismo::RepresenterBase<itk::Image<Pixel, IMAGE_DIMENSION>,
+                                     StandardImageRepresenter<Pixel, IMAGE_DIMENSION>>
 {
 public:
   using Self = StandardImageRepresenter;
@@ -84,7 +84,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   using Base =
-    statismo::RepresenterBase<itk::Image<TPixel, ImageDimension>, StandardImageRepresenter<TPixel, ImageDimension>>;
+    statismo::RepresenterBase<itk::Image<Pixel, IMAGE_DIMENSION>, StandardImageRepresenter<Pixel, IMAGE_DIMENSION>>;
   friend Base;
   friend typename Base::ObjectFactoryType;
 
@@ -94,7 +94,7 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(StandardImageRepresenter, Object);
 
-  using ImageType = itk::Image<TPixel, ImageDimension>;
+  using ImageType = itk::Image<Pixel, IMAGE_DIMENSION>;
   using RepresenterBaseType = typename statismo::Representer<ImageType>;
   using DomainType = typename RepresenterBaseType::DomainType;
   using PointType = typename RepresenterBaseType::PointType;
@@ -104,57 +104,57 @@ public:
   using DatasetConstPointerType = typename RepresenterBaseType::DatasetConstPointerType;
 
   StandardImageRepresenter();
-  virtual ~StandardImageRepresenter();
+  virtual ~StandardImageRepresenter(); // NOLINT
 
-  virtual void
+  void
   Delete() override
   {
     this->UnRegister();
   }
 
-  virtual const DomainType &
+  const DomainType &
   GetDomain() const override
   {
     return m_domain;
   }
 
-  virtual void DeleteDataset(DatasetConstPointerType) const override
+  void DeleteDataset(DatasetConstPointerType) const override
   {
     // no op
   }
-  virtual DatasetPointerType
+  DatasetPointerType
   CloneDataset(DatasetConstPointerType d) const override;
 
-  virtual void
+  void
   Load(const H5::Group & fg) override;
-  virtual void
+  void
   Save(const H5::Group & fg) const override;
 
-  virtual DatasetConstPointerType
+  DatasetConstPointerType
   GetReference() const override
   {
     return m_reference;
   }
 
-  virtual void
-  SetReference(ImageType * ds);
+  void
+  SetReference(ImageType * reference);
 
-  virtual statismo::VectorType
+  statismo::VectorType
   PointToVector(const PointType & pt) const override;
-  virtual statismo::VectorType
+  statismo::VectorType
   SampleToSampleVector(DatasetConstPointerType sample) const override;
   DatasetPointerType
   SampleVectorToSample(const statismo::VectorType & sample) const override;
 
-  virtual ValueType
+  ValueType
   PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
-  virtual ValueType
+  ValueType
   PointSampleVectorToPointSample(const statismo::VectorType & pointSample) const override;
-  virtual statismo::VectorType
+  statismo::VectorType
   PointSampleToPointSampleVector(const ValueType & v) const override;
 
-  virtual unsigned
-  GetPointIdForPoint(const PointType & point) const override;
+  unsigned
+  GetPointIdForPoint(const PointType & pt) const override;
 
   virtual unsigned
   GetNumberOfPoints() const;
@@ -163,7 +163,7 @@ private:
   static unsigned
   GetDimensionsImpl()
   {
-    return PixelConversionTrait<TPixel>::GetPixelDimension();
+    return PixelConversionTrait<Pixel>::GetPixelDimension();
   }
   static std::string
   GetNameImpl()
@@ -182,7 +182,7 @@ private:
     return "0.1";
   }
 
-  virtual StandardImageRepresenter *
+  StandardImageRepresenter *
   CloneImpl() const override;
 
   typename ImageType::Pointer

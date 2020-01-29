@@ -90,13 +90,14 @@ public:
    *
    * \param sampleSet A list training samples with associated surrogate data - typically obtained from a
    * DataManagerWithSurrogates.
-   * \param surrogateTypes A vector with length corresponding to the number of surrogate
+   * \param surrogateTypesInfo A vector with length corresponding to the number of surrogate
    * variables, indicating whether a variable is continuous or categorical - typically obtained from a
    * DataManagerWithSurrogates.
    * \param conditioningInfo A vector (length = \a surrogateTypes) indicating which
    * surrogates are used for conditioning, and the conditioning value.
    * \param noiseVariance  The variance of the noise
    * assumed on our data
+   * \param modelVarianceRetained  The ratio of retained variance for the model
    * \return a new statistical model
    *
    */

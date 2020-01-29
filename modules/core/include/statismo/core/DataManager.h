@@ -62,14 +62,14 @@ public:
   /**
    * Create an empty fold
    */
-  CrossValidationFold(){};
+  CrossValidationFold() = default;
 
   /**
    * Create a fold with the given trainingData and testingData
    */
-  CrossValidationFold(const DataItemListType & trainingData, const DataItemListType & testingData)
-    : m_trainingData(trainingData)
-    , m_testingData(testingData)
+  CrossValidationFold(DataItemListType trainingData, DataItemListType testingData)
+    : m_trainingData(std::move(trainingData))
+    , m_testingData(std::move(testingData))
   {}
 
   /**
@@ -125,14 +125,14 @@ public:
   /**
    * Add a dataset to the data manager.
    * \param dataset the dataset to be added
-   * \param URI A string containing the URI of the given dataset. This is only added as an info to the metadata.
+   * \param uri A string containing the URI of the given dataset. This is only added as an info to the metadata.
    *
    * While it is not strictly necessary, and sometimes not even possible, to specify a URI for the given dataset,
    * it is strongly encouraged to add a description. The string will be added to the metadata and stored with the model.
    * Having this information stored with the model may prove valuable at a later point in time.
    */
   virtual void
-  AddDataset(DatasetConstPointerType dataset, const std::string & URI) = 0;
+  AddDataset(DatasetConstPointerType dataset, const std::string & uri) = 0;
 
   /**
    * Saves the data matrix and all URIs into an HDF5 file.
@@ -163,7 +163,7 @@ public:
    * was added is preserved
    */
   virtual CrossValidationFoldListType
-  GetCrossValidationFolds(unsigned nFolds, bool isRandomized = true) const = 0;
+  GetCrossValidationFolds(unsigned nFolds, bool isRandomized) const = 0;
 
   /**
    * Generates Leave-one-out cross validation folds
@@ -207,30 +207,30 @@ public:
   static UniquePtrType<DataManagerBase>
   Load(Representer<T> * representer, const std::string & filename);
 
-  virtual ~DataManagerBase() = default;
+  // virtual ~DataManagerBase() = default;
 
-  virtual void
-  AddDataset(DatasetConstPointerType dataset, const std::string & URI) override;
+  void
+  AddDataset(DatasetConstPointerType dataset, const std::string & uri) override;
 
-  virtual void
+  void
   Save(const std::string & filename) const override;
 
-  virtual DataItemListType
+  DataItemListType
   GetData() const override;
 
-  virtual unsigned
+  unsigned
   GetNumberOfSamples() const override
   {
     return m_dataItemList.size();
   }
 
-  virtual CrossValidationFoldListType
-  GetCrossValidationFolds(unsigned nFolds, bool randomize = true) const override;
+  CrossValidationFoldListType
+  GetCrossValidationFolds(unsigned nFolds, bool isRandomized = true) const override;
 
-  virtual CrossValidationFoldListType
+  CrossValidationFoldListType
   GetLeaveOneOutCrossValidationFolds() const override;
 
-  virtual void
+  void
   Delete() override
   {
     delete this;

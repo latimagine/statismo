@@ -68,22 +68,22 @@
 namespace
 {
 
-constexpr int _k_gaussianSigma = 70;
-constexpr int _k_gaussianScale = 100;
-constexpr int _k_numBasisFunctions = 100;
-constexpr int _k_numIterations = 100;
+constexpr int gk_gaussianSigma = 70;
+constexpr int gk_gaussianScale = 100;
+constexpr int gk_numBasisFunctions = 100;
+constexpr int gk_numIterations = 100;
 
 /**
  * A scalar valued gaussian kernel.
  */
 template <class TPoint>
-class _GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
+class GaussianKernel : public statismo::ScalarValuedKernel<TPoint>
 {
 public:
   using CoordRepType = typename TPoint::CoordRepType;
   using VectorType = vnl_vector<CoordRepType>;
 
-  explicit _GaussianKernel(double sigma)
+  explicit GaussianKernel(double sigma)
     : m_sigma(sigma)
     , m_sigma2(sigma * sigma)
   {}
@@ -102,7 +102,7 @@ public:
   GetKernelInfo() const override
   {
     std::ostringstream os;
-    os << "_GaussianKernel(" << m_sigma << ")";
+    os << "GaussianKernel(" << m_sigma << ")";
     return os.str();
   }
 
@@ -119,37 +119,37 @@ private:
  *  - const char* referenceFilename		-> Filename to reference image
  *
  * Output:
- *  - TStatisticalModelType::Pointer	-> Smartpointer on a (statismo) statistical model.
+ *  - StatisticalModelType::Pointer	-> Smartpointer on a (statismo) statistical model.
  *
  * Comment:
  *  - The composition of different kernel functions can be even more complicated. For example
  *    a linear combination of different kernel functions is again a kernel function and thus
  *    can be handled by the LowRankGPModelBuilder.
  */
-template <class TRepresenterType, class TImage, class TStatisticalModelType>
-typename TStatisticalModelType::Pointer
+template <typename RepresenterType, typename Image, typename StatisticalModelType>
+typename StatisticalModelType::Pointer
 BuildLowRankGPModel(const char * referenceFilename)
 {
-  using ModelBuilderType = itk::LowRankGPModelBuilder<TImage>;
-  using ImageFileReaderType = itk::ImageFileReader<TImage>;
-  using PointType = typename TRepresenterType::PointType;
+  using ModelBuilderType = itk::LowRankGPModelBuilder<Image>;
+  using ImageFileReaderType = itk::ImageFileReader<Image>;
+  using PointType = typename RepresenterType::PointType;
 
   // we take an arbitrary dataset as the reference, as they have all the same resolution anyway
   auto referenceReader = ImageFileReaderType::New();
   referenceReader->SetFileName(referenceFilename);
   referenceReader->Update();
 
-  auto representer = TRepresenterType::New();
+  auto representer = RepresenterType::New();
   representer->SetReference(referenceReader->GetOutput());
 
-  auto gk = _GaussianKernel<PointType>(_k_gaussianSigma); // a Gaussian kernel with sigma=gaussianKernelSigma
+  auto gk = GaussianKernel<PointType>(gk_gaussianSigma); // a Gaussian kernel with sigma=gaussianKernelSigma
   // make the kernel matrix valued and scale it by a factor of 100
   const auto & mvGk = statismo::UncorrelatedMatrixValuedKernel<PointType>(&gk, representer->GetDimensions());
-  const auto & scaledGk = statismo::ScaledKernel<PointType>(&mvGk, _k_gaussianScale); // apply Gaussian scale parameter
+  const auto & scaledGk = statismo::ScaledKernel<PointType>(&mvGk, gk_gaussianScale); // apply Gaussian scale parameter
 
   auto gpModelBuilder = ModelBuilderType::New();
   gpModelBuilder->SetRepresenter(representer);
-  auto model = gpModelBuilder->BuildNewZeroMeanModel(scaledGk, _k_numBasisFunctions); // number of basis functions
+  auto model = gpModelBuilder->BuildNewZeroMeanModel(scaledGk, gk_numBasisFunctions); // number of basis functions
 
   std::cout << "done!" << std::endl;
   return model;
@@ -164,33 +164,33 @@ BuildLowRankGPModel(const char * referenceFilename)
  * Input:
  *  - std::string referenceFilename			-> Filename of reference image.
  *  - std::string targetFilename			-> Filename of target image.
- *  - TStatisticalModelType::Pointer model	-> Smartpointer to the statistical model.
+ *  - StatisticalModelType::Pointer model	-> Smartpointer to the statistical model.
  *
  * Output:
- *  - TVectorImage::Pointer		-> The deformation field.
+ *  - VectorImage::Pointer		-> The deformation field.
  */
-template <class TImage, class TVectorImage, class TStatisticalModelType, class TMetric, unsigned int VImageDimension>
-typename TVectorImage::Pointer
-ModelBasedImageToImageRegistration(const std::string &                     referenceFilename,
-                                   const std::string &                     targetFilename,
-                                   typename TStatisticalModelType::Pointer model)
+template <typename Image, typename VectorImage, typename StatisticalModelType, typename Metric, unsigned int IMAGE_DIM>
+typename VectorImage::Pointer
+ModelBasedImageToImageRegistration(const std::string &                    referenceFilename,
+                                   const std::string &                    targetFilename,
+                                   typename StatisticalModelType::Pointer model)
 {
 
-  using ImageReaderType = itk::ImageFileReader<TImage>;
-  using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<TVectorImage, double, VImageDimension>;
+  using ImageReaderType = itk::ImageFileReader<Image>;
+  using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<VectorImage, double, IMAGE_DIM>;
   using OptimizerType = itk::LBFGSOptimizer;
-  using RegistrationFilterType = itk::ImageRegistrationMethod<TImage, TImage>;
-  using InterpolatorType = itk::LinearInterpolateImageFunction<TImage, double>;
+  using RegistrationFilterType = itk::ImageRegistrationMethod<Image, Image>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<Image, double>;
 
   auto referenceReader = ImageReaderType::New();
   referenceReader->SetFileName(referenceFilename);
   referenceReader->Update();
-  typename TImage::Pointer referenceImage = referenceReader->GetOutput();
+  typename Image::Pointer referenceImage = referenceReader->GetOutput();
 
   auto targetReader = ImageReaderType::New();
   targetReader->SetFileName(targetFilename);
   targetReader->Update();
-  typename TImage::Pointer targetImage = targetReader->GetOutput();
+  typename Image::Pointer targetImage = targetReader->GetOutput();
 
   // do the fitting
   auto transform = TransformType::New();
@@ -200,9 +200,9 @@ ModelBasedImageToImageRegistration(const std::string &                     refer
   // Setting up the fitting
   auto optimizer = OptimizerType::New();
   optimizer->MinimizeOn();
-  optimizer->SetMaximumNumberOfFunctionEvaluations(_k_numIterations);
+  optimizer->SetMaximumNumberOfFunctionEvaluations(gk_numIterations);
 
-  auto metric = TMetric::New();
+  auto metric = Metric::New();
   auto interpolator = InterpolatorType::New();
 
   auto registration = RegistrationFilterType::New();

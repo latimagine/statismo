@@ -48,7 +48,7 @@ using namespace statismo::test;
 
 namespace
 {
-std::string _s_dataDir;
+std::string g_dataDir;
 
 int
 TestRepresenterForMesh()
@@ -56,8 +56,8 @@ TestRepresenterForMesh()
   using RepresenterType = statismo::vtkStandardMeshRepresenter;
   using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
 
-  auto referenceFilename = _s_dataDir + "/hand_polydata/hand-0.vtk";
-  auto testDatasetFilename = _s_dataDir + "/hand_polydata/hand-1.vtk";
+  auto referenceFilename = g_dataDir + "/hand_polydata/hand-0.vtk";
+  auto testDatasetFilename = g_dataDir + "/hand_polydata/hand-1.vtk";
 
   auto reference = LoadPolyData(referenceFilename);
   auto representer = RepresenterType::SafeCreate(reference);
@@ -84,7 +84,7 @@ vtkStandardMeshRepresenterTest(int argc, char ** argv)
     exit(EXIT_FAILURE);
   }
 
-  _s_dataDir = argv[1];
+  g_dataDir = argv[1];
 
   auto res = statismo::Translate([]() {
     return statismo::test::RunAllTests("vtkStandardImageRepresenterTest",

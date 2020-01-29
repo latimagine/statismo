@@ -228,13 +228,13 @@ public:
   using PointType = typename RepresenterType::PointType;
 
   /**
-   * @brief Make a given kernel spatially varying according to the given tempering function
-   * @param representer, A representer which defines the domain over which the approximation is done
-   * @param kernel The kernel that is made spatially adaptive
-   * @param eta The tempering function that defines the amount of tempering for each point in the domain
-   * @param numEigenfunctions The number of eigenfunctions to be used for the approximation
-   * @param numberOfPointsForApproximation The number of points used for the nystrom approximation
-   * @param cacheValues Cache result of eigenfunction computations. Greatly speeds up the computation.
+   * \brief Make a given kernel spatially varying according to the given tempering function
+   * \param representer A representer which defines the domain over which the approximation is done
+   * \param kernel The kernel that is made spatially adaptive
+   * \param eta The tempering function that defines the amount of tempering for each point in the domain
+   * \param numEigenfunctions The number of eigenfunctions to be used for the approximation
+   * \param numberOfPointsForApproximation The number of points used for the nystrom approximation
+   * \param cacheValues Cache result of eigenfunction computations. Greatly speeds up the computation.
    */
   SpatiallyVaryingKernel(const RepresenterType *               representer,
                          const MatrixValuedKernel<PointType> & kernel,

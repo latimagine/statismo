@@ -270,7 +270,7 @@ vtkStandardMeshRepresenter::Save(const H5::Group & fg) const
 statismo::VectorType
 vtkStandardMeshRepresenter::PointToVector(const PointType & pt) const
 {
-  return Eigen::Map<const VectorTypeDoublePrecision>(pt.data(), 3).cast<float>();
+  return Eigen::Map<const VectorTypeDoublePrecision>(pt.Data(), 3).cast<float>();
 }
 
 statismo::VectorType
@@ -308,7 +308,7 @@ vtkStandardMeshRepresenter::SampleVectorToSample(const VectorType & sample) cons
     {
       pt[d] = sample(MapPointIdToInternalIdx(i, d));
     }
-    points->SetPoint(i, pt.data());
+    points->SetPoint(i, pt.Data());
   }
   return pd;
 }
@@ -350,7 +350,7 @@ unsigned
 vtkStandardMeshRepresenter::GetPointIdForPoint(const PointType & pt) const
 {
   assert(m_reference);
-  return this->m_reference->FindPoint(const_cast<double *>(pt.data()));
+  return this->m_reference->FindPoint(const_cast<double *>(pt.Data()));
 }
 
 unsigned

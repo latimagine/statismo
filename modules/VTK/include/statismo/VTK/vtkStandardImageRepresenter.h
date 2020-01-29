@@ -75,13 +75,13 @@ struct RepresenterTraits<vtkStructuredPoints>
  *
  * \see Representer
  */
-template <class TScalar, unsigned PixelDimensions>
+template <class TScalar, unsigned PIXEL_DIMENSIONS>
 class vtkStandardImageRepresenter
-  : public RepresenterBase<vtkStructuredPoints, vtkStandardImageRepresenter<TScalar, PixelDimensions>>
+  : public RepresenterBase<vtkStructuredPoints, vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>>
 {
 public:
   using RepresenterBaseType =
-    RepresenterBase<vtkStructuredPoints, vtkStandardImageRepresenter<TScalar, PixelDimensions>>;
+    RepresenterBase<vtkStructuredPoints, vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>>;
   friend RepresenterBaseType;
   friend typename RepresenterBaseType::ObjectFactoryType;
 
@@ -125,7 +125,7 @@ public:
   statismo::VectorType
   SampleToSampleVector(DatasetConstPointerType sample) const override;
   DatasetPointerType
-  SampleVectorToSample(const statismo::VectorType & sample) const override;
+  SampleVectorToSample(const statismo::VectorType & sampleVector) const override;
 
 
   ValueType
@@ -133,7 +133,7 @@ public:
   statismo::VectorType
   PointSampleToPointSampleVector(const ValueType & v) const override;
   ValueType
-  PointSampleVectorToPointSample(const statismo::VectorType & samplePoint) const override;
+  PointSampleVectorToPointSample(const statismo::VectorType & pointSample) const override;
 
   unsigned
   GetPointIdForPoint(const PointType & pt) const override;
@@ -148,7 +148,7 @@ private:
   static unsigned
   GetDimensionsImpl()
   {
-    return PixelDimensions;
+    return PIXEL_DIMENSIONS;
   }
 
   static std::string

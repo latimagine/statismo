@@ -68,11 +68,9 @@ public:
   /**
    * Build a new model from the given model, which retains only the leading principal components
    *
-   * \param model A statistical model.
-   * \param numberOfPrincipalComponents,
+   * \param model Statistical model
+   * \param numberOfPrincipalComponents The number of kept component
    * \return a new statistical model
-   *
-   * \warning The returned model needs to be explicitly deleted by the user of this method.
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModelWithLeadingComponents(const StatisticalModelType * model, unsigned numberOfPrincipalComponents) const;
@@ -82,7 +80,7 @@ public:
    * Build a new model from the given model, which retains only the specified variance
    *
    * \param model A statistical model.
-   * \param totalVariance, The fraction of the variance to be retained
+   * \param totalVariance The fraction of the variance to be retained
    * \return a new statistical model
    *
    * \warning The returned model needs to be explicitly deleted by the user of this method.

@@ -87,7 +87,7 @@ PosteriorModelBuilder<T>::TrivialPointValueWithCovarianceListWithUniformNoise(co
 {
   const MatrixType pointCovarianceMatrix =
     pointValueNoiseVariance *
-    MatrixType::Identity(RepresenterType::RealPointDimension, RepresenterType::RealPointDimension);
+    MatrixType::Identity(RepresenterType::sk_realPointDimension, RepresenterType::sk_realPointDimension);
   PointValueWithCovarianceListType pvcList;
 
   for (auto item : pointValues)
@@ -130,7 +130,7 @@ PosteriorModelBuilder<T>::BuildNewModelFromModel(const StatisticalModelType *   
 
   // this method only makes sense for a proper PPCA model (e.g. the noise term is properly defined)
   // if the model has zero noise, we assume a small amount of noise
-  double rho2 = std::max((double)inputModel->GetNoiseVariance(), (double)Superclass::TOLERANCE);
+  double rho2 = std::max((double)inputModel->GetNoiseVariance(), (double)Superclass::sk_tolerance);
   auto   dim = representer->GetDimensions();
 
   // build the part matrices considering only the points that are fixed

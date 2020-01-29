@@ -53,7 +53,7 @@ namespace
 {
 
 void
-_SaveSample(const vtkPolyData * pd, const std::string & resdir, const std::string & basename)
+SaveSample(const vtkPolyData * pd, const std::string & resdir, const std::string & basename)
 {
   auto filename = resdir + std::string("/") + basename;
 
@@ -97,17 +97,17 @@ main(int argc, char ** argv)
 
     // get the model mean
     auto mean = model->DrawMean();
-    _SaveSample(mean, resultdir, "mean.vtk");
+    SaveSample(mean, resultdir, "mean.vtk");
 
     // draw a random sample
     auto randomSample = model->DrawSample();
-    _SaveSample(randomSample, resultdir, "randomsample.vtk");
+    SaveSample(randomSample, resultdir, "randomsample.vtk");
 
     // draw a sample with known pca coefficients (3 stddev in direction of the 1st PC)
     VectorType coefficients = VectorType::Zero(model->GetNumberOfPrincipalComponents());
     coefficients(0) = 3;
     auto samplePC1 = model->DrawSample(coefficients);
-    _SaveSample(samplePC1, resultdir, "samplePC1.vtk");
+    SaveSample(samplePC1, resultdir, "samplePC1.vtk");
 
     std::cout << "saved samples to " << resultdir << std::endl;
   }

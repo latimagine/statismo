@@ -57,7 +57,7 @@ BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: true
 ## The following line allows larger lines in non-documentation code
 ColumnLimit:     120
-CommentPragmas:  '^ IWYU pragma:'
+CommentPragmas:  ' NOLINT'
 CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 2

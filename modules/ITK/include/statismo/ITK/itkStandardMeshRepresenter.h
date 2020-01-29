@@ -61,8 +61,6 @@ struct RepresenterTraits<::itk::Mesh<T, N>>
   using DatasetConstPointerType = typename MeshType::Pointer;
   using PointType = typename MeshType::PointType;
   using ValueType = typename MeshType::PointType;
-
-  static constexpr unsigned Dimension = N;
 };
 
 } // namespace statismo
@@ -75,9 +73,9 @@ namespace itk
  * \brief A representer for scalar valued itk Meshs
  * \sa Representer
  */
-template <class TPixel, unsigned MeshDimension>
+template <typename Pixel, unsigned MESH_DIMENSION>
 class StandardMeshRepresenter
-  : public statismo::RepresenterBase<itk::Mesh<TPixel, MeshDimension>, StandardMeshRepresenter<TPixel, MeshDimension>>
+  : public statismo::RepresenterBase<itk::Mesh<Pixel, MESH_DIMENSION>, StandardMeshRepresenter<Pixel, MESH_DIMENSION>>
   , public Object
 {
 public:
@@ -87,11 +85,11 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   using Base =
-    statismo::RepresenterBase<itk::Mesh<TPixel, MeshDimension>, StandardMeshRepresenter<TPixel, MeshDimension>>;
+    statismo::RepresenterBase<itk::Mesh<Pixel, MESH_DIMENSION>, StandardMeshRepresenter<Pixel, MESH_DIMENSION>>;
   friend Base;
   friend typename Base::ObjectFactoryType;
 
-  using MeshType = itk::Mesh<TPixel, MeshDimension>;
+  using MeshType = itk::Mesh<Pixel, MESH_DIMENSION>;
   using RepresenterBaseType = typename statismo::Representer<MeshType>;
   using DomainType = typename RepresenterBaseType::DomainType;
   using PointType = typename RepresenterBaseType::PointType;
@@ -114,57 +112,57 @@ public:
   itkTypeMacro(StandardMeshRepresenter, Object);
 
   StandardMeshRepresenter();
-  virtual ~StandardMeshRepresenter();
+  virtual ~StandardMeshRepresenter(); // NOLINT
 
-  virtual void
+  void
   Delete() override
   {
     this->UnRegister();
   }
 
-  virtual void DeleteDataset(DatasetPointerType) const override{
+  void DeleteDataset(DatasetPointerType) const override{
     // no op
   };
-  virtual DatasetPointerType
+  DatasetPointerType
   CloneDataset(DatasetConstPointerType mesh) const override;
 
-  virtual void
+  void
   Load(const H5::Group & fg) override;
 
-  virtual void
+  void
   Save(const H5::Group & fg) const override;
 
-  virtual const DomainType &
+  const DomainType &
   GetDomain() const override
   {
     return m_domain;
   }
 
-  virtual void
-  SetReference(DatasetPointerType ds);
+  void
+  SetReference(DatasetPointerType reference);
 
-  virtual DatasetConstPointerType
+  DatasetConstPointerType
   GetReference() const override
   {
     return m_reference;
   }
 
-  virtual statismo::VectorType
+  statismo::VectorType
   PointToVector(const PointType & pt) const override;
 
-  virtual statismo::VectorType
+  statismo::VectorType
   SampleToSampleVector(DatasetConstPointerType sample) const override;
 
-  virtual DatasetPointerType
+  DatasetPointerType
   SampleVectorToSample(const statismo::VectorType & sample) const override;
 
-  virtual ValueType
+  ValueType
   PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
 
-  virtual ValueType
+  ValueType
   PointSampleVectorToPointSample(const statismo::VectorType & pointSample) const override;
 
-  virtual statismo::VectorType
+  statismo::VectorType
   PointSampleToPointSampleVector(const ValueType & v) const override;
 
   virtual unsigned
@@ -172,14 +170,14 @@ public:
 
   /// return the point id associated with the given point
   /// \warning This works currently only for points that are defined on the reference
-  virtual unsigned
-  GetPointIdForPoint(const PointType & point) const override;
+  unsigned
+  GetPointIdForPoint(const PointType & pt) const override;
 
 private:
   static unsigned
   GetDimensionsImpl()
   {
-    return MeshDimension;
+    return MESH_DIMENSION;
   }
   static std::string
   GetNameImpl()

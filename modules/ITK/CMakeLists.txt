@@ -1,4 +1,12 @@
 # Create target
+
+set(_target_include_dir_suffix /statismo/ITK)
+set(_target_include_dir include/${_target_include_dir_suffix})
+
+file(GLOB _target_headers
+  ${_target_include_dir}/*.h ${_target_include_dir}/*.hxx ${_target_include_dir}/*.hpp ${_target_include_dir}/*.txx ${_target_include_dir}/*.tpp
+)
+
 add_library(statismo_ITK INTERFACE)
 target_include_directories(
     statismo_ITK INTERFACE
@@ -7,9 +15,6 @@ target_include_directories(
 )
 target_link_libraries(statismo_ITK INTERFACE statismo_core ${ITK_LIBRARIES})
 target_compile_features(statismo_ITK INTERFACE cxx_std_17)
-
-set(TARGET_INCLUDE_DIR_SUFFIX /statismo/ITK)
-set(TARGET_INCLUDE_DIR include/${TARGET_INCLUDE_DIR_SUFFIX})
 
 # Test
 
@@ -32,14 +37,11 @@ endif()
 # Wrapping
 
 if(${BUILD_WRAPPING})
-  add_subdirectory(wrapping)
+  #add_subdirectory(wrapping)
 endif()
 
 # Install
 
-file(GLOB TARGET_HEADERS
-  ${TARGET_INCLUDE_DIR}/*.h ${TARGET_INCLUDE_DIR}/*.hxx ${TARGET_INCLUDE_DIR}/*.hpp ${TARGET_INCLUDE_DIR}/*.txx ${TARGET_INCLUDE_DIR}/*.tpp
-)
-install(FILES ${TARGET_HEADERS}
-  DESTINATION ${INSTALL_INCLUDE_DIR}/${TARGET_INCLUDE_DIR_SUFFIX}
+install(FILES ${_target_headers}
+  DESTINATION ${INSTALL_INCLUDE_DIR}/${_target_include_dir_suffix}
 )

@@ -1,4 +1,12 @@
 # Create target
+
+set(_target_include_dir_suffix /statismo/VTK)
+set(_target_include_dir include/${_target_include_dir_suffix})
+
+file(GLOB _target_headers
+  ${_target_include_dir}/*.h ${_target_include_dir}/*.hxx ${_target_include_dir}/*.hpp ${_target_include_dir}/*.txx ${_target_include_dir}/*.tpp
+)
+
 add_library(statismo_VTK ${statismo_LIB_TYPE}
   src/vtkStandardMeshRepresenter.cxx
   src/vtkUnstructuredGridRepresenter.cxx
@@ -16,17 +24,11 @@ set_target_properties(statismo_VTK PROPERTIES
   SOVERSION "${statismo_LIB_SOVERSION}"
 )
 if(${BUILD_WITH_TIDY})
-   # Const-cast is used because, in VTK, few routines are const even if
-   # the specific invariant of the class are not modified 
-   set(WITH_CLANG_TIDY "${WITH_CLANG_TIDY},-cppcoreguidelines-pro-type-const-cast")
    set_target_properties(
     statismo_VTK PROPERTIES
    CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
   )
 endif()
-
-set(TARGET_INCLUDE_DIR_SUFFIX /statismo/VTK)
-set(TARGET_INCLUDE_DIR include/${TARGET_INCLUDE_DIR_SUFFIX})
 
 # Test
 
@@ -43,7 +45,7 @@ endif()
 # Wrapping
 
 if(${BUILD_WRAPPING})
-  add_subdirectory(wrapping)
+  #add_subdirectory(wrapping)
 endif()
 
 # Install
@@ -55,9 +57,6 @@ install(TARGETS statismo_VTK
   ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
 )
 
-file(GLOB TARGET_HEADERS
-  ${TARGET_INCLUDE_DIR}/*.h ${TARGET_INCLUDE_DIR}/*.hxx ${TARGET_INCLUDE_DIR}/*.hpp ${TARGET_INCLUDE_DIR}/*.txx ${TARGET_INCLUDE_DIR}/*.tpp
-)
-install(FILES ${TARGET_HEADERS}
-  DESTINATION ${INSTALL_INCLUDE_DIR}/${TARGET_INCLUDE_DIR_SUFFIX}
+install(FILES ${_target_headers}
+  DESTINATION ${INSTALL_INCLUDE_DIR}/${_target_include_dir_suffix}
 )

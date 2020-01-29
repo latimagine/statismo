@@ -46,29 +46,29 @@ namespace details
 // general compile-time validator (ref: C++ template the complete guide)
 template <typename F, typename... Args, typename = decltype(std::declval<F>()(std::declval<Args &&>()...))>
 auto
-is_valid_impl(void *) -> std::true_type;
+IsValidImpl(void *) -> std::true_type;
 
 template <typename F, typename... Args>
 auto
-is_valid_impl(...) -> std::false_type;
+IsValidImpl(...) -> std::false_type;
 } // namespace details
 
-inline constexpr auto is_valid = [](auto f) {
-  using input_type = decltype(f);
-  return [](auto &&... args) { return decltype(details::is_valid_impl<input_type, decltype(args) &&...>(nullptr)){}; };
+inline constexpr auto gk_isValid = [](auto f) {
+  using InputType = decltype(f);
+  return [](auto &&... args) { return decltype(details::IsValidImpl<InputType, decltype(args) &&...>(nullptr)){}; };
 };
 
 template <typename T>
-struct type_t
+struct TypeT
 {
-  using type = T;
+  using Type = T;
 };
 
 template <typename T>
-constexpr auto type = type_t<T>{};
+constexpr auto gk_type = TypeT<T>{};
 
 template <typename T>
-T value_t(type_t<T>);
+T ValueT(TypeT<T>);
 
 } // namespace statismo
 

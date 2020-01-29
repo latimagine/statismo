@@ -137,8 +137,8 @@ class Test(unittest.TestCase):
     def testCheckPosteriorModelMean(self):
         # if we fix many points to correspond to one of the samples, and build a
         # partiallyfixed model, its mean should correspond to the sample
-        nPointsFixed = 100
-        nPointsTest = 1000
+        kNPointsFixed = 100
+        kNPointsTest = 1000
 
         sample = self.dataManager.GetData()[0].GetSample()
 
@@ -147,7 +147,7 @@ class Test(unittest.TestCase):
         reference = self.representer.GetReference()
         domainPoints = self.representer.GetDomain().GetDomainPoints()
 
-        for pt_id in xrange(0, len(domainPoints), len(domainPoints) / nPointsFixed):
+        for pt_id in xrange(0, len(domainPoints), len(domainPoints) / kNPointsFixed):
             fixed_pt = domainPoints[pt_id]
             value = statismo.vtkPoint(*getPDPointWithId(sample, pt_id))
             pointValue = statismo.PointValuePair_vtkPD(fixed_pt, value)
@@ -160,7 +160,7 @@ class Test(unittest.TestCase):
         partial_mean = pf_model.DrawMean()
 
         # now the sample that we used to fix the point should be similar to the mean. We test it by
-        for pt_id in xrange(0, sample.GetNumberOfPoints(), sample.GetNumberOfPoints() / nPointsTest):
+        for pt_id in xrange(0, sample.GetNumberOfPoints(), sample.GetNumberOfPoints() / kNPointsTest):
             mean_pt = getPDPointWithId(partial_mean, pt_id)
             sample_pt = getPDPointWithId(sample, pt_id)
             self.assertAlmostEqual(mean_pt[0], sample_pt[0], 0)
@@ -237,8 +237,8 @@ class Test(unittest.TestCase):
     def testCheckPosteriorModelMean(self):
         # if we fix many points to correspond to one of the samples, and build a
         # Posterior model, its mean should correspond to the sample
-        nPointsFixed = 100
-        nPointsTest = 1000
+        kNPointsFixed = 100
+        kNPointsTest = 1000
 
         sample = self.dataManager.GetData()[0].GetSample()
 
@@ -247,7 +247,7 @@ class Test(unittest.TestCase):
         reference = self.representer.GetReference()
         domainPoints = self.representer.GetDomain().GetDomainPoints()
 
-        for pt_id in xrange(0, len(domainPoints), len(domainPoints) / nPointsFixed):
+        for pt_id in xrange(0, len(domainPoints), len(domainPoints) / kNPointsFixed):
             fixed_pt = domainPoints[pt_id]
             value = statismo.vtkPoint(*getPDPointWithId(sample, pt_id))
             pointValue = statismo.PointValuePair_vtkPD(fixed_pt, value)
@@ -260,7 +260,7 @@ class Test(unittest.TestCase):
         partial_mean = pf_model.DrawMean()
 
         # now the sample that we used to fix the point should be similar to the mean. We test it by
-        for pt_id in xrange(0, sample.GetNumberOfPoints(), sample.GetNumberOfPoints() / nPointsTest):
+        for pt_id in xrange(0, sample.GetNumberOfPoints(), sample.GetNumberOfPoints() / kNPointsTest):
             mean_pt = getPDPointWithId(partial_mean, pt_id)
             sample_pt = getPDPointWithId(sample, pt_id)
             self.assertAlmostEqual(mean_pt[0], sample_pt[0], 0)
@@ -339,12 +339,12 @@ class Test(unittest.TestCase):
 #     def testCheckPosteriorModelMean(self):
 #         # if we fix many points to correspond to one of the samples, and build a
 #         # Posterior model, its mean should correspond to the sample
-#         nPointsFixed = 100
-#         nPointsTest = 1000
+#         kNPointsFixed = 100
+#         kNPointsTest = 1000
 #
 #         sample = self.dataManager.GetData()[0].GetSample()
 #
-#         pvcList = statismo.PointValueWithCovarianceList_vtkPD(nPointsFixed)
+#         pvcList = statismo.PointValueWithCovarianceList_vtkPD(kNPointsFixed)
 #         matrixMatrixList = statismo.MatrixMatrixPair
 #
 #         reference = self.representer.GetReference()
@@ -353,7 +353,7 @@ class Test(unittest.TestCase):
 #         pointCovarianceMatrix = 0.1 * identity(3)
 #
 #         i = 0
-#         for pt_id in xrange(0, len(domainPoints), len(domainPoints) / nPointsFixed):
+#         for pt_id in xrange(0, len(domainPoints), len(domainPoints) / kNPointsFixed):
 #             fixed_pt = domainPoints[pt_id]
 #             value = statismo.vtkPoint(*getPDPointWithId(sample, pt_id))
 #             pointValue = statismo.PointValuePair_vtkPD(fixed_pt, value)
@@ -374,7 +374,7 @@ class Test(unittest.TestCase):
 #         partial_mean = pf_model.DrawMean()
 #
 #         # now the sample that we used to fix the point should be similar to the mean. We test it by
-#         for pt_id in xrange(0, sample.GetNumberOfPoints(), sample.GetNumberOfPoints() / nPointsTest):
+#         for pt_id in xrange(0, sample.GetNumberOfPoints(), sample.GetNumberOfPoints() / kNPointsTest):
 #             mean_pt = getPDPointWithId(partial_mean, pt_id)
 #             sample_pt = getPDPointWithId(sample, pt_id)
 #             self.assertAlmostEqual(mean_pt[0], sample_pt[0], 0)

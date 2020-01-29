@@ -58,7 +58,7 @@ namespace itk
  * \brief ITK Wrapper for statismo::DataManagerWithSurrogates class.
  * \see statismo::DataManagerWithSurrogates for detailed documentation.
  */
-template <class Representer>
+template <typename Representer>
 class DataManagerWithSurrogates
   : public statismo::DataManager<Representer>
   , public statismo::ImplWrapper<statismo::DataManagerWithSurrogates<Representer>>

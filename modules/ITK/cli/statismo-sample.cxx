@@ -55,12 +55,12 @@ using namespace std;
 namespace
 {
 
-const unsigned _Dimensionality3D = 3;
-const unsigned _Dimensionality2D = 2;
+constexpr unsigned gk_dimensionality3D = 3;
+constexpr unsigned gk_dimensionality2D = 2;
 
 using StringListType = vector<string>;
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   string         strInputFileName;
   string         strOutputFileName;
@@ -72,7 +72,7 @@ struct _ProgramOptions
 };
 
 bool
-_IsOptionsConflictPresent(_ProgramOptions & opt)
+IsOptionsConflictPresent(ProgramOptions & opt)
 {
   statismo::utils::ToLower(opt.strType);
 
@@ -84,7 +84,7 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
 
 template <class VectorType>
 void
-_PopulateVectorWithParameters(const StringListType & paramsIn, VectorType & paramsOut)
+PopulateVectorWithParameters(const StringListType & paramsIn, VectorType & paramsOut)
 {
   set<unsigned> indices;
   for (const auto & str : paramsIn)
@@ -137,7 +137,7 @@ _PopulateVectorWithParameters(const StringListType & paramsIn, VectorType & para
 
 template <class DataType, class RepresenterType, class DataWriterType>
 void
-_DrawSampleFromModel(const _ProgramOptions & opt)
+DrawSampleFromModel(const ProgramOptions & opt)
 {
   using StatisticalModelType = itk::StatisticalModel<DataType>;
 
@@ -155,7 +155,7 @@ _DrawSampleFromModel(const _ProgramOptions & opt)
     typename StatisticalModelType::VectorType params(paramsCount);
     params.fill(0);
 
-    _PopulateVectorWithParameters<typename StatisticalModelType::VectorType>(opt.vParameters, params);
+    PopulateVectorWithParameters<typename StatisticalModelType::VectorType>(opt.vParameters, params);
     output = model->DrawSample(params);
   }
   else if (opt.bSampleReference)
@@ -179,7 +179,7 @@ int
 main(int argc, char ** argv)
 {
 
-  _ProgramOptions                                                  poParameters;
+  ProgramOptions                                                   poParameters;
   po::program_options<std::string, StringListType, bool, unsigned> parser{ argv[0], "Program help:" };
 
   parser
@@ -217,7 +217,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -228,28 +228,28 @@ main(int argc, char ** argv)
   {
     if (poParameters.strType == "shape")
     {
-      using DataType = itk::Mesh<float, _Dimensionality3D>;
-      using RepresenterType = itk::StandardMeshRepresenter<float, _Dimensionality3D>;
+      using DataType = itk::Mesh<float, gk_dimensionality3D>;
+      using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensionality3D>;
       using DataWriterType = itk::MeshFileWriter<DataType>;
-      _DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
+      DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
     }
     else
     {
       if (poParameters.uNumberOfDimensions == 2)
       {
-        using VectorPixelType = itk::Vector<float, _Dimensionality2D>;
-        using DataType = itk::Image<VectorPixelType, _Dimensionality2D>;
-        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, _Dimensionality2D>;
+        using VectorPixelType = itk::Vector<float, gk_dimensionality2D>;
+        using DataType = itk::Image<VectorPixelType, gk_dimensionality2D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, gk_dimensionality2D>;
         using DataWriterType = itk::ImageFileWriter<DataType>;
-        _DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
+        DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
       }
       else
       {
-        using VectorPixelType = itk::Vector<float, _Dimensionality3D>;
-        using DataType = itk::Image<VectorPixelType, _Dimensionality3D>;
-        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, _Dimensionality3D>;
+        using VectorPixelType = itk::Vector<float, gk_dimensionality3D>;
+        using DataType = itk::Image<VectorPixelType, gk_dimensionality3D>;
+        using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, gk_dimensionality3D>;
         using DataWriterType = itk::ImageFileWriter<DataType>;
-        _DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
+        DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
       }
     }
   }

@@ -59,7 +59,7 @@ namespace itk
  * \brief ITK Wrapper for statismo::ReducedVarianceModelBuilder class.
  * \see statismo::ReducedVariance for detailed documentation.
  */
-template <class Representer>
+template <typename Representer>
 class ReducedVarianceModelBuilder
   : public Object
   , public statismo::ImplWrapper<statismo::ReducedVarianceModelBuilder<Representer>, statismo::SafeInitializer>
@@ -74,10 +74,6 @@ public:
 
   itkNewMacro(Self);
   itkTypeMacro(ReducedVarianceModelBuilder, Object);
-
-  ReducedVarianceModelBuilder() = default;
-
-  virtual ~ReducedVarianceModelBuilder() = default;
 
   typename StatisticalModel<Representer>::Pointer
   BuildNewModelWithLeadingComponents(const StatisticalModel<Representer> * model, unsigned numberOfPrincipalComponents)

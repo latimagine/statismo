@@ -49,7 +49,7 @@ namespace statismo
 {
 
 // numerical value
-static constexpr double PI = 3.14159265358979323846;
+static constexpr double gk_pi = 3.14159265358979323846;
 
 // the type that is used for all vector and matrices throughout the library.
 using ScalarType = float;
@@ -64,17 +64,17 @@ using RowVectorType = GenericEigenTraits<ScalarType>::RowVectorType;
 
 // type definitions used in the standard file format.
 // Note that these are the same as used by VTK
-static constexpr unsigned Void = 0; // not capitalized, as windows defines: #define VOID void, which causes trouble
-static constexpr unsigned SIGNED_CHAR = 2;
-static constexpr unsigned UNSIGNED_CHAR = 3;
-static constexpr unsigned SIGNED_SHORT = 4;
-static constexpr unsigned UNSIGNED_SHORT = 5;
-static constexpr unsigned SIGNED_INT = 6;
-static constexpr unsigned UNSIGNED_INT = 7;
-static constexpr unsigned SIGNED_LONG = 8;
-static constexpr unsigned UNSIGNED_LONG = 9;
-static constexpr unsigned FLOAT = 10;
-static constexpr unsigned DOUBLE = 11;
+static constexpr unsigned gk_void = 0; // not capitalized, as windows defines: #define VOID void, which causes trouble
+static constexpr unsigned gk_signedChar = 2;
+static constexpr unsigned gk_unsignedChar = 3;
+static constexpr unsigned gk_signedShort = 4;
+static constexpr unsigned gk_unsignedShort = 5;
+static constexpr unsigned gk_signedInt = 6;
+static constexpr unsigned gk_unsignedInt = 7;
+static constexpr unsigned gk_signedLong = 8;
+static constexpr unsigned gk_unsignedLong = 9;
+static constexpr unsigned gk_float = 10;
+static constexpr unsigned gk_double = 11;
 
 template <class T>
 constexpr unsigned
@@ -84,61 +84,61 @@ template <>
 inline constexpr unsigned
 GetDataTypeId<signed char>()
 {
-  return SIGNED_CHAR;
+  return gk_signedChar;
 }
 template <>
 inline constexpr unsigned
 GetDataTypeId<unsigned char>()
 {
-  return UNSIGNED_CHAR;
+  return gk_unsignedChar;
 }
 template <>
 inline constexpr unsigned
-GetDataTypeId<signed short>()
+GetDataTypeId<short>() // NOLINT
 {
-  return SIGNED_SHORT;
+  return gk_signedShort;
 }
 template <>
 inline constexpr unsigned
-GetDataTypeId<unsigned short>()
+GetDataTypeId<unsigned short>() // NOLINT
 {
-  return UNSIGNED_SHORT;
+  return gk_unsignedShort;
 }
 template <>
 inline constexpr unsigned
 GetDataTypeId<signed int>()
 {
-  return SIGNED_INT;
+  return gk_signedInt;
 }
 template <>
 inline constexpr unsigned
 GetDataTypeId<unsigned int>()
 {
-  return UNSIGNED_INT;
+  return gk_unsignedInt;
 }
 template <>
 inline constexpr unsigned
-GetDataTypeId<signed long>()
+GetDataTypeId<long>() // NOLINT
 {
-  return SIGNED_LONG;
+  return gk_signedLong;
 }
 template <>
 inline constexpr unsigned
-GetDataTypeId<unsigned long>()
+GetDataTypeId<unsigned long>() // NOLINT
 {
-  return UNSIGNED_LONG;
+  return gk_unsignedLong;
 }
 template <>
 inline constexpr unsigned
 GetDataTypeId<float>()
 {
-  return FLOAT;
+  return gk_float;
 }
 template <>
 inline constexpr unsigned
 GetDataTypeId<double>()
 {
-  return DOUBLE;
+  return gk_double;
 }
 
 /**
@@ -206,7 +206,7 @@ private:
   bool     m_do{ true };
 
 public:
-  StackUnwinder(Callable && c)
+  explicit StackUnwinder(Callable && c)
     : m_c{ std::move(c) }
   {}
 
@@ -218,14 +218,21 @@ public:
     }
   }
 
+  StackUnwinder(const StackUnwinder &) = delete;
+  StackUnwinder(const StackUnwinder &&) = delete;
+  StackUnwinder &
+  operator=(const StackUnwinder &) = delete;
+  StackUnwinder &
+  operator=(StackUnwinder &&) = delete;
+
   void
-  set()
+  Set()
   {
     m_do = true;
   }
 
   void
-  unset()
+  Unset()
   {
     m_do = false;
   }

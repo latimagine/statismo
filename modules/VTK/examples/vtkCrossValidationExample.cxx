@@ -53,7 +53,7 @@ namespace
 {
 
 vtkSmartPointer<vtkPolyData>
-_LoadVTKPolyData(const std::string & filename)
+LoadVTKPolyData(const std::string & filename)
 {
   vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.c_str());
@@ -84,7 +84,7 @@ main(int argc, char ** argv)
 
   try
   {
-    auto reference = _LoadVTKPolyData(datadir + "/hand-0.vtk");
+    auto reference = LoadVTKPolyData(datadir + "/hand-0.vtk");
     auto representer = RepresenterType::SafeCreate(reference);
 
     // create a data manager and add a number of datasets for model building
@@ -98,7 +98,7 @@ main(int argc, char ** argv)
 
       // We provde the filename as a second argument.
       // It will be written as metadata, and allows us to more easily figure out what we did later.
-      dataManager->AddDataset(_LoadVTKPolyData(datasetFilename), datasetFilename);
+      dataManager->AddDataset(LoadVTKPolyData(datasetFilename), datasetFilename);
     }
 
     std::cout << "succesfully loaded " << dataManager->GetNumberOfSamples() << " samples " << std::endl;

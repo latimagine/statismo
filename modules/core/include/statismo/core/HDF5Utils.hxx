@@ -98,7 +98,7 @@ ReadMatrixOfType(const H5::H5Location & fg, const char * name, typename GenericE
 {
   H5::DataSet ds = fg.openDataSet(name);
   hsize_t     dims[2];
-  ds.getSpace().getSimpleExtentDims(dims, NULL);
+  ds.getSpace().getSimpleExtentDims(dims, nullptr);
 
   // simply read the whole dataspace
   matrix.resize(dims[0], dims[1]);
@@ -130,7 +130,7 @@ ReadVectorOfType(const H5::H5Location & fg, const char * name, typename GenericE
 {
   H5::DataSet ds = fg.openDataSet(name);
   hsize_t     dims[1];
-  ds.getSpace().getSimpleExtentDims(dims, NULL);
+  ds.getSpace().getSimpleExtentDims(dims, nullptr);
   vector.resize(dims[0], 1);
   ds.read(vector.data(), details::HDF5PredTypeTraits<T>::GetPredRef());
 }
@@ -153,7 +153,7 @@ ReadArray(const H5::H5Location & fg, const char * name, std::vector<T> & array)
 {
   H5::DataSet ds = fg.openDataSet(name);
   hsize_t     dims[1];
-  ds.getSpace().getSimpleExtentDims(dims, NULL);
+  ds.getSpace().getSimpleExtentDims(dims, nullptr);
   array.resize(dims[0]);
   ds.read(&array[0], details::HDF5PredTypeTraits<T>::GetPredRef());
 }

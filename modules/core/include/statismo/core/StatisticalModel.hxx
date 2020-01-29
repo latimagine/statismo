@@ -52,18 +52,18 @@ namespace statismo
 
 template <typename T>
 StatisticalModel<T>::StatisticalModel(const RepresenterType * representer,
-                                      const VectorType &      m,
+                                      VectorType              m,
                                       const MatrixType &      orthonormalPCABasis,
-                                      const VectorType &      pcaVariance,
+                                      VectorType              pcaVariance,
                                       double                  noiseVariance)
   : m_representer(representer->CloneSelf())
-  , m_mean(m)
-  , m_pcaVariance(pcaVariance)
+  , m_mean(std::move(m))
+  , m_pcaVariance(std::move(pcaVariance))
   , m_noiseVariance(noiseVariance)
   , m_cachedValuesValid(false)
 {
-  VectorType D = pcaVariance.array().sqrt();
-  m_pcaBasisMatrix = orthonormalPCABasis * DiagMatrixType(D);
+  VectorType d = m_pcaVariance.array().sqrt();
+  m_pcaBasisMatrix = orthonormalPCABasis * DiagMatrixType(d);
 }
 
 
@@ -90,9 +90,9 @@ StatisticalModel<T>::EvaluateSampleAtPoint(const DatasetConstPointerType sample,
 
 template <typename T>
 typename StatisticalModel<T>::ValueType
-StatisticalModel<T>::EvaluateSampleAtPoint(const DatasetConstPointerType sample, unsigned ptid) const
+StatisticalModel<T>::EvaluateSampleAtPoint(const DatasetConstPointerType sample, unsigned ptId) const
 {
-  return this->m_representer->PointSampleFromSample(sample, ptid);
+  return this->m_representer->PointSampleFromSample(sample, ptId);
 }
 
 
@@ -144,15 +144,15 @@ StatisticalModel<T>::DrawSample(const VectorType & coefficients, bool addNoise) 
 
 template <typename T>
 typename StatisticalModel<T>::DatasetPointerType
-StatisticalModel<T>::DrawPCABasisSample(const unsigned pcaComponent) const
+StatisticalModel<T>::DrawPCABasisSample(const unsigned pcaComponentCount) const
 {
-  if (pcaComponent >= this->GetNumberOfPrincipalComponents())
+  if (pcaComponentCount >= this->GetNumberOfPrincipalComponents())
   {
-    throw StatisticalModelException("Wrong pcaComponent index provided to DrawPCABasisSample!");
+    throw StatisticalModelException("Wrong pcaComponentCount index provided to DrawPCABasisSample!");
   }
 
 
-  return m_representer->SampleVectorToSample(m_pcaBasisMatrix.col(pcaComponent));
+  return m_representer->SampleVectorToSample(m_pcaBasisMatrix.col(pcaComponentCount));
 }
 
 
@@ -249,7 +249,9 @@ StatisticalModel<T>::GetCovarianceAtPoint(unsigned ptId1, unsigned ptId2) const
       VectorType vj = m_pcaBasisMatrix.row(idxj);
       cov(i, j) = vi.dot(vj);
       if (i == j)
+      {
         cov(i, j) += m_noiseVariance;
+      }
     }
   }
   return cov;
@@ -259,17 +261,17 @@ template <typename T>
 MatrixType
 StatisticalModel<T>::GetCovarianceMatrix() const
 {
-  MatrixType M = m_pcaBasisMatrix * m_pcaBasisMatrix.transpose();
-  M.diagonal() += m_noiseVariance * VectorType::Ones(m_pcaBasisMatrix.rows());
-  return M;
+  MatrixType matM = m_pcaBasisMatrix * m_pcaBasisMatrix.transpose();
+  matM.diagonal() += m_noiseVariance * VectorType::Ones(m_pcaBasisMatrix.rows());
+  return matM;
 }
 
 
 template <typename T>
 VectorType
-StatisticalModel<T>::ComputeCoefficients(DatasetConstPointerType ds) const
+StatisticalModel<T>::ComputeCoefficients(DatasetConstPointerType dataset) const
 {
-  return ComputeCoefficientsForSampleVector(m_representer->SampleToSampleVector(ds));
+  return ComputeCoefficientsForSampleVector(m_representer->SampleToSampleVector(dataset));
 }
 
 template <typename T>
@@ -279,9 +281,9 @@ StatisticalModel<T>::ComputeCoefficientsForSampleVector(const VectorType & sampl
 
   CheckAndUpdateCachedParameters();
 
-  const MatrixType & WT = m_pcaBasisMatrix.transpose();
+  const MatrixType & matWT = m_pcaBasisMatrix.transpose();
 
-  VectorType coeffs = m_MInverseMatrix * (WT * (sample - m_mean));
+  VectorType coeffs = m_matMInverse * (matWT * (sample - m_mean));
   return coeffs;
 }
 
@@ -309,10 +311,10 @@ StatisticalModel<T>::ComputeCoefficientsForPointIDValues(const PointIdValueListT
 
   unsigned dim = m_representer->GetDimensions();
 
-  double noiseVariance = std::max(pointValueNoiseVariance, (double)m_noiseVariance);
+  double noiseVariance = std::max(pointValueNoiseVariance, static_cast<double>(m_noiseVariance));
 
   // build the part matrices with , considering only the points that are fixed
-  MatrixType PCABasisPart(pointIdValueList.size() * dim, this->GetNumberOfPrincipalComponents());
+  MatrixType pcaBasisPart(pointIdValueList.size() * dim, this->GetNumberOfPrincipalComponents());
   VectorType muPart(pointIdValueList.size() * dim);
   VectorType sample(pointIdValueList.size() * dim);
 
@@ -320,19 +322,19 @@ StatisticalModel<T>::ComputeCoefficientsForPointIDValues(const PointIdValueListT
   for (const auto & item : pointIdValueList)
   {
     VectorType val = this->m_representer->PointSampleToPointSampleVector(item.second);
-    unsigned   pt_id = item.first;
+    unsigned   ptId = item.first;
     for (unsigned d = 0; d < dim; d++)
     {
-      PCABasisPart.row(i * dim + d) = this->GetPCABasisMatrix().row(m_representer->MapPointIdToInternalIdx(pt_id, d));
-      muPart[i * dim + d] = this->GetMeanVector()[m_representer->MapPointIdToInternalIdx(pt_id, d)];
+      pcaBasisPart.row(i * dim + d) = this->GetPCABasisMatrix().row(m_representer->MapPointIdToInternalIdx(ptId, d));
+      muPart[i * dim + d] = this->GetMeanVector()[m_representer->MapPointIdToInternalIdx(ptId, d)];
       sample[i * dim + d] = val[d];
     }
     i++;
   }
 
-  MatrixType M = PCABasisPart.transpose() * PCABasisPart;
-  M.diagonal() += noiseVariance * VectorType::Ones(PCABasisPart.cols());
-  VectorType coeffs = M.inverse() * PCABasisPart.transpose() * (sample - muPart);
+  MatrixType matM = pcaBasisPart.transpose() * pcaBasisPart;
+  matM.diagonal() += noiseVariance * VectorType::Ones(pcaBasisPart.cols());
+  VectorType coeffs = matM.inverse() * pcaBasisPart.transpose() * (sample - muPart);
 
   return coeffs;
 }
@@ -347,7 +349,7 @@ StatisticalModel<T>::ComputeCoefficientsForPointValuesWithCovariance(
   // Posterior Shape Models,
   // Thomas Albrecht, Marcel Luethi, Thomas Gerig, Thomas Vetter
   //
-  const MatrixType & Q = m_pcaBasisMatrix;
+  const MatrixType & matQ = m_pcaBasisMatrix;
   const VectorType & mu = m_mean;
 
   unsigned dim = m_representer->GetDimensions();
@@ -355,43 +357,42 @@ StatisticalModel<T>::ComputeCoefficientsForPointValuesWithCovariance(
   // build the part matrices with , considering only the points that are fixed
   //
   unsigned   numPrincipalComponents = this->GetNumberOfPrincipalComponents();
-  MatrixType Q_g(pointValuesWithCovariance.size() * dim, numPrincipalComponents);
-  VectorType mu_g(pointValuesWithCovariance.size() * dim);
-  VectorType s_g(pointValuesWithCovariance.size() * dim);
+  MatrixType matQg(pointValuesWithCovariance.size() * dim, numPrincipalComponents);
+  VectorType mug(pointValuesWithCovariance.size() * dim);
+  VectorType sg(pointValuesWithCovariance.size() * dim);
 
-  MatrixType LQ_g(pointValuesWithCovariance.size() * dim, numPrincipalComponents);
+  MatrixType matLQg(pointValuesWithCovariance.size() * dim, numPrincipalComponents);
 
   unsigned i = 0;
   for (const auto & item : pointValuesWithCovariance)
   {
     VectorType val = m_representer->PointSampleToPointSampleVector(item.first.second);
-    unsigned   pt_id = m_representer->GetPointIdForPoint(item.first.first);
+    unsigned   ptId = m_representer->GetPointIdForPoint(item.first.first);
 
     // In the formulas, we actually need the precision matrix, which is the inverse of the covariance.
-    const MatrixType pointPrecisionMatrix = item.second.inverse();
+    const MatrixType kPointPrecisionMatrix = item.second.inverse();
 
     // Get the three rows pertaining to this point:
-    const MatrixType Qrows_for_pt_id = Q.block(pt_id * dim, 0, dim, numPrincipalComponents);
+    const MatrixType kQrowsForPtId = matQ.block(ptId * dim, 0, dim, numPrincipalComponents);
 
-    Q_g.block(i * dim, 0, dim, numPrincipalComponents) = Qrows_for_pt_id;
-    mu_g.block(i * dim, 0, dim, 1) = mu.block(pt_id * dim, 0, dim, 1);
-    s_g.block(i * dim, 0, dim, 1) = val;
+    matQg.block(i * dim, 0, dim, numPrincipalComponents) = kQrowsForPtId;
+    mug.block(i * dim, 0, dim, 1) = mu.block(ptId * dim, 0, dim, 1);
+    sg.block(i * dim, 0, dim, 1) = val;
 
-    LQ_g.block(i * dim, 0, dim, numPrincipalComponents) = pointPrecisionMatrix * Qrows_for_pt_id;
+    matLQg.block(i * dim, 0, dim, numPrincipalComponents) = kPointPrecisionMatrix * kQrowsForPtId;
     i++;
   }
 
-  VectorType D2 = m_pcaVariance.array();
+  VectorType         d2 = m_pcaVariance.array();
+  const MatrixType & matQgT = matQg.transpose();
 
-  const MatrixType & Q_gT = Q_g.transpose();
+  MatrixType matM = matQgT * matLQg;
+  matM.diagonal() += VectorType::Ones(matQg.cols());
 
-  MatrixType M = Q_gT * LQ_g;
-  M.diagonal() += VectorType::Ones(Q_g.cols());
-
-  MatrixTypeDoublePrecision Minv = M.cast<double>().inverse();
+  MatrixTypeDoublePrecision matMinv = matM.cast<double>().inverse();
 
   // the MAP solution for the latent variables (coefficients)
-  VectorType coeffs = Minv.cast<ScalarType>() * LQ_g.transpose() * (s_g - mu_g);
+  VectorType coeffs = matMinv.cast<ScalarType>() * matLQg.transpose() * (sg - mug);
 
   return coeffs;
 }
@@ -399,41 +400,41 @@ StatisticalModel<T>::ComputeCoefficientsForPointValuesWithCovariance(
 
 template <typename T>
 double
-StatisticalModel<T>::ComputeLogProbability(DatasetConstPointerType ds) const
+StatisticalModel<T>::ComputeLogProbability(DatasetConstPointerType dataset) const
 {
-  VectorType alpha = ComputeCoefficients(ds);
+  VectorType alpha = ComputeCoefficients(dataset);
   return ComputeLogProbabilityOfCoefficients(alpha);
 }
 
 template <typename T>
 double
-StatisticalModel<T>::ComputeProbability(DatasetConstPointerType ds) const
+StatisticalModel<T>::ComputeProbability(DatasetConstPointerType dataset) const
 {
-  VectorType alpha = ComputeCoefficients(ds);
+  VectorType alpha = ComputeCoefficients(dataset);
   return ComputeProbabilityOfCoefficients(alpha);
 }
 
 
 template <typename T>
 double
-StatisticalModel<T>::ComputeLogProbabilityOfCoefficients(const VectorType & coefficents) const
+StatisticalModel<T>::ComputeLogProbabilityOfCoefficients(const VectorType & coefficients) const
 {
-  return log(pow(2 * PI, -0.5 * this->GetNumberOfPrincipalComponents())) - 0.5 * coefficents.squaredNorm();
+  return log(pow(2 * gk_pi, -0.5 * this->GetNumberOfPrincipalComponents())) - 0.5 * coefficients.squaredNorm();
 }
 
 template <typename T>
 double
 StatisticalModel<T>::ComputeProbabilityOfCoefficients(const VectorType & coefficients) const
 {
-  return pow(2 * PI, -0.5 * this->GetNumberOfPrincipalComponents()) * exp(-0.5 * coefficients.squaredNorm());
+  return pow(2 * gk_pi, -0.5 * this->GetNumberOfPrincipalComponents()) * exp(-0.5 * coefficients.squaredNorm());
 }
 
 
 template <typename T>
 double
-StatisticalModel<T>::ComputeMahalanobisDistance(DatasetConstPointerType ds) const
+StatisticalModel<T>::ComputeMahalanobisDistance(DatasetConstPointerType dataset) const
 {
-  VectorType alpha = ComputeCoefficients(ds);
+  VectorType alpha = ComputeCoefficients(dataset);
   return std::sqrt(alpha.squaredNorm());
 }
 
@@ -476,8 +477,8 @@ StatisticalModel<T>::GetOrthonormalPCABasisMatrix() const
   // (c.f. the method SetParameters)
 
   assert(m_pcaVariance.maxCoeff() > 1e-8);
-  VectorType D = m_pcaVariance.array().sqrt();
-  return m_pcaBasisMatrix * DiagMatrixType(D).inverse();
+  VectorType d = m_pcaVariance.array().sqrt();
+  return m_pcaBasisMatrix * DiagMatrixType(d).inverse();
 }
 
 
@@ -519,18 +520,18 @@ MatrixType
 StatisticalModel<T>::GetJacobian(unsigned ptId) const
 {
 
-  unsigned   Dimensions = m_representer->GetDimensions();
-  MatrixType J = MatrixType::Zero(Dimensions, GetNumberOfPrincipalComponents());
+  unsigned   dims = m_representer->GetDimensions();
+  MatrixType matJ = MatrixType::Zero(dims, GetNumberOfPrincipalComponents());
 
-  for (unsigned i = 0; i < Dimensions; i++)
+  for (unsigned i = 0; i < dims; i++)
   {
     unsigned idx = m_representer->MapPointIdToInternalIdx(ptId, i);
     for (unsigned j = 0; j < GetNumberOfPrincipalComponents(); j++)
     {
-      J(i, j) += m_pcaBasisMatrix(idx, j);
+      matJ(i, j) += m_pcaBasisMatrix(idx, j);
     }
   }
-  return J;
+  return matJ;
 }
 
 template <typename T>
@@ -538,13 +539,13 @@ void
 StatisticalModel<T>::CheckAndUpdateCachedParameters() const
 {
 
-  if (m_cachedValuesValid == false)
+  if (!m_cachedValuesValid)
   {
-    VectorType I = VectorType::Ones(m_pcaBasisMatrix.cols());
-    MatrixType Mmatrix = m_pcaBasisMatrix.transpose() * m_pcaBasisMatrix;
-    Mmatrix.diagonal() += m_noiseVariance * I;
+    VectorType vI = VectorType::Ones(m_pcaBasisMatrix.cols());
+    MatrixType matM = m_pcaBasisMatrix.transpose() * m_pcaBasisMatrix;
+    matM.diagonal() += m_noiseVariance * vI;
 
-    m_MInverseMatrix = Mmatrix.inverse();
+    m_matMInverse = matM.inverse();
   }
   m_cachedValuesValid = true;
 }

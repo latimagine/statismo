@@ -87,7 +87,7 @@ endforeach()
 # ----------------------------------------
 
 # Formating
-set(CLANG_FORMAT_BIN_NAME clang-format-6.0)
+set(CLANG_FORMAT_BIN_NAME clang-format-6.0 clang-format)
 set(CLANG_FORMAT_EXCLUDE_PATTERNS  "build*" ${PROJECT_BINARY_DIR})
 find_package(ClangFormat)
 
@@ -117,12 +117,8 @@ if (BUILD_WITH_TIDY)
     message(FATAL_ERROR "clang-tidy not found")
   else()
     message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
-    set(WITH_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=-*,cert-*,bugprone-*,cppcoreguidelines-*,google-*,hicpp-*,misc-*,\
-    modernize-*,performance-*,readability-*,-google-readability-namespace-comments,-google-runtime-references,-cert-dcl58-cpp,\
-    -hicpp-special-member-functions,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,\
-    -cppcoreguidelines-owning-memory,-readability-implicit-bool-conversion,-hicpp-no-array-decay,\
-    -cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-build-using-namespace,\
-    -cppcoreguidelines-pro-bounds-constant-array-index,-clang-diagnostic-unused-lambda-capture")
+    set(WITH_CLANG_TIDY "${CLANG_TIDY_EXE}")
+    set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
   endif()
 endif()
 

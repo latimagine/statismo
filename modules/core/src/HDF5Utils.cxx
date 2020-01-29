@@ -147,12 +147,12 @@ ReadMatrix(const H5::H5Location & fg, const char * name, unsigned maxNumColumns,
   H5::DataSpace memspace(2, dimsm);
 
   /* Define memory hyperslab. */
-  hsize_t offset_out[2] = { 0, 0 }; // hyperslab offset in memory
-  hsize_t count_out[2];             // size of the hyperslab in memory
+  hsize_t offsetOut[2] = { 0, 0 }; // hyperslab offset in memory
+  hsize_t countOut[2];             // size of the hyperslab in memory
 
-  count_out[0] = nRows;
-  count_out[1] = nCols;
-  memspace.selectHyperslab(H5S_SELECT_SET, count_out, offset_out);
+  countOut[0] = nRows;
+  countOut[1] = nCols;
+  memspace.selectHyperslab(H5S_SELECT_SET, countOut, offsetOut);
 
   matrix.resize(nRows, nCols);
   ds.read(matrix.data(), H5::PredType::NATIVE_FLOAT, memspace, dataspace);
@@ -193,11 +193,11 @@ ReadVector(const H5::H5Location & fg, const char * name, unsigned maxNumElements
   H5::DataSpace memspace(1, dimsm);
 
   /* Define memory hyperslab. */
-  hsize_t offset_out[1] = { 0 }; // hyperslab offset in memory
-  hsize_t count_out[1];          // size of the hyperslab in memory
+  hsize_t offsetOut[1] = { 0 }; // hyperslab offset in memory
+  hsize_t countOut[1];          // size of the hyperslab in memory
 
-  count_out[0] = nElements;
-  memspace.selectHyperslab(H5S_SELECT_SET, count_out, offset_out);
+  countOut[0] = nElements;
+  memspace.selectHyperslab(H5S_SELECT_SET, countOut, offsetOut);
 
   vector.resize(nElements);
   ds.read(vector.data(), H5::PredType::NATIVE_FLOAT, memspace, dataspace);
@@ -316,8 +316,6 @@ GetFileFromHDF5(const H5::H5Location & fg, const char * name, const char * filen
     ds.read(&buffer[0], H5::PredType::NATIVE_CHAR);
   }
 
-  using ostream_iterator = std::ostream_iterator<char>;
-
   std::ofstream ofile(filename, std::ios::binary);
   if (!ofile)
   {
@@ -325,15 +323,12 @@ GetFileFromHDF5(const H5::H5Location & fg, const char * name, const char * filen
     throw StatisticalModelException(s.c_str(), Status::IO_ERROR);
   }
 
-  std::copy(std::begin(buffer), std::end(buffer), ostream_iterator(ofile));
+  std::copy(std::begin(buffer), std::end(buffer), std::ostream_iterator<char>(ofile));
 }
 
 void
 DumpFileToHDF5(const char * filename, const H5::H5Location & fg, const char * name)
 {
-
-  using istream_iterator = std::istream_iterator<char>;
-
   std::ifstream ifile(filename, std::ios::binary);
   if (!ifile)
   {
@@ -343,7 +338,7 @@ DumpFileToHDF5(const char * filename, const H5::H5Location & fg, const char * na
 
   std::vector<char> buffer;
   ifile >> std::noskipws;
-  std::copy(istream_iterator(ifile), istream_iterator(), std::back_inserter(buffer));
+  std::copy(std::istream_iterator<char>(ifile), std::istream_iterator<char>(), std::back_inserter(buffer));
 
   hsize_t     dims[] = { buffer.size() };
   H5::DataSet ds = fg.createDataSet(name, H5::PredType::NATIVE_CHAR, H5::DataSpace(1, dims));

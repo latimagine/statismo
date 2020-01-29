@@ -64,18 +64,18 @@ namespace itk
  * \ingroup Transforms
  */
 
-template <class TDataset,
-          class TScalarType,
-          unsigned int TInputDimension,
-          unsigned int TOutputDimension = TInputDimension>
+template <typename Dataset,
+          typename TransformScalarType,
+          unsigned int INPUT_DIMENSION,
+          unsigned int OUTPUT_DIMENSION = INPUT_DIMENSION>
 class ITK_EXPORT StatisticalModelTransformBase
-  : public itk::Transform<TScalarType, TInputDimension, TOutputDimension>
+  : public itk::Transform<TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>
   , public statismo::NonCopyable
 {
 public:
   /* Standard class using =s. */
   using Self = StatisticalModelTransformBase;
-  using Superclass = itk::Transform<TScalarType, TInputDimension, TOutputDimension>;
+  using Superclass = itk::Transform<TransformScalarType, INPUT_DIMENSION, OUTPUT_DIMENSION>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   using VectorType = vnl_vector<statismo::ScalarType>;
@@ -92,8 +92,8 @@ public:
   using OutputVnlVectorType = typename Superclass::OutputVnlVectorType;
   using InputCovariantVectorType = typename Superclass::InputCovariantVectorType;
   using OutputCovariantVectorType = typename Superclass::OutputCovariantVectorType;
-  using RepresenterType = statismo::Representer<TDataset>;
-  using StatisticalModelType = itk::StatisticalModel<TDataset>;
+  using RepresenterType = statismo::Representer<Dataset>;
+  using StatisticalModelType = itk::StatisticalModel<Dataset>;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(StatisticalModelTransformBase, Superclass);
@@ -108,30 +108,30 @@ public:
     another->m_Parameters = this->m_Parameters;
   }
 
-  itkStaticConstMacro(SpaceDimension, unsigned int, TInputDimension);
-  itkStaticConstMacro(InputSpaceDimension, unsigned int, TInputDimension);
-  itkStaticConstMacro(OutputSpaceDimension, unsigned int, TOutputDimension);
+  itkStaticConstMacro(SpaceDimension, unsigned int, INPUT_DIMENSION);
+  itkStaticConstMacro(InputSpaceDimension, unsigned int, INPUT_DIMENSION);
+  itkStaticConstMacro(OutputSpaceDimension, unsigned int, OUTPUT_DIMENSION);
 
-  virtual void
+  void
   ComputeJacobianWithRespectToParameters(const InputPointType & pt, JacobianType & jacobian) const override;
 
   virtual void
   SetIdentity();
 
-  virtual void
+  void
   SetParameters(const ParametersType &) override;
 
-  virtual const ParametersType &
-  GetParameters(void) const override;
+  const ParametersType &
+  GetParameters() const override;
 
-  virtual void
+  void
   SetFixedParameters(const ParametersType &) override
   {
     // there no fixed parameters
   }
 
-  virtual const ParametersType &
-  GetFixedParameters(void) const override
+  const ParametersType &
+  GetFixedParameters() const override
   {
     return this->m_fixedParameters;
   };

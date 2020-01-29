@@ -20,7 +20,7 @@ matrix:
     ##########################################################################
     - os: linux
       dist: xenial
-      env: C_COMPILER=clang CXX_COMPILER=clang++ BUILD_TYPE=Debug BUILD_SHARED_LIBS=OFF BUILD_DOCUMENTATION=ON BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Debug BUILD_SHARED_LIBS=OFF BUILD_DOCUMENTATION=ON BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
       addons:
           apt:
             packages:
@@ -30,7 +30,7 @@ matrix:
               - texlive-full
             sources:
               - ubuntu-toolchain-r-test
-      after_install:
+      before_install:
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
         - sudo update-alternatives --config gcc
         - gcc --version
@@ -43,18 +43,20 @@ matrix:
     ##########################################################################
     - os: linux
       dist: xenial
-      env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
+      env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 CHECK_FORMAT=ON BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=ON BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
       addons:
         apt:
           packages: 
             - g++-7
+            - clang-tidy-6.0
+            - clang-format-6.0
           sources:
             - ubuntu-toolchain-r-test
-      after_install:
+      before_install:
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
         - sudo update-alternatives --config gcc
-        - gcc --version
-        - g++ --version
+        - sudo ln -f -s /usr/bin/clang-format-6.0 /usr/bin/clang-format
+        - clang-format --version
     ##########################################################################
     # Clang on Linux Bionic with:
     # - VTK support
@@ -63,7 +65,7 @@ matrix:
     ##########################################################################
     - os: linux
       dist: bionic
-      env: C_COMPILER=clang CXX_COMPILER=clang++ BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=ON USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=ON USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
       addons:
         apt:
           packages:
@@ -77,7 +79,8 @@ matrix:
     ##########################################################################
     - os: linux
       dist: bionic
-      env: C_COMPILER=gcc CXX_COMPILER=g++ BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
+      env: C_COMPILER=gcc CXX_COMPILER=g++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
+
 install:
   # Set the compiler variables properly
   - export CC=${C_COMPILER}
@@ -136,12 +139,16 @@ before_script:
   # have CMake to generate build files
   - cd "${TRAVIS_BUILD_DIR}"
   - mkdir build && cd build
-  - cmake ../superbuild -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DBUILD_DOCUMENTATION=$BUILD_DOCUMENTATION -DBUILD_TESTS=$BUILD_TESTS -DBUILD_CLI_TOOLS=$BUILD_CLI_TOOLS -DBUILD_LONG_RUNNING_CLI_TESTS=$BUILD_LONG_RUNNING_CLI_TESTS -DITK_SUPPORT:BOOL=$ITK_SUPPORT -DVTK_SUPPORT:BOOL=$VTK_SUPPORT -DUSE_SYSTEM_HDF5=$USE_SYSTEM_HDF5 -DUSE_SYSTEM_Eigen=$USE_SYSTEM_Eigen -DUSE_SYSTEM_VTK=$USE_SYSTEM_VTK -DUSE_SYSTEM_ITK=$USE_SYSTEM_ITK
+  - cmake ../superbuild -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DAUTOBUILD_STATISMO=OFF -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DBUILD_DOCUMENTATION=$BUILD_DOCUMENTATION -DBUILD_WITH_TIDY=$BUILD_WITH_TIDY -DBUILD_TESTS=$BUILD_TESTS -DBUILD_CLI_TOOLS=$BUILD_CLI_TOOLS -DBUILD_LONG_RUNNING_CLI_TESTS=$BUILD_LONG_RUNNING_CLI_TESTS -DITK_SUPPORT:BOOL=$ITK_SUPPORT -DVTK_SUPPORT:BOOL=$VTK_SUPPORT -DUSE_SYSTEM_HDF5=$USE_SYSTEM_HDF5 -DUSE_SYSTEM_Eigen=$USE_SYSTEM_Eigen -DUSE_SYSTEM_VTK=$USE_SYSTEM_VTK -DUSE_SYSTEM_ITK=$USE_SYSTEM_ITK
 
 script:
   - make -j${JOBS}
   - cd "${TRAVIS_BUILD_DIR}/build/Statismo-build"
-  - make
+  - |
+    if [[ "${CHECK_FORMAT}" == "ON" ]]; then
+      make format-check
+    fi
+  - if [ $(make -j${JOBS} 2>&1 | grep -o 'warning:' | wc -l) -gt 5 ] ; then echo "too many warning, needs some tidy" && exit 1 ; fi
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${TRAVIS_BUILD_DIR}/build/INSTALL/lib
   - ctest
   - |

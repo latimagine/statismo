@@ -60,9 +60,9 @@ using ImageType2D = itk::Image<float, 2>;
 using VectorImageType2D = itk::Image<itk::Vector<float, 2>, 2>;
 using RepresenterType2D = itk::StandardImageRepresenter<itk::Vector<float, 2>, 2>;
 
-template <class RepresenterType, class ImageType>
+template <typename RepresenterType, typename ImageType>
 void
-_DoRunExample(const char * dir, const char * modelname, double noiseVariance)
+DoRunExample(const char * dir, const char * modelname, double noiseVariance)
 {
   using ModelBuilderType = itk::PCAModelBuilder<ImageType>;
   using DataManagerType = itk::DataManager<ImageType>;
@@ -120,11 +120,11 @@ main(int argc, char * argv[])
 
   if (dimension == 2)
   {
-    _DoRunExample<RepresenterType2D, VectorImageType2D>(dir, modelname, noiseVariance);
+    DoRunExample<RepresenterType2D, VectorImageType2D>(dir, modelname, noiseVariance);
   }
   else if (dimension == 3)
   {
-    _DoRunExample<RepresenterType3D, VectorImageType3D>(dir, modelname, noiseVariance);
+    DoRunExample<RepresenterType3D, VectorImageType3D>(dir, modelname, noiseVariance);
   }
   else
   {

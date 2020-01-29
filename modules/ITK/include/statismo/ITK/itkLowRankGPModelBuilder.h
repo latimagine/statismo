@@ -57,7 +57,7 @@ namespace itk
  * \see statismo::LowRankGPModelBuilder for detailed documentation.
  */
 
-template <class T>
+template <typename T>
 class LowRankGPModelBuilder
   : public Object
   , public statismo::ImplWrapper<statismo::LowRankGPModelBuilder<T>>
@@ -75,9 +75,6 @@ public:
 
   using StatisticalModelType = itk::StatisticalModel<T>;
   using MatrixValuedKernelType = statismo::MatrixValuedKernel<typename RepresenterType::PointType>;
-
-  LowRankGPModelBuilder() = default;
-  virtual ~LowRankGPModelBuilder() = default;
 
   void
   SetRepresenter(const RepresenterType * representer)

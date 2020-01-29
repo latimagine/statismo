@@ -55,10 +55,10 @@ namespace
 /**
  * A scalar valued gaussian kernel.
  */
-class _GaussianKernel : public ScalarValuedKernel<vtkPoint>
+class GaussianKernel : public ScalarValuedKernel<vtkPoint> // NOLINT
 {
 public:
-  explicit _GaussianKernel(double sigma)
+  explicit GaussianKernel(double sigma)
     : m_sigma(sigma)
     , m_sigma2(sigma * sigma)
   {}
@@ -75,7 +75,7 @@ public:
   GetKernelInfo() const override
   {
     std::ostringstream os;
-    os << "_GaussianKernel(" << m_sigma << ")";
+    os << "GaussianKernel(" << m_sigma << ")";
     return os.str();
   }
 
@@ -96,12 +96,12 @@ main(int argc, char ** argv)
 {
   if (argc < 5)
   {
-    std::cerr << "Usage " << argv[0] << " model _GaussianKernelWidth numberOfComponents, outputmodelName" << std::endl;
+    std::cerr << "Usage " << argv[0] << " model GaussianKernelWidth numberOfComponents, outputmodelName" << std::endl;
     return 1;
   }
 
   std::string modelFilename(argv[1]);
-  double      _GaussianKernelSigma = std::stof(argv[2]);
+  double      gaussianKernelSigma = std::stof(argv[2]);
   int         numberOfComponents = std::stoi(argv[3]);
   std::string outputModelFilename(argv[4]);
 
@@ -122,7 +122,7 @@ main(int argc, char ** argv)
     // Create a (scalar valued) gaussian kernel. This kernel is then made matrix-valued. We use a
     // UncorrelatedMatrixValuedKernel, which assumes that each output component is independent.
 
-    _GaussianKernel                gk{ _GaussianKernelSigma };
+    GaussianKernel                 gk{ gaussianKernelSigma };
     const MatrixValuedKernelType & mvGk =
       UncorrelatedMatrixValuedKernel<vtkPoint>(&gk, model->GetRepresenter()->GetDimensions());
 

@@ -12,6 +12,7 @@ if(BUILD_DOCUMENTATION)
   set(DOXYGEN_PROJECT_BRIEF "Statismo doxygen documentation")
   set(DOXYGEN_IMAGE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/classdoc)
   set(DOXYGEN_GENERATE_HTML YES)
+  set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
 
   doxygen_add_docs(
       statismoDox

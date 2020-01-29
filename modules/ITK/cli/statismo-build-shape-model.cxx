@@ -56,7 +56,7 @@ using namespace std;
 namespace
 {
 
-struct _ProgramOptions
+struct ProgramOptions
 {
   string strDataListFile;
   string strProcrustesMode;
@@ -66,7 +66,7 @@ struct _ProgramOptions
 };
 
 bool
-_IsOptionsConflictPresent(_ProgramOptions & opt)
+IsOptionsConflictPresent(ProgramOptions & opt)
 {
   statismo::utils::ToLower(opt.strProcrustesMode);
 
@@ -79,17 +79,17 @@ _IsOptionsConflictPresent(_ProgramOptions & opt)
 }
 
 void
-_BuildAndSaveShapeModel(const _ProgramOptions & opt)
+BuildAndSaveShapeModel(const ProgramOptions & opt)
 {
-  const unsigned Dimensions = 3;
+  const unsigned kDimensions = 3;
 
-  using RepresenterType = itk::StandardMeshRepresenter<float, Dimensions>;
-  using MeshType = itk::Mesh<float, Dimensions>;
+  using RepresenterType = itk::StandardMeshRepresenter<float, kDimensions>;
+  using MeshType = itk::Mesh<float, kDimensions>;
   using DataManagerType = itk::DataManager<MeshType>;
   using MeshReaderType = itk::MeshFileReader<MeshType>;
   using MeshReaderList = vector<MeshReaderType::Pointer>;
   using Rigid3DTransformType = itk::VersorRigid3DTransform<float>;
-  using ImageType = itk::Image<float, Dimensions>;
+  using ImageType = itk::Image<float, kDimensions>;
   using LandmarkBasedTransformInitializerType =
     itk::LandmarkBasedTransformInitializer<Rigid3DTransformType, ImageType, ImageType>;
   using PCAModelBuilder = itk::PCAModelBuilder<MeshType>;
@@ -133,13 +133,13 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
       originalMeshes.emplace_back(reader->GetOutput());
     }
 
-    const unsigned uMaxGPAIterations = 20;
-    const unsigned uNumberOfPoints = 100;
-    const float    fBreakIfChangeBelow = 0.001f;
+    const unsigned kMaxGPAIterations = 20;
+    const unsigned kNumberOfPoints = 100;
+    const float    kBreakIfChangeBelow = 0.001f;
 
     auto referenceMesh = statismo::cli::
       CalculateProcrustesMeanMesh<MeshType, LandmarkBasedTransformInitializerType, Rigid3DTransformType, FilterType>(
-        originalMeshes, uMaxGPAIterations, uNumberOfPoints, fBreakIfChangeBelow);
+        originalMeshes, kMaxGPAIterations, kNumberOfPoints, kBreakIfChangeBelow);
     representer->SetReference(referenceMesh);
   }
 
@@ -158,7 +158,7 @@ _BuildAndSaveShapeModel(const _ProgramOptions & opt)
 int
 main(int argc, char ** argv)
 {
-  _ProgramOptions                         poParameters;
+  ProgramOptions                          poParameters;
   po::program_options<std::string, float> parser{ argv[0], "Program help:" };
 
   parser
@@ -188,7 +188,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  if (_IsOptionsConflictPresent(poParameters))
+  if (IsOptionsConflictPresent(poParameters))
   {
     cerr << "A conflict in the options exists or insufficient options were set." << endl;
     cout << parser << endl;
@@ -197,7 +197,7 @@ main(int argc, char ** argv)
 
   try
   {
-    _BuildAndSaveShapeModel(poParameters);
+    BuildAndSaveShapeModel(poParameters);
   }
   catch (const ifstream::failure & e)
   {

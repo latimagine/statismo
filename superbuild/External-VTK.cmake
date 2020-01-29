@@ -13,9 +13,9 @@ ExternalProject_Add(VTK
   BINARY_DIR VTK-build
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
-  CMAKE_GENERATOR ${EP_CMAKE_GENERATOR}
+  CMAKE_GENERATOR ${_ep_cmake_gen}
   CMAKE_ARGS
-    ${ep_common_args}
+    ${_ep_common_args}
     ${_vtkOptions}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}

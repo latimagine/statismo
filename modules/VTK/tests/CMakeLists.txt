@@ -1,4 +1,4 @@
-set(TARGET_TESTS
+set(_target_tests
   PosteriorModelBuilderTest.cxx
   PCAModelBuilderWithSelfAdjointEigenSolverTest.cxx
   PCAModelBuilderTest.cxx
@@ -9,10 +9,10 @@ set(TARGET_TESTS
 create_test_sourcelist( 
     vtkStatismoTest
     vtkStatismoTest_driver.cxx
-    ${TARGET_TESTS}
+    ${_target_tests}
 )
 
-add_executable(vtkStatismoTest vtkStatismoTest_driver.cxx ${TARGET_TESTS} vtkTestHelper.h)
+add_executable(vtkStatismoTest vtkStatismoTest_driver.cxx ${_target_tests} vtkTestHelper.h)
 target_link_libraries(vtkStatismoTest statismo_VTK)
 
 if(${BUILD_WITH_TIDY})
@@ -22,12 +22,12 @@ if(${BUILD_WITH_TIDY})
   )
 endif()
 
-foreach( _test ${_VTKTests} )
+foreach(_test ${_VTKTests} )
   add_executable( ${_test} ${_test}.cxx )
   target_link_libraries( ${_test} statismo_VTK )
 endforeach()
 
-foreach(TST ${TARGET_TESTS})
+foreach(TST ${_target_tests})
     get_filename_component(TNAME ${TST} NAME_WE)
     add_test(NAME ${TNAME} COMMAND vtkStatismoTest ${TNAME} ${statismo_SOURCE_DIR}/data WORKING_DIRECTORY "${TEST_WORKING_DIR}")
 endforeach()

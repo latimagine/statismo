@@ -90,7 +90,7 @@ public:
    * Builds a new model from the data provided in the dataManager, and the given constraints.
    * This version of the function assumes a noise with a uniform uncorrelated variance
    * of the form pointValueNoiseVariance * identityMatrix at every given point.
-   * \param DataItemList The list holding the data the model is built from
+   * \param dataItemList The list holding the data the model is built from
    * \param pointValues A list of (point, value) pairs with the known values.
    * \param pointValueNoiseVariance The variance of the estimated error at the known points (the pointValues)
    * \param noiseVariance  The variance of the noise assumed on our data

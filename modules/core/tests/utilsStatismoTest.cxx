@@ -52,8 +52,8 @@ TestUtils()
   STATISMO_ASSERT_EQ("02mw-y6id-9r3k-ltlh.txt", utils::CreateTmpName(".txt"));
   STATISMO_ASSERT_EQ(utils::ToLowerCopy("MyTeST"), "mytest");
 
-  const std::string testStr = "this,is,a comma, separated,string?";
-  auto              commaSplitVec = utils::Split<','>(testStr);
+  const std::string kTestStr = "this,is,a comma, separated,string?";
+  auto              commaSplitVec = utils::Split<','>(kTestStr);
 
   STATISMO_ASSERT_EQ(5U, commaSplitVec.size());
   STATISMO_ASSERT_EQ("this", commaSplitVec[0]);
@@ -62,7 +62,7 @@ TestUtils()
   STATISMO_ASSERT_EQ(" separated", commaSplitVec[3]);
   STATISMO_ASSERT_EQ("string?", commaSplitVec[4]);
 
-  auto spaceSplitVec = utils::Split<' '>(testStr);
+  auto spaceSplitVec = utils::Split<' '>(kTestStr);
   STATISMO_ASSERT_EQ(3U, spaceSplitVec.size());
   STATISMO_ASSERT_EQ("this,is,a", spaceSplitVec[0]);
   STATISMO_ASSERT_EQ("comma,", spaceSplitVec[1]);
@@ -166,7 +166,7 @@ TestSafeContainerMap()
  * This basic test case covers the test of different utility classes used in the
  * framework
  */
-int utilsStatismoTest([[maybe_unused]] int argc, [[maybe_unused]] char * argv[])
+int utilsStatismoTest([[maybe_unused]] int argc, [[maybe_unused]] char * argv[]) // NOLINT
 {
   auto res = statismo::Translate([]() {
     return statismo::test::RunAllTests("utilsStatismoTest",

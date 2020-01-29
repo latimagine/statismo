@@ -177,7 +177,7 @@ Split(const std::string & in)
 namespace std
 {
 inline string
-to_string(const statismo::MatrixType & t)
+to_string(const statismo::MatrixType & t) // NOLINT
 {
   ostringstream os;
   os << t;

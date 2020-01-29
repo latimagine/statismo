@@ -57,14 +57,14 @@ namespace itk
  *
  * \ingroup Transforms
  */
-template <class TRepresenter, class TScalarType, unsigned int TDimension>
+template <typename Representer, typename ScalarType, unsigned int DIMENSION>
 class ITK_EXPORT StatisticalShapeModelTransform
-  : public itk::StatisticalModelTransformBase<TRepresenter, TScalarType, TDimension>
+  : public itk::StatisticalModelTransformBase<Representer, ScalarType, DIMENSION>
 {
 public:
   /* Standard class using =s. */
   using Self = StatisticalShapeModelTransform;
-  using Superclass = itk::StatisticalModelTransformBase<TRepresenter, TScalarType, TDimension>;
+  using Superclass = itk::StatisticalModelTransformBase<Representer, ScalarType, DIMENSION>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
@@ -76,7 +76,7 @@ public:
   using OutputPointType = typename Superclass::OutputPointType;
   using RepresenterType = typename Superclass::RepresenterType;
 
-  virtual ::itk::LightObject::Pointer
+  ::itk::LightObject::Pointer
   CreateAnother() const override
   {
     ::itk::LightObject::Pointer smartPtr;
@@ -87,7 +87,7 @@ public:
     return smartPtr;
   }
 
-  virtual OutputPointType
+  OutputPointType
   TransformPoint(const InputPointType & pt) const override
   {
     return this->m_statisticalModel->DrawSampleAtPoint(this->m_coeffVector, pt);
@@ -99,4 +99,4 @@ public:
 
 } // namespace itk
 
-#endif // __ItkStatisticalShapeModelTransform
+#endif

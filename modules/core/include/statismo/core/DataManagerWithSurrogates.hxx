@@ -66,11 +66,11 @@ DataManagerWithSurrogates<T>::LoadSurrogateTypes(const std::string & filename)
   {
     if (surrogateTypes(i) == 0)
     {
-      m_typeInfo.types.push_back(DataItemWithSurrogatesType::SurrogateType::Categorical);
+      m_typeInfo.types.push_back(DataItemWithSurrogatesType::SurrogateType::CATEGORICAL);
     }
     else
     {
-      m_typeInfo.types.push_back(DataItemWithSurrogatesType::SurrogateType::Continuous);
+      m_typeInfo.types.push_back(DataItemWithSurrogatesType::SurrogateType::CONTINUOUS);
     }
   }
 }

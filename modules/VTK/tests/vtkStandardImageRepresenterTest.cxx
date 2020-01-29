@@ -48,7 +48,7 @@ using namespace statismo::test;
 
 namespace
 {
-std::string _s_dataDir;
+std::string g_dataDir;
 
 int
 TestRepresenterForImage()
@@ -56,8 +56,8 @@ TestRepresenterForImage()
   using RepresenterType = statismo::vtkStandardImageRepresenter<float, 2>;
   using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
 
-  auto referenceFilename = _s_dataDir + "/hand_dfs/df-hand-1.vtk";
-  auto testDatasetFilename = _s_dataDir + "/hand_dfs/df-hand-2.vtk";
+  auto referenceFilename = g_dataDir + "/hand_dfs/df-hand-1.vtk";
+  auto testDatasetFilename = g_dataDir + "/hand_dfs/df-hand-2.vtk";
 
   auto reference = LoadStructuredPoints(referenceFilename);
   auto representer = RepresenterType::SafeCreate(reference);
@@ -84,7 +84,7 @@ vtkStandardImageRepresenterTest(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  _s_dataDir = argv[1];
+  g_dataDir = argv[1];
 
   auto res = statismo::Translate([]() {
     return statismo::test::RunAllTests("vtkStandardImageRepresenterTest",

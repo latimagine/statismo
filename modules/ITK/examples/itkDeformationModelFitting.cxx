@@ -55,24 +55,24 @@
 namespace
 {
 
-const unsigned Dimensions = 2;
-using ImageType = itk::Image<uint16_t, Dimensions>;
+const unsigned gk_dimensions = 2;
+using ImageType = itk::Image<uint16_t, gk_dimensions>;
 using VectorImageType = itk::Image<itk::Vector<float, ImageType::ImageDimension>, ImageType::ImageDimension>;
-using RepresenterType = itk::StandardImageRepresenter<itk::Vector<float, Dimensions>, Dimensions>;
+using RepresenterType = itk::StandardImageRepresenter<itk::Vector<float, gk_dimensions>, gk_dimensions>;
 using ImageReaderType = itk::ImageFileReader<ImageType>;
 // using = itk::MeanSquaresImageToImageMetric<ImageType, ImageType> MetricType;
 using MetricType = itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType>;
-using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, Dimensions>;
+using TransformType = itk::InterpolatingStatisticalDeformationModelTransform<VectorImageType, double, gk_dimensions>;
 using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 using RegistrationFilterType = itk::ImageRegistrationMethod<ImageType, ImageType>;
 using OptimizerType = itk::LBFGSOptimizer;
 using StatisticalModelType = itk::StatisticalModel<VectorImageType>;
 
 
-class _IterationStatusObserver : public itk::Command
+class IterationStatusObserver : public itk::Command
 {
 public:
-  using Self = _IterationStatusObserver;
+  using Self = IterationStatusObserver;
   using Superclass = itk::Command;
   using Pointer = itk::SmartPointer<Self>;
 
@@ -150,7 +150,7 @@ main(int argc, char * argv[])
   optimizer->MinimizeOn();
   optimizer->SetMaximumNumberOfFunctionEvaluations(100);
 
-  using ObserverType = _IterationStatusObserver;
+  using ObserverType = IterationStatusObserver;
   auto observer = ObserverType::New();
   optimizer->AddObserver(itk::IterationEvent(), observer);
 
