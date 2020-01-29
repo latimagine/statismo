@@ -30,7 +30,7 @@ matrix:
               - texlive-full
             sources:
               - ubuntu-toolchain-r-test
-      after_install:
+      before_install:
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
         - sudo update-alternatives --config gcc
         - gcc --version
@@ -52,10 +52,10 @@ matrix:
             - clang-format-6.0
           sources:
             - ubuntu-toolchain-r-test
-      after_install:
+      before_install:
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
         - sudo update-alternatives --config gcc
-        - sudo ln -s /usr/bin/clang-format-6.0 /usr/bin/clang-format
+        - sudo ln -f -s /usr/bin/clang-format-6.0 /usr/bin/clang-format
         - clang-format --version
     ##########################################################################
     # Clang on Linux Bionic with:
@@ -80,6 +80,7 @@ matrix:
     - os: linux
       dist: bionic
       env: C_COMPILER=gcc CXX_COMPILER=g++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_Eigen=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF
+
 install:
   # Set the compiler variables properly
   - export CC=${C_COMPILER}
