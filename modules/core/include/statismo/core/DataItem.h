@@ -113,7 +113,8 @@ public:
 
   /**
    * Create a new DataItem object, using the data from the group in the HDF5 file
-   * \param dsGroup. The group in the hdf5 file for this dataset
+   * \param representer representer
+   * \param dsGroup group in the hdf5 file for this dataset
    */
   static UniquePtrType<DataItemBase>
   Load(const RepresenterType * representer, const H5::Group & dsGroup);

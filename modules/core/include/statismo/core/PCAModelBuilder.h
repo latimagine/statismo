@@ -68,7 +68,7 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * @brief The EigenValueMethod enum This type is used to specify which decomposition method resp. eigenvalue solver
+   * \brief The EigenValueMethod enum This type is used to specify which decomposition method resp. eigenvalue solver
    * sould be used. Default is JacobiSVD which is the most accurate but for larger systems quite slow. In this case the
    * SelfAdjointEigensolver is more appropriate (especially, if there are more examples than variables).
    */

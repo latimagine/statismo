@@ -37,7 +37,7 @@ endif()
 # Wrapping
 
 if(${BUILD_WRAPPING})
-  add_subdirectory(wrapping)
+  #add_subdirectory(wrapping)
 endif()
 
 # Install

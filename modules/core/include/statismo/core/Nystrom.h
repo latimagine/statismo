@@ -108,8 +108,8 @@ private:
   /*
    * Returns a random set of points from the domain.
    *
-   * @param domain the domain to sample from
-   * @param numberOfPoints the size of the sample
+   * \param domain the domain to sample from
+   * \param numberOfPoints the size of the sample
    */
   std::vector<PointType>
   GetNystromPoints(DomainType & domain, unsigned numberOfPoints) const

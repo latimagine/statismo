@@ -76,9 +76,9 @@ public:
 
   /**
    * Add a dataset, together with surrogate information
-   * \param datasetFilename
-   * \param datasetURI (An URI for the dataset. This info is only added to the metadata).
-   * \param surrogateFilename
+   * \param ds dataset filename
+   * \param datasetURI An URI for the dataset (This info is only added to the metadata)
+   * \param surrogateFilename surrogate filename
    */
   void
   AddDatasetWithSurrogates(DatasetConstPointerType ds,

@@ -71,7 +71,9 @@ public:
 
   /**
    * Returns a new statistical model, which is loaded from the given HDF5 file
-   * \param filename The filename
+   * 
+   * \param representer Representer bound to the model
+   * \param filename Path to hdf5 file
    * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
    * to create the model.
    */
@@ -100,7 +102,8 @@ public:
   /**
    * Returns a new statistical model, which is stored in the given HDF5 Group
    *
-   * \param modelroot A h5 group where the model is saved
+   * \param representer Representer bound to the model
+   * \param modelRoot H5 group where the model is saved
    * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
    * to create the model.
    */

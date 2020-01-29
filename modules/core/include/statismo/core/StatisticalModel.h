@@ -150,7 +150,7 @@ public:
    * \param sample A sample
    * \param ptId the point id where to evaluate the sample
    *
-   * \returns The value of the sample, at the specified point
+   * \return The value of the sample, at the specified point
    */
   ValueType
   EvaluateSampleAtPoint(DatasetConstPointerType sample, unsigned ptId) const;
@@ -162,7 +162,7 @@ public:
    * \param sample A sample
    * \param point the (domain) point on which the sample should be evaluated.
    *
-   * \returns The value of the sample, at the specified point
+   * \return The value of the sample, at the specified point
    */
   ValueType
   EvaluateSampleAtPoint(DatasetConstPointerType sample, const PointType & point) const;
@@ -219,7 +219,7 @@ public:
    * Returns the mean of the model, evaluated at the given point.
    *
    * \param point A point on the domain the model is defined
-   * \returns The mean Sample evaluated at the point point
+   * \return The mean Sample evaluated at the point point
    */
   ValueType
   DrawMeanAtPoint(const PointType & point) const;
@@ -227,8 +227,8 @@ public:
   /**
    * Returns the mean of the model, evaluated at the given pointid.
    *
-   * \param pointid The pointId of the point where it should be evaluated (as defined by the representer)
-   * \returns The mean sample evaluated at the given pointId \see DrawMeanAtPoint
+   * \param pointId The pointId of the point where it should be evaluated (as defined by the representer)
+   * \return The mean sample evaluated at the given pointId \see DrawMeanAtPoint
    */
   ValueType
   DrawMeanAtPoint(unsigned pointId) const;
@@ -239,8 +239,8 @@ public:
    * efficient that calling DrawSample, if only a few points are of interest.
    *
    * \param coefficients the coefficients of the sample
-   * \param the point of the sample where it is evaluated
-   * \param addNoise If true, the Gaussian noise assumed in the model is added to the sample
+   * \param point point of the sample where it is evaluated
+   * \param addNoise if true, the Gaussian noise assumed in the model is added to the sample
    */
   ValueType
   DrawSampleAtPoint(const VectorType & coefficients, const PointType & point, bool addNoise = false) const;
@@ -251,8 +251,8 @@ public:
    * efficient that calling DrawSample, if only a few points are of interest.
    *
    * \param coefficients the coefficients of the sample
-   * \param the point of the sample where it is evaluated
-   * \param addNoise If true, the Gaussian noise assumed in the model is added to the sample
+   * \param ptId point of the sample where it is evaluated
+   * \param addNoise if true, the Gaussian noise assumed in the model is added to the sample
    */
   ValueType
   DrawSampleAtPoint(const VectorType & coefficients, unsigned ptId, bool addNoise = false) const;
@@ -261,7 +261,7 @@ public:
   /**
    * Computes the jacobian of the Statistical model at a given point
    * \param pt The point where the Jacobian is computed
-   * \param jacobian Output parameter where the jacobian is stored.
+   * \return Jacobian matrix
    */
   MatrixType
   GetJacobian(const PointType & pt) const;
@@ -269,14 +269,16 @@ public:
   /**
    * Computes the jacobian of the Statistical model at a specified pointID
    * \param ptId The pointID where the Jacobian is computed
-   * \param jacobian Output parameter where the jacobian is stored.
+   * \return Jacobian matrix
    */
   MatrixType
   GetJacobian(unsigned ptId) const;
 
   /**
    * Returns the variance in the model for point pt
-   * @param pt The point
+   * \param pt1 point 1
+   * \param pt2 point 2
+   * 
    * @returns a d x d covariance matrix
    */
   MatrixType
@@ -284,7 +286,8 @@ public:
 
   /**
    * Returns the variance in the model for point pt
-   * @param pt The point
+   * \param ptId1 point 1
+   * \param ptId2 point 2
    * @returns a d x d covariance matrix
    */
   MatrixType
@@ -349,7 +352,7 @@ public:
   /**
    * Returns the log probability of observing given coefficients.
    *
-   * \param dataset The coefficients \f$\alpha \in \mathbf{R}^n\f$
+   * \param coefficients The coefficients \f$\alpha \in \mathbf{R}^n\f$
    * \return The log probability
    *
    */
@@ -473,6 +476,7 @@ public:
 
   /**
    * Returns an instance for the given coefficients as a vector.
+   * \param coefficients the coefficients of the sample
    * \param addNoise If true, the Gaussian noise assumed in the model is added to the sample
    */
   VectorType
@@ -523,7 +527,7 @@ private:
 
   /**
    * Create an instance of the StatisticalModel
-   * @param representer An instance of the representer, used to convert the samples to dataset of the represented type.
+   * \param representer An instance of the representer, used to convert the samples to dataset of the represented type.
    */
   StatisticalModel(const RepresenterType * representer,
                    VectorType              m,
