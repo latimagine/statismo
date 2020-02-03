@@ -59,6 +59,12 @@ public:
   using DatasetPointerType = typename RepresenterType::DatasetPointerType;
 
   /**
+   *  Load from group
+   */
+  virtual void
+  LoadFromGroup(const H5::Group & dsGroup) = 0;
+
+  /**
    *  Save the sample data to the hdf5 group dsGroup.
    */
   virtual void
@@ -111,14 +117,6 @@ public:
   using ObjectFactoryType = GenericFactory<Derived>;
   friend ObjectFactoryType;
 
-  /**
-   * Create a new DataItem object, using the data from the group in the HDF5 file
-   * \param representer representer
-   * \param dsGroup group in the hdf5 file for this dataset
-   */
-  static UniquePtrType<DataItemBase>
-  Load(const RepresenterType * representer, const H5::Group & dsGroup);
-
   void
   Save(const H5::Group & dsGroup) const override;
 
@@ -164,15 +162,17 @@ protected:
   {}
 
   // loads the internal state from the hdf5 file
-  virtual void
-  LoadInternal(const H5::Group & dsGroup)
+  void
+  LoadFromGroup(const H5::Group & dsGroup)
   {
     hdf5utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
     m_uri = hdf5utils::ReadString(dsGroup, "./URI");
+
+    LoadInternalImpl(dsGroup);
   }
 
   void
-  SaveInternal(const H5::Group & dsGroup) const
+  SaveToGroup(const H5::Group & dsGroup) const
   {
     hdf5utils::WriteVector(dsGroup, "./samplevector", m_sampleVector);
     hdf5utils::WriteString(dsGroup, "./URI", m_uri);
@@ -180,11 +180,12 @@ protected:
     SaveInternalImpl(dsGroup);
   }
 
+private:
   virtual void
-  SaveInternalImpl(const H5::Group & dsGroup) const
-  {
-    hdf5utils::WriteString(dsGroup, "./sampletype", "DataItem");
-  }
+  SaveInternalImpl(const H5::Group & dsGroup) const = 0;
+
+  virtual  void
+  LoadInternalImpl(const H5::Group & dsGroup) = 0;
 
   const RepresenterType * m_representer;
   std::string             m_uri;
@@ -202,9 +203,30 @@ public:
   using RepresenterType = typename Superclass::RepresenterType;
   friend typename Superclass::ObjectFactoryType;
 
+  /**
+   * Create a new DataItem object, using the data from the group in the HDF5 file
+   * \param representer representer
+   * \param dsGroup group in the hdf5 file for this dataset
+   */
+  static UniquePtrType<DataItem<T>>
+  Load(const RepresenterType * representer, const H5::Group & dsGroup);
+
+protected:
+  void
+  SaveInternalImpl(const H5::Group & dsGroup) const override
+  {
+    hdf5utils::WriteString(dsGroup, "./sampletype", "DataItem");
+  }
+
+  void
+  LoadInternalImpl(const H5::Group &) override
+  {
+    // no op
+  }
+
 private:
-  BasicDataItem(const RepresenterType * representer, std::string uri, const VectorType & sampleVector)
-    : Superclass(representer, std::move(uri), sampleVector)
+  BasicDataItem(const RepresenterType * representer, std::string uri, VectorType sampleVector)
+    : Superclass(representer, std::move(uri), std::move(sampleVector))
   {}
 
   explicit BasicDataItem(const RepresenterType * representer)
@@ -222,10 +244,6 @@ private:
 template <typename T>
 class DataItemWithSurrogates : public DataItemBase<T, DataItemWithSurrogates<T>>
 {
-  using Superclass = DataItemBase<T, DataItemWithSurrogates<T>>;
-  using RepresenterType = typename Superclass::RepresenterType;
-  friend typename Superclass::ObjectFactoryType;
-
 public:
   enum class SurrogateType
   {
@@ -233,6 +251,17 @@ public:
     CONTINUOUS = 1   // e.g. Size, weight
   };
   using SurrogateTypeVectorType = std::vector<SurrogateType>;
+  using Superclass = DataItemBase<T, DataItemWithSurrogates<T>>;
+  using RepresenterType = typename Superclass::RepresenterType;
+  friend typename Superclass::ObjectFactoryType;
+
+  /**
+   * Create a new DataItem object, using the data from the group in the HDF5 file
+   * \param representer representer
+   * \param dsGroup group in the hdf5 file for this dataset
+   */
+  static UniquePtrType<DataItem<T>>
+  Load(const RepresenterType * representer, const H5::Group & dsGroup);
 
   VectorType
   GetSurrogateVector() const
@@ -263,9 +292,8 @@ private:
 
   // loads the internal state from the hdf5 file
   void
-  LoadInternal(const H5::Group & dsGroup) override
+  LoadInternalImpl(const H5::Group & dsGroup) override
   {
-    Superclass::LoadInternal(dsGroup);
     hdf5utils::ReadVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
     m_surrogateFilename = hdf5utils::ReadString(dsGroup, "./surrogateFilename");
   }

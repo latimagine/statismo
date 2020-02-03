@@ -1,7 +1,5 @@
 message("External project - HDF5")
 
-message ("shared libs ${BUILD_SHARED_LIBS}")
-
 ExternalProject_add(HDF5
   SOURCE_DIR ${CMAKE_BINARY_DIR}/HDF5
   BINARY_DIR ${CMAKE_BINARY_DIR}/HDF5-build

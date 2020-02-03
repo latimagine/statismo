@@ -40,11 +40,11 @@
 #define __STATIMO_CORE_POSTERIOR_MODEL_BUILDER_H_
 
 #include "statismo/core/CommonTypes.h"
-#include "Config.h"
-#include "DataManager.h"
-#include "ModelBuilder.h"
-#include "Representer.h"
-#include "StatisticalModel.h"
+#include "statismo/core/Config.h"
+#include "statismo/core/DataManager.h"
+#include "statismo/core/ModelBuilder.h"
+#include "statismo/core/Representer.h"
+#include "statismo/core/StatisticalModel.h"
 
 #include <list>
 #include <vector>

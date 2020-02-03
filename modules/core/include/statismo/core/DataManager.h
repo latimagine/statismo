@@ -193,7 +193,6 @@ public:
   using DatasetConstPointerType = typename Superclass::DatasetConstPointerType;
   using DataItemType = typename Superclass::DataItemType;
   using DataItemListType = typename Superclass::DataItemListType;
-  using ConcreteDataItemType = BasicDataItem<T>;
   using CrossValidationFoldType = typename Superclass::CrossValidationFoldType;
   using CrossValidationFoldListType = typename Superclass::CrossValidationFoldListType;
   using ObjectFactoryType = GenericFactory<Derived>;
@@ -201,16 +200,8 @@ public:
   friend ObjectFactoryType;
 
 public:
-  /**
-   * Create a new dataManager, with the data stored in the given hdf5 file
-   */
-  static UniquePtrType<DataManagerBase>
-  Load(Representer<T> * representer, const std::string & filename);
 
   // virtual ~DataManagerBase() = default;
-
-  void
-  AddDataset(DatasetConstPointerType dataset, const std::string & uri) override;
 
   void
   Save(const std::string & filename) const override;
@@ -239,6 +230,10 @@ public:
 protected:
   explicit DataManagerBase(const RepresenterType * representer);
 
+  template <typename ConcreteDataItemType, typename... Args>
+  static UniquePtrType<DataManagerBase>
+  Load(RepresenterType * representer, const std::string & filename, Args&&... args);
+
   UniquePtrType<RepresenterType> m_representer;
   DataItemListType               m_dataItemList;
 };
@@ -252,13 +247,27 @@ class BasicDataManager : public DataManagerBase<T, BasicDataManager<T>>
 public:
   using Superclass = DataManagerBase<T, BasicDataManager<T>>;
   using RepresenterType = typename Superclass::RepresenterType;
+  using DataItemType = typename Superclass::DataItemType;
+  using BasicDataItemType = BasicDataItem<T>;
+  using DatasetConstPointerType = typename Superclass::DatasetConstPointerType;
   using ObjectFactoryType = typename Superclass::ObjectFactoryType;
 
   friend ObjectFactoryType;
 
+  /**
+   * Create a new dataManager, with the data stored in the given hdf5 file
+   */
+  static UniquePtrType<Superclass>
+  Load(RepresenterType * representer, const std::string & filename) {
+    return Superclass::template Load<BasicDataItem<T>>(representer, filename);
+  }
+
+  void
+  AddDataset(DatasetConstPointerType dataset, const std::string & uri) override;
+
 private:
   explicit BasicDataManager(const RepresenterType * representer)
-    : DataManagerBase<T, BasicDataManager<T>>(representer)
+    : Superclass(representer)
   {}
 };
 

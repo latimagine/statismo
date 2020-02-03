@@ -21,3 +21,7 @@ cmake_dependent_option(BUILD_CLI_TOOLS_DOC "Build documentation for the command-
 cmake_dependent_option(BUILD_LONG_RUNNING_CLI_TESTS "Run the cli examples (the execution of these tests can take some time)" ON
   "BUILD_CLI_TOOLS;BUILD_TESTS" OFF
 )
+
+if(BUILD_WRAPPING)
+  SET(STATISMO_PYTHON_VERSION 3 CACHE STRING "Python version for wrapping")
+endif()

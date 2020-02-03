@@ -35,49 +35,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 %{
-#include "vtkUnstructuredGridRepresenter.h"
+#include "statismo/VTK/vtkUnstructuredGridRepresenter.h"
 %}
 
-
-/*class vtkPoint {
-public:
-	vtkPoint(double x, double y, double z);
-};*/	
+// \warning Include core AFTER vtkUnstructuredGridRepresenter
+%include "statismoCore.i"
 
 
-
-
-class vtkUnstructuredGridRepresenter {
-public:
-typedef vtkPoint PointType;
-typedef vtkPoint ValueType;
-typedef vtkUnstructuredGrid* DatasetPointerType;
-typedef const vtkUnstructuredGrid* DatasetConstPointerType;
-
-typedef statismo::Domain<PointType> DomainType;
-
- enum AlignmentType {
-   NONE=999,
-   RIGID=VTK_LANDMARK_RIGIDBODY,
-   SIMILARITY=VTK_LANDMARK_SIMILARITY,
-   AFFINE=VTK_LANDMARK_AFFINE
- };
-
- %newobject Create; 
- static vtkUnstructuredGridRepresenter* Create(const vtkUnstructuredGrid* reference, AlignmentType alignment);
-  static unsigned GetDimensions();
-  AlignmentType GetAlignment() const;
-  
-  const DomainType& GetDomain() const;
-  
- const vtkUnstructuredGrid* GetReference() const;
- unsigned GetNumberOfPoints();
- unsigned GetPointIdForPoint(const vtkPoint& pt);
-
-private:
- 
- vtkUnstructuredGridRepresenter(AlignmentType alignment = RIGID);
-
-};

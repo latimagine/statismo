@@ -34,41 +34,66 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+#include "Core.i"
  
 %{
-#include "vtkStructuredPointsRepresenter.h"
+#include "statismo/VTK/vtkStandardImageRepresenter.h"
+#include <vtkStructuredPoints.h>
 %}
 
+%template(vtkSmartPointer_vtkSP) vtkSmartPointer<vtkStructuredPoints>;
 
-template <class TPixel, unsigned Dimensions>
-class vtkNDPixel {
-public:
-	vtkNDPixel(TPixel* x);
+%template(Representer_vtkSP) statismo::Representer<vtkStructuredPoints>;
+
+%template(vtkStandardImageRepresenter_F2) statismo::vtkStandardImageRepresenter<float, 2>;
+%template(GenericFactory_vtkSIR_F2) statismo::GenericFactory<statismo::vtkStandardImageRepresenter<float, 2>>;
+%template(RepresenterBase_vtkSP_vtkSIR_F2) statismo::RepresenterBase<vtkStructuredPoints, statismo::vtkStandardImageRepresenter<float, 2>>;
+
+
+%template(vtkStandardImageRepresenter_F3) statismo::vtkStandardImageRepresenter<float, 3>;
+%template(GenericFactory_vtkSIR_F3) statismo::GenericFactory<statismo::vtkStandardImageRepresenter<float, 3>>;
+%template(RepresenterBase_vtkSP_vtkSIR_F3) statismo::RepresenterBase<vtkStructuredPoints, statismo::vtkStandardImageRepresenter<float, 3>>;
+
+%template(vtkStandardImageRepresenter_D2) statismo::vtkStandardImageRepresenter<double, 2>;
+%template(GenericFactory_vtkSIR_D2) statismo::GenericFactory<statismo::vtkStandardImageRepresenter<double, 2>>;
+%template(RepresenterBase_vtkSP_vtkSIR_D2) statismo::RepresenterBase<vtkStructuredPoints, statismo::vtkStandardImageRepresenter<double, 2>>;
+
+%template(vtkStandardImageRepresenter_D3) statismo::vtkStandardImageRepresenter<double, 3>;
+%template(GenericFactory_vtkSIR_D3) statismo::GenericFactory<statismo::vtkStandardImageRepresenter<double, 3>>;
+%template(RepresenterBase_vtkSP_vtkSIR_D3) statismo::RepresenterBase<vtkStructuredPoints, statismo::vtkStandardImageRepresenter<double, 3>>;
+
+namespace statismo {
+
+class vtkNDPixel
+{
+	public:
+	vtkNDPixel(unsigned dimensions);
+	vtkNDPixel(const double * x, unsigned dimensions);
 };
-%template(vtkNDPixel_F3) vtkNDPixel<float, 3>;
 
+%rename(RepresenterTraits_vtkSP) RepresenterTraits<vtkStructuredPoints>;  
+struct RepresenterTraits<vtkStructuredPoints>
+{
+  typedef vtkSmartPointer<vtkStructuredPoints> DatasetPointerType;
+  typedef const vtkStructuredPoints * DatasetConstPointerType;
+
+  typedef vtkPoint PointType;
+  typedef vtkNDPixel ValueType;
+};
 
 template <class TPixel, unsigned TDimensions>
-class vtkStructuredPointsRepresenter {
-public: 
+class vtkStandardImageRepresenter : public RepresenterBase<vtkStructuredPoints, vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>> {
+	public:
+		%newobject Create; 
+		static vtkStandardImageRepresenter* Create(); 
+		static vtkStandardImageRepresenter* Create(const vtkStructuredPoints* reference);
 
-	typedef vtkStructuredPoints DatasetType;
-	typedef vtkStructuredPoints* DatasetPointerType;
-	typedef const vtkStructuredPoints* DatasetConstPointerType;
-
-	typedef vtkNDPixel<TPixel, TDimensions> ValueType; 
-
-%newobject Create;
-static vtkStructuredPointsRepresenter* Create(const vtkStructuredPoints* reference);
- static unsigned GetDimensions();
- const vtkStructuredPoints* GetReference() const;
- unsigned GetNumberOfPoints() const ;
- unsigned GetPointIdForPoint(const vtkPoint& pt) const;
-
-private:
- vtkStructuredPointsRepresenter();
-
+		const DomainType& GetDomain() const;
+		unsigned GetNumberOfPoints() const;
+		unsigned GetPointIdForPoint(const vtkPoint & pt) const;
+	private:
+		vtkStandardImageRepresenter();
+		vtkStandardImageRepresenter(const vtkStructuredPoints* reference);
 };
-
-
-%template(vtkStructuredPointsRepresenter_F3) vtkStructuredPointsRepresenter<float, 3>;
+}

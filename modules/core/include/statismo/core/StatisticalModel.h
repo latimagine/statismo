@@ -88,7 +88,6 @@ public:
   using ValueType = typename RepresenterType::ValueType;
   using PointType = typename RepresenterType::PointType;
   using DomainType = Domain<PointType>;
-  using PointIdType = unsigned;
   friend GenericFactory<StatisticalModel<T>>;
 
   using PointValuePairType = std::pair<PointType, ValueType>;

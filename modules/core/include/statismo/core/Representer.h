@@ -60,8 +60,7 @@ namespace statismo
  * - ValueType
  */
 template <class T>
-class RepresenterTraits
-{};
+struct RepresenterTraits;
 
 enum class RepresenterDataType
 {
