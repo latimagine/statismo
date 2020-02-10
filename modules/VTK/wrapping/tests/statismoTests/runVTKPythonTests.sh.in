@@ -33,7 +33,7 @@
 #
 
 #
-# WARNING: This script aims at running python tests in CI. It is only usable
+# WARNING: This script aims at running python tests. It is only usable
 #          if VTK was downloaded and installed from the superbuild as it relies
 #          on the custom install directory.
 #

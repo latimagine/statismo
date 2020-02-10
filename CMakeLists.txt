@@ -103,9 +103,6 @@ string(
 
 # Clang tidy
 
-#
-# sudo ln -s /usr/bin/clang-tidy-6.0 /usr/bin/clang-tidy
-#
 if (BUILD_WITH_TIDY)
   find_program(
     CLANG_TIDY_EXE

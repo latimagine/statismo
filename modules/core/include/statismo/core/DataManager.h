@@ -200,7 +200,6 @@ public:
   friend ObjectFactoryType;
 
 public:
-
   // virtual ~DataManagerBase() = default;
 
   void
@@ -232,7 +231,7 @@ protected:
 
   template <typename ConcreteDataItemType, typename... Args>
   static UniquePtrType<DataManagerBase>
-  Load(RepresenterType * representer, const std::string & filename, Args&&... args);
+  Load(RepresenterType * representer, const std::string & filename, Args &&... args);
 
   UniquePtrType<RepresenterType> m_representer;
   DataItemListType               m_dataItemList;
@@ -258,7 +257,8 @@ public:
    * Create a new dataManager, with the data stored in the given hdf5 file
    */
   static UniquePtrType<Superclass>
-  Load(RepresenterType * representer, const std::string & filename) {
+  Load(RepresenterType * representer, const std::string & filename)
+  {
     return Superclass::template Load<BasicDataItem<T>>(representer, filename);
   }
 

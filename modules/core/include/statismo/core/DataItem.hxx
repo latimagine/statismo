@@ -54,28 +54,31 @@ template <typename T>
 UniquePtrType<DataItem<T>>
 BasicDataItem<T>::Load(const RepresenterType * representer, const H5::Group & dsGroup)
 {
-  auto                                    sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
+  auto sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
   if (sampleType == "DataItem")
   {
-    UniquePtrType<DataItem<T>> newSample{BasicDataItem<T>::Create(representer)};
+    UniquePtrType<DataItem<T>> newSample{ BasicDataItem<T>::Create(representer) };
     newSample->LoadFromGroup(dsGroup);
     return newSample;
   }
 
   throw StatisticalModelException((std::string("Unknown sampletype in hdf5 group: ") + sampleType).c_str(),
-                                    Status::INVALID_DATA_ERROR);
+                                  Status::INVALID_DATA_ERROR);
 }
 
 template <typename T>
 UniquePtrType<DataItem<T>>
 DataItemWithSurrogates<T>::Load(const RepresenterType * representer, const H5::Group & dsGroup)
 {
-  auto                                    sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
+  auto sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
   if (sampleType == "DataItem")
   {
     return BasicDataItem<T>::Load(representer, dsGroup);
-  } else if (sampleType == "DataItemWithSurrogates") {
-    UniquePtrType<DataItem<T>> newSample{DataItemWithSurrogates<T>::Create(representer)};
+  }
+
+  if (sampleType == "DataItemWithSurrogates")
+  {
+    UniquePtrType<DataItem<T>> newSample{ DataItemWithSurrogates<T>::Create(representer) };
     newSample->LoadFromGroup(dsGroup);
     return newSample;
   }

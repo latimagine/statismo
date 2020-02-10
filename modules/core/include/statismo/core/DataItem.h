@@ -163,7 +163,7 @@ protected:
 
   // loads the internal state from the hdf5 file
   void
-  LoadFromGroup(const H5::Group & dsGroup)
+  LoadFromGroup(const H5::Group & dsGroup) override
   {
     hdf5utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
     m_uri = hdf5utils::ReadString(dsGroup, "./URI");
@@ -184,7 +184,7 @@ private:
   virtual void
   SaveInternalImpl(const H5::Group & dsGroup) const = 0;
 
-  virtual  void
+  virtual void
   LoadInternalImpl(const H5::Group & dsGroup) = 0;
 
   const RepresenterType * m_representer;

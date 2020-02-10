@@ -70,7 +70,9 @@ public:
     }
   }
 
-  vtkNDPixel() : vtkNDPixel(0) {} // Needed for usage in container
+  vtkNDPixel()
+    : vtkNDPixel(0)
+  {} // Needed for usage in container
 
   ~vtkNDPixel() = default;
 

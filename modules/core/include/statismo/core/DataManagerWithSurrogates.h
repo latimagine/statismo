@@ -79,7 +79,8 @@ public:
    * Create a new dataManager, with the data stored in the given hdf5 file
    */
   static UniquePtrType<Superclass>
-  Load(RepresenterType * representer, const std::string & h5Filename, const std::string& surrogateFilename) {
+  Load(RepresenterType * representer, const std::string & h5Filename, const std::string & surrogateFilename)
+  {
     return Superclass::template Load<DataItemWithSurrogatesType>(representer, h5Filename, surrogateFilename);
   }
 

@@ -58,7 +58,7 @@ DataManagerBase<T, Derived>::DataManagerBase(const RepresenterType * representer
 template <typename T, typename Derived>
 template <typename ConcreteDataItemType, typename... Args>
 UniquePtrType<DataManagerBase<T, Derived>>
-DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::string & filename, Args&&... args)
+DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::string & filename, Args &&... args)
 {
   using namespace H5;
 
@@ -112,7 +112,8 @@ DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::stri
     }
 
     representer->Load(representerGroup);
-    newDataManagerBase = UniquePtrType<DataManagerBase>(DataManagerBase::Create(representer, std::forward<Args>(args)...));
+    newDataManagerBase =
+      UniquePtrType<DataManagerBase>(DataManagerBase::Create(representer, std::forward<Args>(args)...));
 
     auto     dataGroup = file.openGroup("/data");
     unsigned numds = hdf5utils::ReadInt(dataGroup, "./NumberOfDatasets");
