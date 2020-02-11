@@ -45,7 +45,11 @@ endif()
 # Wrapping
 
 if(${BUILD_WRAPPING})
-  #add_subdirectory(wrapping)
+  if(${statismo_LIB_TYPE} STREQUAL SHARED)
+    add_subdirectory(wrapping)
+  else()
+    message(WARNING "Wrapping is not compatible with static libraries")
+  endif()
 endif()
 
 # Install

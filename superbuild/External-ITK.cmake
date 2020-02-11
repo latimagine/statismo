@@ -1,19 +1,19 @@
 message("External project - ITK")
 
-set(ITK_DEPENDENCIES)
+set(_itk_deps)
 set(_vtkoptions)
 
 if (${VTK_SUPPORT})
   if(${USE_SYSTEM_VTK})
     set(_vtkoptions -DVTK_DIR:PATH=${VTK_DIR})
   else()
-    set(ITK_DEPENDENCIES VTK ${ITK_DEPENDENCIES})
+    set(_itk_deps VTK ${_itk_deps})
   endif()
   set(_vtkoptions ${_vtkoptions} -DModule_ITKVtkGlue:BOOL=ON)
 endif()
 
 ExternalProject_Add(ITK
-  DEPENDS ${ITK_DEPENDENCIES}
+  DEPENDS ${_itk_deps}
   GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITK.git
   GIT_TAG v5.0.1
   SOURCE_DIR ITK

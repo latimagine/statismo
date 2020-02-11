@@ -1,0 +1,4 @@
+numpy<1.17; python_version <= '2.7'
+numpy; python_version >= '3.0'
+scipy<=1.2.2; python_version <= '2.7'
+scipy; python_version >= '3.0'

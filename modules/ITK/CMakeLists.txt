@@ -34,12 +34,6 @@ if(${BUILD_CLI_TOOLS})
   add_subdirectory(cli)
 endif()
 
-# Wrapping
-
-if(${BUILD_WRAPPING})
-  #add_subdirectory(wrapping)
-endif()
-
 # Install
 
 install(FILES ${_target_headers}

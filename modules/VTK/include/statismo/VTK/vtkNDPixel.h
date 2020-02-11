@@ -70,6 +70,10 @@ public:
     }
   }
 
+  vtkNDPixel()
+    : vtkNDPixel(0)
+  {} // Needed for usage in container
+
   ~vtkNDPixel() = default;
 
   vtkNDPixel(const vtkNDPixel & rhs)

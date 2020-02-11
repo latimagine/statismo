@@ -103,9 +103,6 @@ string(
 
 # Clang tidy
 
-#
-# sudo ln -s /usr/bin/clang-tidy-6.0 /usr/bin/clang-tidy
-#
 if (BUILD_WITH_TIDY)
   find_program(
     CLANG_TIDY_EXE
@@ -194,7 +191,7 @@ else()
 endif()
 
 if(VTK_SUPPORT)
-  set(_required_vtk_modules
+  set(STATISMO_REQUIRED_VTK_MODULES
     vtkCommonComputationalGeometry
     vtkCommonCore
     vtkCommonDataModel
@@ -212,14 +209,14 @@ if(VTK_SUPPORT)
     vtkIOXMLParser
   )
   if(${BUILD_WRAPPING})
-    list(APPEND _required_vtk_modules vtkWrappingPythonCore)
+    list(APPEND STATISMO_REQUIRED_VTK_MODULES vtkWrappingPythonCore vtkWrappingTools)
   endif()
 
   list(FIND VTK_MODULES_ENABLED "vtkIOMPIParallel" HasOMPI)
   if(NOT HasOMPI EQUAL -1)
-    list(APPEND _required_vtk_modules vtkIOMPIParallel)
+    list(APPEND STATISMO_REQUIRED_VTK_MODULES vtkIOMPIParallel)
   endif()
-  find_package(VTK 8.0.0 REQUIRED PATHS ${INSTALL_DEPENDENCIES_DIR} COMPONENTS ${_required_vtk_modules})
+  find_package(VTK 8.0.0 REQUIRED PATHS ${INSTALL_DEPENDENCIES_DIR} COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES})
   include(${VTK_USE_FILE})
 endif()
 

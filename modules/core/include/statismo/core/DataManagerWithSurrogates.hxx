@@ -75,6 +75,16 @@ DataManagerWithSurrogates<T>::LoadSurrogateTypes(const std::string & filename)
   }
 }
 
+template <typename T>
+void
+DataManagerWithSurrogates<T>::AddDataset(DatasetConstPointerType dataset, const std::string & uri)
+{
+  auto sample = this->m_representer->CloneDataset(dataset);
+  auto uw = MakeStackUnwinder([&]() { this->m_representer->DeleteDataset(sample); });
+
+  this->m_dataItemList.push_back(MakeSharedPointer<DataItemType>(
+    BasicDataItemType::Create(this->m_representer.get(), uri, this->m_representer->SampleToSampleVector(sample))));
+}
 
 template <typename T>
 void

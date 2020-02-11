@@ -44,35 +44,47 @@ namespace statismo
 {
 
 template <typename T, typename Derived>
-UniquePtrType<DataItemBase<T, Derived>>
-DataItemBase<T, Derived>::Load(const RepresenterType * representer, const H5::Group & dsGroup)
-{
-  auto                                    sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
-  UniquePtrType<DataItemBase<T, Derived>> newSample;
-  if (sampleType == "DataItem")
-  {
-    newSample = std::make_unique<BasicDataItem<T>>(representer);
-  }
-  else if (sampleType == "DataItemWithSurrogates")
-  {
-    newSample = std::make_unique<DataItemWithSurrogates<T>>(representer);
-  }
-  else
-  {
-    throw StatisticalModelException((std::string("Unknown sampletype in hdf5 group: ") + sampleType).c_str(),
-                                    Status::INVALID_DATA_ERROR);
-  }
-
-  newSample->LoadInternal(dsGroup);
-
-  return newSample;
-}
-
-template <typename T, typename Derived>
 void
 DataItemBase<T, Derived>::Save(const H5::Group & dsGroup) const
 {
-  SaveInternal(dsGroup);
+  SaveToGroup(dsGroup);
+}
+
+template <typename T>
+UniquePtrType<DataItem<T>>
+BasicDataItem<T>::Load(const RepresenterType * representer, const H5::Group & dsGroup)
+{
+  auto sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
+  if (sampleType == "DataItem")
+  {
+    UniquePtrType<DataItem<T>> newSample{ BasicDataItem<T>::Create(representer) };
+    newSample->LoadFromGroup(dsGroup);
+    return newSample;
+  }
+
+  throw StatisticalModelException((std::string("Unknown sampletype in hdf5 group: ") + sampleType).c_str(),
+                                  Status::INVALID_DATA_ERROR);
+}
+
+template <typename T>
+UniquePtrType<DataItem<T>>
+DataItemWithSurrogates<T>::Load(const RepresenterType * representer, const H5::Group & dsGroup)
+{
+  auto sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
+  if (sampleType == "DataItem")
+  {
+    return BasicDataItem<T>::Load(representer, dsGroup);
+  }
+
+  if (sampleType == "DataItemWithSurrogates")
+  {
+    UniquePtrType<DataItem<T>> newSample{ DataItemWithSurrogates<T>::Create(representer) };
+    newSample->LoadFromGroup(dsGroup);
+    return newSample;
+  }
+
+  throw StatisticalModelException((std::string("Unknown sampletype in hdf5 group: ") + sampleType).c_str(),
+                                  Status::INVALID_DATA_ERROR);
 }
 
 } // namespace statismo

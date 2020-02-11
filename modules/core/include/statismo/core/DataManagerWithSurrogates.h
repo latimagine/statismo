@@ -62,6 +62,7 @@ public:
   using RepresenterType = typename Superclass::RepresenterType;
   using DatasetPointerType = typename Superclass::DatasetPointerType;
   using DatasetConstPointerType = typename Superclass::DatasetConstPointerType;
+  using BasicDataItemType = BasicDataItem<T>;
   using DataItemWithSurrogatesType = DataItemWithSurrogates<T>;
   using SurrogateTypeVectorType = typename DataItemWithSurrogatesType::SurrogateTypeVectorType;
   using ObjectFactoryType = typename Superclass::ObjectFactoryType;
@@ -73,6 +74,18 @@ public:
     SurrogateTypeVectorType types;
     std::string             typeFilename;
   };
+
+  /**
+   * Create a new dataManager, with the data stored in the given hdf5 file
+   */
+  static UniquePtrType<Superclass>
+  Load(RepresenterType * representer, const std::string & h5Filename, const std::string & surrogateFilename)
+  {
+    return Superclass::template Load<DataItemWithSurrogatesType>(representer, h5Filename, surrogateFilename);
+  }
+
+  void
+  AddDataset(DatasetConstPointerType dataset, const std::string & uri) override;
 
   /**
    * Add a dataset, together with surrogate information

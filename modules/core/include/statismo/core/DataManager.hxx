@@ -56,8 +56,9 @@ DataManagerBase<T, Derived>::DataManagerBase(const RepresenterType * representer
 {}
 
 template <typename T, typename Derived>
+template <typename ConcreteDataItemType, typename... Args>
 UniquePtrType<DataManagerBase<T, Derived>>
-DataManagerBase<T, Derived>::Load(Representer<T> * representer, const std::string & filename)
+DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::string & filename, Args &&... args)
 {
   using namespace H5;
 
@@ -72,7 +73,7 @@ DataManagerBase<T, Derived>::Load(Representer<T> * representer, const std::strin
     throw StatisticalModelException(msg.c_str(), Status::IO_ERROR);
   }
 
-  UniquePtrType<DataManagerBase<T, Derived>> newDataManagerBase;
+  UniquePtrType<DataManagerBase> newDataManagerBase;
   try
   {
     // loading representer
@@ -80,8 +81,8 @@ DataManagerBase<T, Derived>::Load(Representer<T> * representer, const std::strin
     auto repName = hdf5utils::ReadStringAttribute(representerGroup, "name");
     auto repTypeStr = hdf5utils::ReadStringAttribute(representerGroup, "datasetType");
     auto versionStr = hdf5utils::ReadStringAttribute(representerGroup, "version");
-    auto type = RepresenterType::TypeFromString(repTypeStr);
-    if (type == RepresenterType::CUSTOM || type == RepresenterType::UNKNOWN)
+    auto type = TypeFromString(repTypeStr);
+    if (type == RepresenterDataType::CUSTOM || type == RepresenterDataType::UNKNOWN)
     {
       if (repName != representer->GetName())
       {
@@ -105,13 +106,14 @@ DataManagerBase<T, Derived>::Load(Representer<T> * representer, const std::strin
     {
       std::ostringstream os;
       os << "The representer that was provided cannot be used to load the dataset ";
-      os << "(" << type << " != " << representer->GetType() << ").";
+      os << "(" << TypeToString(type) << " != " << TypeToString(representer->GetType()) << ").";
       os << "Cannot load hdf5 file.";
       throw StatisticalModelException(os.str().c_str(), Status::INVALID_DATA_ERROR);
     }
 
     representer->Load(representerGroup);
-    newDataManagerBase = std::make_unique<DataManagerBase<T, Derived>>(representer);
+    newDataManagerBase =
+      UniquePtrType<DataManagerBase>(DataManagerBase::Create(representer, std::forward<Args>(args)...));
 
     auto     dataGroup = file.openGroup("/data");
     unsigned numds = hdf5utils::ReadInt(dataGroup, "./NumberOfDatasets");
@@ -121,7 +123,7 @@ DataManagerBase<T, Derived>::Load(Representer<T> * representer, const std::strin
       ss << "./dataset-" << num;
 
       auto dsGroup = file.openGroup(ss.str().c_str());
-      newDataManagerBase->m_dataItemList.push_back(DataItemType::Load(representer, dsGroup));
+      newDataManagerBase->m_dataItemList.push_back(ConcreteDataItemType::Load(representer, dsGroup));
     }
   }
   catch (const H5::Exception & e)
@@ -148,7 +150,7 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
   {
     file = H5File(filename.c_str(), H5F_ACC_TRUNC);
   }
-  catch (H5::Exception & e)
+  catch (const H5::Exception & e)
   {
     std::string msg(std::string("Could not open HDF5 file for writing \n") + e.getCDetailMsg());
     throw StatisticalModelException(msg.c_str(), Status::IO_ERROR);
@@ -180,23 +182,12 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
       num++;
     }
   }
-  catch (H5::Exception & e)
+  catch (const H5::Exception & e)
   {
     std::string msg =
       std::string("an exception occurred while writing data matrix to HDF5 file \n") + e.getCDetailMsg();
     throw StatisticalModelException(msg.c_str(), Status::IO_ERROR);
   }
-}
-
-template <typename T, typename Derived>
-void
-DataManagerBase<T, Derived>::AddDataset(DatasetConstPointerType dataset, const std::string & uri)
-{
-  auto sample = m_representer->CloneDataset(dataset);
-  auto uw = MakeStackUnwinder([&]() { m_representer->DeleteDataset(sample); });
-
-  m_dataItemList.push_back(MakeSharedPointer<DataItemType>(
-    ConcreteDataItemType::Create(m_representer.get(), uri, m_representer->SampleToSampleVector(sample))));
 }
 
 template <typename T, typename Derived>
@@ -287,6 +278,17 @@ DataManagerBase<T, Derived>::GetLeaveOneOutCrossValidationFolds() const
     foldList.push_back(fold);
   }
   return foldList;
+}
+
+template <typename T>
+void
+BasicDataManager<T>::AddDataset(DatasetConstPointerType dataset, const std::string & uri)
+{
+  auto sample = this->m_representer->CloneDataset(dataset);
+  auto uw = MakeStackUnwinder([&]() { this->m_representer->DeleteDataset(sample); });
+
+  this->m_dataItemList.push_back(MakeSharedPointer<DataItemType>(
+    BasicDataItemType::Create(this->m_representer.get(), uri, this->m_representer->SampleToSampleVector(sample))));
 }
 
 } // Namespace statismo
