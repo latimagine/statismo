@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.15.1)
 project(statismo VERSION 0.11.1 LANGUAGES C CXX)
 
 # ----------------------------------------
@@ -124,7 +124,7 @@ endif()
 # ----------------------------------------
 
 if (BUILD_TESTS)
-  include_directories(${PROJECT_SOURCE_DIR}/helpers/tests)
+  set(UNIT_TEST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/helpers/tests")
   enable_testing()
 
   if (UNIX)
@@ -141,56 +141,15 @@ endif()
 # ----------------------------------------
 # Dependencies
 # ----------------------------------------
+
+# Pandoc
 if(${BUILD_CLI_TOOLS} AND ${BUILD_CLI_TOOLS_DOC})
   find_program(PANDOC NAMES pandoc)
   mark_as_advanced(PANDOC)
 endif()
 
-if(ITK_SUPPORT)
-  find_package(ITK 5.0.0 REQUIRED PATHS ${INSTALL_DEPENDENCIES_DIR})
-  include(${ITK_USE_FILE})
-endif()
-
-# if possible, rely on libs shipped with itk for better comptibility
-if(ITK_SUPPORT)
-  set(ITK_VERSION ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR})
-  find_path(ITK_INCLUDE_WITH_HDF5 NAMES itkhdf5/hdf5.h PATHS ${ITK_INCLUDE_DIRS})
-  set(ITK_HDF5_DIR ${ITK_INCLUDE_WITH_HDF5}/itkhdf5)
-  set(HDF5_INCLUDE_DIRS ${ITK_HDF5_DIR} ${ITK_HDF5_DIR}/cpp)
-  set(HDF5_LIBRARIES ${ITKHDF5_LIBRARIES})
-  set(HDF5_LIBRARY_DIR ${INSTALL_DEPENDENCIES_DIR}/lib)
-
-  find_path(ITK_INCLUDE_WITH_EIGEN NAMES itkeigen/Eigen/Eigen PATHS ${ITK_INCLUDE_DIRS})
-  set(EIGEN3_INCLUDE_DIR ${ITK_INCLUDE_WITH_EIGEN}/itkeigen)
-
-  include_directories(${EIGEN3_INCLUDE_DIR} ${HDF5_INCLUDE_DIRS})
-else()
-  # find eigen
-  find_package(Eigen3 3.0.0 REQUIRED)
-  include_directories(${EIGEN3_INCLUDE_DIR})
-  # find hdf5
-  if(BUILD_SHARED_LIBS)
-    set(HDF5_COMPONENT_TYPE shared)
-  else()
-    set(HDF5_COMPONENT_TYPE static)
-  endif()
-  find_package(HDF5 1.10.2 REQUIRED PATHS ${HDF5_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE})
-  if(HDF5_shared_C_FOUND)
-    include_directories(${HDF5_INCLUDE_DIR})
-    set(HDF5_LIBRARIES hdf5::hdf5-shared hdf5::hdf5_cpp-shared)
-  elseif(HDF5_static_C_FOUND)
-    # Package is imported the hdf5 way
-    include_directories(${HDF5_INCLUDE_DIR})
-    set(HDF5_LIBRARIES hdf5::hdf5-static hdf5::hdf5_cpp-static)
-  else()
-    # Package is imported the cmake way
-    include_directories(${HDF5_INCLUDE_DIRS})
-    set(HDF5_LIBRARIES ${HDF5_C_LIBRARIES} ${HDF5_CXX_LIBRARIES})
-    set(HDF5_LIBRARY_DIR ${HDF5_LIBRARY_DIRS})
-  endif()
-endif()
-
-if(VTK_SUPPORT)
+# VTK
+if(${VTK_SUPPORT})
   set(STATISMO_REQUIRED_VTK_MODULES
     vtkCommonComputationalGeometry
     vtkCommonCore
@@ -216,19 +175,72 @@ if(VTK_SUPPORT)
   if(NOT HasOMPI EQUAL -1)
     list(APPEND STATISMO_REQUIRED_VTK_MODULES vtkIOMPIParallel)
   endif()
-  find_package(VTK 8.0.0 REQUIRED PATHS ${INSTALL_DEPENDENCIES_DIR} COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES})
+  # Search in the install dir with first priority
+  find_package(VTK 8.0.0 PATHS ${INSTALL_DEPENDENCIES_DIR} COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES} NO_DEFAULT_PATH)
+  if(NOT VTK_FOUND)
+    find_package(VTK 8.0.0 REQUIRED COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES})
+  endif()
   include(${VTK_USE_FILE})
 endif()
 
-# make sure the executables have access to the dll's created by the superbuild on windows 
-# to make them runnable even without installing & adding the install path to the cmd PATH
-if(NOT INSTALL_DEPENDENCIES_DIR)
-  set(TESTS_WORKING_DIR "." CACHE INTERNAL "")
-else()
-  set(TEST_WORKING_DIR "${INSTALL_DEPENDENCIES_DIR}/bin" CACHE INTERNAL "")
+# ITK
+if(ITK_SUPPORT)
+  # Search in the install dir with first priority
+  find_package(ITK 5.0.0 PATHS ${INSTALL_DEPENDENCIES_DIR} NO_DEFAULT_PATH)
+  if(NOT ITK_FOUND)
+    find_package(ITK 5.0.0 REQUIRED)
+  endif()
+  include(${ITK_USE_FILE})
+  set(ITK_VERSION ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR})
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/contrib/boost_light)
+# Eigen
+if(ITK_SUPPORT AND USE_ITK_EIGEN)
+  find_path(ITK_INCLUDE_WITH_EIGEN NAMES itkeigen/Eigen/Eigen PATHS ${ITK_INCLUDE_DIRS})
+  set(EIGEN3_INCLUDE_DIR ${ITK_INCLUDE_WITH_EIGEN}/itkeigen)
+else()
+  # Search in the install dir with first priority
+  find_package(Eigen3 3.3.5 PATHS ${INSTALL_DEPENDENCIES_DIR} NO_DEFAULT_PATH)
+  if (NOT Eigen3_FOUND)
+    find_package(Eigen3 3.3.5 REQUIRED)
+  endif()
+endif()
+add_definitions(-DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+# hdf5
+if(ITK_SUPPORT AND USE_ITK_HDF5)
+  find_path(ITK_INCLUDE_WITH_HDF5 NAMES itkhdf5/hdf5.h PATHS ${ITK_INCLUDE_DIRS})
+  set(ITK_HDF5_DIR ${ITK_INCLUDE_WITH_HDF5}/itkhdf5)
+  set(HDF5_INCLUDE_DIRS ${ITK_HDF5_DIR} ${ITK_HDF5_DIR}/cpp)
+  set(HDF5_LIBRARIES ${ITKHDF5_LIBRARIES})
+  include_directories(${HDF5_INCLUDE_DIRS})
+else()
+  # find hdf5
+  if(BUILD_SHARED_LIBS)
+    set(HDF5_COMPONENT_TYPE shared)
+  else()
+    set(HDF5_COMPONENT_TYPE static)
+  endif()
+  find_package(HDF5 1.10.2 PATHS ${HDF5_DIR} ${INSTALL_DEPENDENCIES_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
+  if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
+    find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX ${HDF5_COMPONENT_TYPE})
+  endif()
+  if(HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND AND HDF5_${HDF5_COMPONENT_TYPE}_CXX_FOUND)
+    # handle both case where hdf5 export targets have a namespace or not
+    if (TARGET hdf5::hdf5-${HDF5_COMPONENT_TYPE})
+      set(HDF5_LIBRARIES hdf5::hdf5-${HDF5_COMPONENT_TYPE} hdf5::hdf5_cpp-${HDF5_COMPONENT_TYPE})
+    else()
+      set(HDF5_LIBRARIES hdf5-${HDF5_COMPONENT_TYPE} hdf5_cpp-${HDF5_COMPONENT_TYPE})
+    endif()
+  else()
+    # Package is imported the cmake way
+    set(HDF5_LIBRARIES ${HDF5_C_LIBRARIES} ${HDF5_CXX_LIBRARIES})
+  endif()
+  include_directories(${HDF5_INCLUDE_DIR})
+endif()
+
+set(LPO_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contrib/boost_light")
 
 # ----------------------------------------
 # Process subdirectories

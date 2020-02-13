@@ -1,3 +1,5 @@
+include_directories(${UNIT_TEST_INCLUDE_DIR})
+
 set(_target_tests
   itkStandardImageRepresenterTest.cxx
   itkStandardMeshRepresenterTest.cxx
@@ -21,5 +23,5 @@ endif()
 
 foreach(_test ${_target_tests})
     get_filename_component(TNAME ${_test} NAME_WE)
-    add_test(NAME ${TNAME} COMMAND itkStatismoTest ${TNAME} ${statismo_SOURCE_DIR}/data WORKING_DIRECTORY "${TEST_WORKING_DIR}")
+    add_test(NAME ${TNAME} COMMAND itkStatismoTest ${TNAME} ${statismo_SOURCE_DIR}/data)
 endforeach()

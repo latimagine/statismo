@@ -45,6 +45,7 @@
 #include <vtkPointData.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
+#include <vtkNew.h>
 
 namespace statismo
 {

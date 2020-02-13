@@ -1,5 +1,7 @@
 # The idea here is to have an X.cxx and a X.md where X denotes the cli-command name.
 
+include_directories(${LPO_INCLUDE_DIR})
+
 # Exe build
 set(_cli_files
   statismo-build-shape-model
@@ -91,5 +93,5 @@ endif()
 # Test build
 
 if(${BUILD_LONG_RUNNING_CLI_TESTS})
-  add_subdirectory(test)
+  add_subdirectory(tests)
 endif()

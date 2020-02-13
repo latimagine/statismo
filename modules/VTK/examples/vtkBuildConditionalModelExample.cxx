@@ -42,6 +42,7 @@
 #include "statismo/VTK/vtkStandardImageRepresenter.h"
 
 #include <vtkStructuredPointsReader.h>
+#include <vtkNew.h>
 
 #include <memory>
 #include <iostream>

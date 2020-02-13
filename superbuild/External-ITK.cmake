@@ -1,15 +1,20 @@
-message("External project - ITK")
-
-set(_itk_deps)
-set(_vtkoptions)
+message("-- External project - ITK")
 
 if (${VTK_SUPPORT})
   if(${USE_SYSTEM_VTK})
-    set(_vtkoptions -DVTK_DIR:PATH=${VTK_DIR})
+    set(_itkoptions -DVTK_DIR:PATH=${VTK_DIR})
   else()
     set(_itk_deps VTK ${_itk_deps})
   endif()
-  set(_vtkoptions ${_vtkoptions} -DModule_ITKVtkGlue:BOOL=ON)
+  set(_itkoptions ${_itkoptions} -DModule_ITKVtkGlue:BOOL=ON)
+endif()
+
+if (USE_SYSTEM_HDF5)
+  set(_itkoptions ${_itkoptions} -DHDF5_DIR:PATH=${HDF5_DIR})
+endif()
+
+if (USE_SYSTEM_EIGEN)
+  set(_itkoptions ${_itkoptions} -DEigen_DIR:PATH=${Eigen_DIR})
 endif()
 
 ExternalProject_Add(ITK
@@ -31,8 +36,8 @@ ExternalProject_Add(ITK
     -DModule_ITKReview:BOOL=ON
     -DITK_LEGACY_REMOVE:BOOL=ON
     -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DEPENDENCIES_DIR}
-    -DITK_USE_SYSTEM_HDF5:BOOL=OFF
-    -DITK_USE_SYSTEM_EIGEN:BOOL=OFF
-    ${_vtkoptions}
+    -DITK_USE_SYSTEM_HDF5:BOOL=${USE_SYSTEM_HDF5}
+    -DITK_USE_SYSTEM_EIGEN:BOOL=${USE_SYSTEM_EIGEN}
+    ${_itkoptions}
     ${ITK_EXTRA_OPTIONS}
 )

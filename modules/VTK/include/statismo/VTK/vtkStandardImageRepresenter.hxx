@@ -49,6 +49,7 @@
 #include <vtkPointData.h>
 #include <vtkDataArray.h>
 #include <vtkVersion.h>
+#include <vtkNew.h>
 
 namespace statismo
 {

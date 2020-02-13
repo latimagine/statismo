@@ -1,4 +1,4 @@
-message("External project - Eigen")
+message("-- External project - Eigen")
 
 set(Eigen3_VERSION "3.3.7")
 

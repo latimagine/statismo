@@ -1,3 +1,5 @@
+include_directories(${UNIT_TEST_INCLUDE_DIR})
+
 set(_target_tests
   PosteriorModelBuilderTest.cxx
   PCAModelBuilderWithSelfAdjointEigenSolverTest.cxx
@@ -29,5 +31,5 @@ endforeach()
 
 foreach(TST ${_target_tests})
     get_filename_component(TNAME ${TST} NAME_WE)
-    add_test(NAME ${TNAME} COMMAND vtkStatismoTest ${TNAME} ${statismo_SOURCE_DIR}/data WORKING_DIRECTORY "${TEST_WORKING_DIR}")
+    add_test(NAME ${TNAME} COMMAND vtkStatismoTest ${TNAME} ${statismo_SOURCE_DIR}/data)
 endforeach()

@@ -46,6 +46,7 @@
 #include <vtkPoints.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataReader.h>
+#include <vtkNew.h>
 
 #include <memory>
 

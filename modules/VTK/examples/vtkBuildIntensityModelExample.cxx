@@ -43,6 +43,7 @@
 
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsReader.h>
+#include <vtkNew.h>
 
 #include <iostream>
 #include <ostream>

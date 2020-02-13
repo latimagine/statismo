@@ -1,9 +1,9 @@
-message("External project - HDF5")
+message("-- External project - HDF5")
 
 ExternalProject_add(HDF5
   SOURCE_DIR ${CMAKE_BINARY_DIR}/HDF5
   BINARY_DIR ${CMAKE_BINARY_DIR}/HDF5-build
-  URL http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.gz
+  URL http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.gz
   UPDATE_COMMAND ""
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}

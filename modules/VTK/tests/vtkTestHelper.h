@@ -9,6 +9,7 @@
 #include <vtkStructuredPointsReader.h>
 #include <vtkStructuredPoints.h>
 #include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 #include <string>
 

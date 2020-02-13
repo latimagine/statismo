@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.15.1)
 project(Statismo-Superbuild LANGUAGES C CXX)
 
 # ----------------------------------------
@@ -23,22 +23,41 @@ endif()
 include(${PROJECT_SOURCE_DIR}/../cmake/statismoOptions.cmake)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-option(USE_SYSTEM_VTK "Use system libraries for VTK" OFF)
-option(USE_SYSTEM_ITK "Use system libraries for ITK" OFF)
 option(AUTOBUILD_STATISMO "Set to on build statismo during superbuild" ON)
 
-# If itk support is enabled, we use ITK hdf5 and eigen3 to achieve more stability
 include(CMakeDependentOption)
+cmake_dependent_option(USE_SYSTEM_VTK "Use system libraries for VTK" OFF
+  "VTK_SUPPORT" OFF
+)
+cmake_dependent_option(USE_SYSTEM_ITK "Use system libraries for ITK" OFF
+  "ITK_SUPPORT" OFF
+)
+# USE_SYSTEM_HDF5 and USE_SYSTEM_EIGEN are only an option when
+# USE_SYSTEM_ITK=OFF (no ITK support or manually set to OFF).
+# When USE_SYSTEM_ITK=ON, USE_SYSTEM_HDF5 and USE_SYSTEM_EIGEN are
+# immutable and set to ON because we don't want to mix an ITK system
+# bound with its hdf5/eigen libraries and hdf5/eigen libraries downloaded
+# through the superbuild
 cmake_dependent_option(USE_SYSTEM_HDF5 "Use system libraries for hdf5" OFF
-  "NOT ITK_SUPPORT" OFF
+  "NOT USE_SYSTEM_ITK" ON
 )
-cmake_dependent_option(USE_SYSTEM_Eigen "Use system libraries for eigen3" OFF
-  "NOT ITK_SUPPORT" OFF
+cmake_dependent_option(USE_SYSTEM_EIGEN "Use system libraries for eigen3" OFF
+  "NOT USE_SYSTEM_ITK" ON
+)
+cmake_dependent_option(USE_ITK_EIGEN "Use eigen from itk system library" OFF
+  "USE_SYSTEM_ITK" OFF
+)
+cmake_dependent_option(USE_ITK_HDF5 "Use hdf5 from itk system library" OFF
+  "USE_SYSTEM_ITK" OFF
 )
 
-set(VTK_EXTRA_OPTIONS ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Build VTK with extra options")
-set(ITK_EXTRA_OPTIONS ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Build ITK with extra options")
+if (VTK_SUPPORT AND NOT USE_SYSTEM_VTK)
+  set(VTK_EXTRA_OPTIONS "" CACHE STRING "Build VTK with extra options")
+endif()
 
+if (ITK_SUPPORT AND NOT USE_SYSTEM_ITK)
+  set(ITK_EXTRA_OPTIONS "" CACHE STRING "Build ITK with extra options")
+endif()
 # ----------------------------------------
 # Project settings
 # ----------------------------------------
@@ -56,7 +75,6 @@ set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
 if(NOT INSTALL_DEPENDENCIES_DIR)
     set(INSTALL_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Install directory for dependencies")
 endif()
-set(Patches_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patches)
 set(Statismo_DEPENDENCIES)
 
 # ----------------------------------------
@@ -64,22 +82,6 @@ set(Statismo_DEPENDENCIES)
 # ----------------------------------------
 
 include(ExternalProject)
-
-if(NOT ITK_SUPPORT)
-  if(NOT USE_SYSTEM_HDF5)
-    include(External-HDF5.cmake)
-    set(Statismo_DEPENDENCIES ${Statismo_DEPENDENCIES} HDF5)
-  else()
-    find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
-  endif()
-
-  if(NOT USE_SYSTEM_Eigen)
-    include(External-Eigen.cmake)
-    set(Statismo_DEPENDENCIES ${Statismo_DEPENDENCIES} Eigen3)
-  else()
-    find_package(Eigen3 3.0.0 REQUIRED)
-  endif()
-endif()
 
 if(VTK_SUPPORT)
   if(NOT USE_SYSTEM_VTK)
@@ -91,11 +93,59 @@ if(VTK_SUPPORT)
   endif()
 endif()
 
-if(ITK_SUPPORT)
+set(_use_itk_hdf5 OFF)
+set(_use_itk_eigen OFF)
+
+if(NOT ITK_SUPPORT)
+  # If no ITK support, the opposite of USE_SYSTEM_(HDF5|Eigen) is to download
+  # an external project
+  if(NOT USE_SYSTEM_HDF5)
+    include(External-HDF5.cmake)
+    set(Statismo_DEPENDENCIES ${Statismo_DEPENDENCIES} HDF5)
+  else()
+    find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
+  endif()
+  if(NOT USE_SYSTEM_EIGEN)
+    include(External-Eigen.cmake)
+    set(Statismo_DEPENDENCIES ${Statismo_DEPENDENCIES} Eigen3)
+  else()
+    find_package(Eigen3 3.3.5 REQUIRED)
+  endif()
+else()
   if(NOT USE_SYSTEM_ITK)
+    # If no ITK support, the opposite of USE_SYSTEM_(HDF5|Eigen) is to 
+    # use ITK internal libraries
+    if(USE_SYSTEM_HDF5)
+      find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
+    else()
+      set(_use_itk_hdf5 ON)
+    endif()
+    if(USE_SYSTEM_EIGEN)
+      find_package(Eigen3 3.3.5 REQUIRED)
+    else()
+      set(_use_itk_eigen ON)
+    endif()
     include(External-ITK.cmake)
     set(Statismo_DEPENDENCIES ${Statismo_DEPENDENCIES} ITK)
   else()
+    # This should never happen
+    if (NOT USE_SYSTEM_HDF5 OR NOT USE_SYSTEM_EIGEN)
+      message(FATAL_ERROR "eigen and hdf5 must be system if ITK is system")
+    endif()
+
+    if (USE_ITK_EIGEN)
+      set(_use_itk_eigen ON)
+    else()
+      find_package(Eigen3 3.3.5 REQUIRED)
+    endif()
+    if (USE_ITK_HDF5)
+      set(_use_itk_hdf5 ON)
+    else()
+      find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
+    endif()
+
+    # This has to be included after hdf5 config
+    # as it messes up the config
     find_package(ITK 5.0.0 REQUIRED)
     include(${ITK_USE_FILE})
   endif()
@@ -123,6 +173,8 @@ set (_cmake_args
   -DVTK_DIR:PATH=${VTK_DIR}
   -DHDF5_DIR:PATH=${HDF5_DIR}
   -DEIGEN3_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}
+  -DUSE_ITK_EIGEN:BOOL=${_use_itk_eigen}
+  -DUSE_ITK_HDF5:BOOL=${_use_itk_hdf5}
 )
 
 if(AUTOBUILD_STATISMO)

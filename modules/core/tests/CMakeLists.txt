@@ -1,3 +1,5 @@
+include_directories(${UNIT_TEST_INCLUDE_DIR})
+
 set(_target_tests
   basicStatismoTest.cxx
   utilsStatismoTest.cxx
@@ -22,5 +24,5 @@ endif()
 
 foreach(_tst ${_target_tests})
     get_filename_component(TNAME ${_tst} NAME_WE)
-    add_test(NAME ${TNAME} COMMAND coreStatismoTest ${TNAME} WORKING_DIRECTORY "${TEST_WORKING_DIR}")
+    add_test(NAME ${TNAME} COMMAND coreStatismoTest ${TNAME})
 endforeach()
