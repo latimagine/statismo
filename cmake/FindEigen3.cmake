@@ -29,7 +29,7 @@ macro(_eigen3_set_version)
 endmacro()
 
 if(Eigen3_DIR)
-  find_package(Eigen3 CONFIG PATHS ${Eigen3_DIR} NO_DEFAULt_PATH)
+  find_package(Eigen3 CONFIG PATHS ${Eigen3_DIR} NO_DEFAULT_PATH)
   set(EIGEN3_VERSION ${EIGEN3_VERSION_STRING})
 endif()
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15.1)
+cmake_minimum_required(VERSION 3.13.4)
 project(Statismo-Superbuild LANGUAGES C CXX)
 
 # ----------------------------------------
@@ -22,7 +22,6 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/../cmake/statismoOptions.cmake)
 
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(AUTOBUILD_STATISMO "Set to on build statismo during superbuild" ON)
 
 include(CMakeDependentOption)
@@ -83,13 +82,14 @@ set(Statismo_DEPENDENCIES)
 
 include(ExternalProject)
 
+# This is important to handle VTK before ITK as 
+# ITK can use VTK with its Glue module
 if(VTK_SUPPORT)
   if(NOT USE_SYSTEM_VTK)
     include(External-VTK.cmake)
     set(Statismo_DEPENDENCIES ${Statismo_DEPENDENCIES} VTK)
   else()
     find_package(VTK 8.0.0 REQUIRED)
-    include(${VTK_USE_FILE})
   endif()
 endif()
 
@@ -144,10 +144,8 @@ else()
       find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
     endif()
 
-    # This has to be included after hdf5 config
-    # as it messes up the config
+    # This has to be included after hdf5 and eigen
     find_package(ITK 5.0.0 REQUIRED)
-    include(${ITK_USE_FILE})
   endif()
 endif()
 
@@ -173,6 +171,7 @@ set (_cmake_args
   -DVTK_DIR:PATH=${VTK_DIR}
   -DHDF5_DIR:PATH=${HDF5_DIR}
   -DEIGEN3_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}
+  -DEigen3_DIR:PATH=${Eigen3_DIR}
   -DUSE_ITK_EIGEN:BOOL=${_use_itk_eigen}
   -DUSE_ITK_HDF5:BOOL=${_use_itk_hdf5}
 )

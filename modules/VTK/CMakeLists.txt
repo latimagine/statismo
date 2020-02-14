@@ -20,8 +20,8 @@ target_compile_features(statismo_VTK PUBLIC cxx_std_17)
 target_compile_options(statismo_VTK PRIVATE "${STATISMO_COMPILE_OPTIONS}")
 set_target_properties(statismo_VTK PROPERTIES
   DEBUG_POSTFIX "-d"
-  VERSION "${statismo_LIB_VERSION}"
-  SOVERSION "${statismo_LIB_SOVERSION}"
+  VERSION ${statismo_LIB_VERSION}
+  SOVERSION ${statismo_LIB_SOVERSION}
 )
 if(${BUILD_WITH_TIDY})
    set_target_properties(

@@ -1,12 +1,10 @@
 message("-- External project - ITK")
 
 if (${VTK_SUPPORT})
-  if(${USE_SYSTEM_VTK})
-    set(_itkoptions -DVTK_DIR:PATH=${VTK_DIR})
-  else()
+  if(NOT ${USE_SYSTEM_VTK})
     set(_itk_deps VTK ${_itk_deps})
   endif()
-  set(_itkoptions ${_itkoptions} -DModule_ITKVtkGlue:BOOL=ON)
+  set(_itkoptions ${_itkoptions} -DVTK_DIR:PATH=${VTK_DIR} -DModule_ITKVtkGlue:BOOL=ON)
 endif()
 
 if (USE_SYSTEM_HDF5)
@@ -14,13 +12,13 @@ if (USE_SYSTEM_HDF5)
 endif()
 
 if (USE_SYSTEM_EIGEN)
-  set(_itkoptions ${_itkoptions} -DEigen_DIR:PATH=${Eigen_DIR})
+  set(_itkoptions ${_itkoptions} -DEIGEN3_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR} -DEigen3_DIR:PATH=${Eigen3_DIR})
 endif()
 
 ExternalProject_Add(ITK
   DEPENDS ${_itk_deps}
   GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITK.git
-  GIT_TAG v5.0.1
+  GIT_TAG v5.0.1 # If you modify this, update the ITK_DIR at the end of the file
   SOURCE_DIR ITK
   BINARY_DIR ITK-build
   UPDATE_COMMAND ""
@@ -41,3 +39,6 @@ ExternalProject_Add(ITK
     ${_itkoptions}
     ${ITK_EXTRA_OPTIONS}
 )
+
+# This is passed to Statismo so it is able to find it in priority
+set(ITK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/ITK-5.0/)

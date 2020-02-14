@@ -37,8 +37,8 @@ target_compile_features(statismo_core PUBLIC cxx_std_17)
 target_compile_options(statismo_core PRIVATE "${STATISMO_COMPILE_OPTIONS}")
 set_target_properties(statismo_core PROPERTIES
   DEBUG_POSTFIX "-d"
-  VERSION "${statismo_LIB_VERSION}"
-  SOVERSION "${statismo_LIB_SOVERSION}"
+  VERSION ${statismo_LIB_VERSION}
+  SOVERSION ${statismo_LIB_SOVERSION}
 )
 
 if(${BUILD_WITH_TIDY})

@@ -1,7 +1,8 @@
-# Additional deps
-find_package(PythonLibs ${STATISMO_PYTHON_VERSION} REQUIRED)
-find_package(PythonInterp ${STATISMO_PYTHON_VERSION} REQUIRED)
-include_directories(${PYTHON_INCLUDE_PATH})
+cmake_policy(SET CMP0078 NEW)
+
+if(${CMAKE_VERSION} VERSION_GREATER 3.14.0)
+  cmake_policy(SET CMP0086 NEW)
+endif()
 
 # Give us path to exe SWIG_EXECUTABLE and dir SWIG_DIR
 find_package(SWIG REQUIRED)
@@ -52,6 +53,11 @@ target_compile_definitions(statismovtk PUBLIC -DNPY_NO_DEPRECATED_API=NPY_1_7_AP
 target_compile_options(statismovtk PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
           -Wno-register>
+)
+
+set_target_properties(statismovtk PROPERTIES
+  VERSION ${statismo_LIB_VERSION}
+  SOVERSION ${statismo_LIB_SOVERSION}
 )
 
 # Tests

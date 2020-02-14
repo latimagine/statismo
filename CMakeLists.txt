@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15.1)
+cmake_minimum_required(VERSION 3.13.4)
 project(statismo VERSION 0.11.1 LANGUAGES C CXX)
 
 # ----------------------------------------
@@ -10,11 +10,15 @@ include(${PROJECT_SOURCE_DIR}/cmake/statismoOptions.cmake)
 # ----------------------------------------
 # Project settings
 # ----------------------------------------
-
 set(STATISMO_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(statismo_LIB_VERSION ${STATISMO_VERSION})
-set(statismo_LIB_SOVERSION ${STATISMO_MAJOR_VERSION}.${STATISMO_MINOR_VERSION})
+set(statismo_LIB_VERSION ${PROJECT_VERSION})
+set(statismo_LIB_SOVERSION ${PROJECT_VERSION_MAJOR})
 set(statismo_LIB_TYPE SHARED)
+
+# Library type
+if (NOT BUILD_SHARED_LIBS)
+  set(statismo_LIB_TYPE STATIC)
+endif()
 
 # Setup build locations.
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
@@ -148,7 +152,7 @@ if(${BUILD_CLI_TOOLS} AND ${BUILD_CLI_TOOLS_DOC})
   mark_as_advanced(PANDOC)
 endif()
 
-# VTK
+# VTK (first)
 if(${VTK_SUPPORT})
   set(STATISMO_REQUIRED_VTK_MODULES
     vtkCommonComputationalGeometry
@@ -175,22 +179,22 @@ if(${VTK_SUPPORT})
   if(NOT HasOMPI EQUAL -1)
     list(APPEND STATISMO_REQUIRED_VTK_MODULES vtkIOMPIParallel)
   endif()
-  # Search in the install dir with first priority
-  find_package(VTK 8.0.0 PATHS ${INSTALL_DEPENDENCIES_DIR} COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES} NO_DEFAULT_PATH)
+  # If VTK_DIR has been transferred, it will find it with first priority
+  find_package(VTK 8.0.0 PATHS ${VTK_DIR} COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES} NO_DEFAULT_PATH)
   if(NOT VTK_FOUND)
     find_package(VTK 8.0.0 REQUIRED COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES})
   endif()
-  include(${VTK_USE_FILE})
+  include_directories(${VTK_INCLUDE_DIRS})
 endif()
 
-# ITK
+# ITK (This has to be included first in case internal hdf5/eigen is used)
 if(ITK_SUPPORT)
-  # Search in the install dir with first priority
-  find_package(ITK 5.0.0 PATHS ${INSTALL_DEPENDENCIES_DIR} NO_DEFAULT_PATH)
+  # If ITK_DIR has been transfered, it will find it with first priority
+  find_package(ITK 5.0.0 PATHS ${ITK_DIR} NO_DEFAULT_PATH)
   if(NOT ITK_FOUND)
     find_package(ITK 5.0.0 REQUIRED)
   endif()
-  include(${ITK_USE_FILE})
+  include_directories(${ITK_INCLUDE_DIRS})
   set(ITK_VERSION ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR})
 endif()
 
@@ -199,14 +203,16 @@ if(ITK_SUPPORT AND USE_ITK_EIGEN)
   find_path(ITK_INCLUDE_WITH_EIGEN NAMES itkeigen/Eigen/Eigen PATHS ${ITK_INCLUDE_DIRS})
   set(EIGEN3_INCLUDE_DIR ${ITK_INCLUDE_WITH_EIGEN}/itkeigen)
 else()
-  # Search in the install dir with first priority
-  find_package(Eigen3 3.3.5 PATHS ${INSTALL_DEPENDENCIES_DIR} NO_DEFAULT_PATH)
+  # If EIGEN3_INCLUDE_DIR has been transferred, it will find it with first priority
+  find_package(Eigen3 3.3.5 NO_DEFAULT_PATH)
   if (NOT Eigen3_FOUND)
     find_package(Eigen3 3.3.5 REQUIRED)
   endif()
 endif()
 add_definitions(-DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)
 include_directories(${EIGEN3_INCLUDE_DIR})
+# We have to use another variable name as ITK could modify this
+set(CONFIG_EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
 
 # hdf5
 if(ITK_SUPPORT AND USE_ITK_HDF5)
@@ -215,6 +221,8 @@ if(ITK_SUPPORT AND USE_ITK_HDF5)
   set(HDF5_INCLUDE_DIRS ${ITK_HDF5_DIR} ${ITK_HDF5_DIR}/cpp)
   set(HDF5_LIBRARIES ${ITKHDF5_LIBRARIES})
   include_directories(${HDF5_INCLUDE_DIRS})
+  set(CONFIG_HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
+  set(CONFIG_HDF5_LIBRARIES ${HDF5_LIBRARIES})
 else()
   # find hdf5
   if(BUILD_SHARED_LIBS)
@@ -222,7 +230,8 @@ else()
   else()
     set(HDF5_COMPONENT_TYPE static)
   endif()
-  find_package(HDF5 1.10.2 PATHS ${HDF5_DIR} ${INSTALL_DEPENDENCIES_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
+  # If HDF5_DIR has been transferred, it will find it with first priority
+  find_package(HDF5 1.10.2 PATHS ${HDF5_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
   if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
     find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX ${HDF5_COMPONENT_TYPE})
   endif()
@@ -238,9 +247,16 @@ else()
     set(HDF5_LIBRARIES ${HDF5_C_LIBRARIES} ${HDF5_CXX_LIBRARIES})
   endif()
   include_directories(${HDF5_INCLUDE_DIR})
+  set(CONFIG_HDF5_DIR ${HDF5_DIR})
 endif()
 
 set(LPO_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contrib/boost_light")
+
+if (BUILD_WRAPPING)
+  find_package(PythonLibs ${STATISMO_PYTHON_VERSION} REQUIRED)
+  find_package(PythonInterp ${STATISMO_PYTHON_VERSION} REQUIRED)
+  include_directories(${PYTHON_INCLUDE_PATH})
+endif()
 
 # ----------------------------------------
 # Process subdirectories
@@ -282,28 +298,41 @@ if(VTK_SUPPORT)
 endif()
 
 write_basic_package_version_file(
-    ${statismo_BINARY_DIR}/statismoConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion)
+  ${statismo_BINARY_DIR}/statismoConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY AnyNewerVersion)
 
 configure_package_config_file(
-    ${statismo_SOURCE_DIR}/cmake/statismoConfig.cmake.in
-    ${statismo_BINARY_DIR}/statismoConfig.cmake
-    INSTALL_DESTINATION .
+  ${statismo_SOURCE_DIR}/cmake/statismoConfig.cmake.in
+  ${statismo_BINARY_DIR}/statismoConfig.cmake
+  INSTALL_DESTINATION .
+)
+
+configure_package_config_file(
+  ${statismo_SOURCE_DIR}/cmake/UseStatismo.cmake.in
+  ${statismo_BINARY_DIR}/UseStatismo.cmake
+  INSTALL_DESTINATION .
 )
 
 # ----------------------------------------
 # Install tree targets export
 # ----------------------------------------
 configure_package_config_file(
-    ${statismo_SOURCE_DIR}/cmake/statismoConfig.cmake.in
-    ${statismo_BINARY_DIR}/cmake/statismoConfig.cmake
-    INSTALL_DESTINATION ${INSTALL_CMAKE_DIR}
+  ${statismo_SOURCE_DIR}/cmake/statismoConfig.cmake.in
+  ${statismo_BINARY_DIR}/cmake/statismoConfig.cmake
+  INSTALL_DESTINATION ${INSTALL_CMAKE_DIR}
+)
+
+configure_package_config_file(
+  ${statismo_SOURCE_DIR}/cmake/UseStatismo.cmake.in
+  ${statismo_BINARY_DIR}/cmake/UseStatismo.cmake
+  INSTALL_DESTINATION ${INSTALL_CMAKE_DIR}
 )
 
 install(FILES
     ${statismo_BINARY_DIR}/statismoConfig.cmake
     ${statismo_BINARY_DIR}/statismoConfigVersion.cmake
+    ${statismo_BINARY_DIR}/UseStatismo.cmake
    DESTINATION ${INSTALL_CMAKE_DIR} COMPONENT dev
 )
 install(EXPORT statismoTargets NAMESPACE statismo::
