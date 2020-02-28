@@ -43,6 +43,7 @@
 #include "statismo/core/Domain.h"
 #include "statismo/core/Representer.h"
 #include "statismo/VTK/vtkPoint.h"
+#include "statismo/VTK/statismoVTKExport.h"
 
 #include <H5Cpp.h>
 
@@ -77,7 +78,7 @@ struct RepresenterTraits<vtkUnstructuredGrid>
  *
  * \see Representer
  */
-class vtkUnstructuredGridRepresenter : public RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>
+class STATISMO_VTK_EXPORT vtkUnstructuredGridRepresenter : public RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>
 {
 public:
   using RepresenterBaseType = RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>;

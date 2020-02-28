@@ -37,11 +37,16 @@
 #define __STATIMO_CORE_RAND_UTILS_H_
 
 #include <random>
+#include <ctime>
 
 namespace statismo::rand
 {
-std::minstd_rand &
-RandGen(unsigned seed = static_cast<unsigned>(time(nullptr)));
+inline std::minstd_rand &
+RandGen(unsigned seed = static_cast<unsigned>(std::time(nullptr)))
+{
+  static std::minstd_rand s_rg{ seed };
+  return s_rg;
+}
 } // namespace statismo::rand
 
 #endif

@@ -14,6 +14,14 @@
 
 #pragma once
 
+#ifdef _WIN32
+#include <Windows.h>
+#include <shellapi.h>
+
+#include <locale>
+#include <codecvt>
+#endif
+
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
@@ -23,6 +31,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <sstream>
 
 ///
 /// Light program options (lpo) aims to provide
@@ -203,8 +212,8 @@ private:
     std::string desc;
     T *         val;
     T           default_val;
-    T           min{ std::numeric_limits<T>::min() };
-    T           max{ std::numeric_limits<T>::max() };
+    T           min{ (std::numeric_limits<T>::min)() };
+    T           max{ (std::numeric_limits<T>::max)() };
   };
 
   template <typename T, typename = void>
@@ -221,8 +230,8 @@ private:
     using value_type = std::decay_t<T>;
     std::string desc;
     T *         val;
-    T           min{ std::numeric_limits<T>::min() };
-    T           max{ std::numeric_limits<T>::max() };
+    T           min{ (std::numeric_limits<T>::min)() };
+    T           max{ (std::numeric_limits<T>::max)() };
   };
 
   using flag_opt_t = opt<bool>;
@@ -446,10 +455,10 @@ program_options<Ts...>::parse(int argc, char ** argv)
               {
                 throw std::runtime_error("missing value for option <" + opt.name + ">");
               }
-              auto arg = args[++args_count];
+              auto argval = args[++args_count];
               try
               {
-                *(opt.val) = details::lexical_cast<T>(arg);
+                *(opt.val) = details::lexical_cast<T>(argval);
               }
               catch (...)
               {

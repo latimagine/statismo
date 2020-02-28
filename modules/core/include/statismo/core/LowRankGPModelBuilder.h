@@ -69,8 +69,10 @@ struct EigenfunctionComputationResult
     , resultForPoints(resMat)
   {}
 
-  unsigned   lowerInd;
-  unsigned   upperInd;
+  EigenfunctionComputationResult() = default;
+
+  unsigned   lowerInd{ 0 };
+  unsigned   upperInd{ 0 };
   MatrixType resultForPoints;
 };
 

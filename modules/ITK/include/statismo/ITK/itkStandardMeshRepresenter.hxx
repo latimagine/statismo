@@ -75,7 +75,7 @@ template <typename Pixel, unsigned MESH_DIMENSION>
 void
 StandardMeshRepresenter<Pixel, MESH_DIMENSION>::Load(const H5::Group & fg)
 {
-  auto repName = statismo::hdf5utils::ReadStringAttribute(fg, "name");
+  auto repName = statismo::HDF5Utils::ReadStringAttribute(fg, "name");
   if (repName == "vtkPolyDataRepresenter" || repName == "itkMeshRepresenter")
   {
     this->SetReference(LoadRefLegacy(fg));
@@ -91,11 +91,11 @@ typename StandardMeshRepresenter<Pixel, MESH_DIMENSION>::MeshType::Pointer
 StandardMeshRepresenter<Pixel, MESH_DIMENSION>::LoadRef(const H5::Group & fg) const
 {
   statismo::MatrixType vertexMat;
-  statismo::hdf5utils::ReadMatrix(fg, "./points", vertexMat);
+  statismo::HDF5Utils::ReadMatrix(fg, "./points", vertexMat);
 
   using UIntMatrixType = typename statismo::GenericEigenTraits<unsigned int>::MatrixType;
   UIntMatrixType cellsMat;
-  statismo::hdf5utils::ReadMatrixOfType<unsigned int>(fg, "./cells", cellsMat);
+  statismo::HDF5Utils::ReadMatrixOfType<unsigned int>(fg, "./cells", cellsMat);
 
   unsigned nVertices = vertexMat.cols();
   unsigned nCells = cellsMat.cols();
@@ -142,14 +142,14 @@ StandardMeshRepresenter<Pixel, MESH_DIMENSION>::LoadRef(const H5::Group & fg) co
   }
 
   // currently this representer supports only pointdata of type scalar
-  if (statismo::hdf5utils::ExistsObjectWithName(fg, "pointData"))
+  if (statismo::HDF5Utils::ExistsObjectWithName(fg, "pointData"))
   {
     auto pdGroup = fg.openGroup("./pointData");
 
-    if (statismo::hdf5utils::ExistsObjectWithName(pdGroup, "scalars"))
+    if (statismo::HDF5Utils::ExistsObjectWithName(pdGroup, "scalars"))
     {
       auto ds = pdGroup.openDataSet("scalars");
-      auto type = static_cast<unsigned>(statismo::hdf5utils::ReadIntAttribute(ds, "datatype"));
+      auto type = static_cast<unsigned>(statismo::HDF5Utils::ReadIntAttribute(ds, "datatype"));
       if (type != PixelConversionTrait<Pixel>::GetDataType())
       {
         std::cout << "Warning: The datatype specified for the scalars does not match the Pixel template argument used "
@@ -157,7 +157,7 @@ StandardMeshRepresenter<Pixel, MESH_DIMENSION>::LoadRef(const H5::Group & fg) co
                   << std::endl;
       }
       statismo::MatrixTypeDoublePrecision scalarMatDouble;
-      statismo::hdf5utils::ReadMatrixOfType<double>(pdGroup, "scalars", scalarMatDouble);
+      statismo::HDF5Utils::ReadMatrixOfType<double>(pdGroup, "scalars", scalarMatDouble);
       statismo::MatrixType scalarMat = scalarMatDouble.cast<statismo::ScalarType>();
       assert(static_cast<unsigned>(scalarMatDouble.cols()) == mesh->GetNumberOfPoints());
       auto pd = MeshType::PointDataContainer::New();
@@ -180,7 +180,7 @@ typename StandardMeshRepresenter<Pixel, MESH_DIMENSION>::MeshType::Pointer
 StandardMeshRepresenter<Pixel, MESH_DIMENSION>::LoadRefLegacy(const H5::Group & fg) const
 {
   auto tmpfilename = statismo::utils::CreateTmpName(".vtk");
-  statismo::hdf5utils::GetFileFromHDF5(fg, "./reference", tmpfilename.c_str());
+  statismo::HDF5Utils::GetFileFromHDF5(fg, "./reference", tmpfilename.c_str());
 
   auto uw = statismo::MakeStackUnwinder([=]() { statismo::utils::RemoveFile(tmpfilename); });
 
@@ -341,7 +341,7 @@ StandardMeshRepresenter<Pixel, MESH_DIMENSION>::Save(const H5::Group & fg) const
       vertexMat(d, i) = pt[d];
     }
   }
-  statismo::hdf5utils::WriteMatrix(fg, "./points", vertexMat);
+  statismo::HDF5Utils::WriteMatrix(fg, "./points", vertexMat);
 
   // check the dimensionality of a face (i.e. the number of points it has). We assume that
   // all the cells are the same.
@@ -380,11 +380,11 @@ StandardMeshRepresenter<Pixel, MESH_DIMENSION>::Save(const H5::Group & fg) const
       scalarsMat.col(i) = PixelConversionTrait<Pixel>::ToVector(pd->GetElement(i));
     }
     statismo::MatrixTypeDoublePrecision scalarsMatDouble = scalarsMat.cast<double>();
-    H5::DataSet ds = statismo::hdf5utils::WriteMatrixOfType<double>(pdGroup, "scalars", scalarsMatDouble);
-    statismo::hdf5utils::WriteIntAttribute(ds, "datatype", PixelConversionTrait<Pixel>::GetDataType());
+    H5::DataSet ds = statismo::HDF5Utils::WriteMatrixOfType<double>(pdGroup, "scalars", scalarsMatDouble);
+    statismo::HDF5Utils::WriteIntAttribute(ds, "datatype", PixelConversionTrait<Pixel>::GetDataType());
   }
 
-  statismo::hdf5utils::WriteMatrixOfType<unsigned int>(fg, "./cells", facesMat);
+  statismo::HDF5Utils::WriteMatrixOfType<unsigned int>(fg, "./cells", facesMat);
 }
 
 template <typename Pixel, unsigned MESH_DIMENSION>

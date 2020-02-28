@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13.4)
+﻿cmake_minimum_required(VERSION 3.13.4)
 project(statismo VERSION 0.11.1 LANGUAGES C CXX)
 
 # ----------------------------------------
@@ -14,11 +14,13 @@ set(STATISMO_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(statismo_LIB_VERSION ${PROJECT_VERSION})
 set(statismo_LIB_SOVERSION ${PROJECT_VERSION_MAJOR})
 set(statismo_LIB_TYPE SHARED)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Library type
 if (NOT BUILD_SHARED_LIBS)
   set(statismo_LIB_TYPE STATIC)
 endif()
+set(STATISMO_BUILD_SHARED ${BUILD_SHARED_LIBS})
 
 # Setup build locations.
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
@@ -26,37 +28,22 @@ if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 endif()
 
 # set CMAKE_MODULE_PATH for cmake macro/function and modules
-set(CMAKE_MODULE_PATH
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake
-  ${CMAKE_MODULE_PATH}
-)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules" ${CMAKE_MODULE_PATH})
 
 if(APPLE)
   include(CMakeOSXVariables)
 endif()
 
-if(CMAKE_HOST_WIN32)
-  set(STATISMO_MAX_PATH 50)
-  string(LENGTH "${CMAKE_CURRENT_SOURCE_DIR}" n)
-  if(n GREATER ${STATISMO_MAX_PATH})
-    message(FATAL_ERROR
-      "Statismo source code directory path length is too long (${n} > ${STATISMO_MAX_PATH})."
-      "Please move the Statismo source code directory to a directory with a shorter path."
-   )
-  endif()
-
-  string(LENGTH "${CMAKE_CURRENT_BINARY_DIR}" n)
-  if(n GREATER ${STATISMO_MAX_PATH})
-    message(FATAL_ERROR
-      "Statismo build directory path length is too long (${n} > ${STATISMO_MAX_PATH})."
-      "Please move the Statismo build directory to a directory with a shorter path."
-   )
-  endif()
+if (MSVC)
+  include(CMakeTargetPath)
 endif()
 
-if(WIN32)
-  # TODO: Fix this with cmake auto-generated export macro
-  set(statismo_LIB_TYPE STATIC)
+# ----------------------------------------
+# Compile options
+# ----------------------------------------
+if(MSVC AND MSVC_VERSION GREATER 1310)
+    set(STATISMO_REQUIRED_CXX_FLAGS "/bigobj;")
+    string(APPEND STATISMO_COMPILE_OPTIONS "${STATISMO_REQUIRED_CXX_FLAGS}")
 endif()
 
 # ----------------------------------------
@@ -85,6 +72,9 @@ foreach(p LIB BIN INCLUDE CMAKE)
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
   endif()
 endforeach()
+
+# Used to store the path to shared library under windows
+set(SHARED_LIBRARY_PATHS)
 
 # ----------------------------------------
 # Sanity
@@ -139,7 +129,6 @@ if (BUILD_TESTS)
     endif()
   endif()
   include(CTest)
-
 endif()
 
 # ----------------------------------------
@@ -184,7 +173,11 @@ if(${VTK_SUPPORT})
   if(NOT VTK_FOUND)
     find_package(VTK 8.0.0 REQUIRED COMPONENTS ${STATISMO_REQUIRED_VTK_MODULES})
   endif()
-  include_directories(${VTK_INCLUDE_DIRS})
+  include(${VTK_USE_FILE})
+  if(MSVC)
+    get_shared_locations(_vtk_libs_loc "${VTK_LIBRARIES}")
+    set(SHARED_LIBRARY_PATHS "${SHARED_LIBRARY_PATHS};${_vtk_libs_loc}")
+  endif()
 endif()
 
 # ITK (This has to be included first in case internal hdf5/eigen is used)
@@ -194,8 +187,12 @@ if(ITK_SUPPORT)
   if(NOT ITK_FOUND)
     find_package(ITK 5.0.0 REQUIRED)
   endif()
-  include_directories(${ITK_INCLUDE_DIRS})
   set(ITK_VERSION ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR})
+  include(${ITK_USE_FILE})
+  if(MSVC)
+    get_shared_locations(_itk_libs_loc "${ITK_LIBRARIES}")
+    set(SHARED_LIBRARY_PATHS "${SHARED_LIBRARY_PATHS};${_itk_libs_loc}")
+  endif()
 endif()
 
 # Eigen
@@ -204,9 +201,10 @@ if(ITK_SUPPORT AND USE_ITK_EIGEN)
   set(EIGEN3_INCLUDE_DIR ${ITK_INCLUDE_WITH_EIGEN}/itkeigen)
 else()
   # If EIGEN3_INCLUDE_DIR has been transferred, it will find it with first priority
-  find_package(Eigen3 3.3.5 NO_DEFAULT_PATH)
+  # Force find_package to MODULE to use the provided FindEigen3
+  find_package(Eigen3 3.3.5 MODULE)
   if (NOT Eigen3_FOUND)
-    find_package(Eigen3 3.3.5 REQUIRED)
+   find_package(Eigen3 3.3.5 REQUIRED)
   endif()
 endif()
 add_definitions(-DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)
@@ -231,8 +229,10 @@ else()
     set(HDF5_COMPONENT_TYPE static)
   endif()
   # If HDF5_DIR has been transferred, it will find it with first priority
-  find_package(HDF5 1.10.2 PATHS ${HDF5_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
+  message("${HDF5_DIR}")
+  find_package(HDF5 1.10.2 CONFIG PATHS ${HDF5_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
   if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
+     message("${HDF5_DIR} again")
     find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX ${HDF5_COMPONENT_TYPE})
   endif()
   if(HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND AND HDF5_${HDF5_COMPONENT_TYPE}_CXX_FOUND)
@@ -248,6 +248,10 @@ else()
   endif()
   include_directories(${HDF5_INCLUDE_DIR})
   set(CONFIG_HDF5_DIR ${HDF5_DIR})
+  if (MSVC)
+    get_shared_locations(_hdf5_libs_loc "${HDF5_LIBRARIES}")
+    set(SHARED_LIBRARY_PATHS "${SHARED_LIBRARY_PATHS};${_hdf5_libs_loc}")
+  endif()
 endif()
 
 set(LPO_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contrib/boost_light")
@@ -256,6 +260,11 @@ if (BUILD_WRAPPING)
   find_package(PythonLibs ${STATISMO_PYTHON_VERSION} REQUIRED)
   find_package(PythonInterp ${STATISMO_PYTHON_VERSION} REQUIRED)
   include_directories(${PYTHON_INCLUDE_PATH})
+endif()
+
+if (MSVC)
+    set(_env_path "${SHARED_LIBRARY_PATHS};$ENV{PATH}")
+    STRING(REPLACE ";" "\\;" STATISMO_ENV_PATH "${_env_path}")
 endif()
 
 # ----------------------------------------

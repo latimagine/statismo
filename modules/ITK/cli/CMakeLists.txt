@@ -20,6 +20,8 @@ foreach(_ex ${_cli_files})
   target_link_libraries(${_ex} statismo_core statismo_ITK)
   install(TARGETS ${_ex} DESTINATION ${INSTALL_BIN_DIR})
   target_compile_options(${_ex} PRIVATE "${STATISMO_COMPILE_OPTIONS}")
+  target_compile_definitions(${_ex} PRIVATE -D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
+  set_target_properties(${_ex} PROPERTIES FOLDER cli)
 
   if(${BUILD_WITH_TIDY})
     set_target_properties(
@@ -76,7 +78,7 @@ if(${BUILD_CLI_TOOLS_DOC})
 
     # build the cli documentation by default
     add_custom_target(
-      doc-cli ALL
+      statismo_doc_cli ALL
       DEPENDS ${_clidoc_target_deps}
       SOURCES ${_clidoc_target_sources}
    )

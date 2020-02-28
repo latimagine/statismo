@@ -51,7 +51,7 @@ namespace statismo
 {
 
 template <typename T>
-unsigned
+std::size_t
 ConditionalModelBuilder<T>::PrepareData(const DataItemListType &            sampleDataList,
                                         const SurrogateTypeInfoType &       surrogateTypesInfo,
                                         const CondVariableValueVectorType & conditioningInfo,
@@ -161,7 +161,7 @@ ConditionalModelBuilder<T>::BuildNewModel(const DataItemListType &            sa
   {
     // the scores in the pca model correspond to the parameters of each sample in the model.
     MatrixType B = pcaModel->GetModelInfo().GetScoresMatrix().transpose();
-    assert(B.rows() == nSamples);
+    assert(static_cast<std::size_t>(B.rows()) == nSamples);
     assert(B.cols() == nPCAComponents);
 
     // A is the joint data matrix B, X, where X contains the conditional information for each sample

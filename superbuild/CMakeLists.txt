@@ -57,6 +57,7 @@ endif()
 if (ITK_SUPPORT AND NOT USE_SYSTEM_ITK)
   set(ITK_EXTRA_OPTIONS "" CACHE STRING "Build ITK with extra options")
 endif()
+
 # ----------------------------------------
 # Project settings
 # ----------------------------------------
@@ -71,9 +72,7 @@ if(APPLE)
 endif()
 
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
-if(NOT INSTALL_DEPENDENCIES_DIR)
-    set(INSTALL_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Install directory for dependencies")
-endif()
+set(INSTALL_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Install directory for dependencies")
 set(Statismo_DEPENDENCIES)
 
 # ----------------------------------------

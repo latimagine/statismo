@@ -109,7 +109,7 @@ public:
                 double                              modelVarianceRetained = 1.0f) const;
 
 private:
-  unsigned
+  std::size_t
   PrepareData(const DataItemListType &            DataItemList,
               const SurrogateTypeInfoType &       surrogateTypesInfo,
               const CondVariableValueVectorType & conditioningInfo,

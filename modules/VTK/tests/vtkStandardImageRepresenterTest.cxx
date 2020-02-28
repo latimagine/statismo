@@ -75,7 +75,7 @@ TestRepresenterForImage()
 } // namespace
 
 int
-vtkStandardImageRepresenterTest(int argc, char ** argv)
+vtkStandardImageRepresenterTest(int argc, char * argv[])
 {
 
   if (argc < 2)

@@ -30,12 +30,11 @@ endif()
 
 # Target configuration
 set_source_files_properties(statismo.i PROPERTIES CPLUSPLUS ON SWIG_FLAGS "-includeall")
-file(GLOB _target_sources ${CMAKE_CURRENT_SOURCE_DIR}/../src/*.cxx )
 
 swig_add_library(statismovtk
- TYPE MODULE
+ TYPE USE_BUILD_SHARED_LIBS
  LANGUAGE python
- SOURCES statismo.i ${_target_sources})
+ SOURCES statismo.i)
 
 swig_link_libraries(statismovtk statismo_core
   statismo_VTK
@@ -64,8 +63,15 @@ set_target_properties(statismovtk PROPERTIES
 set(STATISMO_DATA_DIR "${statismo_SOURCE_DIR}/data/")
 set(STATISMOVTK_TEST_SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests/statismoTests")
 set(STATISMOVTK_MODULE_DIR $<TARGET_FILE_DIR:statismovtk>)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tests/statismoTests/runVTKPythonTests.sh.in ${PROJECT_BINARY_DIR}/runVTKPythonTests.sh.gen @ONLY)
-file(GENERATE OUTPUT ${PROJECT_BINARY_DIR}/runVTKPythonTests.sh INPUT ${PROJECT_BINARY_DIR}/runVTKPythonTests.sh.gen)
+
+if(MSVC)
+    set(_script_ext "bat")
+else()
+    set(_script_ext "sh")
+endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tests/statismoTests/runVTKPythonTests.${_script_ext}.in ${PROJECT_BINARY_DIR}/runVTKPythonTests.${_script_ext}.gen @ONLY)
+file(GENERATE OUTPUT ${PROJECT_BINARY_DIR}/runVTKPythonTests$<CONFIG>.${_script_ext} INPUT ${PROJECT_BINARY_DIR}/runVTKPythonTests.${_script_ext}.gen)
 
 # Install
 set(_python_install_dir ${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)

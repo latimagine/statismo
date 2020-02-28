@@ -15,7 +15,7 @@ if(BUILD_DOCUMENTATION)
   set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
 
   doxygen_add_docs(
-      statismoDox
+      statismo_dox
       ${CMAKE_CURRENT_SOURCE_DIR}/classdoc/intro.dox ${PROJECT_SOURCE_DIR}/modules
       COMMENT "Generate doxygen doc"
       ALL

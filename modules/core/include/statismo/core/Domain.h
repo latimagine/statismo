@@ -80,7 +80,7 @@ public:
   }
 
   /** Returns the number of points of the domain */
-  unsigned
+  std::size_t
   GetNumberOfPoints() const
   {
     return m_domainPoints.size();

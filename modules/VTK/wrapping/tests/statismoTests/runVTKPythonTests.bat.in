@@ -1,0 +1,9 @@
+@echo OFF
+
+cd "@STATISMOVTK_TEST_SCRIPTS_DIR@"
+
+set PYTHONPATH=%PYTHONPATH%;STATISMOVTK_MODULE_DIR@/..;@INSTALL_DEPENDENCIES_DIR@/bin/Lib/site-packages
+set STATISMO_DATA_DIR=@STATISMO_DATA_DIR@
+set PATH=@INSTALL_DEPENDENCIES_DIR@/bin;@STATISMOVTK_MODULE_DIR@;%PATH%
+
+python -m unittest test_builders test_managers test_models

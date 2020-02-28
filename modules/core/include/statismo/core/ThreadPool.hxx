@@ -32,6 +32,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+#ifndef __STATIMO_CORE_THREAD_POOL_HXX_
+#define __STATIMO_CORE_THREAD_POOL_HXX_
+
 #include "statismo/core/ThreadPool.h"
 #include "statismo/core/Exceptions.h"
 
@@ -130,3 +134,5 @@ ThreadPool::RunPendingTask()
   }
 }
 } // namespace statismo
+
+#endif

@@ -131,9 +131,10 @@ struct TranslateImpl
     {
       return std::make_tuple(ex.GetStatus(), std::nullopt);
     }
-    catch (...)
+    catch (const std::exception & e)
     {
-      return std::make_tuple(Status::INTERNAL_ERROR, std::nullopt);
+    std::cerr << "ex!!!!!!!!!!!!!!!!!!! " << e.what() << std::endl;
+          return std::make_tuple(Status::INTERNAL_ERROR, std::nullopt);
     }
   }
 };

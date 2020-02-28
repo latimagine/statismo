@@ -165,8 +165,8 @@ protected:
   void
   LoadFromGroup(const H5::Group & dsGroup) override
   {
-    hdf5utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
-    m_uri = hdf5utils::ReadString(dsGroup, "./URI");
+    HDF5Utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
+    m_uri = HDF5Utils::ReadString(dsGroup, "./URI");
 
     LoadInternalImpl(dsGroup);
   }
@@ -174,8 +174,8 @@ protected:
   void
   SaveToGroup(const H5::Group & dsGroup) const
   {
-    hdf5utils::WriteVector(dsGroup, "./samplevector", m_sampleVector);
-    hdf5utils::WriteString(dsGroup, "./URI", m_uri);
+    HDF5Utils::WriteVector(dsGroup, "./samplevector", m_sampleVector);
+    HDF5Utils::WriteString(dsGroup, "./URI", m_uri);
 
     SaveInternalImpl(dsGroup);
   }
@@ -215,7 +215,7 @@ protected:
   void
   SaveInternalImpl(const H5::Group & dsGroup) const override
   {
-    hdf5utils::WriteString(dsGroup, "./sampletype", "DataItem");
+    HDF5Utils::WriteString(dsGroup, "./sampletype", "DataItem");
   }
 
   void
@@ -294,16 +294,16 @@ private:
   void
   LoadInternalImpl(const H5::Group & dsGroup) override
   {
-    hdf5utils::ReadVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
-    m_surrogateFilename = hdf5utils::ReadString(dsGroup, "./surrogateFilename");
+    HDF5Utils::ReadVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
+    m_surrogateFilename = HDF5Utils::ReadString(dsGroup, "./surrogateFilename");
   }
 
   void
   SaveInternalImpl(const H5::Group & dsGroup) const override
   {
-    hdf5utils::WriteString(dsGroup, "./sampletype", "DataItemWithSurrogates");
-    hdf5utils::WriteVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
-    hdf5utils::WriteString(dsGroup, "./surrogateFilename", this->m_surrogateFilename);
+    HDF5Utils::WriteString(dsGroup, "./sampletype", "DataItemWithSurrogates");
+    HDF5Utils::WriteVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
+    HDF5Utils::WriteString(dsGroup, "./surrogateFilename", this->m_surrogateFilename);
   }
 
   std::string m_surrogateFilename;

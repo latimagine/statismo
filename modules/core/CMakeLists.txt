@@ -8,12 +8,7 @@ file(GLOB _target_headers
 )
 
 add_library(statismo_core ${statismo_LIB_TYPE}
-  src/HDF5Utils.cxx 
   src/ModelInfo.cxx
-  src/RandUtils.cxx
-  src/Representer.cxx
-  src/Utils.cxx
-  src/ThreadPool.cxx 
 )
 
 set(_deps

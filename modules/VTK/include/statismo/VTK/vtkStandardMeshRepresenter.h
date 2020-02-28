@@ -43,6 +43,7 @@
 #include "statismo/core/Domain.h"
 #include "statismo/core/Representer.h"
 #include "statismo/VTK/vtkPoint.h"
+#include "statismo/VTK/statismoVTKExport.h"
 
 #include <H5Cpp.h>
 
@@ -67,7 +68,7 @@ struct RepresenterTraits<vtkPolyData>
  *
  * \see Representer
  */
-class vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
+class STATISMO_VTK_EXPORT vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
 {
 public:
   using RepresenterBaseType = RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>;

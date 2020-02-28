@@ -71,7 +71,8 @@ TestRepresenterForScalarImage()
   auto testDatasetFilename = g_dataDir + "/hand_images/hand-2.vtk";
 
   auto representer = RepresenterType::New();
-  auto reference = LoadImage<ScalarImageType>(referenceFilename);
+
+  auto   reference = LoadImage<ScalarImageType>(referenceFilename);
   representer->SetReference(reference);
 
   // choose a test dataset, a point and its associate pixel value
@@ -117,7 +118,7 @@ TestRepresenterForVectorImage()
 } // namespace
 
 int
-itkStandardImageRepresenterTest(int argc, char ** argv) // NOLINT
+itkStandardImageRepresenterTest(int argc, char * argv[]) // NOLINT
 {
   if (argc < 2)
   {

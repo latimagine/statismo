@@ -4,7 +4,7 @@
 # obtained from StatismoConfig.cmake.
 #
 
-if (_statismo_itk_support AND _statismo_use_itk_hdf5)
+if (STATISMO_ITK_SUPPORT AND STATISMO_USE_ITK_HDF5)
   include_directories(${HDF5_INCLUDE_DIRS})
 else()
   find_package(HDF5 REQUIRED PATHS ${HDF5_DIR} NO_DEFAULT_PATH)
@@ -15,12 +15,12 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 # Including ITK before VTK seems to solve some issues
 # with macro redefinition due to the use of itkVtkGkue
-if(_statismo_itk_support)
+if(STATISMO_ITK_SUPPORT)
   find_package(ITK REQUIRED PATHS ${ITK_DIR} NO_DEFAULT_PATH)
   include_directories(${ITK_INCLUDE_DIRS})
 endif()
 
-if(_statismo_vtk_support)
+if(STATISMO_VTK_SUPPORT)
   find_package(VTK REQUIRED PATHS ${VTK_DIR} NO_DEFAULT_PATH)
   include_directories(${VTK_INCLUDE_DIRS})
 endif()

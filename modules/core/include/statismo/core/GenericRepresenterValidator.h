@@ -120,7 +120,7 @@ public:
     // if we convert a dataset to a samplevector, the resulting vector needs to have
     // as many entries as there are points * dimensions
     auto sampleVector = m_representer->SampleToSampleVector(m_testDataset);
-    if (sampleVector.rows() != m_representer->GetDimensions() * domain.GetNumberOfPoints())
+    if (sampleVector.rows() != static_cast<uint64_t>(m_representer->GetDimensions()) * domain.GetNumberOfPoints())
     {
       m_errString = "the dimension of the sampleVector does not agree with the number of points in the domain (#points "
                     "* dimensionality)";
@@ -239,9 +239,9 @@ public:
 
     // We add the required attributes, which are usually written by the StatisticalModel class.
     // This is needed, as some representers check on these values.
-    statismo::hdf5utils::WriteStringAttribute(representerGroup, "name", m_representer->GetName());
-    std::string dataTypeStr = TypeToString(m_representer->GetType());
-    statismo::hdf5utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
+    statismo::HDF5Utils::WriteStringAttribute(representerGroup, "name", m_representer->GetName());
+    std::string dataTypeStr = Representer::TypeToString(m_representer->GetType());
+    statismo::HDF5Utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
 
     file.close();
     try

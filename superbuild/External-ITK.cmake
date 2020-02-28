@@ -1,5 +1,10 @@
 message("-- External project - ITK")
 
+# https://discourse.itk.org/t/itk-5-0-deformableregistration15-cxx/1948
+if(MSVC AND MSVC_VERSION GREATER 1920)
+    set(_itkoptions ${_itkoptions} "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} /FS")
+endif()
+
 if (${VTK_SUPPORT})
   if(NOT ${USE_SYSTEM_VTK})
     set(_itk_deps VTK ${_itk_deps})
@@ -25,6 +30,7 @@ ExternalProject_Add(ITK
   PATCH_COMMAND ""
   CMAKE_GENERATOR ${_ep_cmake_gen}
   CMAKE_ARGS
+    ${itkenv}
     ${_ep_common_args}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}

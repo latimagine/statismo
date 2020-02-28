@@ -16,7 +16,10 @@
 #include "statismo/core/CommonTypes.h"
 #include "statismo/core/Kernels.h"
 #include "statismo/core/RandSVD.h"
+#include "statismo/core/RandUtils.h"
 #include "statismo/core/Representer.h"
+
+#include <algorithm>
 
 namespace statismo
 {
@@ -88,7 +91,7 @@ private:
   {
     DomainType domain = m_representer->GetDomain();
     m_nystromPoints = GetNystromPoints(domain, numberOfPointsForApproximation);
-    unsigned numDomainPoints = domain.GetNumberOfPoints();
+    auto numDomainPoints = domain.GetNumberOfPoints();
 
     // compute a eigenvalue decomposition of the kernel matrix, evaluated at the points used for the
     // nystrom approximation
@@ -112,12 +115,12 @@ private:
    * \param numberOfPoints the size of the sample
    */
   std::vector<PointType>
-  GetNystromPoints(DomainType & domain, unsigned numberOfPoints) const
+  GetNystromPoints(DomainType & domain, std::size_t numberOfPoints) const
   {
     numberOfPoints = std::min(numberOfPoints, domain.GetNumberOfPoints());
 
     std::vector<PointType> shuffledDomainPoints = domain.GetDomainPoints();
-    std::random_shuffle(std::begin(shuffledDomainPoints), std::end(shuffledDomainPoints));
+    std::shuffle(std::begin(shuffledDomainPoints), std::end(shuffledDomainPoints), statismo::rand::RandGen());
     shuffledDomainPoints.resize(numberOfPoints);
 
     return shuffledDomainPoints;
@@ -138,7 +141,7 @@ private:
   {
     unsigned kernelDim = kernel->GetDimension();
 
-    unsigned                  n = xs.size();
+    auto                  n = xs.size();
     MatrixTypeDoublePrecision K = MatrixTypeDoublePrecision::Zero(n * kernelDim, n * kernelDim);
     for (unsigned i = 0; i < n; ++i)
     {

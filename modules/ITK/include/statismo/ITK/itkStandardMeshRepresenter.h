@@ -44,6 +44,7 @@
 #include "statismo/core/Hash.h"
 #include "statismo/ITK/itkConfig.h" // this needs to be the first include file
 #include "statismo/ITK/itkPixelConversionTraits.h"
+#include "statismo/ITK/itkPointTraits.h"
 
 #include <itkMesh.h>
 #include <itkObject.h>

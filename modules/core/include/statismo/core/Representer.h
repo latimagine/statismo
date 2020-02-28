@@ -42,7 +42,6 @@
 #include "statismo/core/CoreTraits.h"
 #include "statismo/core/Clonable.h"
 #include "statismo/core/GenericFactory.h"
-#include "statismo/core/StatismoCoreExport.h"
 
 #include <H5Cpp.h>
 #include <string>
@@ -73,12 +72,6 @@ enum class RepresenterDataType
   CUSTOM = 99
 };
 
-STATISMO_CORE_EXPORT RepresenterDataType
-                     TypeFromString(const std::string & s);
-
-STATISMO_CORE_EXPORT std::string
-                     TypeToString(RepresenterDataType type);
-
 /**
  * \brief Provides the interface between statismo and the dataset type the application uses.
  *
@@ -96,6 +89,60 @@ class Representer : public Clonable<Representer<T>>
 {
 
 public:
+  static RepresenterDataType
+  TypeFromString(const std::string & s)
+  {
+    if (s == "POINT_SET")
+    {
+      return RepresenterDataType::POINT_SET;
+    }
+    else if (s == "POLYGON_MESH")
+    {
+      return RepresenterDataType::POLYGON_MESH;
+    }
+    else if (s == "VOLUME_MESH")
+    {
+      return RepresenterDataType::VOLUME_MESH;
+    }
+    else if (s == "IMAGE")
+    {
+      return RepresenterDataType::IMAGE;
+    }
+    else if (s == "VECTOR")
+    {
+      return RepresenterDataType::VECTOR;
+    }
+    else if (s == "CUSTOM")
+    {
+      return RepresenterDataType::CUSTOM;
+    }
+
+    return RepresenterDataType::UNKNOWN;
+  }
+
+  static std::string
+  TypeToString(RepresenterDataType type)
+  {
+    switch (type)
+    {
+      case RepresenterDataType::POINT_SET:
+        return "POINT_SET";
+      case RepresenterDataType::POLYGON_MESH:
+        return "POLYGON_MESH";
+      case RepresenterDataType::VOLUME_MESH:
+        return "VOLUME_MESH";
+      case RepresenterDataType::IMAGE:
+        return "IMAGE";
+      case RepresenterDataType::VECTOR:
+        return "VECTOR";
+      case RepresenterDataType::CUSTOM:
+        return "CUSTOM";
+      default:
+        break;
+    }
+
+    return "UNKNOWN";
+  }
   /**
    * \name Type definitions
    */
@@ -364,7 +411,7 @@ public:
       case RepresenterDataType::IMAGE:
       case RepresenterDataType::VECTOR:
       {
-        VectorType zeroVec = VectorType::Zero(this->GetDomain().GetNumberOfPoints() * GetDimensions());
+        VectorType zeroVec = VectorType::Zero(static_cast<uint64_t>(this->GetDomain().GetNumberOfPoints()) * GetDimensions());
         return this->SampleVectorToSample(zeroVec);
         break;
       }

@@ -123,7 +123,7 @@ public:
       int minorVersion = 0;
       int majorVersion = 0;
 
-      if (!hdf5utils::ExistsObjectWithName(modelRoot, "version"))
+      if (!HDF5Utils::ExistsObjectWithName(modelRoot, "version"))
       {
         // this is an old statismo format, that had not been versioned. We set the version to 0.8 as this is the last
         // version that stores the old format
@@ -134,17 +134,17 @@ public:
       else
       {
         auto versionGroup = modelRoot.openGroup("./version");
-        minorVersion = hdf5utils::ReadInt(versionGroup, "./minorVersion");
-        majorVersion = hdf5utils::ReadInt(versionGroup, "./majorVersion");
+        minorVersion = HDF5Utils::ReadInt(versionGroup, "./minorVersion");
+        majorVersion = HDF5Utils::ReadInt(versionGroup, "./majorVersion");
       }
 
       auto       modelGroup = modelRoot.openGroup("./model");
       VectorType mean;
-      hdf5utils::ReadVector(modelGroup, "./mean", mean);
+      HDF5Utils::ReadVector(modelGroup, "./mean", mean);
       VectorType pcaVariance;
-      hdf5utils::ReadVector(modelGroup, "./pcaVariance", maxNumberOfPCAComponents, pcaVariance);
+      HDF5Utils::ReadVector(modelGroup, "./pcaVariance", maxNumberOfPCAComponents, pcaVariance);
 
-      auto noiseVariance = hdf5utils::ReadFloat(modelGroup, "./noiseVariance");
+      auto noiseVariance = HDF5Utils::ReadFloat(modelGroup, "./noiseVariance");
 
       // Depending on the statismo version, the pcaBasis matrix was stored as U*D or U (where U are the orthonormal PCA
       // Basis functions and D the standard deviations). Here we make sure that we fill the pcaBasisMatrix (which
@@ -152,7 +152,7 @@ public:
       MatrixType pcaBasisMatrix;
       if (majorVersion == gk_oldFileVersionMinor && minorVersion == gk_oldFileVersionMajor)
       {
-        hdf5utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
+        HDF5Utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
         VectorType D = pcaVariance.array().sqrt(); // NOLINT
         MatrixType orthonormalPCABasisMatrix = pcaBasisMatrix * DiagMatrixType(D).inverse();
         newModel =
@@ -160,7 +160,7 @@ public:
       }
       else if (majorVersion == gk_currenFileVersionMajor && minorVersion == gk_currentFileVersionMinor)
       {
-        hdf5utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
+        HDF5Utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
         newModel = StatisticalModelType::SafeCreate(representer, mean, pcaBasisMatrix, pcaVariance, noiseVariance);
       }
       else
@@ -226,8 +226,8 @@ public:
     auto modelRoot = file.openGroup("/");
     auto versionGroup = modelRoot.createGroup("version");
 
-    hdf5utils::WriteInt(versionGroup, "majorVersion", 0);
-    hdf5utils::WriteInt(versionGroup, "minorVersion", 9);
+    HDF5Utils::WriteInt(versionGroup, "majorVersion", 0);
+    HDF5Utils::WriteInt(versionGroup, "minorVersion", 9);
 
     SaveStatisticalModel(model, modelRoot);
   };
@@ -243,20 +243,21 @@ public:
     try
     {
       // create the group structure
-      auto dataTypeStr = TypeToString(model.GetRepresenter()->GetType());
+      using RepresenterType = typename StatisticalModelType::RepresenterType;
+      auto dataTypeStr = RepresenterType::TypeToString(model.GetRepresenter()->GetType());
       auto representerGroup = modelRoot.createGroup("./representer");
 
-      hdf5utils::WriteStringAttribute(representerGroup, "name", model.GetRepresenter()->GetName());
-      hdf5utils::WriteStringAttribute(representerGroup, "version", model.GetRepresenter()->GetVersion());
-      hdf5utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
+      HDF5Utils::WriteStringAttribute(representerGroup, "name", model.GetRepresenter()->GetName());
+      HDF5Utils::WriteStringAttribute(representerGroup, "version", model.GetRepresenter()->GetVersion());
+      HDF5Utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
 
       model.GetRepresenter()->Save(representerGroup);
 
       auto modelGroup = modelRoot.createGroup("./model");
-      hdf5utils::WriteMatrix(modelGroup, "./pcaBasis", model.GetOrthonormalPCABasisMatrix());
-      hdf5utils::WriteVector(modelGroup, "./pcaVariance", model.GetPCAVarianceVector());
-      hdf5utils::WriteVector(modelGroup, "./mean", model.GetMeanVector());
-      hdf5utils::WriteFloat(modelGroup, "./noiseVariance", model.GetNoiseVariance());
+      HDF5Utils::WriteMatrix(modelGroup, "./pcaBasis", model.GetOrthonormalPCABasisMatrix());
+      HDF5Utils::WriteVector(modelGroup, "./pcaVariance", model.GetPCAVarianceVector());
+      HDF5Utils::WriteVector(modelGroup, "./mean", model.GetMeanVector());
+      HDF5Utils::WriteFloat(modelGroup, "./noiseVariance", model.GetNoiseVariance());
 
       model.GetModelInfo().Save(modelRoot);
     }

@@ -49,12 +49,15 @@ class H5Object;
 class DataSet;
 } // namespace H5
 
-namespace statismo::hdf5utils
+namespace statismo {
+
+class HDF5Utils
 {
-/**
+public:
+  /**
  * Opens the hdf5 file with the given name, or creates it if the file does not exist
  */
-H5::H5File
+static H5::H5File
 OpenOrCreateFile(const std::string & filename);
 
 /**
@@ -65,7 +68,7 @@ OpenOrCreateFile(const std::string & filename);
  *
  * @return the group object representing the path in the hdf5 file
  */
-H5::Group
+static H5::Group
 OpenPath(H5::H5File & file, const std::string & path, bool createPath = false);
 
 /**
@@ -74,7 +77,7 @@ OpenPath(H5::H5File & file, const std::string & path, bool createPath = false);
  * \param name The name of the entry
  * \param matrix The output matrix
  */
-void
+static void
 ReadMatrix(const H5::H5Location & fg, const char * name, MatrixType & matrix);
 
 /**
@@ -84,7 +87,7 @@ ReadMatrix(const H5::H5Location & fg, const char * name, MatrixType & matrix);
  * \param maxNumColumns The number of columns to be Read
  * \param matrix The output matrix
  */
-void
+static void
 ReadMatrix(const H5::H5Location & fg, const char * name, unsigned maxNumColumns, MatrixType & matrix);
 
 /**
@@ -94,7 +97,7 @@ ReadMatrix(const H5::H5Location & fg, const char * name, unsigned maxNumColumns,
  * \param matrix The output matrix
  */
 template <class T>
-void
+static void
 ReadMatrixOfType(const H5::H5Location & fg, const char * name, typename GenericEigenTraits<T>::MatrixType & matrix);
 
 /**
@@ -103,7 +106,7 @@ ReadMatrixOfType(const H5::H5Location & fg, const char * name, typename GenericE
  * \param name the name of the entry
  * \param the matrix to be written
  */
-H5::DataSet
+static H5::DataSet
 WriteMatrix(const H5::H5Location & fg, const char * name, const MatrixType & matrix);
 
 /**
@@ -113,7 +116,7 @@ WriteMatrix(const H5::H5Location & fg, const char * name, const MatrixType & mat
  * \param the matrix to be written
  */
 template <class T>
-H5::DataSet
+static H5::DataSet
 WriteMatrixOfType(const H5::H5Location &                             fg,
                   const char *                                       name,
                   const typename GenericEigenTraits<T>::MatrixType & matrix);
@@ -126,7 +129,7 @@ WriteMatrixOfType(const H5::H5Location &                             fg,
  * \param maxNumElements The number of elements to be Read from the file
  * \param the output vector
  */
-void
+static void
 ReadVector(const H5::H5Location & fg, const char * name, unsigned maxNumElements, VectorType & vector);
 
 /**
@@ -135,11 +138,11 @@ ReadVector(const H5::H5Location & fg, const char * name, unsigned maxNumElements
  * \param name the name of the entry
  * \param the output vector
  */
-void
+static void
 ReadVector(const H5::H5Location & fg, const char * name, VectorType & vector);
 
 template <class T>
-void
+static void
 ReadVectorOfType(const H5::H5Location & fg, const char * name, typename GenericEigenTraits<T>::VectorType & vector);
 
 /**
@@ -148,11 +151,11 @@ ReadVectorOfType(const H5::H5Location & fg, const char * name, typename GenericE
  * \param name the name of the entry
  * \param the vector to be written
  */
-H5::DataSet
+static H5::DataSet
 WriteVector(const H5::H5Location & fg, const char * name, const VectorType & vector);
 
 template <class T>
-H5::DataSet
+static H5::DataSet
 WriteVectorOfType(const H5::H5Location &                             fg,
                   const char *                                       name,
                   const typename GenericEigenTraits<T>::VectorType & vector);
@@ -164,7 +167,7 @@ WriteVectorOfType(const H5::H5Location &                             fg,
  * \param fg The hdf5 group
  * \param name The name of the entry
  */
-void
+static void
 DumpFileToHDF5(const char * filename, const H5::H5Location & fg, const char * name);
 
 /**
@@ -173,7 +176,7 @@ DumpFileToHDF5(const char * filename, const H5::H5Location & fg, const char * na
  * \param name the name of the entry
  * \param filename The filename where the data from the HDF5 file is stored.
  */
-void
+static void
 GetFileFromHDF5(const H5::H5Location & fg, const char * name, const char * filename);
 
 /** Writes a string to the hdf5 file
@@ -181,7 +184,7 @@ GetFileFromHDF5(const H5::H5Location & fg, const char * name, const char * filen
  * \param name The name of the entry in the group
  * \param s The string to be written
  */
-H5::DataSet
+static H5::DataSet
 WriteString(const H5::H5Location & fg, const char * name, const std::string & s);
 
 /** Reads a string from the given group
@@ -189,7 +192,7 @@ WriteString(const H5::H5Location & fg, const char * name, const std::string & s)
  * \param name the name of the entry in the group
  * @return the string
  */
-std::string
+static std::string
 ReadString(const H5::H5Location & fg, const char * name);
 
 /** Writes a string attribute for the given group
@@ -197,7 +200,7 @@ ReadString(const H5::H5Location & fg, const char * name);
  * \param name The name of the entry in the group
  * \param s The string to be written
  */
-void
+static void
 WriteStringAttribute(const H5::H5Object & fg, const char * name, const std::string & s);
 
 /** Writes an int attribute for the given group
@@ -205,7 +208,7 @@ WriteStringAttribute(const H5::H5Object & fg, const char * name, const std::stri
  * \param name The name of the entry in the group
  * \param value the int value to be written
  */
-void
+static void
 WriteIntAttribute(const H5::H5Object & fg, const char * name, int value);
 
 
@@ -214,7 +217,7 @@ WriteIntAttribute(const H5::H5Object & fg, const char * name, int value);
  * \param name the name of the entry in the group
  * @return the value
  */
-std::string
+static std::string
 ReadStringAttribute(const H5::H5Object & fg, const char * name);
 
 /** Reads a int attribute from the given group
@@ -222,7 +225,7 @@ ReadStringAttribute(const H5::H5Object & fg, const char * name);
  * \param name the name of the entry in the group
  * @return the value
  */
-int
+static int
 ReadIntAttribute(const H5::H5Object & fg, const char * name);
 
 
@@ -231,7 +234,7 @@ ReadIntAttribute(const H5::H5Object & fg, const char * name);
  * \param name The name
  * @returns the integeter
  */
-int
+static int
 ReadInt(const H5::H5Location & fg, const char * name);
 
 /** Writes an integer to the hdf5 file
@@ -239,7 +242,7 @@ ReadInt(const H5::H5Location & fg, const char * name);
  * \param name The name
  * \param value The value to be written
  */
-H5::DataSet
+static H5::DataSet
 WriteInt(const H5::H5Location & fg, const char * name, int value);
 
 /** Reads an dobule from the hdf5 file
@@ -247,7 +250,7 @@ WriteInt(const H5::H5Location & fg, const char * name, int value);
  * \param name The name
  * @returns the Read number
  */
-float
+static float
 ReadFloat(const H5::H5Location & fg, const char * name);
 
 /** Writes an double to the hdf5 file
@@ -255,7 +258,7 @@ ReadFloat(const H5::H5Location & fg, const char * name);
  * \param name The name
  * \param value The value to be written
  */
-H5::DataSet
+static H5::DataSet
 WriteFloat(const H5::H5Location & fg, const char * name, float value);
 
 /** Reads an array from the hdf5 group
@@ -264,7 +267,7 @@ WriteFloat(const H5::H5Location & fg, const char * name, float value);
  * \param array The array (type std::vector<T>) to be Read, contents will be lost
  */
 template <typename T>
-void
+static void
 ReadArray(const H5::H5Location & fg, const char * name, std::vector<T> & array);
 
 /** Writes an array to the hdf5 group
@@ -273,16 +276,17 @@ ReadArray(const H5::H5Location & fg, const char * name, std::vector<T> & array);
  * \param array The array (type std::vector<T>) to be written
  */
 template <typename T>
-H5::DataSet
+static H5::DataSet
 WriteArray(const H5::H5Location & fg, const char * name, std::vector<T> const & array);
 
 
 /** Check whether an object (direct child) of fg with the given name exists
  */
-bool
+static bool
 ExistsObjectWithName(const H5::H5Location & fg, const std::string & name);
 
-} // namespace statismo::hdf5utils
+};
+}
 
 #include "HDF5Utils.hxx"
 

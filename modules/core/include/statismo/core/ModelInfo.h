@@ -35,7 +35,6 @@
  *
  */
 
-
 #ifndef __STATIMO_CORE_MODEL_INFO_H_
 #define __STATIMO_CORE_MODEL_INFO_H_
 

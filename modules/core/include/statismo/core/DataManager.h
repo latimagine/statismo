@@ -151,7 +151,7 @@ public:
   /**
    * returns the number of samples managed by the datamanager
    */
-  virtual unsigned
+  virtual std::size_t
   GetNumberOfSamples() const = 0;
 
   /**
@@ -208,7 +208,7 @@ public:
   DataItemListType
   GetData() const override;
 
-  unsigned
+  std::size_t
   GetNumberOfSamples() const override
   {
     return m_dataItemList.size();

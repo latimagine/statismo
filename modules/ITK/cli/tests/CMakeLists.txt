@@ -1,8 +1,15 @@
+#
 # Test some of the commands provided in the man pages
 # Not all commands for 3D deformation models will be tested because the example image data is in 2d
+#
+
 set(_test_deformation_data_dir "${CMAKE_BINARY_DIR}/tests-cli/deformation/")
 set(_test_shape_data_dir "${CMAKE_BINARY_DIR}/tests-cli/shape/")
 set(_statismo_data_dir "${statismo_SOURCE_DIR}/data/")
+
+#
+# Test utilities
+#
 
 # write a file containing the paths to the deformation fields/meshes to build the models.
 # in this test the absolute paths are used so that it's independent from the current working directory. Paths relative to the current working directory can be used as well.
@@ -21,6 +28,45 @@ endfunction()
 
 set(_filename_deformation_field "${_test_deformation_data_dir}data-list.txt")
 write_filelist(${_filename_deformation_field} "${_statismo_data_dir}/hand_dfs/df-hand-*.vtk")
+
+#
+# Test list
+#
+
+set(_cli_tests_list
+    statismo-build-deformation-model-test-2d
+    statismo-build-gp-model-test-2d-image
+    statismo-build-gp-model-test-2d-image-extend-existing-model
+    statismo-sample-test-2d-image
+    statismo-fit-image-test-2d-no-landmarks
+    statismo-fit-image-test-2d-with-landmarks
+    statismo-reduce-model-test-2d
+    statismo-posterior-test-2d
+    statismo-warp-image-test-2d
+    statismo-build-deformation-model-test-3d
+    statismo-build-gp-model-test-3d-image
+    statismo-reduce-model-test-3d
+    statismo-posterior-test-3d
+    statismo-sample-test-3d-image
+    statismo-warp-image-test-3d
+    statismo-build-gp-model-test
+    statismo-reduce-model-test-5-components
+    statismo-reduce-model-test-42.1-percent
+    statismo-sample-test-random
+    statismo-sample-test-random-2
+    statismo-sample-test-mean
+    statismo-sample-test-reference
+    statismo-sample-test-parameters
+    statismo-fit-surface-test-no-landmarks
+    statismo-fit-surface-test-with-landmarks-1
+    statismo-fit-surface-test-with-landmarks-2
+    statismo-posterior-test-1
+    statismo-posterior-test-2
+    statismo-posterior-test-with-corresponding-mesh
+    statismo-build-shape-model-test-1
+    statismo-build-shape-model-test-2
+    statismo-build-shape-model-test-3
+)
 
 # List of 2D tests
 
@@ -192,3 +238,9 @@ add_test(NAME statismo-build-shape-model-test-3
   COMMAND statismo-build-shape-model -p reference -r "${_filename_projected_mesh}" -l "${_filename_meshes}" "${_test_shape_data_dir}shape model 3.h5"
   )
 set_property(TEST statismo-build-shape-model-test-3 APPEND PROPERTY DEPENDS statismo-fit-surface-test-with-landmarks-1)
+
+# Common properties
+if (MSVC)
+   set(_statismo_core_dir $<TARGET_FILE_DIR:statismo_core>)
+   set_tests_properties(${_cli_tests_list} PROPERTIES ENVIRONMENT "PATH=${_statismo_core_dir}\;${STATISMO_ENV_PATH}")
+endif()

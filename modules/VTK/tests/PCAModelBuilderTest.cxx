@@ -125,7 +125,7 @@ TestBuildWithNGreaterThanP()
 } // namespace
 
 int
-PCAModelBuilderTest(int argc, char ** argv) // NOLINT
+PCAModelBuilderTest(int argc, char * argv[]) // NOLINT
 {
   if (argc < 2)
   {

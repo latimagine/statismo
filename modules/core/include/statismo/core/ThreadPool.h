@@ -45,6 +45,7 @@
 #include <deque>
 #include <future>
 #include <type_traits>
+#include <memory>
 
 namespace statismo
 {
@@ -268,5 +269,7 @@ private:
 };
 
 } // namespace statismo
+
+#include "ThreadPool.hxx"
 
 #endif

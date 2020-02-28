@@ -26,5 +26,5 @@ cmake_dependent_option(BUILD_LONG_RUNNING_CLI_TESTS "Run the cli examples (the e
 )
 
 if(BUILD_WRAPPING)
-  SET(STATISMO_PYTHON_VERSION 3 CACHE STRING "Python version for wrapping")
+  set(STATISMO_PYTHON_VERSION 3 CACHE STRING "Python version for wrapping")
 endif()
