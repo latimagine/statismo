@@ -125,7 +125,7 @@ namespace std
 {
 template <>
 inline void
-swap<statismo::vtkNDPixel>(statismo::vtkNDPixel & lhs, statismo::vtkNDPixel & rhs) noexcept // NOLINT
+swap<statismo::vtkNDPixel>(statismo::vtkNDPixel & lhs, statismo::vtkNDPixel & rhs) // NOLINT
 {
   lhs.Swap(rhs);
 }

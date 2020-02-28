@@ -105,7 +105,7 @@ public:
    * Write a Matrix to the HDF5 File
    * \param fg The group
    * \param name the name of the entry
-   * \param the matrix to be written
+   * \param matrix to be written
    */
   static H5::DataSet
   WriteMatrix(const H5::H5Location & fg, const char * name, const MatrixType & matrix);
@@ -114,7 +114,7 @@ public:
    * Write a Matrix of the given type to the HDF5 File
    * \param fg The group
    * \param name the name of the entry
-   * \param the matrix to be written
+   * \param matrix to be written
    */
   template <class T>
   static H5::DataSet
@@ -128,7 +128,7 @@ public:
    * \param fg The group
    * \param name the name of the entry
    * \param maxNumElements The number of elements to be Read from the file
-   * \param the output vector
+   * \param vector the output vector
    */
   static void
   ReadVector(const H5::H5Location & fg, const char * name, unsigned maxNumElements, VectorType & vector);
@@ -137,7 +137,7 @@ public:
    * Read a Vector from a HDF5 File
    * \param fg The group
    * \param name the name of the entry
-   * \param the output vector
+   * \param vector the output vector
    */
   static void
   ReadVector(const H5::H5Location & fg, const char * name, VectorType & vector);
@@ -150,7 +150,7 @@ public:
    * Write a vector to the HDF5 File
    * \param fg The hdf5 group
    * \param name the name of the entry
-   * \param the vector to be written
+   * \param vector to be written
    */
   static H5::DataSet
   WriteVector(const H5::H5Location & fg, const char * name, const VectorType & vector);
@@ -189,9 +189,9 @@ public:
   WriteString(const H5::H5Location & fg, const char * name, const std::string & s);
 
   /** Reads a string from the given group
-   * \param group the hdf5 group
+   * \param fg the hdf5 group
    * \param name the name of the entry in the group
-   * @return the string
+   * \return the string
    */
   static std::string
   ReadString(const H5::H5Location & fg, const char * name);

@@ -39,6 +39,7 @@
 #include "statismo/core/CommonTypes.h"
 #include "statismo/core/NonCopyable.h"
 #include "statismo/core/SafeContainer.h"
+#include "statismo/core/Exceptions.h"
 
 #include <thread>
 #include <mutex>
@@ -221,8 +222,34 @@ public:
 
   using TaskType = FunctionWrapper;
 
-  explicit ThreadPool(unsigned maxThreads = std::numeric_limits<unsigned int>::max());
-  explicit ThreadPool(unsigned maxThreads, WaitingMode m, unsigned waitTime = 25);
+  explicit ThreadPool(unsigned maxThreads, WaitingMode m, unsigned waitTime)
+    : m_waitMode{ m }
+    , m_waitTime{ waitTime }
+  {
+    const auto kThreadCount = std::min(std::thread::hardware_concurrency(), maxThreads);
+
+    for (std::remove_cv_t<decltype(kThreadCount)> i = 0; i < kThreadCount; ++i)
+    {
+      m_queues.push_back(std::make_unique<WorkStealingQueue>());
+    }
+
+    try
+    {
+      for (std::remove_cv_t<decltype(kThreadCount)> i = 0; i < kThreadCount; ++i)
+      {
+        m_threads.push_back(RaiiThread{ std::thread{ &ThreadPool::DoThreadJob, this, i } });
+      }
+    }
+    catch (...)
+    {
+      m_isDone = true;
+      throw StatisticalModelException("Failed to create thread pool");
+    }
+  }
+
+  explicit ThreadPool(unsigned maxThreads = std::numeric_limits<unsigned int>::max())
+    : ThreadPool{ maxThreads, WaitingMode::YIELD, 0 }
+  {}
 
   virtual ~ThreadPool() { m_isDone = true; } // NOLINT
 
@@ -247,15 +274,64 @@ public:
 
 private:
   void
-  DoThreadJob(std::size_t idx);
+  DoThreadJob(std::size_t idx)
+  {
+    m_tid = idx;
+    m_localQueue = m_queues[m_tid].get();
+
+    while (!m_isDone)
+    {
+      RunPendingTask();
+    }
+  }
+
   bool
-  PopTaskFromLocalQueue(TaskType & t);
+  PopTaskFromLocalQueue(TaskType & t)
+  {
+    return m_localQueue->TryPop(t);
+  }
+
   bool
-  PopTaskFromPoolQueue(TaskType & t);
+  PopTaskFromPoolQueue(TaskType & t)
+  {
+    return m_poolQueue.TryPop(t);
+  }
+
   bool
-  PopTaskFromOtherLocalQueues(TaskType & t);
+  PopTaskFromOtherLocalQueues(TaskType & t)
+  {
+    for (std::size_t i = 0; i < m_queues.size(); ++i)
+    {
+      if (m_queues[(m_tid + i + 1) % m_queues.size()]->TrySteal(t))
+      {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   void
-  RunPendingTask();
+  RunPendingTask()
+  {
+    TaskType t;
+
+    if (PopTaskFromLocalQueue(t) || PopTaskFromPoolQueue(t) || PopTaskFromOtherLocalQueues(t))
+    {
+      t();
+    }
+    else
+    {
+      if (m_waitMode == WaitingMode::YIELD)
+      {
+        std::this_thread::yield();
+      }
+      else
+      {
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_waitTime));
+      }
+    }
+  }
 
   std::atomic_bool                                m_isDone{ false };
   WaitingMode                                     m_waitMode{ WaitingMode::YIELD };
@@ -268,8 +344,9 @@ private:
   static thread_local std::size_t         m_tid;
 };
 
-} // namespace statismo
+thread_local WorkStealingQueue * ThreadPool::m_localQueue = nullptr; // NOLINT
+thread_local std::size_t         ThreadPool::m_tid = 0;              // NOLINT
 
-#include "ThreadPool.hxx"
+} // namespace statismo
 
 #endif

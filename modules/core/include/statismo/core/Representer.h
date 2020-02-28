@@ -96,23 +96,28 @@ public:
     {
       return RepresenterDataType::POINT_SET;
     }
-    else if (s == "POLYGON_MESH")
+
+    if (s == "POLYGON_MESH")
     {
       return RepresenterDataType::POLYGON_MESH;
     }
-    else if (s == "VOLUME_MESH")
+
+    if (s == "VOLUME_MESH")
     {
       return RepresenterDataType::VOLUME_MESH;
     }
-    else if (s == "IMAGE")
+
+    if (s == "IMAGE")
     {
       return RepresenterDataType::IMAGE;
     }
-    else if (s == "VECTOR")
+
+    if (s == "VECTOR")
     {
       return RepresenterDataType::VECTOR;
     }
-    else if (s == "CUSTOM")
+
+    if (s == "CUSTOM")
     {
       return RepresenterDataType::CUSTOM;
     }
