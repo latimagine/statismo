@@ -229,10 +229,8 @@ else()
     set(HDF5_COMPONENT_TYPE static)
   endif()
   # If HDF5_DIR has been transferred, it will find it with first priority
-  message("${HDF5_DIR}")
   find_package(HDF5 1.10.2 CONFIG PATHS ${HDF5_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
   if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
-     message("${HDF5_DIR} again")
     find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX ${HDF5_COMPONENT_TYPE})
   endif()
   if(HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND AND HDF5_${HDF5_COMPONENT_TYPE}_CXX_FOUND)
@@ -292,6 +290,10 @@ if(VTK_SUPPORT)
   set(_targets ${_targets} statismo_VTK)
 endif()
 
+if(ITK_SUPPORT)
+  set(_targets ${_targets} statismo_ITK)
+endif()
+
 export(TARGETS ${_targets}
   FILE "${statismo_BINARY_DIR}/statismoTargets.cmake"
 )
@@ -304,6 +306,10 @@ set(statismo_LIBRARIES statismo::statismo_core)
 
 if(VTK_SUPPORT)
   set(statismo_LIBRARIES ${statismo_LIBRARIES} statismo::statismo_VTK)
+endif()
+
+if(ITK_SUPPORT)
+  set(statismo_LIBRARIES ${statismo_LIBRARIES} statismo::statismo_ITK)
 endif()
 
 write_basic_package_version_file(

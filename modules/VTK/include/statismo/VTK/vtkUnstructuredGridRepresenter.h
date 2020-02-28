@@ -43,7 +43,7 @@
 #include "statismo/core/Domain.h"
 #include "statismo/core/Representer.h"
 #include "statismo/VTK/vtkPoint.h"
-#include "statismo/VTK/statismoVTKExport.h"
+#include "statismo/VTK/StatismoVTKExport.h"
 
 #include <H5Cpp.h>
 

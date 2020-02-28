@@ -63,8 +63,8 @@ endif()
 # ----------------------------------------
 # set CMAKE_MODULE_PATH for cmake macro/function and modules
 set(CMAKE_MODULE_PATH
+  ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/Modules
   ${CMAKE_MODULE_PATH}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../cmake
 )
 
 if(APPLE)
