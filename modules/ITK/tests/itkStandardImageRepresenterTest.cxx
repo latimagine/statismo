@@ -72,7 +72,7 @@ TestRepresenterForScalarImage()
 
   auto representer = RepresenterType::New();
 
-  auto   reference = LoadImage<ScalarImageType>(referenceFilename);
+  auto reference = LoadImage<ScalarImageType>(referenceFilename);
   representer->SetReference(reference);
 
   // choose a test dataset, a point and its associate pixel value

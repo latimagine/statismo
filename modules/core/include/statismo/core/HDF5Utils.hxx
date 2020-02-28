@@ -101,8 +101,8 @@ struct HDF5PredTypeTraits<int>
 template <class T>
 inline void
 HDF5Utils::ReadMatrixOfType(const H5::H5Location &                       fg,
-                          const char *                                 name,
-                          typename GenericEigenTraits<T>::MatrixType & matrix)
+                            const char *                                 name,
+                            typename GenericEigenTraits<T>::MatrixType & matrix)
 {
   H5::DataSet ds = fg.openDataSet(name);
   hsize_t     dims[2];
@@ -116,8 +116,8 @@ HDF5Utils::ReadMatrixOfType(const H5::H5Location &                       fg,
 template <class T>
 inline H5::DataSet
 HDF5Utils::WriteMatrixOfType(const H5::H5Location &                             fg,
-                  const char *                                       name,
-                  const typename GenericEigenTraits<T>::MatrixType & matrix)
+                             const char *                                       name,
+                             const typename GenericEigenTraits<T>::MatrixType & matrix)
 {
   // HDF5 does not like empty matrices.
   //
@@ -148,8 +148,8 @@ HDF5Utils::ReadVectorOfType(const H5::H5Location &                       fg,
 template <class T>
 inline H5::DataSet
 HDF5Utils::WriteVectorOfType(const H5::H5Location &                             fg,
-                  const char *                                       name,
-                  const typename GenericEigenTraits<T>::VectorType & vector)
+                             const char *                                       name,
+                             const typename GenericEigenTraits<T>::VectorType & vector)
 {
   hsize_t     dims[1] = { static_cast<hsize_t>(vector.size()) };
   H5::DataSet ds = fg.createDataSet(name, details::HDF5PredTypeTraits<T>::GetPredRef(), H5::DataSpace(1, dims));
@@ -486,6 +486,6 @@ HDF5Utils::GetFileFromHDF5(const H5::H5Location & fg, const char * name, const c
   std::copy(std::begin(buffer), std::end(buffer), std::ostream_iterator<char>(ofile));
 }
 
-}
+} // namespace statismo
 
 #endif

@@ -107,8 +107,8 @@ DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::stri
     {
       std::ostringstream os;
       os << "The representer that was provided cannot be used to load the dataset ";
-      os << "(" << RepresenterType::TypeToString(type) << " != " << RepresenterType::TypeToString(representer->GetType())
-         << ").";
+      os << "(" << RepresenterType::TypeToString(type)
+         << " != " << RepresenterType::TypeToString(representer->GetType()) << ").";
       os << "Cannot load hdf5 file.";
       throw StatisticalModelException(os.str().c_str(), Status::INVALID_DATA_ERROR);
     }
@@ -173,7 +173,7 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
 
     if (this->m_dataItemList.size() > std::numeric_limits<int>::max())
     {
-        throw StatisticalModelException("too many dataset to write", Status::OUT_OF_RANGE_ERROR);
+      throw StatisticalModelException("too many dataset to write", Status::OUT_OF_RANGE_ERROR);
     }
 
     HDF5Utils::WriteInt(dataGroup, "./NumberOfDatasets", static_cast<int>(this->m_dataItemList.size()));

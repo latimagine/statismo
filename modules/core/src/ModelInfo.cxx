@@ -83,8 +83,8 @@ ModelInfo::Save(const H5::H5Location & publicFg) const
 
   try
   {
-    Group publicInfo = publicFg.createGroup("./modelinfo");
-    char* buildTime =  std::asctime(timeinfo);
+    Group  publicInfo = publicFg.createGroup("./modelinfo");
+    char * buildTime = std::asctime(timeinfo);
     HDF5Utils::WriteString(publicInfo, "./build-time", buildTime ? buildTime : "");
     if (m_scores.rows() != 0 && m_scores.cols() != 0)
     {

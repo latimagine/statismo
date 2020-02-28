@@ -78,7 +78,8 @@ struct RepresenterTraits<vtkUnstructuredGrid>
  *
  * \see Representer
  */
-class STATISMO_VTK_EXPORT vtkUnstructuredGridRepresenter : public RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>
+class STATISMO_VTK_EXPORT vtkUnstructuredGridRepresenter
+  : public RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>
 {
 public:
   using RepresenterBaseType = RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>;

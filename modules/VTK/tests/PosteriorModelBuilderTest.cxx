@@ -99,7 +99,7 @@ TestPosteriorMain()
 
   auto testSample = dataManager->GetData().back()->GetSample();
 
-  auto     domaintPointsList = representer->GetDomain().GetDomainPoints();
+  auto domaintPointsList = representer->GetDomain().GetDomainPoints();
   auto nDomainPoints = representer->GetDomain().GetNumberOfPoints();
 
   for (std::size_t ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / kNPointsFixed)

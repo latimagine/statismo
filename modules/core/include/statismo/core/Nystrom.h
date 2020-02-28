@@ -141,7 +141,7 @@ private:
   {
     unsigned kernelDim = kernel->GetDimension();
 
-    auto                  n = xs.size();
+    auto                      n = xs.size();
     MatrixTypeDoublePrecision K = MatrixTypeDoublePrecision::Zero(n * kernelDim, n * kernelDim);
     for (unsigned i = 0; i < n; ++i)
     {

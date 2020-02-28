@@ -15,11 +15,11 @@
 #pragma once
 
 #ifdef _WIN32
-#include <Windows.h>
-#include <shellapi.h>
+#  include <Windows.h>
+#  include <shellapi.h>
 
-#include <locale>
-#include <codecvt>
+#  include <locale>
+#  include <codecvt>
 #endif
 
 #include <algorithm>

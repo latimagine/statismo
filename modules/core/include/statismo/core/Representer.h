@@ -411,7 +411,8 @@ public:
       case RepresenterDataType::IMAGE:
       case RepresenterDataType::VECTOR:
       {
-        VectorType zeroVec = VectorType::Zero(static_cast<uint64_t>(this->GetDomain().GetNumberOfPoints()) * GetDimensions());
+        VectorType zeroVec =
+          VectorType::Zero(static_cast<uint64_t>(this->GetDomain().GetNumberOfPoints()) * GetDimensions());
         return this->SampleVectorToSample(zeroVec);
         break;
       }
