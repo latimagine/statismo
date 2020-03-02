@@ -10,14 +10,14 @@ if [ "$#" -lt 2 ]; then
     helpcall
 fi
 
-vtk=6
+vtk=8
 
 while getopts "v:d:" opt; do
     case "$opt" in
-	v)
+    v)
             vtk=$OPTARG
             ;;
-	d)  distrib=$OPTARG
+    d)  distrib=$OPTARG
             ;;
     esac
 done    
@@ -39,4 +39,3 @@ debuild -S -I
 cd debian
 mv changelog.bck changelog
 mv control.bck control
-

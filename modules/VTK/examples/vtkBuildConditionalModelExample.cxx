@@ -105,7 +105,6 @@ main(int argc, char ** argv)
     // load the data and add it to the data manager. We take the first 4 hand images that we find in the data folder
     for (unsigned i = 0; i < 4; i++)
     {
-
       std::ostringstream ssFilename;
       ssFilename << datadir << "/hand-" << i << ".vtk";
       std::string datasetFilename = ssFilename.str();
@@ -132,14 +131,12 @@ main(int argc, char ** argv)
     auto model =
       modelBuilder->BuildNewModel(dataManager->GetData(), dataManager->GetSurrogateTypeInfo(), conditioningInfo, 0.1);
 
-    std::cout << "successfully built conditional model" << std::endl;
-
     // The resulting model is a normal statistical model, from which we could for example sample examples.
     // Here we simply  save it to disk for later use.
     statismo::IO<vtkStructuredPoints>::SaveStatisticalModel(model.get(), modelname);
     std::cout << "save model as " << modelname << std::endl;
   }
-  catch (const StatisticalModelException & e)
+  catch (const std::exception & e)
   {
     std::cerr << "Exception occured while building the conditional model" << std::endl;
     std::cerr << e.what() << std::endl;

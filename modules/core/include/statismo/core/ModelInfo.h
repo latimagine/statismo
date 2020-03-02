@@ -44,6 +44,7 @@
 #include <H5Cpp.h>
 
 #include <list>
+#include <vector>
 
 namespace statismo
 {

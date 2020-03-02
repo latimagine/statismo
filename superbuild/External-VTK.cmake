@@ -2,10 +2,6 @@ message("-- External project - VTK")
 
 set(_vtkOptions ${VTK_EXTRA_OPTIONS})
 
-if(APPLE)
-  set(_vtkOptions ${_vtkOptions} -DVTK_REQUIRED_OBJCXX_FLAGS:STRING="")
-endif()
-
 ExternalProject_Add(VTK
   GIT_REPOSITORY https://github.com/Kitware/VTK.git
   GIT_TAG v8.2.0 # If you modify this, update the VTK_DIR at the end of the file

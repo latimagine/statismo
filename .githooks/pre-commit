@@ -6,6 +6,11 @@
 
 LC_ALL=C
 
+if [[ "$NO_VERIFY" ]]; then
+  echo 'pre-commit hook skipped' 1>&2
+  exit 0
+fi
+
 local_branch="$(git rev-parse --abbrev-ref HEAD)"
 
 valid_branch_regex="^(feat|fix|sanity|prerelease|release|hotfix)\/[a-z0-9._-]+$"

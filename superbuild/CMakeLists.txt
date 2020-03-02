@@ -67,13 +67,15 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
 )
 
-if(APPLE)
-  include(CMakeOSXVariables)
-endif()
-
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
 set(INSTALL_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Install directory for dependencies")
 set(Statismo_DEPENDENCIES)
+
+if(BUILD_SHARED_LIBS)
+  set(HDF5_USE_STATIC_LIBRARIES OFF)
+else()
+  set(HDF5_USE_STATIC_LIBRARIES ON)
+endif()
 
 # ----------------------------------------
 # Project dependencies

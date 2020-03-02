@@ -28,11 +28,7 @@ if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 endif()
 
 # set CMAKE_MODULE_PATH for cmake macro/function and modules
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules" ${CMAKE_MODULE_PATH})
-
-if(APPLE)
-  include(CMakeOSXVariables)
-endif()
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules" ${CMAKE_MODULE_PATH})
 
 if (MSVC)
   include(CMakeTargetPath)
@@ -225,13 +221,19 @@ else()
   # find hdf5
   if(BUILD_SHARED_LIBS)
     set(HDF5_COMPONENT_TYPE shared)
+    set(HDF5_USE_STATIC_LIBRARIES OFF)
   else()
     set(HDF5_COMPONENT_TYPE static)
+    set(HDF5_USE_STATIC_LIBRARIES ON)
   endif()
   # If HDF5_DIR has been transferred, it will find it with first priority
   find_package(HDF5 1.10.2 CONFIG PATHS ${HDF5_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
   if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
-    find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX ${HDF5_COMPONENT_TYPE})
+    # In case static/shared components does not exist
+    find_package(HDF5 1.10.2 CONFIG PATHS ${HDF5_DIR} COMPONENTS C CXX NO_DEFAULT_PATH)
+  endif()
+  if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
+    find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
   endif()
   if(HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND AND HDF5_${HDF5_COMPONENT_TYPE}_CXX_FOUND)
     # handle both case where hdf5 export targets have a namespace or not

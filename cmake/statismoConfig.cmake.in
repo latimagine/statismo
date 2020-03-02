@@ -34,7 +34,9 @@ set(STATISMO_ITK_SUPPORT @ITK_SUPPORT@)
 set(STATISMO_USE_ITK_HDF5 @USE_ITK_HDF5@)
 
 # Include targets
-include("${CMAKE_CURRENT_LIST_DIR}/statismoTargets.cmake")
+if(NOT TARGET statismo::statismo_core AND NOT statismo_BINARY_DIR)
+  include("${CMAKE_CURRENT_LIST_DIR}/statismoTargets.cmake")
+endif()
 check_required_components("@PROJECT_NAME@")
 
 # Use file

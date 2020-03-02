@@ -49,7 +49,7 @@ TestUtils()
 {
   rand::RandGen(0);
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__APPLE__)
   STATISMO_ASSERT_EQ("02mw-y6id-9r3k-ltlh.txt", utils::CreateTmpName(".txt"));
 #endif
   STATISMO_ASSERT_EQ(utils::ToLowerCopy("MyTeST"), "mytest");

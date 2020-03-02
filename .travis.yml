@@ -12,6 +12,24 @@ cache:
 matrix:
   include:
     ##########################################################################
+    # Clang studio on MacOS with:
+    # - ITK/VTK support
+    # - Python wrapping
+    # - Release build
+    # - Shared libs
+    ##########################################################################
+    - os: osx
+      osx_image: xcode11.3
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=ON USE_SYSTEM_VTK=ON USE_ITK_EIGEN=ON USE_ITK_HDF5=ON BUILD_WRAPPING=ON
+      compiler: clang
+      before_install:
+        - brew uninstall python@2
+        - brew install swig
+        - brew install vtk
+        - brew install itk
+        - pip3 install numpy
+        - pip3 install spicy
+    ##########################################################################
     # Visual studio on Windows with:
     # - No ITK/VTK support
     # - Release build
@@ -19,7 +37,7 @@ matrix:
     # - VS2017
     ##########################################################################
     - os: windows
-      env: CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF BUILD_WRAPPING=OFF
+      env: CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
       language: cpp
     ##########################################################################
     # Clang on Linux Xenial with:
@@ -30,7 +48,7 @@ matrix:
     ##########################################################################
     - os: linux
       dist: xenial
-      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Debug BUILD_SHARED_LIBS=OFF BUILD_DOCUMENTATION=ON BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF BUILD_WRAPPING=OFF
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Debug BUILD_SHARED_LIBS=OFF BUILD_DOCUMENTATION=ON BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
       addons:
           apt:
             packages:
@@ -53,7 +71,7 @@ matrix:
     ##########################################################################
     - os: linux
       dist: xenial
-      env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 CHECK_FORMAT=ON BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=ON BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF BUILD_WRAPPING=OFF
+      env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 CHECK_FORMAT=ON BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=ON BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
       addons:
         apt:
           packages: 
@@ -75,7 +93,7 @@ matrix:
     ##########################################################################
     - os: linux
       dist: bionic
-      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF BUILD_WRAPPING=OFF
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
       addons:
         apt:
           packages:
@@ -83,10 +101,6 @@ matrix:
             - python3-pip
             - swig
             - python3.6-dev
-      before_install:
-        - pip3 install numpy
-        - pip3 install spicy
-        - pip3 install vtk
     ##########################################################################
     # Gcc on Linux Bionic with:
     # - ITK support
@@ -95,12 +109,12 @@ matrix:
     ##########################################################################
     - os: linux
       dist: bionic
-      env: C_COMPILER=gcc CXX_COMPILER=g++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF BUILD_WRAPPING=OFF
+      env: C_COMPILER=gcc CXX_COMPILER=g++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=ON USE_ITK_HDF5=ON BUILD_WRAPPING=OFF
 
 install:
   # Set the compiler variables properly
   - |
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+    if [[ "${TRAVIS_OS_NAME}" != "windows" ]]; then
      export CC=${C_COMPILER}
      export CXX=${CXX_COMPILER}
      ${CXX} --version
@@ -132,12 +146,9 @@ before_script:
   # have CMake to generate build files
   - cd "${TRAVIS_BUILD_DIR}"
   - mkdir build && cd build
-  - cmake ../superbuild -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DAUTOBUILD_STATISMO=OFF -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DBUILD_DOCUMENTATION=$BUILD_DOCUMENTATION -DBUILD_WITH_TIDY=$BUILD_WITH_TIDY -DBUILD_TESTS=$BUILD_TESTS -DBUILD_CLI_TOOLS=$BUILD_CLI_TOOLS -DBUILD_LONG_RUNNING_CLI_TESTS=$BUILD_LONG_RUNNING_CLI_TESTS -DITK_SUPPORT:BOOL=$ITK_SUPPORT -DVTK_SUPPORT:BOOL=$VTK_SUPPORT -DUSE_SYSTEM_HDF5=$USE_SYSTEM_HDF5 -DUSE_SYSTEM_EIGEN=$USE_SYSTEM_EIGEN -DUSE_SYSTEM_VTK=$USE_SYSTEM_VTK -DUSE_SYSTEM_ITK=$USE_SYSTEM_ITK -DBUILD_WRAPPING=$BUILD_WRAPPING -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6/ -DITK_EXTRA_OPTIONS:STRING="-DITK_SKIP_PATH_LENGTH_CHECKS=1"
+  - cmake ../superbuild -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DAUTOBUILD_STATISMO=OFF -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DBUILD_DOCUMENTATION=$BUILD_DOCUMENTATION -DBUILD_WITH_TIDY=$BUILD_WITH_TIDY -DBUILD_TESTS=$BUILD_TESTS -DBUILD_CLI_TOOLS=$BUILD_CLI_TOOLS -DBUILD_LONG_RUNNING_CLI_TESTS=$BUILD_LONG_RUNNING_CLI_TESTS -DITK_SUPPORT:BOOL=$ITK_SUPPORT -DVTK_SUPPORT:BOOL=$VTK_SUPPORT -DUSE_SYSTEM_HDF5=$USE_SYSTEM_HDF5 -DUSE_SYSTEM_EIGEN=$USE_SYSTEM_EIGEN -DUSE_SYSTEM_VTK=$USE_SYSTEM_VTK -DUSE_SYSTEM_ITK=$USE_SYSTEM_ITK -DUSE_ITK_EIGEN=$USE_ITK_EIGEN -DUSE_ITK_HDF5=$USE_ITK_HDF5 -DBUILD_WRAPPING=$BUILD_WRAPPING -DITK_EXTRA_OPTIONS:STRING="-DITK_SKIP_PATH_LENGTH_CHECKS=1" 
 
 script:
-  # For now, BUILD_WRAPPING is never set to ON as it makes
-  # the time limit to exceed for jobs. This means python test
-  # have to be triggered manually...
   - cmake --build . -j ${JOBS} --config ${BUILD_TYPE}
   - cd "${TRAVIS_BUILD_DIR}/build/Statismo-build"
   - |
@@ -145,26 +156,28 @@ script:
       make format-check
     fi
   - |
-    if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
-      cmake --build . -j ${JOBS} --config ${BUILD_TYPE}
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      if [ $(cmake --build . -j ${JOBS} --config ${BUILD_TYPE} 2>&1 | grep -o 'warning:' | wc -l) -gt 2 ] ; then echo "too many warning, needs some tidy" && exit 1 ; fi
     else
-      if [ $(make -j${JOBS} 2>&1 | grep -o 'warning:' | wc -l) -gt 2 ] ; then echo "too many warning, needs some tidy" && exit 1 ; fi
+      cmake --build . -j ${JOBS} --config ${BUILD_TYPE}
     fi
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${TRAVIS_BUILD_DIR}/build/INSTALL/lib
   - ctest -C ${BUILD_TYPE}
   - |
     if [[ "${TRAVIS_OS_NAME}" != "windows" ]] && [[ "${ITK_SUPPORT}" == "ON" ]]; then
       cd "${TRAVIS_BUILD_DIR}/build/Statismo-build/bin"
-      sh ../../../modules/ITK/examples/runITKExamples.sh
+      cp ../../../modules/ITK/examples/runITKExamples.sh ./runITKExamples.sh
+      sh ./runITKExamples.sh
     fi
   - |
     if [[ "${TRAVIS_OS_NAME}" != "windows" ]] && [[ "${VTK_SUPPORT}" == "ON" ]]; then
       if [[ "${BUILD_WRAPPING}" == "ON" ]]; then
         cd "${TRAVIS_BUILD_DIR}/build/Statismo-build"
-        sh ./runVTKPythonTests.sh 
+        sh ./runVTKPythonTests*.sh 
       fi
       cd "${TRAVIS_BUILD_DIR}/build/Statismo-build/bin"
-      sh ../../../modules/VTK/examples/runVTKExamples.sh
+      cp ../../../modules/VTK/examples/runVTKExamples.sh ./runVTKExamples.sh
+      sh ./runVTKExamples.sh
     fi
   - cd "${TRAVIS_BUILD_DIR}/build/Statismo-build"
   - cmake --install .

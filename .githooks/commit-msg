@@ -6,6 +6,11 @@
 
 LC_ALL=C
 
+if [[ "$NO_VERIFY" ]]; then
+  echo 'commit-msg hook skipped' 1>&2
+  exit 0
+fi
+
 msg=$(cat $1)
 
 echo $msg

@@ -59,6 +59,12 @@ set_target_properties(statismovtk PROPERTIES
   SOVERSION ${statismo_LIB_SOVERSION}
 )
 
+if(APPLE)
+  set_target_properties(statismovtk PROPERTIES
+    SUFFIX ".so"
+  )
+endif(APPLE)
+
 # Tests
 set(STATISMO_DATA_DIR "${statismo_SOURCE_DIR}/data/")
 set(STATISMOVTK_TEST_SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests/statismoTests")
