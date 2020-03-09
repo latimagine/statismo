@@ -1,0 +1,6 @@
+<map id="itk::StandardImageRepresenter&lt; Pixel, IMAGE_DIMENSION &gt;" name="itk::StandardImageRepresenter&lt; Pixel, IMAGE_DIMENSION &gt;">
+<area shape="rect" id="node3" href="$classstatismo_1_1RepresenterBase.html" title="statismo::RepresenterBase\l\&lt; itk::Image\&lt; Pixel, IMAGE\l_DIMENSION \&gt;, StandardImageRepresenter\l\&lt; Pixel, IMAGE_DIMENSION \&gt; \&gt;" alt="" coords="595,57,880,127"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1Representer.html" title="statismo::Representer\l\&lt; itk::Image\&lt; Pixel,\l IMAGE_DIMENSION \&gt; \&gt;" alt="" coords="347,24,524,80"/>
+<area shape="rect" id="node5" href="$classstatismo_1_1Clonable.html" title="statismo::Clonable\l\&lt; Representer\&lt; itk::\lImage\&lt; Pixel, IMAGE_DIMENSION \&gt; \&gt; \&gt;" alt="" coords="5,24,276,80"/>
+<area shape="rect" id="node6" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; StandardImageRepresenter\l\&lt; Pixel, IMAGE_DIMENSION \&gt; \&gt;" alt="" coords="324,104,547,160"/>
+</map>

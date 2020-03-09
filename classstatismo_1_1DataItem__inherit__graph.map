@@ -1,0 +1,8 @@
+<map id="statismo::DataItem&lt; T &gt;" name="statismo::DataItem&lt; T &gt;">
+<area shape="rect" id="node3" href="$classstatismo_1_1DataItemBase.html" title="DataItemBase\&lt; T, BasicData\lItem\&lt; T \&gt; \&gt;" alt="" coords="427,5,622,47"/>
+<area shape="rect" id="node5" href="$classstatismo_1_1DataItemBase.html" title="DataItemBase\&lt; T, DataItem\lWithSurrogates\&lt; T \&gt; \&gt;" alt="" coords="431,71,619,112"/>
+<area shape="rect" id="node7" href="$classstatismo_1_1DataItemBase.html" title="Base class for data item. " alt="" coords="427,137,623,163"/>
+<area shape="rect" id="node2" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,78,164,105"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1BasicDataItem.html" title="statismo::BasicDataItem\&lt; T \&gt;" alt="" coords="699,13,898,39"/>
+<area shape="rect" id="node6" href="$classstatismo_1_1DataItemWithSurrogates.html" title="statismo::DataItemWithSurrogates\&lt; T \&gt;" alt="" coords="671,78,927,105"/>
+</map>

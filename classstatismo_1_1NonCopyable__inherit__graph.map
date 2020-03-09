@@ -1,0 +1,50 @@
+<map id="statismo::NonCopyable" name="statismo::NonCopyable">
+<area shape="rect" id="node2" href="$classstatismo_1_1DataManager.html" title="statismo::DataManager\l\&lt; Representer \&gt;" alt="" coords="288,5,447,47"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::BasicDataManager\l\&lt; T \&gt; \&gt;" alt="" coords="266,150,469,206"/>
+<area shape="rect" id="node6" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::ConditionalModel\lBuilder\&lt; Representer \&gt;, statismo\l::SafeInitializer \&gt;" alt="" coords="260,231,475,301"/>
+<area shape="rect" id="node8" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::DataManagerWith\lSurrogates\&lt; Representer \&gt; \&gt;" alt="" coords="269,70,466,126"/>
+<area shape="rect" id="node9" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::LowRankGPModelBuilder\l\&lt; T \&gt; \&gt;" alt="" coords="247,326,488,382"/>
+<area shape="rect" id="node11" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::PCAModelBuilder\l\&lt; Representer \&gt;, statismo\l::SafeInitializer \&gt;" alt="" coords="270,407,465,477"/>
+<area shape="rect" id="node13" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::PosteriorModelBuilder\l\&lt; T \&gt;, statismo::SafeInitializer \&gt;" alt="" coords="258,502,477,558"/>
+<area shape="rect" id="node15" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::ReducedVariance\lModelBuilder\&lt; Representer\l \&gt;, statismo::SafeInitializer \&gt;" alt="" coords="270,583,465,653"/>
+<area shape="rect" id="node17" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::StatisticalModel\l\&lt; T \&gt; \&gt;" alt="" coords="275,678,460,734"/>
+<area shape="rect" id="node19" href="$classitk_1_1StatisticalModelTransformBase.html" title="Base class that implements an itk transform interface for statistical models. " alt="" coords="212,758,523,814"/>
+<area shape="rect" id="node20" href="$classstatismo_1_1ModelBuilder.html" title="statismo::ModelBuilder\l\&lt; Representer \&gt;" alt="" coords="290,837,445,879"/>
+<area shape="rect" id="node22" href="$classstatismo_1_1SafeQueue.html" title="statismo::SafeQueue\l\&lt; statismo::FunctionWrapper \&gt;" alt="" coords="266,903,469,944"/>
+<area shape="rect" id="node23" href="$classstatismo_1_1DataItem.html" title="statismo::DataItem\&lt; T \&gt;" alt="" coords="284,969,451,995"/>
+<area shape="rect" id="node27" href="$classstatismo_1_1DataManager.html" title="Manages Training and Test Data for building Statistical Models and provides functionality for Crossva..." alt="" coords="272,1019,463,1046"/>
+<area shape="rect" id="node31" href="$classstatismo_1_1FunctionWrapper.html" title="statismo::FunctionWrapper" alt="" coords="278,1070,457,1097"/>
+<area shape="rect" id="node32" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; I, T \&gt;" alt="" coords="290,1121,445,1163"/>
+<area shape="rect" id="node33" href="$classstatismo_1_1ModelBuilder.html" title="Common base class for all the model builder classes. " alt="" coords="274,1187,461,1214"/>
+<area shape="rect" id="node39" href="$classstatismo_1_1Nystrom.html" title="statismo::Nystrom\&lt; T \&gt;" alt="" coords="286,1238,449,1265"/>
+<area shape="rect" id="node40" href="$classstatismo_1_1RaiiThread.html" title="statismo::RaiiThread" alt="" coords="296,1289,439,1315"/>
+<area shape="rect" id="node41" href="$classstatismo_1_1SafeQueue.html" title="statismo::SafeQueue\&lt; T \&gt;" alt="" coords="279,1339,456,1366"/>
+<area shape="rect" id="node42" href="$classstatismo_1_1SafeUnorderedMap.html" title="statismo::SafeUnorderedMap\l\&lt; Key, T, Hash, KeyEqual,\l Allocator \&gt;" alt="" coords="271,1390,463,1446"/>
+<area shape="rect" id="node43" href="$classstatismo_1_1StatisticalModel.html" title="Representation of a linear statistical model (PCA Model). " alt="" coords="265,1470,470,1497"/>
+<area shape="rect" id="node44" href="$classstatismo_1_1ThreadPool.html" title="statismo::ThreadPool" alt="" coords="294,1521,441,1547"/>
+<area shape="rect" id="node45" href="$classstatismo_1_1WorkStealingQueue.html" title="statismo::WorkStealingQueue" alt="" coords="269,1571,465,1598"/>
+<area shape="rect" id="node46" href="$classitk_1_1StatisticalModelTransformBase.html" title="itk::StatisticalModelTransform\lBase\&lt; Dataset, ScalarType,\l DIMENSION \&gt;" alt="" coords="269,1622,465,1678"/>
+<area shape="rect" id="node48" href="$classitk_1_1StatisticalModelTransformBase.html" title="itk::StatisticalModelTransform\lBase\&lt; DataSet, ScalarType,\l DIMENSION \&gt;" alt="" coords="269,1702,465,1758"/>
+<area shape="rect" id="node49" href="$classitk_1_1StatisticalModelTransformBase.html" title="itk::StatisticalModelTransform\lBase\&lt; Representer, ScalarType,\l DIMENSION \&gt;" alt="" coords="261,1782,474,1838"/>
+<area shape="rect" id="node3" href="$classitk_1_1DataManagerWithSurrogates.html" title="ITK Wrapper for statismo::DataManagerWithSurrogates class. " alt="" coords="590,41,802,83"/>
+<area shape="rect" id="node5" href="$classitk_1_1DataManager.html" title="ITK Wrapper for statismo::DataManager class. " alt="" coords="619,165,773,191"/>
+<area shape="rect" id="node7" href="$classitk_1_1ConditionalModelBuilder.html" title="ITK Wrapper for statismo::ConditionalModelBuilder class. " alt="" coords="604,245,788,287"/>
+<area shape="rect" id="node10" href="$classitk_1_1LowRankGPModelBuilder.html" title="ITK Wrapper for statismo::LowRankGPModelBuilder class. " alt="" coords="583,341,809,367"/>
+<area shape="rect" id="node12" href="$classitk_1_1PCAModelBuilder.html" title="ITK Wrapper for statismo::PCAModelBuilder class. " alt="" coords="623,421,769,463"/>
+<area shape="rect" id="node14" href="$classitk_1_1PosteriorModelBuilder.html" title="ITK Wrapper for the statismo::PosteriorModelBuilder class. " alt="" coords="595,517,797,543"/>
+<area shape="rect" id="node16" href="$classitk_1_1ReducedVarianceModelBuilder.html" title="ITK Wrapper for statismo::ReducedVarianceModelBuilder class. " alt="" coords="605,597,787,639"/>
+<area shape="rect" id="node18" href="$classitk_1_1StatisticalModel.html" title="ITK Wrapper for the statismo::StatisticalModel class. " alt="" coords="611,665,781,691"/>
+<area shape="rect" id="node21" href="$classstatismo_1_1ModelBuilderBase.html" title="statismo::ModelBuilderBase\l\&lt; Representer, ReducedVarianceModel\lBuilder\&lt; Representer \&gt; \&gt;" alt="" coords="571,715,821,771"/>
+<area shape="rect" id="node24" href="$classstatismo_1_1DataItemBase.html" title="DataItemBase\&lt; T, BasicData\lItem\&lt; T \&gt; \&gt;" alt="" coords="599,795,793,836"/>
+<area shape="rect" id="node25" href="$classstatismo_1_1DataItemBase.html" title="DataItemBase\&lt; T, DataItem\lWithSurrogates\&lt; T \&gt; \&gt;" alt="" coords="602,860,790,901"/>
+<area shape="rect" id="node26" href="$classstatismo_1_1DataItemBase.html" title="Base class for data item. " alt="" coords="598,926,794,953"/>
+<area shape="rect" id="node28" href="$classstatismo_1_1DataManagerBase.html" title="DataManagerBase\&lt; T,\l BasicDataManager\&lt; T \&gt; \&gt;" alt="" coords="605,977,787,1019"/>
+<area shape="rect" id="node29" href="$classstatismo_1_1DataManagerBase.html" title="DataManagerBase\&lt; T,\l DataManagerWithSurrogates\l\&lt; T \&gt; \&gt;" alt="" coords="599,1042,793,1098"/>
+<area shape="rect" id="node30" href="$classstatismo_1_1DataManagerBase.html" title="Base class for data manager. " alt="" coords="586,1122,806,1149"/>
+<area shape="rect" id="node34" href="$classstatismo_1_1ModelBuilderBase.html" title="ModelBuilderBase\&lt; T,\l ConditionalModelBuilder\l\&lt; T \&gt; \&gt;" alt="" coords="613,1173,779,1229"/>
+<area shape="rect" id="node35" href="$classstatismo_1_1ModelBuilderBase.html" title="ModelBuilderBase\&lt; T,\l LowRankGPModelBuilder\l\&lt; T \&gt; \&gt;" alt="" coords="609,1253,783,1309"/>
+<area shape="rect" id="node36" href="$classstatismo_1_1ModelBuilderBase.html" title="ModelBuilderBase\&lt; T,\l PCAModelBuilder\&lt; T \&gt; \&gt;" alt="" coords="609,1332,783,1373"/>
+<area shape="rect" id="node37" href="$classstatismo_1_1ModelBuilderBase.html" title="ModelBuilderBase\&lt; T,\l PosteriorModelBuilder\l\&lt; T \&gt; \&gt;" alt="" coords="619,1397,773,1453"/>
+<area shape="rect" id="node38" href="$classstatismo_1_1ModelBuilderBase.html" title="Base class for model builder. " alt="" coords="587,1477,805,1503"/>
+<area shape="rect" id="node47" href="$classitk_1_1InterpolatingStatisticalDeformationModelTransform.html" title="An itk transform that allows for deformations defined by a given Statistical Deformation Model..." alt="" coords="571,1622,821,1678"/>
+</map>

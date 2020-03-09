@@ -1,0 +1,6 @@
+<map id="statismo::DataManagerWithSurrogates&lt; T &gt;" name="statismo::DataManagerWithSurrogates&lt; T &gt;">
+<area shape="rect" id="node2" href="$classstatismo_1_1DataManagerBase.html" title="statismo::DataManagerBase\l\&lt; T, DataManagerWithSurrogates\&lt; T \&gt; \&gt;" alt="" coords="507,27,769,69"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1DataManager.html" title="Manages Training and Test Data for building Statistical Models and provides functionality for Crossva..." alt="" coords="240,5,431,32"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,5,164,32"/>
+<area shape="rect" id="node5" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; DataManagerWithSurrogates\&lt; T \&gt; \&gt;" alt="" coords="212,57,459,98"/>
+</map>

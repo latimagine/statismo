@@ -1,0 +1,29 @@
+\form#0:$(pt1_x, pt1_y, pt1_z, ..., ptn_x, ptn_y, ptn_z$
+\form#1:$n$
+\form#2:$ \alpha $
+\form#3:\[ S = \mu + W \alpha + \epsilon. \]
+\form#4:$ \mu \in \mathbf{R}^p $
+\form#5:$W \in \mathbf{R}^{p \times n}$
+\form#6:$\alpha \in \mathbf{R}^n $
+\form#7:$\epsilon \sim \mathcal{N}(0, \sigma^2)$
+\form#8:$ W $
+\form#9:$W = U D $
+\form#10:$U$
+\form#11:$D$
+\form#12:$U \in \mathbf{R}^{p \times n}$
+\form#13:$nd \times nd$
+\form#14:$d \times d $
+\form#15:$\alpha \in \mathbf{R}^n$
+\form#16:$ (2 \pi)^{- \frac{n}{2}} \exp(||\alpha||) $
+\form#17:$\alpha $
+\form#18:$S$
+\form#19:$ S = \mu + U \alpha$
+\form#20:$\alpha$
+\form#21:$\mu \subset \mathbf{R}^d$
+\form#22:$p$
+\form#23:$m$
+\form#24:$m \in \mathbf{R}^{dp} $
+\form#25:$d$
+\form#26:$s \subset \mathbf{R}^d$
+\form#27:$W$
+\form#28:$W \in \mathbf{R}^{dp \times n} $
