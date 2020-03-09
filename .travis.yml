@@ -63,6 +63,14 @@ matrix:
         - sudo update-alternatives --config gcc
         - gcc --version
         - g++ --version
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $STATISMO_GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+        keep_history: true
+        local_dir: ${TRAVIS_BUILD_DIR}/install/share/doc/statismo/html
+        on:
+          all_branches: true
     ##########################################################################
     # Gcc on Linux Xenial with:
     # - No ITK/VTK support
