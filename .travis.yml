@@ -12,7 +12,7 @@ cache:
 matrix:
   include:
     ##########################################################################
-    # Clang studio on MacOS with:
+    # Clang on MacOS with:
     # - ITK/VTK support
     # - Python wrapping
     # - Release build
