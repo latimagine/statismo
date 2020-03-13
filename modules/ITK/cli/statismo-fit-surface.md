@@ -2,7 +2,7 @@
 
 # NAME
 
-statismo-fit-surface - fits a model iteratively in to a target mesh.
+statismo-fit-surface - fits a model iteratively in to a target mesh
 
 
 # SYNOPSIS

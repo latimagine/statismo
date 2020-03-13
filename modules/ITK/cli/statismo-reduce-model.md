@@ -2,7 +2,7 @@
 
 # NAME
 
-statismo-reduce-model - Reduces the number of components in a model.
+statismo-reduce-model - reduces the number of components in a model
 
 
 # SYNOPSIS

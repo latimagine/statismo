@@ -2,7 +2,7 @@
 
 # NAME
 
-statismo-fit-image - fits a model iteratively to an image.
+statismo-fit-image - fits a model iteratively to an image
 
 
 # SYNOPSIS

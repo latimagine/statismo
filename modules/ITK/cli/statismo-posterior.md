@@ -2,7 +2,7 @@
 
 # NAME
 
-statismo-posterior - creates a posterior model from an existing model.
+statismo-posterior - creates a posterior model from an existing model
 
 
 # SYNOPSIS

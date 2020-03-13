@@ -1,5 +1,4 @@
 if(BUILD_DOCUMENTATION)
-
   find_package(LATEX)
   if(NOT LATEX_COMPILER)
     message(WARNING "LaTeX not found. Formulas will not be generated in documentation.")
@@ -16,7 +15,7 @@ if(BUILD_DOCUMENTATION)
 
   doxygen_add_docs(
       statismo_dox
-      ${CMAKE_CURRENT_SOURCE_DIR}/classdoc/intro.dox ${PROJECT_SOURCE_DIR}/modules
+      ${CMAKE_CURRENT_SOURCE_DIR}/dox/intro.dox ${PROJECT_SOURCE_DIR}/modules
       COMMENT "Generate doxygen doc"
       ALL
   )

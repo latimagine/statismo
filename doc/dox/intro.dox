@@ -17,8 +17,7 @@
  *
  * \section Documentation 
  * This documentation describes the API of the Toolkit. 
- * The main classes are shown in the following diagram:
- * \image html class_diagram.png "Class diagram" 
+ * The main classes are shown in the following diagram: 
  * 
  * 
  * Click on classes (above) to get detailed documentation of the classes. 

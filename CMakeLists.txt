@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.13.4)
-project(statismo VERSION 0.11.1 LANGUAGES C CXX)
+project(statismo VERSION 0.11.0 LANGUAGES C CXX)
 
 # ----------------------------------------
 # Project options
@@ -355,6 +355,6 @@ install(FILES
 install(EXPORT statismoTargets NAMESPACE statismo::
   DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev
 )
-install(FILES ReadMe.md LICENSE
+install(FILES README.md LICENSE CHANGELOG.md
   DESTINATION ${INSTALL_DOC_DIR}
 )
