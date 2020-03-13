@@ -13,16 +13,14 @@ fi
 
 msg=$(cat $1)
 
-echo $msg
-
-valid_msg="^(build|ci|docs|feat|fix|misc|perf|sanity|format|test)\((all|core|itk|vtk)\): (.+)$"
-
-message="There is something wrong with your commit message. Commit messages in this project must adhere to this contract: $valid_msg. Your commit will be rejected. Change your message and try again."
+valid_msg="^(build|ci|doc|feat|fix|misc|perf|sanity|format|test): (.+)$"
 
 if [[ ! $msg =~ $valid_msg ]]
 then
-    echo "$message"
-    exit 1
+  echo "There is something wrong with your commit message"
+  echo "Expected format: $valid_msg"
+  echo "Commit is rejected! Reword your commit!"
+  exit 1
 fi
 
 exit 0
