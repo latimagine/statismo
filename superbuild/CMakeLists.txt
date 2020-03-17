@@ -10,7 +10,7 @@ set(_default_build_type "Release")
 if(NOT BUILD_TYPE AND NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "-- build type set to '${_default_build_type}' (none specified)")
   set(BUILD_TYPE "${_default_build_type}" CACHE
-      STRING "Choose the type of build" FORCE)
+      STRING "Build type" FORCE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE BUILD_TYPE PROPERTY STRINGS
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
@@ -22,7 +22,7 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/../cmake/statismoOptions.cmake)
 
-option(AUTOBUILD_STATISMO "Set to on build statismo during superbuild" ON)
+option(AUTOBUILD_STATISMO "Build statismo automatically during the superbuild process" ON)
 
 include(CMakeDependentOption)
 cmake_dependent_option(USE_SYSTEM_VTK "Use system libraries for VTK" OFF
@@ -43,19 +43,19 @@ cmake_dependent_option(USE_SYSTEM_HDF5 "Use system libraries for hdf5" OFF
 cmake_dependent_option(USE_SYSTEM_EIGEN "Use system libraries for eigen3" OFF
   "NOT USE_SYSTEM_ITK" ON
 )
-cmake_dependent_option(USE_ITK_EIGEN "Use eigen from itk system library" OFF
+cmake_dependent_option(USE_ITK_EIGEN "Use eigen library shipped with itk system library" OFF
   "USE_SYSTEM_ITK" OFF
 )
-cmake_dependent_option(USE_ITK_HDF5 "Use hdf5 from itk system library" OFF
+cmake_dependent_option(USE_ITK_HDF5 "Use hdf5 library shipped with itk system library" OFF
   "USE_SYSTEM_ITK" OFF
 )
 
 if (VTK_SUPPORT AND NOT USE_SYSTEM_VTK)
-  set(VTK_EXTRA_OPTIONS "" CACHE STRING "Build VTK with extra options")
+  set(VTK_EXTRA_OPTIONS "" CACHE STRING "Extra options used for VTK configuration")
 endif()
 
 if (ITK_SUPPORT AND NOT USE_SYSTEM_ITK)
-  set(ITK_EXTRA_OPTIONS "" CACHE STRING "Build ITK with extra options")
+  set(ITK_EXTRA_OPTIONS "" CACHE STRING "Extra options used for ITK configuration")
 endif()
 
 # ----------------------------------------
@@ -68,7 +68,7 @@ set(CMAKE_MODULE_PATH
 )
 
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
-set(INSTALL_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Install directory for dependencies")
+set(INSTALL_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/INSTALL CACHE STRING "Install directory for the non-system dependencies installed with the superbuild")
 set(Statismo_DEPENDENCIES)
 
 if(BUILD_SHARED_LIBS)

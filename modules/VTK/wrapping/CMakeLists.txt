@@ -9,7 +9,7 @@ find_package(SWIG REQUIRED)
 include(UseSWIG)
 
 # Pre build
-set(NUMPY_INCLUDE_DIR "" CACHE STRING "Numpy include path")
+set(NUMPY_INCLUDE_DIR "" CACHE STRING "Numpy include directory path")
 mark_as_advanced(NUMPY_INCLUDE_DIR)
 
 # If not set, try to find it automatically
