@@ -115,11 +115,11 @@ The type should be taken in this list:
 The subject is in lowercase (even the first letter) and contains a succinct description of the change. Use the imperative, present tense
 and do not termionate with a dot!
 
-***body**
+***body***
 
 Use the imperative, present tense. The body should include the motivation for the change.
 
-***footer**
+***footer***
 
 The footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
 

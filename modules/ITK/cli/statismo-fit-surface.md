@@ -61,9 +61,9 @@ The Landmarks format is as follows
 Example
 :	pointA,2,-2,3
 
-	pointB,3.1,3,-5
+    pointB,3.1,3,-5
 
-	pointC,7,8,9.08
+    pointC,7,8,9.08
 
 Warning
 :	For now, landmark names with comma are not supported by the parser

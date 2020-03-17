@@ -49,7 +49,7 @@ or
 Draw a random sample from a 3D deformation model:
 
     statismo-sample -t deformation -i model.h5 -o sample.vtk
-	
+    
 Draw a random sample from a 2D deformation model:
 
     statismo-sample -d 2 -t deformation -i model.h5 -o sample.vtk
@@ -57,7 +57,7 @@ Draw a random sample from a 2D deformation model:
 Draw the mean from a shape model:
 
     statismo-sample -m -i model.h5 mean.vtk
-	
+    
 Draw the reference from a shape model:
 
     statismo-sample -r -i model.h5 mean.vtk
