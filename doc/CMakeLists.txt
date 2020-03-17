@@ -1,7 +1,7 @@
 if(BUILD_DOCUMENTATION)
   find_package(LATEX)
   if(NOT LATEX_COMPILER)
-    message(WARNING "LaTeX not found. Formulas will not be generated in documentation.")
+    message(WARNING "-- LaTeX not found (formulas generation disabled)")
   endif()
 
   set(DOXYGEN_PROJECT_NAME ${PROJECT_NAME})

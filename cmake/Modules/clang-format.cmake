@@ -71,4 +71,3 @@ add_custom_target(format-check-changed
     ${EXCLUDE_PATTERN_ARGS}
     --clang-format-bin ${CLANG_FORMAT_BIN}
 )
-

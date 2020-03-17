@@ -4,7 +4,7 @@
 #
 
 if(NOT CLANG_FORMAT_BIN_NAME)
-	set(CLANG_FORMAT_BIN_NAME clang-format)
+    set(CLANG_FORMAT_BIN_NAME clang-format)
 endif()
 
 # if custom path check there first
@@ -29,8 +29,8 @@ mark_as_advanced(
     CLANG_FORMAT_BIN)
 
 if(CLANG_FORMAT_FOUND)
-	# A CMake script to find all source files and setup clang-format targets for them
-	include(clang-format)
+    # A CMake script to find all source files and setup clang-format targets for them
+    include(clang-format)
 else()
-    message("clang-format not found. Not setting up format targets")
+    message(STATUS "-- clang-format not found (code formatting disabled)")
 endif()

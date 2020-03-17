@@ -1,4 +1,4 @@
-message("-- External project - HDF5")
+message("-- External project: HDF5")
 
 ExternalProject_add(HDF5
   SOURCE_DIR ${CMAKE_BINARY_DIR}/HDF5

@@ -35,7 +35,6 @@ endforeach()
 
 if(${BUILD_CLI_TOOLS_DOC})
   if(PANDOC)
-    message(STATUS "Found pandoc - generating documentation for the CLI tools")
     # configuring man page install dir
     if(WIN32 AND NOT CYGWIN)
       #put the directory with the manuals in the same directory as the binaries on windows
@@ -48,7 +47,7 @@ if(${BUILD_CLI_TOOLS_DOC})
         set(_clidoc_install_dir ${CMAKE_INSTALL_MANDIR})
       else()
         set(_clidoc_install_dir ${INSTALL_BIN_DIR})
-        message(STATUS "Couldn't find the man install directory - man pages will NOT be installed properly")
+        message(WARNING "-- man install directory not found (man pages will NOT be installed properly)")
       endif()
         set(_clidoc_output_dir "${CMAKE_BINARY_DIR}/man8")
     endif()
@@ -88,7 +87,7 @@ if(${BUILD_CLI_TOOLS_DOC})
       DESTINATION ${_clidoc_install_dir}
    )
   else()
-    message(WARNING "Pandoc not found - documentation will not be generated for the CLI tools")
+    message(WARNING "-- pandoc not found (cli tools doc generation disabled)")
   endif()
 endif()
 

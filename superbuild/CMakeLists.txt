@@ -8,7 +8,7 @@ project(Statismo-Superbuild LANGUAGES C CXX)
 # Set a default build type if none was specified
 set(_default_build_type "Release")
 if(NOT BUILD_TYPE AND NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "setting build type to '${_default_build_type}' as none was specified.")
+  message(STATUS "-- build type set to '${_default_build_type}' (none specified)")
   set(BUILD_TYPE "${_default_build_type}" CACHE
       STRING "Choose the type of build" FORCE)
   # Set the possible values of build type for cmake-gui
@@ -131,7 +131,7 @@ else()
   else()
     # This should never happen
     if (NOT USE_SYSTEM_HDF5 OR NOT USE_SYSTEM_EIGEN)
-      message(FATAL_ERROR "eigen and hdf5 must be system if ITK is system")
+      message(FATAL_ERROR "-- eigen and hdf5 must be system if ITK is system")
     endif()
 
     if (USE_ITK_EIGEN)
