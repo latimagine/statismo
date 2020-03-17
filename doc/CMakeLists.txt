@@ -20,6 +20,12 @@ if(BUILD_DOCUMENTATION)
       ALL
   )
 
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dox/statismofileformat.html
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html/)
+  
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dox/images
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
+
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html/
     DESTINATION ${INSTALL_DOC_DIR}/html
   )

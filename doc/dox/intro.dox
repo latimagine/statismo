@@ -1,24 +1,70 @@
-/*! \mainpage StatISMo - Statistical Image and Shape Model Library
+/*! \mainpage Statismo - Statistical Image and Shape Model Library
  *  
  * \section Introduction
- * Welcome to Statismo.
  *
- * Statismo is a C++ library for generating and manipulating Statistical
- * Shape and Image Models. It supports all commonly known types of
- * statistical models, including Shape models, Deformation Models and
- * Appearance Models. The implementation and interpretation is based on
- * Probabilistic PCA, which generalizes the standard PCA models and gives
- * a fully probabilistic interpretation.
+ * Welcome to Statismo!
+ *
+ * Statismo is a c++ framework for statistical shape modeling. 
+ * It supports all shape modeling tasks, from model building to shape analysis. 
+ * Although the main focus of statismo lies on shape modeling, 
+ * it is designed such that it supports any kind of PCA based statistical model, 
+ * including statistical deformation models and intensiy models. 
+ * One of the main goals of statismo is to make the exchange of 
+ * statistical shape models easy. 
+ * This is achieved by using a well documented file format 
+ * based on [HDF5](http://hdf5group.org). 
+ * It also add shape modeling capabilities to other frameworks 
+ * used in medical imaging ([VTK](https://vtk.org/) and [ITK](https://itk.org/)).
  *
  * \section Home Home Page
  *
- * The Home Page of Statismo be found at :
- * http://statismo.github.com
+ * The Home Page of Statismo can be found at :
+ * https://github.com/kenavolic/statismo
  *
  * \section Documentation 
- * This documentation describes the API of the Toolkit. 
- * The main classes are shown in the following diagram: 
  * 
+ * This documentation describes the API of the toolkit. For details on contribution,
+ * install and use, browse the <a href=https://github.com/kenavolic/statismo/blob/master/README.md>README</a>.
+ *
+ * \section Concepts Main Concepts
  * 
- * Click on classes (above) to get detailed documentation of the classes. 
+ * \subsection Dataset
+ *
+ * A Shape, Image or Deformation field in some user defined format (e.g. a vtk polydata or an itk image).
+ *
+ * \subsection Sample
+ *
+ * A sample is a representation of a dataset as it is obtained by sampling from the 
+ * model. In contrast to a dataset, it has the same topology and the same number of 
+ * points as the model. Furthermore, its pose is standardized and given by the model. 
+ * Thus, many different datasets may have the same representation as a sample.
+ *
+ * \subsection Representer
+ *
+ * One of the main design goals of Statismo is to be independent of a specific library.
+ * Depending on the model you build, you may want to use different libraries to 
+ * represent your data. For example shapes are very conveniently represented using VTK, 
+ * while the representation of images is more powerful in ITK.
+ *
+ * The mathematics behind the models is completely independent of the concrete 
+ * representation of the data. It is even independent of the type of data (e.g. images, shapes, deformation fields, etc.) 
+ * used to build the models. The only requirement is that the data can be discretized 
+ * and represented using a finite number of points.
+ *
+ * A Representer provides the interface between the library specific representation 
+ * of a data set and the general mathematical view. A Representer abstracts all dataset
+ * specific aspects from the library. It provides a unified interface for creating, 
+ * reading or writing datasets. Furthermore, it provides methods to convert the datasets 
+ * from the specific representation of a library to a vectorial representation used internally by Statismo 
+ * as well as to convert the internal representation back to the original representation.
+ *
+ * \section Format File Format
+ *
+ * The format is based on HDF5 (http://www.hdfgroup.org/HDF5/doc/H5.format.html), which is a platform independent, 
+ * hierarchical format, that targets numerical and scientific data. HDF5 takes care of all the low-level details 
+ * of how data is stored in a platform independent and efficient way. The use of the format was chosen to make it 
+ * easy to exchange algorithms and shape models between different research groups.
+ *
+ * See <a href=statismofileformat.html>here</a> for more details.
+ *
 */
