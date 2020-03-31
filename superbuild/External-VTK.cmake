@@ -1,4 +1,4 @@
-message("-- External project: VTK")
+message(STATUS "External project: VTK")
 
 set(_vtkOptions ${VTK_EXTRA_OPTIONS})
 

@@ -1,4 +1,4 @@
-message("-- External project: ITK")
+message(STATUS "External project: ITK")
 
 # https://discourse.itk.org/t/itk-5-0-deformableregistration15-cxx/1948
 if(MSVC AND MSVC_VERSION GREATER 1920)
