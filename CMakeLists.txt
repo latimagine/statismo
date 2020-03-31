@@ -101,7 +101,7 @@ if (BUILD_WITH_TIDY)
   )
 
   if(NOT CLANG_TIDY_EXE)
-    message(FATAL_ERROR "-- clang-tidy not found")
+    message(FATAL_ERROR "clang-tidy not found")
   else()
     set(WITH_CLANG_TIDY "${CLANG_TIDY_EXE}")
     set(CMAKE_EXPORT_COMPILE_COMMANDS 1)

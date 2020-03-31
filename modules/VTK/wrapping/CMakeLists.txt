@@ -25,7 +25,7 @@ if ("${NUMPY_INCLUDE_DIR}" STREQUAL "")
 endif()
 
 if ("${NUMPY_INCLUDE_DIR}" STREQUAL "")
-  message(FATAL_ERROR "-- numpy include directory not found (you can set it manually with NUMPY_INCLUDE_DIR)")
+  message(FATAL_ERROR "numpy include directory not found (you can set it manually with NUMPY_INCLUDE_DIR)")
 endif()
 
 # Target configuration

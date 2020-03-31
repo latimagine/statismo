@@ -32,5 +32,5 @@ if(CLANG_FORMAT_FOUND)
     # A CMake script to find all source files and setup clang-format targets for them
     include(clang-format)
 else()
-    message(STATUS "-- clang-format not found (code formatting disabled)")
+    message(STATUS "clang-format not found (code formatting disabled)")
 endif()
