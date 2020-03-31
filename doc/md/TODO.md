@@ -14,7 +14,7 @@ Wish List
 # Usability
 
 * Make a python wrapper for the ITK module available as an external project
-* Implement a bridge to make (Scalismo-UI)[https://github.com/unibas-gravis/scalismo-ui] usable with Statismo
+* Implement a bridge to make [Scalismo-UI](https://github.com/unibas-gravis/scalismo-ui) usable with Statismo
 
 # Packaging
 

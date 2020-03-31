@@ -6,7 +6,7 @@
 Statismo
 ========
 
-Statismo is a c++ framework for statistical shape modeling. It supports all shape modeling tasks, from model building to shape analysis. Although the main focus of statismo lies on shape modeling, it is designed such that it supports any kind of PCA based statistical model, including statistical deformation models and intensiy models. One of the main goals of statismo is to make the exchange of statistical shape models easy. This is achieved by using a well documented file format based on [HDF5](http://hdf5group.org). It also add shape modeling capabilities to other frameworks used in medical imaging ([VTK](https://vtk.org/) and [ITK](https://itk.org/)).
+Statismo is a c++ framework for statistical shape modeling. It supports all shape modeling tasks, from model building to shape analysis. Although the main focus of statismo lies on shape modeling, it is designed such that it supports any kind of PCA based statistical model, including statistical deformation models and intensiy models. One of the main goals of statismo is to make the exchange of statistical shape models easy. This is achieved by using a well documented file format based on [HDF5](https://www.hdfgroup.org). It also add shape modeling capabilities to other frameworks used in medical imaging ([VTK](https://vtk.org/) and [ITK](https://itk.org/)).
 
 This repository is a fork of the [original projet](https://github.com/statismo/statismo) created for keeping the SSM features available to the C++ community now that the original
 team is more focused on the development and maintainance of [Scalismo](https://github.com/unibas-gravis/scalismo).

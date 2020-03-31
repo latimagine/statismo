@@ -25,7 +25,7 @@ The install and run is tested with the following dependencies versions:
 | ITK                               | 5.0 -> 5.0.1                    |
 
 > :information_source: This tables are not exhaustive thus the project might work
-> with other configurations... or not! If you need to work with older versions of > ITK, VTK, HDF5, Eigen, you can fallback to the original project as well!
+> with other configurations... or not! If you need to work with older versions of ITK, VTK, HDF5, Eigen, you can fallback to the original project as well!
 
 > :warning: Testing the framework over many platforms with all 
 > possible configurations requires both time and
@@ -225,7 +225,7 @@ See [build issues](#Known-Build-Issues) for possible problems on Linux.
 
 #### Windows
 
-> :warning: Prefer static linking *BUILD_SHARED_LIBS=OFF* as the framework
+> :warning: Prefer static linking (*BUILD_SHARED_LIBS=OFF*) as the framework
 > public interfaces are not DLL proof!
 
 See [build issues](#Known-Build-Issues) for possible problems on Windows.

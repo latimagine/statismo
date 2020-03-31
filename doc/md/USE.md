@@ -12,6 +12,12 @@ CLI tools
 set PATH=C:\path\to\vtk\bin;C:\path\to\itk\bin;C:\path\to\hdf5\bin;%PATH%
 ```
 
+> :information_source: On Linux, if some dependencies are installed as shared libs in 
+> non-standard locations, it is necessary to inform the system about it:
+```
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/src/hdf5/dist/lib:/usr/src/itk/dist/lib:/usr/src/vtk/dist/lib
+```
+
 ### Tools List
 
 | Tool                              | Desc                                                       | Doc link        |

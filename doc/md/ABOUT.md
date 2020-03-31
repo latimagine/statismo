@@ -1,7 +1,7 @@
 History
 =======
 
-Statismo has originally been developed in the context of the [Co-Me](http://www.co-me.ch) research project as a collaboration between the [University of Bern](http://www.istb.unibe.ch), the [University of Basel](http://gravis.cs.unibas.ch) and the [ETH Zurich](http://www.vision.ee.ethz.ch/), with goal of the making it easy to exchange algorithms and shape models between different research groups. The original code has been written by:
+Statismo has originally been developed in the context of the [Co-Me](http://www.co-me.ch) research project as a collaboration between the [University of Bern](http://www.istb.unibe.ch), the [University of Basel](http://gravis.cs.unibas.ch) and the [ETH Zurich](http://www.vision.ee.ethz.ch/), in order to make it easy to exchange algorithms and shape models between different research groups. The original code has been written by:
 * Marcel Luethi, University of Basel and
 * Remi Blanc, formerly at ETH Zurich.
 

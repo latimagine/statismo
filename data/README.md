@@ -1,5 +1,5 @@
-Description
-===========
+Data Description
+================
 
 This data contains shapes (polydata), images and deformation fields of
 2D hand shapes. All data is in correspondence and can be used directly to build simple shape,
@@ -22,7 +22,7 @@ Surrogate Format
 The surrogate system used in conditional model building relies
 on the following descriptions files:
 
-* ****_surrogates_types.txt***
+* ***xxx_surrogates_types.txt***
 
 Description of the surrogate type: continuous (type 1) or categorical (type 0) data.
 
@@ -31,7 +31,7 @@ Example for a categorical variable (gender) and a continuous one (height):
 0
 1
 ~~~
-* ****_surrogates.txt***
+* ***xxx_surrogates.txt***
 
 Surrogate values bound to the dataset.
 

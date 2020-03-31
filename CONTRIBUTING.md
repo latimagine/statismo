@@ -13,7 +13,7 @@ Want a New Feature?
 
 If you are missing a feature, first submit an issue to our [GitHub Repository](https://github.com/kenavolic/statismo/issues) to chat about your proposal and be sure it will be used!
 
-Then, everythng is clarified, you can [submit a Pull Request](#Submit-a-Pull-Request) with your new feature.
+Then, when everything is clarified, you can [submit a Pull Request](#Submit-a-Pull-Request) with your new feature.
 
 Submission Guidelines
 =====================
@@ -40,7 +40,7 @@ From the root of **the forked repo**, run the workspace initialization script:
 bash ./workspace/pr_init.sh
 ```
 
-This script would make your local repo ready. It will ask for a branch name
+This script will make your local repo ready. It will ask for a branch name
 that should comply with the branch naming convention.
 
 > :warning: Check our [coding rules](#Coding-Rules) before processing the next steps!
@@ -149,7 +149,7 @@ Coding Rules
 
 ### Prerequisites
 
-You must install *clang-tidy* (>=6.0.0) and *clang-format* (>=6.0.0) before to ensure your configuration
+You must install *clang-tidy* (>=6.0.0) and *clang-format* (>=6.0.0) to ensure your configuration
 mirrors the one in CI.
 
 On Linux, make a symbolic link toward your installed version:
@@ -159,7 +159,7 @@ sudo ln -s /usr/bin/clang-tidy-6.0 /usr/bin/clang-tidy
 
 ### Project Configuration
 
-Please check the [installation guide](#doc/md/INSTALL.md) for the building process.
+Please check the [installation guide](doc/md/INSTALL.md) for the building process.
 
 The project must be set with the following options in dev mode:
  * BUILD_WITH_TIDY=ON
