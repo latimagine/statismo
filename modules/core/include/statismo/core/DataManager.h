@@ -46,11 +46,19 @@
 
 #include <list>
 
+/**
+ * \defgroup DataManagers Data management classes and routines
+ */
+
 namespace statismo
 {
 
 /**
- * \brief Holds training and test data used for Crossvalidation
+ * \brief Wrapper to hold training and test data used for
+ * Crossvalidation
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class CrossValidationFold
@@ -60,12 +68,12 @@ public:
   using DataItemListType = std::list<SharedPtrType<DataItemType>>;
 
   /**
-   * Create an empty fold
+   * \brief Create an empty fold
    */
   CrossValidationFold() = default;
 
   /**
-   * Create a fold with the given trainingData and testingData
+   * \brief Create a fold with the given \a trainingData and \a testingData
    */
   CrossValidationFold(DataItemListType trainingData, DataItemListType testingData)
     : m_trainingData(std::move(trainingData))
@@ -73,7 +81,7 @@ public:
   {}
 
   /**
-   * Get a list holding the training data
+   * \brief Get training data
    */
   DataItemListType
   GetTrainingData() const
@@ -82,7 +90,7 @@ public:
   }
 
   /**
-   * Get a list holding the testing data
+   * \brief Get testing data
    */
   DataItemListType
   GetTestingData() const
@@ -96,19 +104,26 @@ private:
 };
 
 /**
- * \brief Manages Training and Test Data for building Statistical Models and provides functionality for Crossvalidation.
+ * \brief Base abstract class for data managers
+ *
+ * Managers manage training and test Data for building Statistical Models and provides
+ * functionality for Crossvalidation.
  *
  * The DataManager class provides functionality for loading and managing data sets to be used in the
- * statistical model. The datasets are loaded either by using DataManager::AddDataset or directly from a hdf5 File using
+ * statistical model. Datasets are loaded either by using DataManager::AddDataset or directly from a hdf5 File using
  * the Load function. Per default all the datasets are marked as training data. It is, however, often useful
  * to leave a few datasets out to validate the model. For this purpose, the DataManager class implements basic
- * crossvalidation functionality.
+ * crossvalidation features.
  *
  * For efficiency purposes, the data is internally stored as a large matrix, using the internal SampleVector
  * representation. Furthermore, Statismo emphasizes on traceability, and ties information with the datasets, such as the
- * original filename. This means that when accessing the data stored in the DataManager, one gets a DataItem structure
+ * original filename. This means that when accessing the data stored in the DataManager, one gets a DataItem structure.
+ *
  * \sa Representer
  * \sa DataItem
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class DataManager : public NonCopyable
@@ -123,9 +138,9 @@ public:
   using CrossValidationFoldListType = std::list<CrossValidationFoldType>;
 
   /**
-   * Add a dataset to the data manager.
+   * \brief Add a dataset to the manager
    * \param dataset the dataset to be added
-   * \param uri A string containing the URI of the given dataset. This is only added as an info to the metadata.
+   * \param uri string containing the URI of the given dataset (added as a metadata)
    *
    * While it is not strictly necessary, and sometimes not even possible, to specify a URI for the given dataset,
    * it is strongly encouraged to add a description. The string will be added to the metadata and stored with the model.
@@ -135,51 +150,54 @@ public:
   AddDataset(DatasetConstPointerType dataset, const std::string & uri) = 0;
 
   /**
-   * Saves the data matrix and all URIs into an HDF5 file.
+   * \brief Save the data matrix and all URIs into an HDF5 file.
    * \param filename
    */
   virtual void
   Save(const std::string & filename) const = 0;
 
   /**
-   * return a list with all the sample data objects managed by the data manager
+   * \brief Get all sample data objects managed by the data manager
    * \sa DataItem
    */
   virtual DataItemListType
   GetData() const = 0;
 
   /**
-   * returns the number of samples managed by the datamanager
+   * \brief Get the number of samples managed by the data manager
    */
   virtual std::size_t
   GetNumberOfSamples() const = 0;
 
   /**
-   * Assigns the data to one of n Folds to be used for cross validation.
-   * This method has to be called before cross validation can be started.
+   * \brief Assigns the data to one of n Folds to be used for cross validation.
+   * \warning This method has to be called before cross validation can be started.
    *
-   * \param nFolds The number of folds used in the crossvalidation
-   * \param isRandomized If true, the data will be randomly assigned to the nfolds, otherwise the order with which it
+   * \param nFolds number of folds used in the crossvalidation
+   * \param isRandomized if true, the data will be randomly assigned to the nfolds, otherwise the order with which it
    * was added is preserved
    */
   virtual CrossValidationFoldListType
   GetCrossValidationFolds(unsigned nFolds, bool isRandomized) const = 0;
 
   /**
-   * Generates Leave-one-out cross validation folds
+   * \brief Generates Leave-one-out cross validation folds
    */
   virtual CrossValidationFoldListType
   GetLeaveOneOutCrossValidationFolds() const = 0;
 
   /**
-   * Generic delete function
+   * \brief Generic delete function
    */
   virtual void
   Delete() = 0;
 };
 
 /**
- * \brief Base class for data manager
+ * \brief Base implementation for data managers
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T, typename Derived>
 class DataManagerBase
@@ -238,7 +256,10 @@ protected:
 };
 
 /**
- * \brief Basic data manager is a standard data manager
+ * \brief Standard data manager
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class BasicDataManager : public DataManagerBase<T, BasicDataManager<T>>

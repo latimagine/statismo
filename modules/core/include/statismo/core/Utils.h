@@ -61,10 +61,6 @@
 namespace statismo
 {
 
-/**
- * \brief A number of small utility functions - internal use only.
- */
-
 namespace details
 {
 template <typename T>
@@ -133,6 +129,10 @@ LexicalCast<unsigned long long>(const std::string & str)
 
 namespace utils
 {
+/**
+ * \brief Generate random normal vector
+ * \ingroup Core
+ */
 inline VectorType
 GenerateNormalVector(unsigned n)
 {
@@ -149,6 +149,13 @@ GenerateNormalVector(unsigned n)
   return v;
 }
 
+/**
+ * \brief Read vector from txt file
+ *
+ * Vector element must be space separated
+ *
+ * \ingroup Core
+ */
 inline VectorType
 ReadVectorFromTxtFile(const char * name)
 {
@@ -176,6 +183,10 @@ ReadVectorFromTxtFile(const char * name)
   return v;
 }
 
+/**
+ * \brief Create temp name for file
+ * \ingroup Core
+ */
 inline std::string
 CreateTmpName(const std::string & extension)
 {
@@ -199,18 +210,30 @@ CreateTmpName(const std::string & extension)
   return mask + extension;
 }
 
+/**
+ * \brief Remove file
+ * \ingroup Core
+ */
 inline void
 RemoveFile(const std::string & str)
 {
   std::remove(str.c_str());
 }
 
+/**
+ * \brief Update string to lowercase
+ * \ingroup Core
+ */
 inline void
 ToLower(std::string & str)
 {
   std::transform(std::begin(str), std::end(str), std::begin(str), [](unsigned char c) { return std::tolower(c); });
 }
 
+/**
+ * \brief Convert string to lowercase
+ * \ingroup Core
+ */
 inline std::string
 ToLowerCopy(std::string str)
 {
@@ -218,6 +241,10 @@ ToLowerCopy(std::string str)
   return str;
 }
 
+/**
+ * \brief Lexical casting
+ * \ingroup Core
+ */
 template <typename T>
 static T
 LexicalCast(const std::string & str)
@@ -232,6 +259,11 @@ LexicalCast(const std::string & str)
   }
 }
 
+/**
+ * \brief Tokenize string
+ * \tparam D The delimitor for string splitting
+ * \ingroup Core
+ */
 template <char D>
 static auto
 Split(const std::string & in)

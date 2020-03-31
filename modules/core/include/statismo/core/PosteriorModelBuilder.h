@@ -53,19 +53,18 @@ namespace statismo
 {
 
 /**
- * \brief Given a statistical model (prior) and a set of point constraints (likelihood), generate a new PCA model
- * (posterior).
+ * \brief Create  a new StatisticalModel (posterior) from a prior statistical model
+ * and a set of of point constraints (likelihood)
  *
  * This class builds a StatisticalModel, just as PCAModelBuilder. However, in addition to the data,
  * this model builder also takes as input a set of point constraints, i.e. known values for points.
  * The resulting model will satisfy these constraints, and thus has a much lower variability than an
  * unconstrained model would have.
  *
- * For mathematical details see the paper:
+ * For mathematical details see \cite 4 .
  *
- * "Posterior Shape Models"
- * Thomas Albrecht, Marcel Luethi, Thomas Gerig, Thomas Vetter
- * in Medical Image Analysis 2013
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 template <typename T>
 class PosteriorModelBuilder : public ModelBuilderBase<T, PosteriorModelBuilder<T>>
@@ -87,14 +86,14 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * Builds a new model from the data provided in the dataManager, and the given constraints.
+   * \brief Builds a new model from the data provided in the dataManager, and the given constraints.
+   * \param dataItemList list holding the data the model is built from
+   * \param pointValues list of (point, value) pairs with the known values
+   * \param pointValueNoiseVariance variance of the estimated error at the known points (the pointValues)
+   * \param noiseVariance variance of the noise assumed on our data
+   *
    * This version of the function assumes a noise with a uniform uncorrelated variance
    * of the form pointValueNoiseVariance * identityMatrix at every given point.
-   * \param dataItemList The list holding the data the model is built from
-   * \param pointValues A list of (point, value) pairs with the known values.
-   * \param pointValueNoiseVariance The variance of the estimated error at the known points (the pointValues)
-   * \param noiseVariance  The variance of the noise assumed on our data
-   * \return a new statistical model
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModel(const DataItemListType &   dataItemList,
@@ -104,14 +103,13 @@ public:
 
 
   /**
-   * Builds a new model from the data provided in the dataManager, and the given constraints.
-   * For this version of the function, the covariance matrix of the noise needs to be specified for
-   * every point. These covariance matrices are passed in the pointValuesWithCovariance list.
+   * \brief Builds a new model from the data provided in the dataManager, and the given constraints
+   * \param DataItemList list holding the data the model is built from
+   * \param pointValuesWithCovariance list of ((point,value), covarianceMatrix) for each known value.
+   * \param noiseVariance  variance of the noise assumed on our data
    *
-   * \param DataItemList The list holding the data the model is built from
-   * \param pointValuesWithCovariance A list of ((point,value), covarianceMatrix) for each known value.
-   * \param noiseVariance  The variance of the noise assumed on our data
-   * \return a new statistical model
+   * In this version of the function, the covariance matrix of the noise needs to be specified for
+   * every point. These covariance matrices are passed in the pointValuesWithCovariance list.
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModel(const DataItemListType &                 DataItemList,
@@ -120,18 +118,17 @@ public:
 
 
   /**
-   * Builds a new StatisticalModel given a StatisticalModel and the given constraints.
+   * \brief Builds a new StatisticalModel given a StatisticalModel and the given constraints
+   * \param model statistical model
+   * \param pointValues list of (point, value) pairs with the known values
+   * \param pointValueNoiseVariance variance of the estimated error at the known points (the pointValues)
+   * \param computeScores determines whether the scores are computed and stored in the model
+   *
    * If we interpret the given model as a prior distribution over the modeled objects,
    * the resulting model can (loosely) be interpreted as the posterior distribution,
    * after having observed the data given in the PointValues.
    * This version of the function assumes a noise with a uniform uncorrelated variance
    * of the form pointValueNoiseVariance * identityMatrix at every given point.
-   *
-   * \param model A statistical model.
-   * \param pointValues A list of (point, value) pairs with the known values.
-   * \param pointValueNoiseVariance The variance of the estimated error at the known points (the pointValues)
-   * \param computeScores Determines whether the scores are computed and stored in the model.
-   * \return a new statistical model
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModelFromModel(const StatisticalModelType * model,
@@ -141,17 +138,16 @@ public:
 
 
   /**
-   * Builds a new StatisticalModel given a StatisticalModel and the given constraints.
+   * \brief Builds a new StatisticalModel given a StatisticalModel and the given constraints.
+   * \param model statistical model
+   * \param pointValuesWithCovariance list of ((point,value), covarianceMatrix) for each known value
+   * \param computeScores determines whether the scores are computed and stored in the model
+   *
    * If we interpret the given model as a prior distribution over the modeled objects,
    * the resulting model can (loosely) be interpreted as the posterior distribution,
    * after having observed the data given in the PointValues.
    * For this version of the function, the covariance matrix of the noise needs to be specified for
    * every point. These covariance matrices are passed in the pointValuesWithCovariance list.
-   *
-   * \param model A statistical model.
-   * \param pointValuesWithCovariance A list of ((point,value), covarianceMatrix) for each known value.
-   * \param computeScores Determines whether the scores are computed and stored in the model.
-   * \return a new statistical model
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModelFromModel(const StatisticalModelType *             model,
@@ -159,10 +155,9 @@ public:
                          bool                                     computeScores = true) const;
 
   /**
-   * A convenience function to create a PointValueWithCovarianceList with uniform variance
-   *
-   * \param pointValues A list of (point, value) pairs with the known values.
-   * \param pointValueNoiseVariance The variance of the estimated error at the known points (the pointValues)
+   * \brief Convenience function to create a PointValueWithCovarianceList with uniform variance
+   * \param pointValues list of (point, value) pairs with the known values.
+   * \param pointValueNoiseVariance variance of the estimated error at the known points (the pointValues)
    * \return a PointValueWithCovarianceListType with the given uniform variance
    */
   PointValueWithCovarianceListType

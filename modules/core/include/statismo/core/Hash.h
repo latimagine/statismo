@@ -81,7 +81,8 @@ HashImpl(const T & v) -> std::enable_if_t<HasGetPointDimension(gk_type<T>), size
 } // namespace details
 
 /**
- * Custom hash functor used in hashmap
+ * \brief Custom hash functor used in hashmap
+ * \ingroup Core
  */
 template <typename T>
 class Hash

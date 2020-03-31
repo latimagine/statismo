@@ -1,0 +1,96 @@
+@InProceedings{
+    1,
+    author="Blanc, R{\'e}mi
+    and Reyes, Mauricio
+    and Seiler, Christof
+    and Sz{\'e}kely, G{\'a}bor",
+    editor="Yang, Guang-Zhong
+    and Hawkes, David
+    and Rueckert, Daniel
+    and Noble, Alison
+    and Taylor, Chris",
+    title="Conditional Variability of Statistical Shape Models Based on Surrogate Variables",
+    booktitle="Medical Image Computing and Computer-Assisted Intervention -- MICCAI 2009",
+    year="2009",
+    publisher="Springer Berlin Heidelberg",
+    address="Berlin, Heidelberg",
+    pages="84--91",
+    abstract="We propose to increment a statistical shape model with surrogate variables such as anatomical measurements and patient-related information, allowing conditioning the shape distribution to follow prescribed anatomical constraints. The method is applied to a shape model of the human femur, modeling the joint density of shape and anatomical parameters as a kernel density. Results show that it allows for a fast, intuitive and anatomically meaningful control on the shape deformations and an effective conditioning of the shape distribution, allowing the analysis of the remaining shape variability and relations between shape and anatomy. The approach can be further employed for initializing elastic registration methods such as Active Shape Models, improving their regularization term and reducing the search space for the optimization.",
+    isbn="978-3-642-04271-3"
+}
+
+@InProceedings{
+    2,
+    author="Gerig, Thomas
+    and Shahim, Kamal
+    and Reyes, Mauricio
+    and Vetter, Thomas
+    and L{\"u}thi, Marcel",
+    editor="Golland, Polina
+    and Hata, Nobuhiko
+    and Barillot, Christian
+    and Hornegger, Joachim
+    and Howe, Robert",
+    title="Spatially Varying Registration Using Gaussian Processes",
+    booktitle="Medical Image Computing and Computer-Assisted Intervention -- MICCAI 2014",
+    year="2014",
+    publisher="Springer International Publishing",
+    pages="413--420",
+    abstract="In this paper we propose a new approach for spatially-varying registration using Gaussian process priors. The method is based on the idea of spectral tempering, i.e. the spectrum of the Gaussian process is modified depending on a user defined tempering function. The result is a non-stationary Gaussian process, which induces different amount of smoothness in different areas. In contrast to most other schemes for spatially-varying registration, our approach does not require any change in the registration algorithm itself, but only affects the prior model. Thus we can obtain spatially-varying versions of any registration method whose deformation prior can be formulated in terms of a Gaussian process. This includes for example most spline-based models, but also statistical shape or deformation models. We present results for the problem of atlas based skull-registration of cone beam CT images. These datasets are difficult to register as they contain a large amount of noise around the teeth. We show that with our method we can become robust against noise, but still obtain accurate correspondence where the data is clean.",
+    isbn="978-3-319-10470-6"
+}
+
+@InProceedings{
+    3,
+    author="L{\"u}thi, Marcel
+    and Jud, Christoph
+    and Vetter, Thomas",
+    editor="Wu, Guorong
+    and Zhang, Daoqiang
+    and Shen, Dinggang
+    and Yan, Pingkun
+    and Suzuki, Kenji
+    and Wang, Fei",
+    title="A Unified Approach to Shape Model Fitting and Non-rigid Registration",
+    booktitle="Machine Learning in Medical Imaging",
+    year="2013",
+    publisher="Springer International Publishing",
+    address="Cham",
+    pages="66--73",
+    abstract="Non-rigid registration and shape model fitting are the central problems in any shape modeling pipeline. Even though the goal is in both problems to establishing point-to-point correspondence between two objects, their algorithmic treatment is usually very different. In this paper we present an approach that allows us to treat both problems in a unified algorithmic framework. We use the well known formulation of non-rigid registration as the problem of fitting a Gaussian process model, whose covariance function favors smooth deformations. We compute a low rank approximation of the Gaussian process using the Nystr{\"o}m method, which allows us to formulate it as a parametric fitting problem of the same form as shape model fitting. Besides simplifying the modeling pipeline, our approach also lets us naturally combine shape model fitting and non-rigid registration, in order to reduce the bias in statistical model fitting, or to make registration more robust. As our experiments on 3D surfaces and 3D CT images show, the method leads to a registration accuracy that is comparable to standard registration methods.",
+    isbn="978-3-319-02267-3"
+}
+
+@article{
+    4,
+    title = "Posterior shape models",
+    journal = "Medical Image Analysis",
+    volume = "17",
+    number = "8",
+    pages = "959 - 973",
+    year = "2013",
+    issn = "1361-8415",
+    doi = "https://doi.org/10.1016/j.media.2013.05.010",
+    url = "http://www.sciencedirect.com/science/article/pii/S1361841513000844",
+    author = "Thomas Albrecht and Marcel Lüthi and Thomas Gerig and Thomas Vetter",
+    keywords = "Statistical shape model, Conditional shape model, Posterior shape model, Image segmentation, Trochlear dysplasia",
+    abstract = "We present a method to compute the conditional distribution of a statistical shape model given partial data. The result is a “posterior shape model”, which is again a statistical shape model of the same form as the original model. This allows its direct use in the variety of algorithms that include prior knowledge about the variability of a class of shapes with a statistical shape model. Posterior shape models then provide a statistically sound yet easy method to integrate partial data into these algorithms. Usually, shape models represent a complete organ, for instance in our experiments the femur bone, modeled by a multivariate normal distribution. But because in many application certain parts of the shape are known a priori, it is of great interest to model the posterior distribution of the whole shape given the known parts. These could be isolated landmark points or larger portions of the shape, like the healthy part of a pathological or damaged organ. However, because for most shape models the dimensionality of the data is much higher than the number of examples, the normal distribution is singular, and the conditional distribution not readily available. In this paper, we present two main contributions: First, we show how the posterior model can be efficiently computed as a statistical shape model in standard form and used in any shape model algorithm. We complement this paper with a freely available implementation of our algorithms. Second, we show that most common approaches put forth in the literature to overcome this are equivalent to probabilistic principal component analysis (PPCA), and Gaussian Process regression. To illustrate the use of posterior shape models, we apply them on two problems from medical image analysis: model-based image segmentation incorporating prior knowledge from landmarks, and the prediction of anatomically correct knee shapes for trochlear dysplasia patients, which constitutes a novel medical application. Our experiments confirm that the use of conditional shape models for image segmentation improves the overall segmentation accuracy and robustness."
+}
+
+@InProceedings{
+    5,
+    author="L{\"u}thi, M.
+    and Albrecht, T.
+    and Vetter, T.",
+    editor="Hancock, Edwin R.
+    and Martin, Ralph R.
+    and Sabin, Malcolm A.",
+    title="Probabilistic Modeling and Visualization of the Flexibility in Morphable Models",
+    booktitle="Mathematics of Surfaces XIII",
+    year="2009",
+    publisher="Springer Berlin Heidelberg",
+    address="Berlin, Heidelberg",
+    pages="251--264",
+    abstract="Statistical shape models, and in particular morphable models, have gained widespread use in computer vision, computer graphics and medical imaging. Researchers have started to build models of almost any anatomical structure in the human body. While these models provide a useful prior for many image analysis task, relatively little information about the shape represented by the morphable model is exploited. We propose a method for computing and visualizing the remaining flexibility, when a part of the shape is fixed. Our method, which is based on Probabilistic PCA, not only leads to an approach for reconstructing the full shape from partial information, but also allows us to investigate and visualize the uncertainty of a reconstruction. To show the feasibility of our approach we performed experiments on a statistical model of the human face and the femur bone. The visualization of the remaining flexibility allows for greater insight into the statistical properties of the shape.",
+    isbn="978-3-642-03596-8"
+}

@@ -25,8 +25,11 @@ namespace statismo
 {
 
 /**
- * Computes the Nystrom approximation of a given kernel
- * The type parameter T is the type of the dataset (e.g. Mesh, Image) for which the nystom approximation is computed
+ * \brief Compute Nystrom approximation of a given kernel
+ * \tparam T type of the dataset (e.g. Mesh, Image) for which the
+ * nystom approximation is computed
+ *
+ * \ingroup Core
  */
 template <class T>
 class Nystrom
@@ -42,7 +45,8 @@ public:
   friend ObjectFactoryType;
 
   /**
-   * Returns a d x n matrix, which holds the d-dimension value of all the n eigenfunctions at the given point
+   * \brief Return a d x n matrix, which holds the d-dimension value of all the n eigenfunctions
+   * at the given point \a pt
    */
   MatrixType
   ComputeEigenfunctionsAtPoint(const PointType & pt) const
@@ -71,7 +75,8 @@ public:
 
 
   /**
-   * Returns a vector of size n, where n is the number of eigenfunctions/eigenvalues that were approximated
+   * \brief Get a vector of size n, where n is the number of eigenfunctions/eigenvalues
+   * that were approximated
    */
   const VectorType &
   GetEigenvalues() const
@@ -108,9 +113,8 @@ private:
     m_eigenvalues = (1.0f / normFactor) * D.topRows(numEigenfunctions);
   }
 
-  /*
-   * Returns a random set of points from the domain.
-   *
+  /**
+   * \brief Get a random set of points from the domain
    * \param domain the domain to sample from
    * \param numberOfPoints the size of the sample
    */
@@ -128,9 +132,9 @@ private:
 
 
   /**
-   * Compute the kernel matrix for all points given in xs and
-   * return a matrix U with the first numComponents eigenvectors and a vector D with
-   * the corresponding eigenvalues of this kernel matrix
+   * \brief Compute the kernel matrix for all points given in \a xs and
+   * return a matrix \a U with the first \a numComponents eigenvectors and a vector \a D with
+   * the corresponding eigenvalues of this \a kernel matrix
    */
   void
   ComputeKernelMatrixDecomposition(const MatrixValuedKernel<PointType> * kernel,
@@ -174,6 +178,5 @@ private:
   unsigned                              m_numEigenfunctions;
 };
 
-
 } // namespace statismo
-#endif // NYSTROM_H
+#endif

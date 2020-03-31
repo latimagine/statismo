@@ -51,6 +51,11 @@
 
 namespace statismo
 {
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup VTK
+ */
 template <>
 struct RepresenterTraits<vtkStructuredPoints>
 {
@@ -59,21 +64,19 @@ struct RepresenterTraits<vtkStructuredPoints>
 
   using PointType = vtkPoint;
   using ValueType = vtkNDPixel;
-
-  ///@}
 };
 
 /**
- * \brief Representer class for vtkStructuredPoints of arbitrary scalar type and PixelDimension
+ * \brief Representer for vtkStructuredPoints of arbitrary scalar type and pixel dimension
  *
  * The pixel values used for the shape model are stored in the vtkPointData object of the vtkStructuredPoints.
  * They can be either scalars (cf. sp->GetPointData()->GetScalars()) or vectors (cf. sp->GetPointData()->GetVectors()).
  *
- * If you supply vtkStructuredPoints images with several arrays (e.g. scalars, vectors, tensors etc.), you need to
- * ensure that the array relevant to the shape model is the first array, i.e. the one returned by
+ * \warning If you supply vtkStructuredPoints images with several arrays (e.g. scalars, vectors, tensors etc.), you need
+ * to ensure that the array relevant to the shape model is the first array, i.e. the one returned by
  * sp->GetPointData()->GetArray(0).
- *
- * \see Representer
+ * \ingroup Representers
+ * \ingroup VTK
  */
 template <class TScalar, unsigned PIXEL_DIMENSIONS>
 class vtkStandardImageRepresenter

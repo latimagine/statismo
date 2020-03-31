@@ -51,7 +51,7 @@ namespace statismo
 // numerical value
 static constexpr double gk_pi = 3.14159265358979323846;
 
-// the type that is used for all vector and matrices throughout the library.
+// type used for all vector and matrices throughout the library.
 using ScalarType = float;
 
 // aliases to generic eigen types
@@ -63,7 +63,7 @@ using VectorTypeDoublePrecision = GenericEigenTraits<double>::VectorType;
 using RowVectorType = GenericEigenTraits<ScalarType>::RowVectorType;
 
 // type definitions used in the standard file format.
-// Note that these are the same as used by VTK
+// Note that these are the same as the ones used by VTK
 static constexpr unsigned gk_void = 0; // not capitalized, as windows defines: #define VOID void, which causes trouble
 static constexpr unsigned gk_signedChar = 2;
 static constexpr unsigned gk_unsignedChar = 3;
@@ -142,13 +142,15 @@ GetDataTypeId<double>()
 }
 
 /**
- * Standard deletor
+ * \brief Standard deletor
+ * \ingroup Core
  */
 template <typename T>
 using StdDeletor = std::default_delete<T>;
 
 /**
- * Custom deletor functor used as default deletor in smart memory management
+ * \brief Custom deletor
+ * \ingroup Core
  */
 template <typename T>
 struct DefaultDeletor
@@ -161,19 +163,29 @@ struct DefaultDeletor
 };
 
 /**
- * Custom unique pointer
+ * \brief Custom unique pointer alias
+ * \ingroup Core
  */
 template <typename T>
 using UniquePtrType = std::unique_ptr<T, DefaultDeletor<T>>;
 
 /**
- * Custom shared pointer
+ * \brief Standard unique pointer alias
+ * \ingroup Core
+ */
+template <typename T>
+using StdUniquePtrType = std::unique_ptr<T, StdDeletor<T>>;
+
+/**
+ * \brief Shared pointer alias
+ * \ingroup Core
  */
 template <typename T>
 using SharedPtrType = std::shared_ptr<T>;
 
 /**
- * Factory function for shared pointer
+ * \brief Factory function for shared pointers
+ * \ingroup Core
  */
 template <typename T>
 auto
@@ -182,6 +194,10 @@ MakeSharedPointer(T && t)
   return std::shared_ptr<T>{ std::forward<T>(t), DefaultDeletor<T>() };
 }
 
+/**
+ * \brief Factory function for shared pointers
+ * \ingroup Core
+ */
 template <typename T>
 auto
 MakeSharedPointer(T * t)
@@ -190,13 +206,8 @@ MakeSharedPointer(T * t)
 }
 
 /**
- * Standard unique pointer
- */
-template <typename T>
-using StdUniquePtrType = std::unique_ptr<T, StdDeletor<T>>;
-
-/**
- * RAII enforcer
+ * \brief Stack unwinder used for RAII enforcement
+ * \ingroup Core
  */
 template <typename Callable>
 class StackUnwinder
@@ -225,12 +236,18 @@ public:
   StackUnwinder &
   operator=(StackUnwinder &&) = delete;
 
+  /**
+   * \brief Enable unwinding
+   */
   void
   Set()
   {
     m_do = true;
   }
 
+  /**
+   * \brief Disable unwinding
+   */
   void
   Unset()
   {
@@ -238,6 +255,10 @@ public:
   }
 };
 
+/**
+ * \brief Factory function for stack unwinder
+ * \ingroup Core
+ */
 template <typename Callable>
 inline auto
 MakeStackUnwinder(Callable && c)

@@ -52,13 +52,14 @@ namespace statismo
 class BuilderInfo; // forward declaration
 
 /**
- * \brief stores meta information about the model, such as e.g. the name (uri) of the datasets used to build the models,
- * or specific parameters of the modelBuilders.
+ * \brief Store meta information about the model
  *
- * The ModelInfo object stores the scores and a list of BuilderInfo objects. Each BuilderInfo contains the information
- * (datasets, parameters) that were used to build the model. If n  model builders had been used in succession to create
+ * The ModelInfo object stores the scores and a list of BuilderInfo objects.
+ * Each BuilderInfo contains the information (datasets, parameters) that were
+ * used to build the model. If n model builders had been used in succession to create
  * a model, there will be a list of n builder objects.
  *
+ * \ingroup Core
  */
 class STATISMO_CORE_EXPORT ModelInfo final
 {
@@ -68,39 +69,40 @@ public:
   ModelInfo() = default;
 
   /**
-   * Creates a new ModelInfo object with the given information
-   * \param scores A matrix holding the scores
-   * \param builderInfos A list of BuilderInfo objects
+   * \brief Ctor
+   * \param scores matrix holding the scores
+   * \param builderInfos list of BuilderInfo objects
    */
   ModelInfo(MatrixType scores, BuilderInfoList builderInfos);
 
   /**
-   * Create a ModelInfo object without specifying any BuilderInfos
-   * \param scores A matrix holding the scores
+   * \brief Ctor
+   * \param scores matrix holding the scores
    */
   explicit ModelInfo(MatrixType scores);
 
   /**
-   * Returns a list with BuilderInfos
+   * \brief Get all builder info
    */
   BuilderInfoList
   GetBuilderInfoList() const;
 
   /**
-   * Returns the scores matrix. That is, a matrix where the i-th column corresponds to the
+   * \brief Get the score matrix
+   * \return a matrix where the i-th column corresponds to the
    * coefficients of the i-th dataset in the model
    */
   const MatrixType &
   GetScoresMatrix() const;
 
   /**
-   * Saves the model info to the given group in the HDF5 file
+   * \brief Save model info in an hdf5 group
    */
   void
   Save(const H5::H5Location & publicFg) const;
 
   /**
-   * Loads the model info from the given group in the HDF5 file.
+   * \brief Load model info from tan hdf5 group
    */
   void
   Load(const H5::H5Location & publicFg);
@@ -114,7 +116,13 @@ private:
 };
 
 /**
- * \brief Holds information about the data and the parameters used by a specific modelbuilder
+ * \brief Store meta information about the model
+ *
+ * Meta information consists of:
+ *  - the name (uri) of the datasets used to build the models,
+ *  - specific parameters of the builders
+ *
+ * \ingroup Core
  */
 class STATISMO_CORE_EXPORT BuilderInfo final
 {
@@ -129,38 +137,32 @@ public:
   using DataInfoList = KeyValueList;
   using ParameterInfoList = KeyValueList;
 
-  /**
-   * Creates a new BuilderInfo object with the given information
-   */
   BuilderInfo(std::string modelBuilderName, std::string buildTime, DataInfoList di, ParameterInfoList pi);
 
   BuilderInfo(std::string modelBuilderName, DataInfoList di, ParameterInfoList pi);
 
-  /**
-   * Create a new, empty BilderInfo object
-   */
   BuilderInfo() = default;
 
   /**
-   * Saves the builder info to the given group in the HDF5 file
+   * \brief Save builder info to an hdf5 group
    */
   void
   Save(const H5::H5Location & modelBuilderGroup) const;
 
   /**
-   * Loads the builder info from the given group in the HDF5 file.
+   * \brief Load builder info from an hdf5 group
    */
   void
   Load(const H5::H5Location & modelBuilderGroup);
 
   /**
-   * Returns the data info
+   * \brief Get the data info
    */
   const DataInfoList &
   GetDataInfo() const;
 
   /**
-   * Returns the parameter info
+   * \brief Get the parameter info
    */
   const ParameterInfoList &
   GetParameterInfo() const;

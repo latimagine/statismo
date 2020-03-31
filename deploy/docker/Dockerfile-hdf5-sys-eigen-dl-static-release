@@ -1,14 +1,17 @@
 FROM ubuntu:bionic
 
+ARG git_branch=develop
+
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
 
 RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && apt-get update
 
-RUN apt-get update \
-  && apt-get install -y git cmake tar mesa-common-dev freeglut3-dev\
-  && cd /usr/local/bin
-  
+RUN apt-get install -y git cmake tar mesa-common-dev freeglut3-dev g++-7
+
+ENV CC=gcc-7
+ENV CXX=g++-7
+
 # HDF5 system
 WORKDIR "/usr/src/"
 RUN wget http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.2/src/hdf5-1.10.2.tar.gz
@@ -20,14 +23,14 @@ RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr/src/hdf5/dist -DCMAKE_BUILD_TYPE=Releas
 RUN make install  
 
 # Statismo
-RUN git clone https://github.com/kenavolic/statismo --branch develop /usr/src/statismo
+RUN git clone https://github.com/kenavolic/statismo --branch $git_branch /usr/src/statismo
 
 WORKDIR "/usr/src/statismo"
 RUN mkdir build
 WORKDIR "/usr/src/statismo/build"
 
 RUN cmake ../superbuild -DCMAKE_INSTALL_PREFIX=/usr/src/statismo/dist -DBUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_WRAPPING=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_CLI_TOOLS=OFF -DBUILD_CLI_TOOLS_DOC=OFF \
-  -DVTK_SUPPORT=OFF -DITK_SUPPORT=OFF -DUSE_SYSTEM_EIGEN=OFF -DUSE_SYSTEM_HDF5=ON -DHDF5_DIR=/usr/src/hdf5/dist/share/cmake
+  -DVTK_SUPPORT=OFF -DITK_SUPPORT=OFF -DUSE_SYSTEM_EIGEN=OFF -DUSE_SYSTEM_HDF5=ON -DHDF5_DIR=/usr/src/hdf5/dist/share/cmake/hdf5
 
 RUN make -j4
 

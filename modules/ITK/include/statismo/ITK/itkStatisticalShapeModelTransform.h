@@ -52,10 +52,10 @@ namespace itk
 
 /**
  *
- * \brief An itk transform that allows for deformations defined by a given Statistical Shape Model.
- *
+ * \brief Deformation transform used with Mesh or PointSet
  *
  * \ingroup Transforms
+ * \ingroup ITK
  */
 template <typename Representer, typename ScalarType, unsigned int DIMENSION>
 class ITK_EXPORT StatisticalShapeModelTransform

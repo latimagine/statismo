@@ -41,16 +41,13 @@
 namespace statismo
 {
 
-/* \class PointTraits
- * \brief Should be specialized with information about
- *        a point type. Mandatory information should be:
- *        - sk_realDimension (Real dimension of the point for computation)
- */
 template <typename P>
 struct PointTraits;
 
-// wrapper struct that allows us to easily select matrix and vectors of an arbitrary
-// type, which has the same traits as the standard matrix / vector traits
+/**
+ * \brief Eigen traits
+ * \ingroup Core
+ */
 template <typename TScalar>
 struct GenericEigenTraits
 {

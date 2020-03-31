@@ -55,8 +55,11 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for statismo::ConditionalModelBuilder class.
- * \see statismo::ConditionalModelBuilder for detailed documentation.
+ * \brief ITK wrapper for statismo::ConditionalModelBuilder class
+ *
+ * \sa statismo::ConditionalModelBuilder for detailed documentation
+ * \ingroup ModelBuilders
+ * \ingroup ITK
  */
 template <typename Representer>
 class ConditionalModelBuilder

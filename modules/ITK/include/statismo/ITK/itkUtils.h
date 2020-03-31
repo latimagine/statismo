@@ -47,6 +47,10 @@
 
 namespace statismo::itk
 {
+/**
+ * \brief ITK exception converter
+ * \ingroup ITK
+ */
 struct ExceptionHandler
 {
   explicit ExceptionHandler(const ::itk::Object & o)
@@ -65,6 +69,10 @@ private:
   const ::itk::Object & m_obj;
 };
 
+/**
+ * \brief Get files with extension \a extension in \a dir
+ * \ingroup ITK
+ */
 inline std::vector<std::string>
 GetDirFiles(const std::string & dir, const std::string & extension = ".*")
 {
@@ -84,6 +92,10 @@ GetDirFiles(const std::string & dir, const std::string & extension = ".*")
   return files;
 }
 
+/**
+ * \brief Clone a Mesh
+ * \ingroup ITK
+ */
 template <typename DataType>
 typename DataType::Pointer
 CloneMesh(typename DataType::Pointer pMesh)

@@ -56,8 +56,11 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for statismo::PCAModelBuilder class.
- * \see statismo::PCAModelBuilder for detailed documentation.
+ * \brief ITK wrapper for statismo::PCAModelBuilder class
+ *
+ * \sa statismo::PCAModelBuilder for detailed documentation
+ * \ingroup ITK
+ * \ingroup ModelBuilders
  */
 template <typename Representer>
 class PCAModelBuilder

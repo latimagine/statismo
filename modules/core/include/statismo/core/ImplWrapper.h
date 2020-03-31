@@ -51,8 +51,13 @@ struct NullInitializer
 struct SafeInitializer
 {};
 
-/*
- * Base class for class that wraps a statismo implementation
+/**
+ * \brief Base class for classes that wraps Statismo implementation
+ *
+ * This class is typically used by wrapper classes for compatibility
+ * with other frameworks.
+ *
+ * \ingroup Core
  */
 template <typename I, typename T = NullInitializer>
 class ImplWrapper : public NonCopyable
@@ -71,7 +76,7 @@ public:
   }
 
   /**
-   * Get internal implementation
+   * \brief Get internal implementation
    */
   const I *
   GetStatismoImplObj() const
@@ -80,7 +85,7 @@ public:
   }
 
   /**
-   * Set internal implementation
+   * \brief Set internal implementation
    */
   void
   SetStatismoImplObj(UniquePtrType<I> impl)
@@ -89,7 +94,7 @@ public:
   }
 
   /**
-   * Create internal implementation by forwarding ctor args
+   * \brief Create internal implementation by forwarding ctor args
    */
   template <typename U, typename = std::enable_if_t<!std::is_same_v<UniquePtrType<I>, std::decay_t<U>>>>
   void
@@ -99,7 +104,7 @@ public:
   }
 
   /**
-   * Create internal implementation by forwarding ctor args
+   * \brief Create internal implementation by forwarding ctor args
    */
   template <typename... Args>
   void
@@ -109,7 +114,7 @@ public:
   }
 
   /**
-   * Forward call to implementation
+   * \brief Forward call to implementation
    */
   template <typename Callable, typename... Args>
   decltype(auto)
@@ -120,7 +125,7 @@ public:
   }
 
   /**
-   * Forward call to implementation
+   * \brief Forward call to implementation
    */
   template <typename Callable, typename... Args>
   decltype(auto)
@@ -130,9 +135,8 @@ public:
   }
 
   /**
-   * Forward call to implementation with exception handling
-   *
-   * \warning Note that \a h must be handler that throws
+   * \brief Forward call to implementation with exception handling
+   * \warning Note that \a h must be a handler that throws
    */
   template <typename Handler, typename Callable, typename... Args>
   decltype(auto)
@@ -143,9 +147,8 @@ public:
   }
 
   /**
-   * Forward call to implementation with exception handling
-   *
-   * \warning Note that \a h must be handler that throws
+   * \brief Forward call to implementation with exception handling
+   * \warning Note that \a h must be a handler that throws
    */
   template <typename Handler, typename Callable, typename... Args>
   decltype(auto)

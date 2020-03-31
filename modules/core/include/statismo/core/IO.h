@@ -48,16 +48,13 @@ class Group;
 namespace statismo
 {
 /**
- * \brief The IO class is used to Load() and or Save() a StatisticalModel. The Load and Save functions are static and as
- * such there's no need to create an instance of this class.
+ * \brief The IO class is used to Load/Save a StatisticalModel
+ * \tparam T see StatisticalModel
  *
- * The Template parameter is the same as the one of the StatisticalModel class.
- *
- * \note Here we use a bunch of static methods instead of namespaces because it
+ * \note A bunch of static methods is used instead of namespace because it
  * is easier to manipulate (just alias the class instantiation instead of setting
  * the template param for each function) and the class can be passed as template
- * parameter.
- *
+ * parameter
  */
 template <typename T>
 class IO
@@ -70,11 +67,10 @@ public:
   using StatisticalModelType = StatisticalModel<T>;
 
   /**
-   * Returns a new statistical model, which is loaded from the given HDF5 file
-   *
-   * \param representer Representer bound to the model
-   * \param filename Path to hdf5 file
-   * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
+   * \brief Load statistical model from file
+   * \param representer representer bound to the model
+   * \param filename path to hdf5 file
+   * \param maxNumberOfPCAComponents maximal number of pca components loaded
    * to create the model.
    */
   static UniquePtrType<StatisticalModelType>
@@ -100,11 +96,10 @@ public:
   }
 
   /**
-   * Returns a new statistical model, which is stored in the given HDF5 Group
-   *
-   * \param representer Representer bound to the model
+   * \brief Load statistical model from group
+   * \param representer representer bound to the model
    * \param modelRoot H5 group where the model is saved
-   * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
+   * \param maxNumberOfPCAComponents maximal number of pca components loaded
    * to create the model.
    */
   static UniquePtrType<StatisticalModelType>
@@ -125,8 +120,9 @@ public:
 
       if (!HDF5Utils::ExistsObjectWithName(modelRoot, "version"))
       {
-        // this is an old statismo format, that had not been versioned. We set the version to 0.8 as this is the last
-        // version that stores the old format
+        // This is an old statismo format, that was versioned.
+        // We set the version to 0.8 as this is the last
+        // version that stores the old format.
         std::cout << "Warning: version attribute does not exist in hdf5 file. Assuming version 0.8" << std::endl;
         minorVersion = gk_oldFileVersionMinor;
         majorVersion = gk_oldFileVersionMajor;
@@ -186,9 +182,9 @@ public:
 
 
   /**
-   * Saves the statistical model to a HDF5 file
-   * \param model A pointer to the model you'd like to save.
-   * \param filename The filename (preferred extension is .h5)
+   * \brief Saves the statistical model to a HDF5 file
+   * \param model pointer to the model
+   * \param filename filename (preferred extension is .h5)
    * */
   static void
   SaveStatisticalModel(const StatisticalModelType * const model, const std::string & filename)
@@ -201,9 +197,9 @@ public:
   }
 
   /**
-   * Saves the statistical model to a HDF5 file
-   * \param model The model to save
-   * \param filename The filename (preferred extension is .h5)
+   * \brief Save statistical model
+   * \param model model to save
+   * \param filename filename (preferred extension is .h5)
    * */
   static void
   SaveStatisticalModel(const StatisticalModelType & model, const std::string & filename)
@@ -233,9 +229,9 @@ public:
   };
 
   /**
-   * Saves the statistical model to the given HDF5 group.
-   * \param model the model you'd like to save
-   * \param modelRoot the group where to store the model
+   * \brief Save statistical model to the given HDF5 group.
+   * \param model model to save
+   * \param modelRoot group where to store the model
    * */
   static void
   SaveStatisticalModel(const StatisticalModelType & model, const H5::Group & modelRoot)

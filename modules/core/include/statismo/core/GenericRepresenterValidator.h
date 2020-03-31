@@ -46,15 +46,18 @@
 #include <algorithm>
 
 /**
- * \brief Generic validator for representers. The tests need to hold for all representers.
- * It is used on the framework to validate statismo representer and can be used to validate
+ * \brief Generic validator for representers
+ *
+ * The tests need to hold for all representers.
+ * It is used in the framework to validate statismo representer and can be used to validate
  * user provided representers.
+ *
+ * \ingroup Representers
+ * \ingroup Core
  */
 template <typename Representer>
 class GenericRepresenterValidator
 {
-  // we define aliases for all required typenames, to force a compilation error if one of them
-  // is not defined
   using DatasetConstPointerType = typename Representer::DatasetConstPointerType;
   using DatasetPointerType = typename Representer::DatasetPointerType;
   using PointType = typename Representer::PointType;
@@ -63,8 +66,10 @@ class GenericRepresenterValidator
 
 public:
   /**
-   * Create a new validator. Tests are performed using the given testDataset and the pointValuePair.
-   * \warning It is assumed that the PointValuePair is taken from the testDataset (otherwise some tests will fail).
+   * \brief Create a new validator
+   * \param representer representer to be tested
+   * \param testDataset test datasets
+   * \param pointValuePair (point, value) pair taken from the testDataset
    */
   GenericRepresenterValidator(const Representer *                     representer,
                               DatasetConstPointerType                 testDataset,
@@ -76,6 +81,9 @@ public:
   {}
 
 
+  /**
+   * \brief Test evaluation at a given point
+   */
   bool
   TestSamplePointEvaluation() const
   {
@@ -98,6 +106,9 @@ public:
     return true;
   }
 
+  /**
+   * \brief Test domain validity
+   */
   bool
   TestDomainValid() const
   {
@@ -148,7 +159,8 @@ public:
   }
 
   /**
-   * Test whether converting a sample to a vector and back to a sample yields the original sample
+   * \brief Test whether converting a sample to a vector and back to a sample
+   * yields the original sample
    */
   bool
   TestSampleToVectorAndBack() const
@@ -161,7 +173,7 @@ public:
   }
 
   /**
-   * Test point sample dimensionnality
+   * \brief Test point sample dimensionnality
    */
   bool
   TestPointSampleDimension() const
@@ -172,7 +184,7 @@ public:
   }
 
   /**
-   * Test if the conversion from a pointSample and the pointSampleVector, and back to a pointSample
+   * \brief Test if the conversion from a pointSample and the pointSampleVector, and back to a pointSample
    * yields the original sample.
    */
   bool
@@ -185,7 +197,7 @@ public:
   }
 
   /**
-   * Test if the testSample contains the same entries in the vector as those obtained by taking the
+   * \brief Test if the testSample contains the same entries in the vector as those obtained by taking the
    * pointSample at the corresponding position.
    */
   bool
@@ -215,7 +227,7 @@ public:
   }
 
   /**
-   * Test Save and Load restore the representer
+   * \brief Test Save and Load restore the representer
    */
   bool
   TestSaveLoad() const
@@ -264,7 +276,7 @@ public:
   }
 
   /**
-   * Test cloning do not change representer state and behavior
+   * \brief Test cloning do not change representer state and behavior
    */
   bool
   TestClone() const
@@ -277,7 +289,7 @@ public:
   }
 
   /**
-   * Test sample dimensions
+   * \brief Test sample dimensions
    */
   bool
   TestSampleVectorDimensions() const
@@ -288,7 +300,7 @@ public:
   }
 
   /**
-   * Test representer name
+   * \brief Test representer name
    */
   bool
   TestGetName() const
@@ -298,7 +310,7 @@ public:
   }
 
   /**
-   * Test dimensions
+   * \brief Test dimensions
    */
   bool
   TestDimensions() const
@@ -307,7 +319,9 @@ public:
     return m_representer->GetDimensions() > 0;
   }
 
-  /// run all the tests
+  /**
+   * \brief Run all tests
+   */
   bool
   RunAllTests() const
   {
@@ -340,6 +354,9 @@ public:
     });
   }
 
+  /**
+   * \brief Get last error string
+   */
   std::string
   GetErrorString() const
   {

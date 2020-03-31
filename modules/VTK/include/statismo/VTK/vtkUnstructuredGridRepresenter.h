@@ -56,6 +56,11 @@
 namespace statismo
 {
 
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup VTK
+ */
 template <>
 struct RepresenterTraits<vtkUnstructuredGrid>
 {
@@ -66,17 +71,16 @@ struct RepresenterTraits<vtkUnstructuredGrid>
 };
 
 /**
- * \brief A representer for vtkUnstructuredGrid using Procrustes alignment to align the datasets
+ * \brief Representer for vtkUnstructuredGrid using Procrustes alignment to align the datasets
  *
- * This class provides a specialization of the Representer for the type vtkUnstructuredGrid.
- * Procrustes is used to align the given datasets with the reference.
- * The user can choose between Rigid, Similarity and Affine alignment.
+ * Procrustes is used to align the given datasets with the reference.The user can choose
+ * between Rigid, Similarity and Affine alignment.
  *
  * \note In order to use GPA alignment, simply set the Procrustes Mean as the reference.
  * \warning This class does currently not provide any registration, which implies
  * that the dataset that are read by the class need to be aligned.
- *
- * \see Representer
+ * \ingroup Representers
+ * \ingroup VTK
  */
 class STATISMO_VTK_EXPORT vtkUnstructuredGridRepresenter
   : public RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>

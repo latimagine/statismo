@@ -51,8 +51,12 @@
 namespace statismo
 {
 
-// Some kind of type erase is needed to manipulate tasks in an
-// homogeneous manner
+/**
+ * \brief Function type erasure utility
+ * \note: Implementation taken from "C++ concurrency in action", A. Williams
+ *
+ * \ingroup Core
+ */
 class FunctionWrapper : public NonCopyable
 {
   struct ImplBase
@@ -153,8 +157,10 @@ private:
   mutable std::mutex   m_mut;
 };
 
-/*
- * RaiiThread as inspired from Scott Meyers books
+/**
+ * \brief Thread wrapper to ensure RAII
+ *
+ * \ingroup Core
  */
 class RaiiThread : public NonCopyable
 {
@@ -210,6 +216,13 @@ private:
  * Thread pool used for computation intensive algorithm
  *
  * Implementation taken from "C++ concurrency in action", A. Williams
+ */
+/**
+ * \brief Thread pool
+ * \note Implementation taken from "C++ concurrency in action", A. Williams
+ * and modified for our needs
+ *
+ * \ingroup Core
  */
 class ThreadPool final : public NonCopyable
 {

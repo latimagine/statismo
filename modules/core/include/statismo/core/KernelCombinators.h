@@ -52,7 +52,9 @@ namespace statismo
 {
 
 /**
- * A (matrix valued) kernel, which represents the sum of two matrix valued kernels.
+ * \brief A (matrix valued) kernel, which represents the sum of two matrix valued kernels
+ * \ingroup Kernels
+ * \ingroup Core
  */
 template <class TPoint>
 class SumKernel : public MatrixValuedKernel<TPoint>
@@ -91,7 +93,9 @@ private:
 
 
 /**
- * A (matrix valued) kernel, which represents the product of two matrix valued kernels.
+ * \brief A (matrix valued) kernel, which represents the product of two matrix valued kernels
+ * \ingroup Kernels
+ * \ingroup Core
  */
 template <class TPoint>
 class ProductKernel : public MatrixValuedKernel<TPoint>
@@ -130,7 +134,9 @@ private:
 
 
 /**
- * A (matrix valued) kernel, which represents a scalar multiple of a matrix valued kernel.
+ * \brief A (matrix valued) kernel, which represents a scalar multiple of a matrix valued kernel
+ * \ingroup Kernels
+ * \ingroup Core
  */
 template <class TPoint>
 class ScaledKernel : public MatrixValuedKernel<TPoint>
@@ -163,9 +169,13 @@ private:
 
 
 /**
- * Takes a scalar valued kernel and creates a matrix valued kernel of the given dimension.
+ * \brief Takes a scalar valued kernel and creates a matrix valued kernel of the given dimension.
+ *
  * The new kernel models the output components as independent, i.e. if K(x,y) is a scalar valued Kernel,
  * the matrix valued kernel becomes Id*K(x,y), where Id is an identity matrix of dimensionality d.
+ *
+ * \ingroup Kernels
+ * \ingroup Core
  */
 template <class TPoint>
 class UncorrelatedMatrixValuedKernel : public MatrixValuedKernel<TPoint>
@@ -201,7 +211,9 @@ private:
 
 
 /**
- * Base class for defining a tempering function for the SpatiallyVaryingKernel
+ * \brief Base class for defining a tempering function for the SpatiallyVaryingKernel
+ * \ingroup Kernels
+ * \ingroup Core
  */
 template <class TPoint>
 class TemperingFunction
@@ -213,11 +225,9 @@ public:
 };
 
 /**
- * Spatially-varing kernel, as described in the paper:
- *
- * T. Gerig, K. Shahim, M. Reyes, T. Vetter, M. Luethi
- * Spatially varying registration using gaussian processes
- * Miccai 2014
+ * \brief Spatially-varing kernel, as described in the paper \cite 2
+ * \ingroup Kernels
+ * \ingroup Core
  */
 template <class T>
 class SpatiallyVaryingKernel : public MatrixValuedKernel<typename Representer<T>::PointType>
@@ -229,11 +239,11 @@ public:
 
   /**
    * \brief Make a given kernel spatially varying according to the given tempering function
-   * \param representer A representer which defines the domain over which the approximation is done
-   * \param kernel The kernel that is made spatially adaptive
-   * \param eta The tempering function that defines the amount of tempering for each point in the domain
-   * \param numEigenfunctions The number of eigenfunctions to be used for the approximation
-   * \param numberOfPointsForApproximation The number of points used for the nystrom approximation
+   * \param representer representer which defines the domain over which the approximation is done
+   * \param kernel kernel that is made spatially adaptive
+   * \param eta tempering function that defines the amount of tempering for each point in the domain
+   * \param numEigenfunctions number of eigenfunctions to be used for the approximation
+   * \param numberOfPointsForApproximation number of points used for the nystrom approximation
    * \param cacheValues Cache result of eigenfunction computations. Greatly speeds up the computation.
    */
   SpatiallyVaryingKernel(const RepresenterType *               representer,
@@ -310,9 +320,6 @@ private:
       // we need to convert the point to a vector, as the function hash_value (required by boost)
       // is not defined for an arbitrary point.
       auto ptAsVec = this->m_representer->PointToVector(pt);
-      // TODO: Create thread-safe data structure in statismo instead
-      //       of putting the burden of thread-safety on science related
-      //       classes
       if (!m_phiCache.Find(ptAsVec, v))
       {
         v = m_nystrom->ComputeEigenfunctionsAtPoint(pt);
@@ -326,9 +333,6 @@ private:
     return v;
   }
 
-  //
-  // members
-
   const RepresenterType *              m_representer;
   std::unique_ptr<Nystrom<T>>          m_nystrom;
   statismo::VectorType                 m_eigenvalues;
@@ -340,4 +344,4 @@ private:
 
 } // namespace statismo
 
-#endif // KERNELCOMBINATORS_H
+#endif

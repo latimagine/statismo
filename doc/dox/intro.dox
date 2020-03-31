@@ -12,7 +12,7 @@
  * One of the main goals of statismo is to make the exchange of 
  * statistical shape models easy. 
  * This is achieved by using a well documented file format 
- * based on [HDF5](http://hdf5group.org). 
+ * based on [HDF5](https://www.hdfgroup.org). 
  * It also add shape modeling capabilities to other frameworks 
  * used in medical imaging ([VTK](https://vtk.org/) and [ITK](https://itk.org/)).
  *
@@ -60,7 +60,7 @@
  *
  * \section Format File Format
  *
- * The format is based on HDF5 (http://www.hdfgroup.org/HDF5/doc/H5.format.html), which is a platform independent, 
+ * The format is based on HDF5 (https://www.hdfgroup.org/solutions/hdf5/), which is a platform independent, 
  * hierarchical format, that targets numerical and scientific data. HDF5 takes care of all the low-level details 
  * of how data is stored in a platform independent and efficient way. The use of the format was chosen to make it 
  * easy to exchange algorithms and shape models between different research groups.

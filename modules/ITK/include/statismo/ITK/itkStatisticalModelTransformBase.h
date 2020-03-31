@@ -48,20 +48,26 @@
 
 #include <iostream>
 
+/**
+ * \defgroup Transforms ITK transforms classes and routines
+ */
+
 namespace itk
 {
 
 /**
  *
- * \brief Base class that implements an itk transform interface for statistical models.
+ * \brief Base class that implements the itk transform interface for statistical models
  *
  * Statistical models (shape or deformation models) are often used to model the typical variations within
  * an object class. The StatisticalModelTransformBase implements the standard Transform interface, and thus allows
  * for the use of statistical models within the ITK registration framework.
+ *
  * Subclasses will need to implement the TransformPoint method, as its semantics depends on the type of statistical
  * model.
  *
  * \ingroup Transforms
+ * \ingroup ITK
  */
 
 template <typename Dataset,
@@ -137,8 +143,8 @@ public:
   };
 
   /**
-   * Convenience method to obtain the current coefficients of the StatisticalModel as a statismo::VectorType.
-   * The resulting vector is the same as it would be obtained from GetParameters.
+   * \brief Convenience method to obtain the current coefficients of the StatisticalModel as a statismo::VectorType.
+   * \note The resulting vector is the same as it would be obtained from GetParameters.
    */
   virtual VectorType
   GetCoefficients() const
@@ -147,8 +153,8 @@ public:
   }
 
   /**
-   * Convenicne method to set the coefficients of the underlying StatisticalModel from a statismo::VectorType.
-   * This has the same effect as calling SetParameters.
+   * \brief Convenience method to set the coefficients of the underlying StatisticalModel from a statismo::VectorType.
+   * \note This has the same effect as calling SetParameters
    */
   virtual void
   SetCoefficients(VectorType & coefficients)
@@ -157,20 +163,18 @@ public:
   }
 
   /**
-   * Set the statistical model that defines the valid transformations.
+   * \brief Set the statistical model that defines the valid transformations
    */
   void
   SetStatisticalModel(const StatisticalModelType * model);
 
-  /**
-   * Returns the statistical model used.
-   */
   typename StatisticalModelType::ConstPointer
   GetStatisticalModel() const;
 
   /**
-   * Set the number of PCA Coefficients used by the model. This parameters has a
-   * regularization effect. Setting it to a small value will restrict the possible tranformations
+   * \brief Set the number of PCA Coefficients used by the model
+   *
+   * This parameters has a regularization effect. Setting it to a small value will restrict the possible tranformations
    * to the main modes of variations.
    */
   void
@@ -179,9 +183,6 @@ public:
     m_usedNumberCoefficients = n;
   }
 
-  /**
-   * returns the number of used model coefficients.
-   */
   unsigned
   GetUsedNumberOfCoefficients()
   {

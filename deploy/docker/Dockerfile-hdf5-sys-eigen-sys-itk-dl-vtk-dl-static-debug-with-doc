@@ -1,18 +1,26 @@
 FROM ubuntu:bionic
 
+ARG git_branch=develop
+
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
 
 RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && apt-get update
 
-RUN apt-get update \
-  && apt-get install -y git cmake tar valgrind clang-tidy-6.0 clang-format-6.0 pandoc doxygen mesa-common-dev freeglut3-dev\
-  && cd /usr/local/bin
-  
+RUN apt-get install -y git cmake tar valgrind pandoc doxygen mesa-common-dev freeglut3-dev g++-7
+
+ENV CC=gcc-7
+ENV CXX=g++-7
+
 # Eigen system deployed with cmake
 WORKDIR "/usr/src/"
 RUN wget http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz
 RUN tar -xvzf 3.3.5.tar.gz --one-top-level=eigen --strip-components 1
+WORKDIR "/usr/src/eigen"
+RUN mkdir build
+WORKDIR "/usr/src/eigen/build"
+RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr/src/eigen/dist
+RUN make install
 
 # HDF5 system
 WORKDIR "/usr/src/"
@@ -23,34 +31,35 @@ RUN mkdir build
 WORKDIR "/usr/src/hdf5/build/"
 RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr/src/hdf5/dist -DCMAKE_BUILD_TYPE=Debug -DHDF5_ENABLE_Z_LIB_SUPPORT=OFF -DHDF5_BUILD_CPP_LIB:BOOL=ON -DBUILD_SHARED_LIBS=OFF -DHDF5_BUILD_TOOLS=OFF -DBUILD_TESTING=OFF -DHDF5_BUILD_EXAMPLES=OFF -DHDF5_BUILD_JAVA=OFF
 RUN make install
-  
-# Statismo
-RUN git clone https://github.com/kenavolic/statismo --branch develop /usr/src/statismo
+
+RUN git clone https://github.com/kenavolic/statismo --branch $git_branch /usr/src/statismo
 
 WORKDIR "/usr/src/statismo"
 RUN mkdir build
 WORKDIR "/usr/src/statismo/build"
 
-RUN cmake ../superbuild -DCMAKE_INSTALL_PREFIX=/usr/src/statismo/dist -DBUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_WRAPPING=OFF -DBUILD_WITH_TIDY=ON -DBUILD_DOCUMENTATION=ON -DBUILD_CLI_TOOLS=ON -DBUILD_CLI_TOOLS_DOC=ON \
-  -DUSE_SYSTEM_EIGEN=ON -DUSE_SYSTEM_HDF5=ON -DEIGEN3_INCLUDE_DIR=/usr/src/eigen/ -DHDF5_DIR=/usr/src/hdf5/dist/share/cmake/hdf5
+RUN cmake ../superbuild -DCMAKE_INSTALL_PREFIX=/usr/src/statismo/dist -DBUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_WRAPPING=OFF -DBUILD_WITH_TIDY=OFF -DBUILD_DOCUMENTATION=ON -DBUILD_CLI_TOOLS=ON -DBUILD_CLI_TOOLS_DOC=ON \
+  -DUSE_SYSTEM_EIGEN=ON -DUSE_SYSTEM_HDF5=ON -DEigen3_DIR=/usr/src/eigen/dist/share/eigen3/cmake -DHDF5_DIR=/usr/src/hdf5/dist/share/cmake/hdf5
 
-RUN make format-check
-RUN if [ $(make -j4 2>&1 | grep -o 'warning:' | wc -l) -gt 6 ] ; then echo "too many warning, needs some tidy" && exit 1 ; fi
+# Build
+RUN make -j4
 
 WORKDIR "/usr/src/statismo/build/Statismo-build"
 
+# Install
 RUN make install
 
 # Tests
-RUN ctest -D ExperimentalMemCheck
+RUN ctest --timeout 7200 -D ExperimentalMemCheck
 
 # Test app
 WORKDIR "/usr/src"
 RUN mkdir statismo-demo
 WORKDIR "/usr/src/statismo-demo"
-RUN echo "cmake_minimum_required(VERSION 3.15)\nproject(demo LANGUAGES CXX VERSION 0.1.0)\nfind_package(statismo REQUIRED)\ninclude(${STATISMO_USE_FILE})\nadd_executable(demo main.cpp)\ntarget_link_libraries(demo ${STATISMO_LIBRARIES} ${VTK_LIBRARIES} ${ITK_LIBRARIES})\n" > CMakeLists.txt
-RUN echo "#include \"statismo/VTK/vtkStandardMeshRepresenter.h\"\n#include \"statismo/ITK/itkStandardImageRepresenter.h\"\n#include <iostream>\nint main() {\nauto itkrep = itk::StandardMeshRepresenter<float, 3>::New();\nauto vtkrep = statismo::vtkStandardMeshRepresenter::SafeCreate();\nstd::cout << "itk rep" << itkrep << std::endl;\nstd::cout << "vtkrep rep" << vtkrep.get() << std::endl;\nreturn 0;}\n" > main.cpp
+RUN echo 'cmake_minimum_required(VERSION 3.15)\nproject(demo LANGUAGES CXX VERSION 0.1.0)\nfind_package(statismo REQUIRED)\ninclude(${STATISMO_USE_FILE})\nadd_executable(demo main.cpp)\ntarget_link_libraries(demo ${STATISMO_LIBRARIES} ${VTK_LIBRARIES} ${ITK_LIBRARIES})\n' > CMakeLists.txt
+RUN echo "#include \"statismo/VTK/vtkStandardMeshRepresenter.h\"\n#include \"statismo/ITK/itkStandardMeshRepresenter.h\"\n#include <iostream>\nint main() {\nauto itkrep = itk::StandardMeshRepresenter<float, 3>::New();\nauto vtkrep = statismo::vtkStandardMeshRepresenter::SafeCreate();\nstd::cout << \"itk rep: \" << itkrep << std::endl;\nstd::cout << \"vtkrep rep: \" << vtkrep.get() << std::endl;\nreturn 0;}\n" > main.cpp
 RUN mkdir build
 WORKDIR "/usr/src/statismo-demo/build"
 RUN cmake .. -Dstatismo_DIR=/usr/src/statismo/dist/lib/cmake/statismo
 RUN make
+RUN ./demo

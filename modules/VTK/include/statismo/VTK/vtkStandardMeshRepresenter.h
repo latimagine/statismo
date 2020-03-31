@@ -53,6 +53,11 @@
 namespace statismo
 {
 
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup VTK
+ */
 template <>
 struct RepresenterTraits<vtkPolyData>
 {
@@ -63,10 +68,11 @@ struct RepresenterTraits<vtkPolyData>
 };
 
 /**
- * \brief A representer for vtkPolyData, which stores the representer data in the standard
+ * \brief Representer for vtkPolyData, which stores the representer data in the standard
  * mesh format defined for statismo.
  *
- * \see Representer
+ * \ingroup Representers
+ * \ingroup VTK
  */
 class STATISMO_VTK_EXPORT vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
 {

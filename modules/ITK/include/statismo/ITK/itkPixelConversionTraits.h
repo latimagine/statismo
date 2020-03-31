@@ -48,9 +48,6 @@
 namespace itk
 {
 
-// \note These traits are used to allow a conversion from the generic pixel type to a statismo vector.
-// \warning Currently only scalar types are supported.
-
 namespace details
 {
 template <typename T, typename = void>
@@ -124,8 +121,11 @@ struct PixelConversionTraitImpl<itk::Vector<U, N>, std::enable_if_t<std::is_scal
 };
 } // namespace details
 
-// We use an internal impl to avoid exposing
-// the second dummy parameters to api user
+/**
+ * \brief Traits are used to allow conversion from generic pixel type to statismo vector
+ *
+ * \ingroup ITK
+ */
 template <typename T>
 struct PixelConversionTrait : details::PixelConversionTraitImpl<T>
 {};

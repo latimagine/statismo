@@ -63,7 +63,11 @@ struct PointIdType
   unsigned ptId{ 0 };
 };
 
-
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup Core
+ */
 template <>
 struct RepresenterTraits<statismo::VectorType>
 {
@@ -74,6 +78,11 @@ struct RepresenterTraits<statismo::VectorType>
   using ValueType = statismo::ScalarType;
 };
 
+/**
+ * \brief Point trait specialization
+ * \ingroup Representers
+ * \ingroup Core
+ */
 template <>
 struct PointTraits<statismo::PointIdType>
 {
@@ -82,8 +91,9 @@ struct PointTraits<statismo::PointIdType>
 
 /**
  * \brief A trivial representer, that does no representation at all, but works directly with vectorial data
- *
  * \warning This representer is mainly for debugging purposes and not intended to be used for real projets
+ * \ingroup Representers
+ * \ingroup Core
  */
 class TrivialVectorialRepresenter : public RepresenterBase<statismo::VectorType, TrivialVectorialRepresenter>
 {

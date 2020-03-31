@@ -41,6 +41,11 @@
 
 namespace statismo::rand
 {
+/**
+ * \brief Get framework random generator
+ * \param seed generator seed
+ * \ingroup Core
+ */
 inline std::minstd_rand &
 RandGen(unsigned seed = static_cast<unsigned>(std::time(nullptr)))
 {

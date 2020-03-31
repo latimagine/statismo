@@ -42,15 +42,18 @@
 
 namespace statismo
 {
+
 /**
- * \brief Manages Training and Test Data for building Statistical Models and provides functionality for Crossvalidation.
- * Manages data together with surrogate information.
- * The surrogate variables are provided through a vector (see DataManager), and can contain both continuous or
- * categorical data. The surrogate data is provided through files. One file for each dataset, and one file describing
- * the types of surrogates. This file is also an ascii file with space or EOL separated values. Those values are either
- * 0 or 1, standing for respectively categorical or continuous variable. This class does not support any missing data,
- * so each dataset must come with a surrogate data file, all of which must contain the same number of entries as the
- * type-file. \sa DataManagerBase
+ * \brief Data manager with surrogates
+ *
+ * Manages data together with surrogate information. The surrogate variables are provided through a vector,
+ * and can contain both continuous or categorical data.
+ *
+ * The surrogate data is provided through files. One file for each dataset, and one file describing
+ * the types of surrogates as described in \ref md_data_README "data description"
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class DataManagerWithSurrogates : public DataManagerBase<T, DataManagerWithSurrogates<T>>
@@ -76,7 +79,7 @@ public:
   };
 
   /**
-   * Create a new dataManager, with the data stored in the given hdf5 file
+   * \brief Load a new dataManager
    */
   static UniquePtrType<Superclass>
   Load(RepresenterType * representer, const std::string & h5Filename, const std::string & surrogateFilename)
@@ -88,9 +91,9 @@ public:
   AddDataset(DatasetConstPointerType dataset, const std::string & uri) override;
 
   /**
-   * Add a dataset, together with surrogate information
+   * \brief Add a dataset with surrogate information
    * \param ds dataset filename
-   * \param datasetURI An URI for the dataset (This info is only added to the metadata)
+   * \param datasetURI URI for the dataset (metadata information)
    * \param surrogateFilename surrogate filename
    */
   void
@@ -99,7 +102,7 @@ public:
                            const std::string &     surrogateFilename);
 
   /**
-   * Get a vector indicating the types of surrogates variables (Categorical vs Continuous)
+   * \brief Get a vector indicating the types of surrogates variables (Categorical vs Continuous)
    */
   SurrogateTypeVectorType
   GetSurrogateTypes() const
@@ -108,7 +111,7 @@ public:
   }
 
   /**
-   * Returns the source filename defining the surrogate types
+   * \brief Get the filename of the file defining the surrogate types
    */
   std::string
   GetSurrogateTypeFilename() const
@@ -117,7 +120,7 @@ public:
   }
 
   /**
-   * Get a structure containing the type info: vector of types, and source filename
+   * \brief Get a structure containing the type info: vector of types and source filename
    */
   SurrogateTypeInfoType
   GetSurrogateTypeInfo() const
@@ -127,8 +130,9 @@ public:
 
 protected:
   /**
-   * Loads the information concerning the types of the surrogates variables (categorical=0, continuous=1)
+   * \brief Load information concerning the types of the surrogates variables (categorical=0, continuous=1)
    * \warning it is assumed to be in a text file with the entries separated by spaces or EOL character
+   * as described in \ref md_data_README "data description"
    */
   void
   LoadSurrogateTypes(const std::string & filename);
@@ -143,4 +147,4 @@ private:
 
 #include "DataManagerWithSurrogates.hxx"
 
-#endif /* __DATAMANAGERWITHSURROGATES_H_ */
+#endif

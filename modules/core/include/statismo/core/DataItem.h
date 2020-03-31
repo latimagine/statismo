@@ -47,9 +47,14 @@
 
 namespace statismo
 {
-/* \class DataItem
- * \brief Holds all the information for a given sample.
- * Use GetSample() to recover a Sample
+
+/**
+ * \brief Base abstract class for data item
+ *
+ * A data item holds information about a given sample.
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class DataItem : public NonCopyable
@@ -59,52 +64,56 @@ public:
   using DatasetPointerType = typename RepresenterType::DatasetPointerType;
 
   /**
-   *  Load from group
+   * \brief Load sample from group
    */
   virtual void
   LoadFromGroup(const H5::Group & dsGroup) = 0;
 
   /**
-   *  Save the sample data to the hdf5 group dsGroup.
+   * \brief Save sample to group
    */
   virtual void
   Save(const H5::Group & dsGroup) const = 0;
 
   /**
-   * Get the URI of the original dataset
+   * \brief Get URI of the original dataset
    */
   virtual std::string
   GetDatasetURI() const = 0;
 
   /**
-   * Get the representer used to create this sample
+   * \brief Get representer used for sample creation
    */
   virtual const RepresenterType *
   GetRepresenter() const = 0;
 
   /**
-   * Get the vectorial representation of this sample
+   * \brief Get sample vectorial representation
    */
   virtual VectorType
   GetSampleVector() const = 0;
 
   /**
-   * Returns the sample in the representation given by the representer
-   * \warning This method generates a new object containing the sample. If the Representer does not provide a smart
-   * pointer, the user is responsible for releasing memory.
+   * \brief Get the sample
+   * \return Sample in the representer representation
+   * \warning If returned type is a raw pointer, ownership is transferred
+   * to the caller
    */
   virtual DatasetPointerType
   GetSample() const = 0;
 
   /**
-   * Generic delete function
+   * \brief Generic delete function
    */
   virtual void
   Delete() = 0;
 };
 
 /**
- * \brief Base class for data item
+ * \brief Base implementation for data item
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T, typename Derived>
 class DataItemBase
@@ -192,8 +201,11 @@ private:
   VectorType              m_sampleVector;
 };
 
-/* \class BasicDataItem
- * \brief Standard data item implementation
+/**
+ * \brief Standard data item
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class BasicDataItem : public DataItemBase<T, BasicDataItem<T>>
@@ -204,7 +216,7 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * Create a new DataItem object, using the data from the group in the HDF5 file
+   * \brief Load a new data item object
    * \param representer representer
    * \param dsGroup group in the hdf5 file for this dataset
    */
@@ -234,12 +246,22 @@ private:
   {}
 };
 
-/* \class DataItemWithSurrogates
- * \brief Specific data item implementation that associates surrogates to the data
+/**
+ * \brief Data item with surrogates
  *
- * In particular, it enables to associate categorical or continuous variables with a sample,
- * in a vectorial representation. The vector is provided by a file providing the
- * values in ascii format (empty space or EOL separating the values) \sa DataItem \sa DataManagerWithSurrogates
+ * Specific data item implementation that associates surrogates to the data.
+ *
+ * This kind of item makes it possible to associate categorical or continuous variables
+ * with a sample, in a vectorial representation.
+ *
+ * The vector is provided by a file providing the values in ascii format (empty space or EOL separating the values)
+ * as described in \ref md_data_README "data description".
+ *
+ * \sa DataItem
+ * \sa DataManagerWithSurrogates
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class DataItemWithSurrogates : public DataItemBase<T, DataItemWithSurrogates<T>>
@@ -256,7 +278,7 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * Create a new DataItem object, using the data from the group in the HDF5 file
+   * \brief Load a new DataItemWithSurrogates object
    * \param representer representer
    * \param dsGroup group in the hdf5 file for this dataset
    */

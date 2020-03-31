@@ -49,31 +49,33 @@
 #include <memory>
 #include <functional>
 
+/**
+ * \defgroup Kernels Kernel (GP model) classes and routines
+ */
+
 namespace statismo
 {
 
 /**
- * Base class from which all ScalarValuedKernels derive.
+ * \brief Base class for scalar value kernels
+ * \ingroup Kernels
  */
 template <class TPoint>
 class ScalarValuedKernel
 {
 public:
-  /**
-   * Create a new scalar valued kernel.
-   */
   ScalarValuedKernel() {}
 
   virtual ~ScalarValuedKernel() = default;
 
   /**
-   * Evaluate the kernel function at the points x and y
+   * \brief Evaluate the kernel function at points \a x and \a y
    */
   virtual double
   operator()(const TPoint & x, const TPoint & y) const = 0;
 
   /**
-   * Return a description of this kernel
+   * \brief Return a description of the kernel
    */
   virtual std::string
   GetKernelInfo() const = 0;
@@ -81,27 +83,28 @@ public:
 
 
 /**
- * Base class for all matrix valued kernels
+ * \brief Base class for matrix value kernels
+ * \ingroup Kernels
  */
 template <class TPoint>
 class MatrixValuedKernel
 {
 public:
   /**
-   * Create a new MatrixValuedKernel
+   * \brief Create a new MatrixValuedKernel of dimension \a dim
    */
   MatrixValuedKernel(unsigned dim)
     : m_dimension(dim)
   {}
 
   /**
-   * Evaluate the kernel at the points x and y
+   * \brief Evaluate the kernel at the points x and y
    */
   virtual MatrixType
   operator()(const TPoint & x, const TPoint & y) const = 0;
 
   /**
-   * Return the dimensionality of the kernel (i.e. the size of the matrix)
+   * \brief Return the dimensionality of the kernel (i.e. the size of the matrix)
    */
   virtual unsigned
   GetDimension() const
@@ -112,7 +115,7 @@ public:
   virtual ~MatrixValuedKernel() = default;
 
   /**
-   * Return a description of this kernel.
+   * \brief Return a description of this kernel.
    */
   virtual std::string
   GetKernelInfo() const = 0;
@@ -121,6 +124,10 @@ protected:
   unsigned m_dimension;
 };
 
+/**
+ * \brief Statistical model kernel
+ * \ingroup Kernels
+ */
 template <class T>
 class StatisticalModelKernel : public MatrixValuedKernel<typename Representer<T>::PointType>
 {
