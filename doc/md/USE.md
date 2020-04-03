@@ -1,12 +1,7 @@
 Don't Want To Code?
 ===================
 
-CLI tools
----------
-
-> :information_source: To use the cli tools, you need a version of Statismo compiled with **BUILD_CLI_TOOLS=ON**.
-
-> :information_source: To use the cli tools on Windows with dependencies generated in DLL
+> :information_source: To use statismo-based tools on Windows with dependencies generated in DLL
 > format, it is necessary to update the path accordingly:
 ```
 set PATH=C:\path\to\vtk\bin;C:\path\to\itk\bin;C:\path\to\hdf5\bin;%PATH%
@@ -17,6 +12,11 @@ set PATH=C:\path\to\vtk\bin;C:\path\to\itk\bin;C:\path\to\hdf5\bin;%PATH%
 ```
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/src/hdf5/dist/lib:/usr/src/itk/dist/lib:/usr/src/vtk/dist/lib
 ```
+
+CLI tools
+---------
+
+> :information_source: To use the cli tools, you need a version of Statismo compiled with **BUILD_CLI_TOOLS=ON**.
 
 ### Tools List
 

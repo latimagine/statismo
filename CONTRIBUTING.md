@@ -149,12 +149,12 @@ Coding Rules
 
 ### Prerequisites
 
-You must install *clang-tidy* (>=6.0.0) and *clang-format* (>=6.0.0) to ensure your configuration
-mirrors the one in CI.
+You must install *clang*, *clang-tidy* (>=6.0.0) and *clang-format* (>=6.0.0) to ensure your configuration mirrors the one in CI.
 
 On Linux, make a symbolic link toward your installed version:
 ```
 sudo ln -s /usr/bin/clang-tidy-6.0 /usr/bin/clang-tidy
+sudo ln -s /usr/bin/clang-format-6.0 /usr/bin/clang-format
 ```
 
 ### Project Configuration
