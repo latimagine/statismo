@@ -11,6 +11,5 @@ var searchData=
   ['implwrapper_3c_20statismo_3a_3areducedvariancemodelbuilder_3c_20representer_20_3e_2c_20statismo_3a_3asafeinitializer_20_3e',['ImplWrapper&lt; statismo::ReducedVarianceModelBuilder&lt; Representer &gt;, statismo::SafeInitializer &gt;',['../classstatismo_1_1ImplWrapper.html',1,'statismo']]],
   ['implwrapper_3c_20statismo_3a_3astatisticalmodel_3c_20t_20_3e_20_3e',['ImplWrapper&lt; statismo::StatisticalModel&lt; T &gt; &gt;',['../classstatismo_1_1ImplWrapper.html',1,'statismo']]],
   ['interpolatingstatisticaldeformationmodeltransform',['InterpolatingStatisticalDeformationModelTransform',['../classitk_1_1InterpolatingStatisticalDeformationModelTransform.html',1,'itk']]],
-  ['io',['IO',['../classstatismo_1_1IO.html',1,'statismo']]],
-  ['iterationstatusobserver',['IterationStatusObserver',['../classstatismo_1_1cli_1_1IterationStatusObserver.html',1,'statismo::cli']]]
+  ['io',['IO',['../classstatismo_1_1IO.html',1,'statismo']]]
 ];

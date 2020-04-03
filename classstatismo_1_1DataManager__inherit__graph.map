@@ -1,8 +1,8 @@
 <map id="statismo::DataManager&lt; T &gt;" name="statismo::DataManager&lt; T &gt;">
 <area shape="rect" id="node3" href="$classstatismo_1_1DataManagerBase.html" title="DataManagerBase\&lt; T,\l BasicDataManager\&lt; T \&gt; \&gt;" alt="" coords="470,5,651,47"/>
 <area shape="rect" id="node5" href="$classstatismo_1_1DataManagerBase.html" title="DataManagerBase\&lt; T,\l DataManagerWithSurrogates\l\&lt; T \&gt; \&gt;" alt="" coords="463,70,658,126"/>
-<area shape="rect" id="node7" href="$classstatismo_1_1DataManagerBase.html" title="Base class for data manager. " alt="" coords="451,150,671,177"/>
-<area shape="rect" id="node2" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,85,164,111"/>
-<area shape="rect" id="node4" href="$classstatismo_1_1BasicDataManager.html" title="Basic data manager is a standard data manager. " alt="" coords="719,13,941,39"/>
-<area shape="rect" id="node6" href="$classstatismo_1_1DataManagerWithSurrogates.html" title="Manages Training and Test Data for building Statistical Models and provides functionality for Crossva..." alt="" coords="737,77,923,119"/>
+<area shape="rect" id="node7" href="$classstatismo_1_1DataManagerBase.html" title="Base implementation for data managers. " alt="" coords="451,150,671,177"/>
+<area shape="rect" id="node2" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="5,85,164,111"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1BasicDataManager.html" title="Standard data manager. " alt="" coords="719,13,941,39"/>
+<area shape="rect" id="node6" href="$classstatismo_1_1DataManagerWithSurrogates.html" title="Data manager with surrogates. " alt="" coords="737,77,923,119"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="itk::StatisticalDeformationModelTransform&lt; DataSet, ScalarType, DIMENSION &gt;" name="itk::StatisticalDeformationModelTransform&lt; DataSet, ScalarType, DIMENSION &gt;">
 <area shape="rect" id="node2" href="$classitk_1_1StatisticalModelTransformBase.html" title="itk::StatisticalModelTransform\lBase\&lt; DataSet, ScalarType,\l DIMENSION \&gt;" alt="" coords="261,39,457,95"/>
-<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="30,85,189,112"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="30,85,189,112"/>
 </map>

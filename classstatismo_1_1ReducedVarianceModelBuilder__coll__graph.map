@@ -1,6 +1,6 @@
 <map id="statismo::ReducedVarianceModelBuilder&lt; Representer &gt;" name="statismo::ReducedVarianceModelBuilder&lt; Representer &gt;">
 <area shape="rect" id="node2" href="$classstatismo_1_1ModelBuilderBase.html" title="statismo::ModelBuilderBase\l\&lt; Representer, ReducedVarianceModel\lBuilder\&lt; Representer \&gt; \&gt;" alt="" coords="472,34,723,90"/>
 <area shape="rect" id="node3" href="$classstatismo_1_1ModelBuilder.html" title="statismo::ModelBuilder\l\&lt; Representer \&gt;" alt="" coords="241,5,395,47"/>
-<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,13,164,39"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="5,13,164,39"/>
 <area shape="rect" id="node5" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; ReducedVarianceModelBuilder\l\&lt; Representer \&gt; \&gt;" alt="" coords="212,70,424,126"/>
 </map>

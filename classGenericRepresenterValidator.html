@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -90,11 +90,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classGenericRepresenterValidator-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">GenericRepresenterValidator&lt; Representer &gt; Class Template Reference</div>  </div>
+<div class="title">GenericRepresenterValidator&lt; Representer &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__Representers.html">Representers classes and routines</a> &#124; <a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Generic validator for representers. The tests need to hold for all representers. It is used on the framework to validate statismo representer and can be used to validate user provided representers.  
+<p>Generic validator for representers.  
  <a href="classGenericRepresenterValidator.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="GenericRepresenterValidator_8h_source.html">GenericRepresenterValidator.h</a>&gt;</code></p>
@@ -102,44 +102,67 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3bbe53a4c68a0e4b0e2abcd54738df6d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a3bbe53a4c68a0e4b0e2abcd54738df6d">GenericRepresenterValidator</a> (const Representer *representer, DatasetConstPointerType testDataset, const std::pair&lt; PointType, ValueType &gt; &amp;pointValuePair)</td></tr>
+<tr class="memdesc:a3bbe53a4c68a0e4b0e2abcd54738df6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new validator.  <a href="#a3bbe53a4c68a0e4b0e2abcd54738df6d">More...</a><br /></td></tr>
 <tr class="separator:a3bbe53a4c68a0e4b0e2abcd54738df6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46807a9696ab0f92da3fea535d722d0b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46807a9696ab0f92da3fea535d722d0b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>TestSamplePointEvaluation</b> () const </td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a46807a9696ab0f92da3fea535d722d0b">TestSamplePointEvaluation</a> () const </td></tr>
+<tr class="memdesc:a46807a9696ab0f92da3fea535d722d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test evaluation at a given point. <br /></td></tr>
 <tr class="separator:a46807a9696ab0f92da3fea535d722d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46280f41db7a9e10d355211c9fc0b8a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46280f41db7a9e10d355211c9fc0b8a2"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>TestDomainValid</b> () const </td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a46280f41db7a9e10d355211c9fc0b8a2">TestDomainValid</a> () const </td></tr>
+<tr class="memdesc:a46280f41db7a9e10d355211c9fc0b8a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test domain validity. <br /></td></tr>
 <tr class="separator:a46280f41db7a9e10d355211c9fc0b8a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae13fde06185ae8fa4943d0e88dd78494"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#ae13fde06185ae8fa4943d0e88dd78494">TestSampleToVectorAndBack</a> () const </td></tr>
+<tr class="memitem:ae13fde06185ae8fa4943d0e88dd78494"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae13fde06185ae8fa4943d0e88dd78494"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#ae13fde06185ae8fa4943d0e88dd78494">TestSampleToVectorAndBack</a> () const </td></tr>
+<tr class="memdesc:ae13fde06185ae8fa4943d0e88dd78494"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test whether converting a sample to a vector and back to a sample yields the original sample. <br /></td></tr>
 <tr class="separator:ae13fde06185ae8fa4943d0e88dd78494"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af03b3b825fe35cd04a65b877beda2175"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#af03b3b825fe35cd04a65b877beda2175">TestPointSampleDimension</a> () const </td></tr>
+<tr class="memitem:af03b3b825fe35cd04a65b877beda2175"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af03b3b825fe35cd04a65b877beda2175"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#af03b3b825fe35cd04a65b877beda2175">TestPointSampleDimension</a> () const </td></tr>
+<tr class="memdesc:af03b3b825fe35cd04a65b877beda2175"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test point sample dimensionnality. <br /></td></tr>
 <tr class="separator:af03b3b825fe35cd04a65b877beda2175"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cb4bed200482be33507e5ab389ef9fe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a2cb4bed200482be33507e5ab389ef9fe">TestPointSampleToPointSampleVectorAndBack</a> () const </td></tr>
+<tr class="memitem:a2cb4bed200482be33507e5ab389ef9fe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2cb4bed200482be33507e5ab389ef9fe"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a2cb4bed200482be33507e5ab389ef9fe">TestPointSampleToPointSampleVectorAndBack</a> () const </td></tr>
+<tr class="memdesc:a2cb4bed200482be33507e5ab389ef9fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if the conversion from a pointSample and the pointSampleVector, and back to a pointSample yields the original sample. <br /></td></tr>
 <tr class="separator:a2cb4bed200482be33507e5ab389ef9fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a127adc164b889784b5b72e4bc73ed9b1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a127adc164b889784b5b72e4bc73ed9b1">TestSampleVectorHasCorrectValueAtPoint</a> () const </td></tr>
+<tr class="memitem:a127adc164b889784b5b72e4bc73ed9b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a127adc164b889784b5b72e4bc73ed9b1"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a127adc164b889784b5b72e4bc73ed9b1">TestSampleVectorHasCorrectValueAtPoint</a> () const </td></tr>
+<tr class="memdesc:a127adc164b889784b5b72e4bc73ed9b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if the testSample contains the same entries in the vector as those obtained by taking the pointSample at the corresponding position. <br /></td></tr>
 <tr class="separator:a127adc164b889784b5b72e4bc73ed9b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb948c33767f11cb100cb6bbc509d12f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#acb948c33767f11cb100cb6bbc509d12f">TestSaveLoad</a> () const </td></tr>
+<tr class="memitem:acb948c33767f11cb100cb6bbc509d12f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb948c33767f11cb100cb6bbc509d12f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#acb948c33767f11cb100cb6bbc509d12f">TestSaveLoad</a> () const </td></tr>
+<tr class="memdesc:acb948c33767f11cb100cb6bbc509d12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test Save and Load restore the representer. <br /></td></tr>
 <tr class="separator:acb948c33767f11cb100cb6bbc509d12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2392a45b33441f42110ff0b638444165"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a2392a45b33441f42110ff0b638444165">TestClone</a> () const </td></tr>
+<tr class="memitem:a2392a45b33441f42110ff0b638444165"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2392a45b33441f42110ff0b638444165"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a2392a45b33441f42110ff0b638444165">TestClone</a> () const </td></tr>
+<tr class="memdesc:a2392a45b33441f42110ff0b638444165"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test cloning do not change representer state and behavior. <br /></td></tr>
 <tr class="separator:a2392a45b33441f42110ff0b638444165"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00450f3d7eddfc4f8c96756d3c03c380"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a00450f3d7eddfc4f8c96756d3c03c380">TestSampleVectorDimensions</a> () const </td></tr>
+<tr class="memitem:a00450f3d7eddfc4f8c96756d3c03c380"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a00450f3d7eddfc4f8c96756d3c03c380"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a00450f3d7eddfc4f8c96756d3c03c380">TestSampleVectorDimensions</a> () const </td></tr>
+<tr class="memdesc:a00450f3d7eddfc4f8c96756d3c03c380"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test sample dimensions. <br /></td></tr>
 <tr class="separator:a00450f3d7eddfc4f8c96756d3c03c380"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dd54e942bdbf7a4990ab1e9f7b169d9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a2dd54e942bdbf7a4990ab1e9f7b169d9">TestGetName</a> () const </td></tr>
+<tr class="memitem:a2dd54e942bdbf7a4990ab1e9f7b169d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2dd54e942bdbf7a4990ab1e9f7b169d9"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a2dd54e942bdbf7a4990ab1e9f7b169d9">TestGetName</a> () const </td></tr>
+<tr class="memdesc:a2dd54e942bdbf7a4990ab1e9f7b169d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test representer name. <br /></td></tr>
 <tr class="separator:a2dd54e942bdbf7a4990ab1e9f7b169d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad4d1b5c337691f483459ee1e4175f6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#aad4d1b5c337691f483459ee1e4175f6d">TestDimensions</a> () const </td></tr>
+<tr class="memitem:aad4d1b5c337691f483459ee1e4175f6d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad4d1b5c337691f483459ee1e4175f6d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#aad4d1b5c337691f483459ee1e4175f6d">TestDimensions</a> () const </td></tr>
+<tr class="memdesc:aad4d1b5c337691f483459ee1e4175f6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test dimensions. <br /></td></tr>
 <tr class="separator:aad4d1b5c337691f483459ee1e4175f6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0f8a99f02e375853b3863d699a79460"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0f8a99f02e375853b3863d699a79460"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#aa0f8a99f02e375853b3863d699a79460">RunAllTests</a> () const </td></tr>
-<tr class="memdesc:aa0f8a99f02e375853b3863d699a79460"><td class="mdescLeft">&#160;</td><td class="mdescRight">run all the tests <br /></td></tr>
+<tr class="memdesc:aa0f8a99f02e375853b3863d699a79460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run all tests. <br /></td></tr>
 <tr class="separator:aa0f8a99f02e375853b3863d699a79460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eb5a7713fc4284a59b2bca3d8780832"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6eb5a7713fc4284a59b2bca3d8780832"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetErrorString</b> () const </td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGenericRepresenterValidator.html#a6eb5a7713fc4284a59b2bca3d8780832">GetErrorString</a> () const </td></tr>
+<tr class="memdesc:a6eb5a7713fc4284a59b2bca3d8780832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last error string. <br /></td></tr>
 <tr class="separator:a6eb5a7713fc4284a59b2bca3d8780832"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Representer&gt;<br />
 class GenericRepresenterValidator&lt; Representer &gt;</h3>
 
-<p>Generic validator for representers. The tests need to hold for all representers. It is used on the framework to validate statismo representer and can be used to validate user provided representers. </p>
+<p>Generic validator for representers. </p>
+<p>The tests need to hold for all representers. It is used in the framework to validate statismo representer and can be used to validate user provided representers. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a3bbe53a4c68a0e4b0e2abcd54738df6d"></a>
 <div class="memitem">
@@ -180,242 +203,16 @@ template&lt;typename Representer &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Create a new validator. Tests are performed using the given testDataset and the pointValuePair. </p><dl class="section warning"><dt>Warning</dt><dd>It is assumed that the PointValuePair is taken from the testDataset (otherwise some tests will fail). </dd></dl>
 
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a2392a45b33441f42110ff0b638444165"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestClone </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test cloning do not change representer state and behavior </p>
-
-</div>
-</div>
-<a class="anchor" id="aad4d1b5c337691f483459ee1e4175f6d"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestDimensions </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test dimensions </p>
-
-</div>
-</div>
-<a class="anchor" id="a2dd54e942bdbf7a4990ab1e9f7b169d9"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestGetName </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test representer name </p>
-
-</div>
-</div>
-<a class="anchor" id="af03b3b825fe35cd04a65b877beda2175"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestPointSampleDimension </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test point sample dimensionnality </p>
-
-</div>
-</div>
-<a class="anchor" id="a2cb4bed200482be33507e5ab389ef9fe"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestPointSampleToPointSampleVectorAndBack </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test if the conversion from a pointSample and the pointSampleVector, and back to a pointSample yields the original sample. </p>
-
-</div>
-</div>
-<a class="anchor" id="ae13fde06185ae8fa4943d0e88dd78494"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestSampleToVectorAndBack </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test whether converting a sample to a vector and back to a sample yields the original sample </p>
-
-</div>
-</div>
-<a class="anchor" id="a00450f3d7eddfc4f8c96756d3c03c380"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestSampleVectorDimensions </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test sample dimensions </p>
-
-</div>
-</div>
-<a class="anchor" id="a127adc164b889784b5b72e4bc73ed9b1"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestSampleVectorHasCorrectValueAtPoint </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test if the testSample contains the same entries in the vector as those obtained by taking the pointSample at the corresponding position. </p>
-
-</div>
-</div>
-<a class="anchor" id="acb948c33767f11cb100cb6bbc509d12f"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Representer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classGenericRepresenterValidator.html">GenericRepresenterValidator</a>&lt; Representer &gt;::TestSaveLoad </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test Save and Load restore the representer </p>
+<p>Create a new validator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">representer</td><td>representer to be tested </td></tr>
+    <tr><td class="paramname">testDataset</td><td>test datasets </td></tr>
+    <tr><td class="paramname">pointValuePair</td><td>(point, value) pair taken from the testDataset </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

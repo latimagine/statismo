@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['gaussiankernel',['GaussianKernel',['../classstatismo_1_1cli_1_1GaussianKernel.html',1,'statismo::cli']]],
-  ['gaussiankernelbuilder',['GaussianKernelBuilder',['../structstatismo_1_1cli_1_1GaussianKernelBuilder.html',1,'statismo::cli']]],
   ['genericeigentraits',['GenericEigenTraits',['../structstatismo_1_1GenericEigenTraits.html',1,'statismo']]],
   ['genericeigentraits_3c_20scalartype_20_3e',['GenericEigenTraits&lt; ScalarType &gt;',['../structstatismo_1_1GenericEigenTraits.html',1,'statismo']]],
   ['genericfactory',['GenericFactory',['../classstatismo_1_1GenericFactory.html',1,'statismo']]],

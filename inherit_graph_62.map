@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$classstatismo_1_1StatisticalModelException.html" title="Generic Exception class for the statismo Library. " alt="" coords="152,5,325,47"/>
+<area shape="rect" id="node2" href="$classstatismoTests_1_1test__builders_1_1Test.html" title="statismoTests.test\l_builders.Test" alt="" coords="132,5,263,47"/>
+<area shape="rect" id="node3" href="$classstatismoTests_1_1test__managers_1_1Test.html" title="statismoTests.test\l_managers.Test" alt="" coords="132,71,263,112"/>
+<area shape="rect" id="node4" href="$classstatismoTests_1_1test__models_1_1Test.html" title="statismoTests.test\l_models.Test" alt="" coords="132,136,263,177"/>
 </map>

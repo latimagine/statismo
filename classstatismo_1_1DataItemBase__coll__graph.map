@@ -1,5 +1,5 @@
 <map id="statismo::DataItemBase&lt; T, Derived &gt;" name="statismo::DataItemBase&lt; T, Derived &gt;">
-<area shape="rect" id="node2" href="$classstatismo_1_1DataItem.html" title="statismo::DataItem\&lt; T \&gt;" alt="" coords="5,87,172,114"/>
-<area shape="rect" id="node3" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="9,5,168,32"/>
+<area shape="rect" id="node2" href="$classstatismo_1_1DataItem.html" title="Base abstract class for data item. " alt="" coords="5,87,172,114"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="9,5,168,32"/>
 <area shape="rect" id="node4" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; Derived \&gt;" alt="" coords="196,80,365,121"/>
 </map>

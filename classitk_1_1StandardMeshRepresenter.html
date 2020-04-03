@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -86,7 +86,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespaceitk.html">itk</a></li><li class="navelem"><a class="el" href="classitk_1_1StandardMeshRepresenter.html">StandardMeshRepresenter</a></li>  </ul>
+<li class="navelem"><b>itk</b></li><li class="navelem"><a class="el" href="classitk_1_1StandardMeshRepresenter.html">StandardMeshRepresenter</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -96,11 +96,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classitk_1_1StandardMeshRepresenter-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">itk::StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; Class Template Reference</div>  </div>
+<div class="title">itk::StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__Representers.html">Representers classes and routines</a> &#124; <a class="el" href="group__ITK.html">ITK module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>A representer for scalar valued itk Meshs.  
+<p>Representer for scalar valued itk mesh.  
  <a href="classitk_1_1StandardMeshRepresenter.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="itkStandardMeshRepresenter_8h_source.html">itkStandardMeshRepresenter.h</a>&gt;</code></p>
@@ -172,8 +172,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>PointsContainerType<
 using&#160;</td><td class="memItemRight" valign="bottom"><b>PointsLocatorType</b> = itk::PointsLocator&lt; PointsContainerType &gt;</td></tr>
 <tr class="separator:a718f34f7ff7e59cbe8965440c0a56fdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3a06a9b22c740d41afb093aad8466cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3a06a9b22c740d41afb093aad8466cf"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#ab3a06a9b22c740d41afb093aad8466cf">DatasetType</a> = MeshType</td></tr>
-<tr class="memdesc:ab3a06a9b22c740d41afb093aad8466cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of the data set to be used. <br /></td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>DatasetType</b> = MeshType</td></tr>
 <tr class="separator:ab3a06a9b22c740d41afb093aad8466cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7fd9da5f0b12767d9a9cbbd402af2115"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7fd9da5f0b12767d9a9cbbd402af2115"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>PointCacheType</b> = std::unordered_map&lt; PointType, unsigned, <a class="el" href="classstatismo_1_1Hash.html">statismo::Hash</a>&lt; PointType &gt;&gt;</td></tr>
@@ -211,7 +210,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4e2b9344b2841b85214f0d918d06065a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85587caaa563ac77e821b43f2ecbd85b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a85587caaa563ac77e821b43f2ecbd85b">itkTypeMacro</a> (<a class="el" href="classitk_1_1StandardMeshRepresenter.html">StandardMeshRepresenter</a>, Object)</td></tr>
 <tr class="separator:a85587caaa563ac77e821b43f2ecbd85b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2443e9caff2539b6f76ffbc44776ac4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a2443e9caff2539b6f76ffbc44776ac4d">Delete</a> () override</td></tr>
+<tr class="memitem:a2443e9caff2539b6f76ffbc44776ac4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2443e9caff2539b6f76ffbc44776ac4d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a2443e9caff2539b6f76ffbc44776ac4d">Delete</a> () override</td></tr>
+<tr class="memdesc:a2443e9caff2539b6f76ffbc44776ac4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete the representer object. <br /></td></tr>
 <tr class="separator:a2443e9caff2539b6f76ffbc44776ac4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0914d3f71e90047bdf3bd4b8b1587ee8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0914d3f71e90047bdf3bd4b8b1587ee8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteDataset</b> (DatasetPointerType) const override</td></tr>
@@ -220,16 +221,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteDataset</b> (Da
 DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><b>CloneDataset</b> (DatasetConstPointerType mesh) const override</td></tr>
 <tr class="separator:abc9ad3cd41cac94e717fb72f97c51857"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec269ea83e51c5cfc6223228bd8d9483"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#aec269ea83e51c5cfc6223228bd8d9483">Load</a> (const H5::Group &amp;fg) override</td></tr>
+<tr class="memdesc:aec269ea83e51c5cfc6223228bd8d9483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new representer object, with the the information defined in the given hdf5 group.  <a href="#aec269ea83e51c5cfc6223228bd8d9483">More...</a><br /></td></tr>
 <tr class="separator:aec269ea83e51c5cfc6223228bd8d9483"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf720169010e3b3c07428fbd0034099e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#aaf720169010e3b3c07428fbd0034099e">Save</a> (const H5::Group &amp;fg) const override</td></tr>
+<tr class="memitem:aaf720169010e3b3c07428fbd0034099e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf720169010e3b3c07428fbd0034099e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#aaf720169010e3b3c07428fbd0034099e">Save</a> (const H5::Group &amp;fg) const override</td></tr>
+<tr class="memdesc:aaf720169010e3b3c07428fbd0034099e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the informatino that define this representer to the given hdf5 group. <br /></td></tr>
 <tr class="separator:aaf720169010e3b3c07428fbd0034099e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cb5e94ddc122bd38e2adfcbeeafc816"><td class="memItemLeft" align="right" valign="top">const DomainType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a9cb5e94ddc122bd38e2adfcbeeafc816">GetDomain</a> () const override</td></tr>
+<tr class="memdesc:a9cb5e94ddc122bd38e2adfcbeeafc816"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Domain for this representer.  <a href="#a9cb5e94ddc122bd38e2adfcbeeafc816">More...</a><br /></td></tr>
 <tr class="separator:a9cb5e94ddc122bd38e2adfcbeeafc816"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d8644b6f5433cb2bf401fae10cb401d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d8644b6f5433cb2bf401fae10cb401d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetReference</b> (DatasetPointerType reference)</td></tr>
 <tr class="separator:a5d8644b6f5433cb2bf401fae10cb401d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6937580ff36cb6f689994712b704615"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6937580ff36cb6f689994712b704615"></a>
-DatasetConstPointerType&#160;</td><td class="memItemRight" valign="bottom"><b>GetReference</b> () const override</td></tr>
+DatasetConstPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#af6937580ff36cb6f689994712b704615">GetReference</a> () const override</td></tr>
+<tr class="memdesc:af6937580ff36cb6f689994712b704615"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get reference dataset. <br /></td></tr>
 <tr class="separator:af6937580ff36cb6f689994712b704615"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64ed44fbf93a0a003dbe25635892db36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64ed44fbf93a0a003dbe25635892db36"></a>
 statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><b>PointToVector</b> (const PointType &amp;pt) const override</td></tr>
@@ -237,12 +243,15 @@ statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><b>Point
 <tr class="memitem:a555e6e1e125c9e7c1bd23aea823c0eaa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a555e6e1e125c9e7c1bd23aea823c0eaa"></a>
 statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><b>SampleToSampleVector</b> (DatasetConstPointerType sample) const override</td></tr>
 <tr class="separator:a555e6e1e125c9e7c1bd23aea823c0eaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63da4db4b49d7d7c8680fe480f5133b3"><td class="memItemLeft" align="right" valign="top">DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a63da4db4b49d7d7c8680fe480f5133b3">SampleVectorToSample</a> (const statismo::VectorType &amp;sample) const override</td></tr>
+<tr class="memitem:a63da4db4b49d7d7c8680fe480f5133b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63da4db4b49d7d7c8680fe480f5133b3"></a>
+DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a63da4db4b49d7d7c8680fe480f5133b3">SampleVectorToSample</a> (const statismo::VectorType &amp;sample) const override</td></tr>
+<tr class="memdesc:a63da4db4b49d7d7c8680fe480f5133b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a sample from an internal vector. <br /></td></tr>
 <tr class="separator:a63da4db4b49d7d7c8680fe480f5133b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a158e3a5af8331218a48a6cacd06ff5e1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a158e3a5af8331218a48a6cacd06ff5e1"></a>
 ValueType&#160;</td><td class="memItemRight" valign="bottom"><b>PointSampleFromSample</b> (DatasetConstPointerType sample, unsigned ptid) const override</td></tr>
 <tr class="separator:a158e3a5af8331218a48a6cacd06ff5e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a395bae9a83e26b372748f3411458d28e"><td class="memItemLeft" align="right" valign="top">ValueType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a395bae9a83e26b372748f3411458d28e">PointSampleVectorToPointSample</a> (const statismo::VectorType &amp;pointSample) const override</td></tr>
+<tr class="memdesc:a395bae9a83e26b372748f3411458d28e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a point sample (i.e. the value of a sample at a given point) and converts it to its vector representation.  <a href="#a395bae9a83e26b372748f3411458d28e">More...</a><br /></td></tr>
 <tr class="separator:a395bae9a83e26b372748f3411458d28e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27671d72b11683c48d7ec7c284ea837c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27671d72b11683c48d7ec7c284ea837c"></a>
 statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><b>PointSampleToPointSampleVector</b> (const ValueType &amp;v) const override</td></tr>
@@ -250,44 +259,62 @@ statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><b>Point
 <tr class="memitem:a0bc91787860c6dcc0061077dad9b09d0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0bc91787860c6dcc0061077dad9b09d0"></a>
 virtual unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>GetNumberOfPoints</b> () const </td></tr>
 <tr class="separator:a0bc91787860c6dcc0061077dad9b09d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e3c5f033bccd27f9e9f172a04c94884"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classitk_1_1StandardMeshRepresenter.html#a9e3c5f033bccd27f9e9f172a04c94884">GetPointIdForPoint</a> (const PointType &amp;pt) const override</td></tr>
+<tr class="memitem:a9e3c5f033bccd27f9e9f172a04c94884"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e3c5f033bccd27f9e9f172a04c94884"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>GetPointIdForPoint</b> (const PointType &amp;pt) const override</td></tr>
 <tr class="separator:a9e3c5f033bccd27f9e9f172a04c94884"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classstatismo_1_1RepresenterBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classstatismo_1_1RepresenterBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classstatismo_1_1RepresenterBase.html">statismo::RepresenterBase&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt;, StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; &gt;</a></td></tr>
 <tr class="memitem:a75f5586c0715962d9b29504703467b1a inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75f5586c0715962d9b29504703467b1a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1RepresenterBase.html#a75f5586c0715962d9b29504703467b1a">Delete</a> () override</td></tr>
-<tr class="memdesc:a75f5586c0715962d9b29504703467b1a inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete basic implementation. <br /></td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Delete</b> () override</td></tr>
+<tr class="memdesc:a75f5586c0715962d9b29504703467b1a inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete the representer object. <br /></td></tr>
 <tr class="separator:a75f5586c0715962d9b29504703467b1a inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35dbac74b1e4dcda99c7206b0d9a1528 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35dbac74b1e4dcda99c7206b0d9a1528"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1RepresenterBase.html#a35dbac74b1e4dcda99c7206b0d9a1528">GetName</a> () const final</td></tr>
-<tr class="memdesc:a35dbac74b1e4dcda99c7206b0d9a1528 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a name that identifies the representer. <br /></td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetName</b> () const final</td></tr>
+<tr class="memdesc:a35dbac74b1e4dcda99c7206b0d9a1528 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get representer identifier. <br /></td></tr>
 <tr class="separator:a35dbac74b1e4dcda99c7206b0d9a1528 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac702c8fed9b2b9bdcf466ab63ace727e inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top">RepresenterDataType&#160;</td><td class="memItemRight" valign="bottom"><b>GetType</b> () const final</td></tr>
+<tr class="memitem:ac702c8fed9b2b9bdcf466ab63ace727e inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac702c8fed9b2b9bdcf466ab63ace727e"></a>
+<a class="el" href="group__Representers.html#ga7efc544e7d062becb3e3bfad4c266768">RepresenterDataType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GetType</b> () const final</td></tr>
+<tr class="memdesc:ac702c8fed9b2b9bdcf466ab63ace727e inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get representer data type. <br /></td></tr>
 <tr class="separator:ac702c8fed9b2b9bdcf466ab63ace727e inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae49e8d655014e7f2c784bbe22ad02959 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1RepresenterBase.html#ae49e8d655014e7f2c784bbe22ad02959">GetDimensions</a> () const final</td></tr>
+<tr class="memitem:ae49e8d655014e7f2c784bbe22ad02959 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>GetDimensions</b> () const final</td></tr>
+<tr class="memdesc:ae49e8d655014e7f2c784bbe22ad02959 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the dimensionality of the dataset.  <a href="#ae49e8d655014e7f2c784bbe22ad02959">More...</a><br /></td></tr>
 <tr class="separator:ae49e8d655014e7f2c784bbe22ad02959 inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42bb24259f993d95cc0cd54fe51da10c inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetVersion</b> () const final</td></tr>
+<tr class="memitem:a42bb24259f993d95cc0cd54fe51da10c inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42bb24259f993d95cc0cd54fe51da10c"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetVersion</b> () const final</td></tr>
+<tr class="memdesc:a42bb24259f993d95cc0cd54fe51da10c inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get representer version. <br /></td></tr>
 <tr class="separator:a42bb24259f993d95cc0cd54fe51da10c inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f2d8acae56a6e152cbea81620d4b67a inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>MapPointIdToInternalIdx</b> (unsigned ptId, unsigned componentInd) const override</td></tr>
+<tr class="memdesc:a3f2d8acae56a6e152cbea81620d4b67a inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the mapping between the point ids and the position in the vector.  <a href="#a3f2d8acae56a6e152cbea81620d4b67a">More...</a><br /></td></tr>
 <tr class="separator:a3f2d8acae56a6e152cbea81620d4b67a inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d9af3bc0d207fa6d9ada67ca568a4dc inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d9af3bc0d207fa6d9ada67ca568a4dc"></a>
 <a class="el" href="classstatismo_1_1Representer.html#a28137ea2e59e2dd2ea36562cc2ecf1c8">DatasetPointerType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>IdentitySample</b> () const override</td></tr>
 <tr class="separator:a6d9af3bc0d207fa6d9ada67ca568a4dc inherit pub_methods_classstatismo_1_1RepresenterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classstatismo_1_1Representer"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classstatismo_1_1Representer')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classstatismo_1_1Representer.html">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a></td></tr>
 <tr class="memitem:a4d65de433b89ed75dbedfc8bc2ede4e0 inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d65de433b89ed75dbedfc8bc2ede4e0"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteDataset</b> (<a class="el" href="classstatismo_1_1Representer.html#a28137ea2e59e2dd2ea36562cc2ecf1c8">DatasetPointerType</a> d) const =0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#a4d65de433b89ed75dbedfc8bc2ede4e0">DeleteDataset</a> (<a class="el" href="classstatismo_1_1Representer.html#a28137ea2e59e2dd2ea36562cc2ecf1c8">DatasetPointerType</a> d) const =0</td></tr>
+<tr class="memdesc:a4d65de433b89ed75dbedfc8bc2ede4e0 inherit pub_methods_classstatismo_1_1Representer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a dataset. <br /></td></tr>
 <tr class="separator:a4d65de433b89ed75dbedfc8bc2ede4e0 inherit pub_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbbb632d935d3b56727d0b6f63f0d0c6 inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afbbb632d935d3b56727d0b6f63f0d0c6"></a>
-virtual <a class="el" href="classstatismo_1_1Representer.html#a28137ea2e59e2dd2ea36562cc2ecf1c8">DatasetPointerType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CloneDataset</b> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> d) const =0</td></tr>
+virtual <a class="el" href="classstatismo_1_1Representer.html#a28137ea2e59e2dd2ea36562cc2ecf1c8">DatasetPointerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#afbbb632d935d3b56727d0b6f63f0d0c6">CloneDataset</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> d) const =0</td></tr>
+<tr class="memdesc:afbbb632d935d3b56727d0b6f63f0d0c6 inherit pub_methods_classstatismo_1_1Representer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone a dataset. <br /></td></tr>
 <tr class="separator:afbbb632d935d3b56727d0b6f63f0d0c6 inherit pub_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdea4a3cdbfe1c740411027fd2d523c6 inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top">virtual VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#acdea4a3cdbfe1c740411027fd2d523c6">PointToVector</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;pt) const =0</td></tr>
+<tr class="memitem:acdea4a3cdbfe1c740411027fd2d523c6 inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdea4a3cdbfe1c740411027fd2d523c6"></a>
+virtual VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#acdea4a3cdbfe1c740411027fd2d523c6">PointToVector</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;pt) const =0</td></tr>
+<tr class="memdesc:acdea4a3cdbfe1c740411027fd2d523c6 inherit pub_methods_classstatismo_1_1Representer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a dataset point to an internal vector. <br /></td></tr>
 <tr class="separator:acdea4a3cdbfe1c740411027fd2d523c6 inherit pub_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad922b5a4b2a71ec1718e521e3d910cd2 inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top">virtual VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#ad922b5a4b2a71ec1718e521e3d910cd2">SampleToSampleVector</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample) const =0</td></tr>
+<tr class="memitem:ad922b5a4b2a71ec1718e521e3d910cd2 inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad922b5a4b2a71ec1718e521e3d910cd2"></a>
+virtual VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#ad922b5a4b2a71ec1718e521e3d910cd2">SampleToSampleVector</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample) const =0</td></tr>
+<tr class="memdesc:ad922b5a4b2a71ec1718e521e3d910cd2 inherit pub_methods_classstatismo_1_1Representer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vectorial representation of a sample. <br /></td></tr>
 <tr class="separator:ad922b5a4b2a71ec1718e521e3d910cd2 inherit pub_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40a76c061827993eb9b2765ab7a9ff7f inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#a40a76c061827993eb9b2765ab7a9ff7f">PointSampleFromSample</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample, unsigned ptid) const =0</td></tr>
+<tr class="memitem:a40a76c061827993eb9b2765ab7a9ff7f inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a40a76c061827993eb9b2765ab7a9ff7f"></a>
+virtual <a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#a40a76c061827993eb9b2765ab7a9ff7f">PointSampleFromSample</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample, unsigned ptid) const =0</td></tr>
+<tr class="memdesc:a40a76c061827993eb9b2765ab7a9ff7f inherit pub_methods_classstatismo_1_1Representer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a <em>sample</em> value at point with index <em>ptid</em>. <br /></td></tr>
 <tr class="separator:a40a76c061827993eb9b2765ab7a9ff7f inherit pub_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ca26c90a1a5bb67a75ad6463de00570 inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top">virtual VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#a5ca26c90a1a5bb67a75ad6463de00570">PointSampleToPointSampleVector</a> (const <a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a> &amp;pointSample) const =0</td></tr>
+<tr class="memdesc:a5ca26c90a1a5bb67a75ad6463de00570 inherit pub_methods_classstatismo_1_1Representer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the given vector representation of a pointSample back to its ValueType.  <a href="#a5ca26c90a1a5bb67a75ad6463de00570">More...</a><br /></td></tr>
 <tr class="separator:a5ca26c90a1a5bb67a75ad6463de00570 inherit pub_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75240a16e559860c42525e36a8a09aaa inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top">virtual unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#a75240a16e559860c42525e36a8a09aaa">GetPointIdForPoint</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;point) const =0</td></tr>
+<tr class="memitem:a75240a16e559860c42525e36a8a09aaa inherit pub_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75240a16e559860c42525e36a8a09aaa"></a>
+virtual unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#a75240a16e559860c42525e36a8a09aaa">GetPointIdForPoint</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;point) const =0</td></tr>
+<tr class="memdesc:a75240a16e559860c42525e36a8a09aaa inherit pub_methods_classstatismo_1_1Representer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a point (the coordinates) return the pointId of this point. <br /></td></tr>
 <tr class="separator:a75240a16e559860c42525e36a8a09aaa inherit pub_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classstatismo_1_1Clonable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classstatismo_1_1Clonable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classstatismo_1_1Clonable.html">statismo::Clonable&lt; Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt; &gt;</a></td></tr>
 <tr class="memitem:a3cd1ae84e1ee3719a94deabfd0e8476b inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3cd1ae84e1ee3719a94deabfd0e8476b"></a>
@@ -299,14 +326,14 @@ virtual <a class="el" href="classstatismo_1_1Representer.html#a28137ea2e59e2dd2e
 <tr class="memitem:a98083a0ab081a418334df5ed5b7eb273 inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98083a0ab081a418334df5ed5b7eb273"></a>
 <a class="el" href="classstatismo_1_1Clonable.html">Clonable</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classstatismo_1_1Clonable.html">Clonable</a> &amp;)=delete</td></tr>
 <tr class="separator:a98083a0ab081a418334df5ed5b7eb273 inherit pub_methods_classstatismo_1_1Clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a271938a1772c0313166eb917fce3cb66 inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a271938a1772c0313166eb917fce3cb66"></a>
-<a class="el" href="classstatismo_1_1Representer.html">Representer</a>&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>CloneSelf</b> () const</td></tr>
+<tr class="memitem:a271938a1772c0313166eb917fce3cb66 inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classstatismo_1_1Representer.html">Representer</a>&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Clonable.html#a271938a1772c0313166eb917fce3cb66">CloneSelf</a> () const</td></tr>
+<tr class="memdesc:a271938a1772c0313166eb917fce3cb66 inherit pub_methods_classstatismo_1_1Clonable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone object.  <a href="#a271938a1772c0313166eb917fce3cb66">More...</a><br /></td></tr>
 <tr class="separator:a271938a1772c0313166eb917fce3cb66 inherit pub_methods_classstatismo_1_1Clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3394a73a1ce52891d00c448be8e7f32a inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3394a73a1ce52891d00c448be8e7f32a"></a>
-UniquePtrType&lt; <a class="el" href="classstatismo_1_1Representer.html">Representer</a>&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SafeCloneSelf</b> () const</td></tr>
+<tr class="memitem:a3394a73a1ce52891d00c448be8e7f32a inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Core.html#ga1bd20b8b2fb3b4dd582df27b4b0fcb06">UniquePtrType</a>&lt; <a class="el" href="classstatismo_1_1Representer.html">Representer</a>&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Clonable.html#a3394a73a1ce52891d00c448be8e7f32a">SafeCloneSelf</a> () const</td></tr>
+<tr class="memdesc:a3394a73a1ce52891d00c448be8e7f32a inherit pub_methods_classstatismo_1_1Clonable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone object.  <a href="#a3394a73a1ce52891d00c448be8e7f32a">More...</a><br /></td></tr>
 <tr class="separator:a3394a73a1ce52891d00c448be8e7f32a inherit pub_methods_classstatismo_1_1Clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1766ba455b74985db7ca4f0bdf2bde54 inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1766ba455b74985db7ca4f0bdf2bde54"></a>
-std::unique_ptr&lt; <a class="el" href="classstatismo_1_1Representer.html">Representer</a>&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;, Deletor &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SafeCloneSelfWithCustomDeletor</b> () const</td></tr>
+<tr class="memitem:a1766ba455b74985db7ca4f0bdf2bde54 inherit pub_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classstatismo_1_1Representer.html">Representer</a>&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;, Deletor &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Clonable.html#a1766ba455b74985db7ca4f0bdf2bde54">SafeCloneSelfWithCustomDeletor</a> () const</td></tr>
+<tr class="memdesc:a1766ba455b74985db7ca4f0bdf2bde54 inherit pub_methods_classstatismo_1_1Clonable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone object.  <a href="#a1766ba455b74985db7ca4f0bdf2bde54">More...</a><br /></td></tr>
 <tr class="separator:a1766ba455b74985db7ca4f0bdf2bde54 inherit pub_methods_classstatismo_1_1Clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -319,22 +346,24 @@ friend&#160;</td><td class="memItemRight" valign="bottom"><b>Base</b></td></tr>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classstatismo_1_1Representer"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classstatismo_1_1Representer')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classstatismo_1_1Representer.html">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a></td></tr>
 <tr class="memitem:a4a9db43b7cd6b268da7fa07c8c2365ef inherit pub_static_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a9db43b7cd6b268da7fa07c8c2365ef"></a>
-static RepresenterDataType&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFromString</b> (const std::string &amp;s)</td></tr>
+static <a class="el" href="group__Representers.html#ga7efc544e7d062becb3e3bfad4c266768">RepresenterDataType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>TypeFromString</b> (const std::string &amp;s)</td></tr>
 <tr class="separator:a4a9db43b7cd6b268da7fa07c8c2365ef inherit pub_static_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01ba2746b9459d5b3aea1b3ea2b1a4f3 inherit pub_static_methods_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01ba2746b9459d5b3aea1b3ea2b1a4f3"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>TypeToString</b> (RepresenterDataType type)</td></tr>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>TypeToString</b> (<a class="el" href="group__Representers.html#ga7efc544e7d062becb3e3bfad4c266768">RepresenterDataType</a> type)</td></tr>
 <tr class="separator:a01ba2746b9459d5b3aea1b3ea2b1a4f3 inherit pub_static_methods_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_classstatismo_1_1GenericFactory"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classstatismo_1_1GenericFactory')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classstatismo_1_1GenericFactory.html">statismo::GenericFactory&lt; StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; &gt;</a></td></tr>
-<tr class="memitem:ad965315d07f5dec63a586517ac7b23bc inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top">static StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#ad965315d07f5dec63a586517ac7b23bc">Create</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memitem:ad965315d07f5dec63a586517ac7b23bc inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad965315d07f5dec63a586517ac7b23bc"></a>
+static StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#ad965315d07f5dec63a586517ac7b23bc">Create</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:ad965315d07f5dec63a586517ac7b23bc inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple object creation without smart-memory management. <br /></td></tr>
 <tr class="separator:ad965315d07f5dec63a586517ac7b23bc inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78964956653411c95d3d822aa35ca8f0 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78964956653411c95d3d822aa35ca8f0"></a>
-static auto&#160;</td><td class="memItemRight" valign="bottom"><b>SafeCreate</b> (Args &amp;&amp;...args)</td></tr>
+<tr class="memitem:a78964956653411c95d3d822aa35ca8f0 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#a78964956653411c95d3d822aa35ca8f0">SafeCreate</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a78964956653411c95d3d822aa35ca8f0 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object creation with smart-memory management.  <a href="#a78964956653411c95d3d822aa35ca8f0">More...</a><br /></td></tr>
 <tr class="separator:a78964956653411c95d3d822aa35ca8f0 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa484a715a577664811d1b5aaf570d41 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afa484a715a577664811d1b5aaf570d41"></a>
-static std::unique_ptr&lt; StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt;, Deletor &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SafeCreateWithCustomDeletor</b> (Args &amp;&amp;...args)</td></tr>
+<tr class="memitem:afa484a715a577664811d1b5aaf570d41 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt;, Deletor &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#afa484a715a577664811d1b5aaf570d41">SafeCreateWithCustomDeletor</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:afa484a715a577664811d1b5aaf570d41 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object creation with smart-memory management.  <a href="#afa484a715a577664811d1b5aaf570d41">More...</a><br /></td></tr>
 <tr class="separator:afa484a715a577664811d1b5aaf570d41 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b36ece6061c2ca93287965ff451d037 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b36ece6061c2ca93287965ff451d037"></a>
-static std::unique_ptr&lt; StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SafeCreateStd</b> (Args &amp;&amp;...args)</td></tr>
+<tr class="memitem:a6b36ece6061c2ca93287965ff451d037 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#a6b36ece6061c2ca93287965ff451d037">SafeCreateStd</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a6b36ece6061c2ca93287965ff451d037 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object creation with smart-memory management.  <a href="#a6b36ece6061c2ca93287965ff451d037">More...</a><br /></td></tr>
 <tr class="separator:a6b36ece6061c2ca93287965ff451d037 inherit pub_static_methods_classstatismo_1_1GenericFactory"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_attribs_classstatismo_1_1Representer"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classstatismo_1_1Representer')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classstatismo_1_1Representer.html">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a></td></tr>
 <tr class="memitem:afd2601cde3551e236e9efb47fb0944cc inherit pub_static_attribs_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top">static constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#afd2601cde3551e236e9efb47fb0944cc">sk_realPointDimension</a></td></tr>
@@ -348,37 +377,8 @@ static std::unique_ptr&lt; StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt
 <div class="textblock"><h3>template&lt;typename Pixel, unsigned MESH_DIMENSION&gt;<br />
 class itk::StandardMeshRepresenter&lt; Pixel, MESH_DIMENSION &gt;</h3>
 
-<p>A representer for scalar valued itk Meshs. </p>
-<dl class="section see"><dt>See also</dt><dd>Representer </dd></dl>
+<p>Representer for scalar valued itk mesh. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a2443e9caff2539b6f76ffbc44776ac4d"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Pixel, unsigned MESH_DIMENSION&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classitk_1_1StandardMeshRepresenter.html">itk::StandardMeshRepresenter</a>&lt; Pixel, MESH_DIMENSION &gt;::Delete </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Delete the representer object </p>
-
-<p>Implements <a class="el" href="classstatismo_1_1Representer.html#af974b8ba2537f0dc456a6ade204f154f">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="a9cb5e94ddc122bd38e2adfcbeeafc816"></a>
 <div class="memitem">
 <div class="memproto">
@@ -401,36 +401,11 @@ template&lt;typename Pixel, unsigned MESH_DIMENSION&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns the Domain for this representers. The domain is essentially a list of all the points on which the model is defined. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classstatismo_1_1Domain.html">statismo::Domain</a> </dd></dl>
+
+<p>Get the Domain for this representer. </p>
+<p>The domain is essentially a list of all the points on which the model is defined. </p>
 
 <p>Implements <a class="el" href="classstatismo_1_1Representer.html#af1a79fae822218402ec32c052110ce32">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a9e3c5f033bccd27f9e9f172a04c94884"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Pixel , unsigned MESH_DIMENSION&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned <a class="el" href="classitk_1_1StandardMeshRepresenter.html">itk::StandardMeshRepresenter</a>&lt; Pixel, MESH_DIMENSION &gt;::GetPointIdForPoint </td>
-          <td>(</td>
-          <td class="paramtype">const PointType &amp;&#160;</td>
-          <td class="paramname"><em>pt</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>return the point id associated with the given point </p><dl class="section warning"><dt>Warning</dt><dd>This works currently only for points that are defined on the reference </dd></dl>
 
 </div>
 </div>
@@ -505,7 +480,9 @@ template&lt;typename Pixel , unsigned MESH_DIMENSION&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Creates a new representer object, with the the information defined inthe given hdf5 group </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classitk_1_1StandardMeshRepresenter.html#aaf720169010e3b3c07428fbd0034099e">Save</a> </dd></dl>
+
+<p>Creates a new representer object, with the the information defined in the given hdf5 group. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classitk_1_1StandardMeshRepresenter.html#aaf720169010e3b3c07428fbd0034099e" title="Save the informatino that define this representer to the given hdf5 group. ">Save</a> </dd></dl>
 
 <p>Implements <a class="el" href="classstatismo_1_1Representer.html#abb41be9e03fadf032aa9278349782fef">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a>.</p>
 
@@ -534,67 +511,11 @@ template&lt;typename Pixel , unsigned MESH_DIMENSION&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Take a point sample (i.e. the value of a sample at a given point) and converts it to its vector representation. The type of the point sample is a ValueType, that depends on the type of the dataset. For a mesh this would for example be a 3D point, while for a scalar image this would be a scalar value representing the intensity. </p>
+
+<p>Take a point sample (i.e. the value of a sample at a given point) and converts it to its vector representation. </p>
+<p>The type of the point sample is a ValueType, that depends on the type of the dataset. For a mesh this would for example be a 3D point, while for a scalar image this would be a scalar value representing the intensity. </p>
 
 <p>Implements <a class="el" href="classstatismo_1_1Representer.html#aee4cfecd7a10ce23fe49f1a3ab4b4d38">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a63da4db4b49d7d7c8680fe480f5133b3"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Pixel , unsigned MESH_DIMENSION&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classitk_1_1StandardMeshRepresenter.html">StandardMeshRepresenter</a>&lt; Pixel, MESH_DIMENSION &gt;::DatasetPointerType <a class="el" href="classitk_1_1StandardMeshRepresenter.html">itk::StandardMeshRepresenter</a>&lt; Pixel, MESH_DIMENSION &gt;::SampleVectorToSample </td>
-          <td>(</td>
-          <td class="paramtype">const statismo::VectorType &amp;&#160;</td>
-          <td class="paramname"><em>sample</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Takes a vector of nd elements and converts it to a sample. The sample is a type that is represnter (e.g. an image, a mesh, etc). </p>
-
-<p>Implements <a class="el" href="classstatismo_1_1Representer.html#a2888172b416fae7d32807f1e7a412ba6">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aaf720169010e3b3c07428fbd0034099e"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Pixel , unsigned MESH_DIMENSION&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classitk_1_1StandardMeshRepresenter.html">itk::StandardMeshRepresenter</a>&lt; Pixel, MESH_DIMENSION &gt;::Save </td>
-          <td>(</td>
-          <td class="paramtype">const H5::Group &amp;&#160;</td>
-          <td class="paramname"><em>fg</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Save the informatino that define this representer to the group in the HDF5 file given by fg. </p>
-
-<p>Implements <a class="el" href="classstatismo_1_1Representer.html#abb51a7a425c01aa7dd2b5d58060d8344">statismo::Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt;</a>.</p>
 
 </div>
 </div>

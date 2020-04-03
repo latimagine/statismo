@@ -1,4 +1,4 @@
 <map id="statismo::StatisticalModel&lt; T &gt;" name="statismo::StatisticalModel&lt; T &gt;">
 <area shape="rect" id="node2" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; StatisticalModel\&lt; T \&gt; \&gt;" alt="" coords="5,5,176,47"/>
-<area shape="rect" id="node3" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="201,13,359,39"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="201,13,359,39"/>
 </map>

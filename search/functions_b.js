@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['randgen',['RandGen',['../group__Core.html#ga1fc47a3acba7910f58aa28e1ad38478b',1,'statismo::rand']]],
   ['readarray',['ReadArray',['../classstatismo_1_1HDF5Utils.html#a9890d26fd9671f0d7db5bf8c930be79f',1,'statismo::HDF5Utils']]],
   ['readfloat',['ReadFloat',['../classstatismo_1_1HDF5Utils.html#a69d30ec9338b7e23a07b64abf3628ab3',1,'statismo::HDF5Utils']]],
   ['readint',['ReadInt',['../classstatismo_1_1HDF5Utils.html#ab81669ef2529c87d9e5d0c41fa9ffbde',1,'statismo::HDF5Utils']]],
@@ -9,5 +10,7 @@ var searchData=
   ['readstring',['ReadString',['../classstatismo_1_1HDF5Utils.html#aa93af126a2c103181ce33e2265f62572',1,'statismo::HDF5Utils']]],
   ['readstringattribute',['ReadStringAttribute',['../classstatismo_1_1HDF5Utils.html#af821069610dbfe3bd38292e7f1a18eba',1,'statismo::HDF5Utils']]],
   ['readvector',['ReadVector',['../classstatismo_1_1HDF5Utils.html#ac589af8729f1ec34512a9bac6ce583be',1,'statismo::HDF5Utils::ReadVector(const H5::H5Location &amp;fg, const char *name, unsigned maxNumElements, VectorType &amp;vector)'],['../classstatismo_1_1HDF5Utils.html#abb93b2743bd8ebcfd81caff94374f46d',1,'statismo::HDF5Utils::ReadVector(const H5::H5Location &amp;fg, const char *name, VectorType &amp;vector)']]],
+  ['readvectorfromtxtfile',['ReadVectorFromTxtFile',['../group__Core.html#gac26b0aab30b7867c9586c3de6920e5ef',1,'statismo::utils']]],
+  ['removefile',['RemoveFile',['../group__Core.html#gae55cc8d34d48469dc0b773e27c9df948',1,'statismo::utils']]],
   ['runalltests',['RunAllTests',['../classGenericRepresenterValidator.html#aa0f8a99f02e375853b3863d699a79460',1,'GenericRepresenterValidator']]]
 ];

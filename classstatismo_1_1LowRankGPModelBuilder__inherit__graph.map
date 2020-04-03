@@ -1,6 +1,6 @@
 <map id="statismo::LowRankGPModelBuilder&lt; T &gt;" name="statismo::LowRankGPModelBuilder&lt; T &gt;">
 <area shape="rect" id="node2" href="$classstatismo_1_1ModelBuilderBase.html" title="statismo::ModelBuilderBase\l\&lt; T, LowRankGPModelBuilder\&lt; T \&gt; \&gt;" alt="" coords="487,27,729,69"/>
-<area shape="rect" id="node3" href="$classstatismo_1_1ModelBuilder.html" title="Common base class for all the model builder classes. " alt="" coords="232,5,419,32"/>
-<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,5,164,32"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1ModelBuilder.html" title="Base abstract class for model builders. " alt="" coords="232,5,419,32"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="5,5,164,32"/>
 <area shape="rect" id="node5" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; LowRankGPModelBuilder\&lt; T \&gt; \&gt;" alt="" coords="212,57,439,98"/>
 </map>

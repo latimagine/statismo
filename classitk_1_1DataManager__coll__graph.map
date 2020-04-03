@@ -1,4 +1,4 @@
 <map id="itk::DataManager&lt; T &gt;" name="itk::DataManager&lt; T &gt;">
 <area shape="rect" id="node3" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::BasicDataManager\l\&lt; T \&gt; \&gt;" alt="" coords="90,80,293,136"/>
-<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="112,5,271,32"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="112,5,271,32"/>
 </map>

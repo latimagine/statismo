@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -96,11 +96,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classstatismo_1_1ModelBuilder-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">statismo::ModelBuilder&lt; T &gt; Class Template Reference</div>  </div>
+<div class="title">statismo::ModelBuilder&lt; T &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__ModelBuilders.html">Statistical model building classes and routines</a> &#124; <a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Common base class for all the model builder classes.  
+<p>Base abstract class for model builders.  
  <a href="classstatismo_1_1ModelBuilder.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ModelBuilder_8h_source.html">ModelBuilder.h</a>&gt;</code></p>
@@ -113,12 +113,12 @@ Inheritance diagram for statismo::ModelBuilder&lt; T &gt;:</div>
 <area shape="rect" id="node5" href="classstatismo_1_1ModelBuilderBase.html" title="ModelBuilderBase\&lt; T,\l LowRankGPModelBuilder\l\&lt; T \&gt; \&gt;" alt="" coords="468,85,643,141"/>
 <area shape="rect" id="node7" href="classstatismo_1_1ModelBuilderBase.html" title="ModelBuilderBase\&lt; T,\l PCAModelBuilder\&lt; T \&gt; \&gt;" alt="" coords="469,165,642,206"/>
 <area shape="rect" id="node9" href="classstatismo_1_1ModelBuilderBase.html" title="ModelBuilderBase\&lt; T,\l PosteriorModelBuilder\l\&lt; T \&gt; \&gt;" alt="" coords="479,229,632,285"/>
-<area shape="rect" id="node11" href="classstatismo_1_1ModelBuilderBase.html" title="Base class for model builder. " alt="" coords="447,309,664,336"/>
-<area shape="rect" id="node2" href="classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,172,164,199"/>
-<area shape="rect" id="node4" href="classstatismo_1_1ConditionalModelBuilder.html" title="Creates a StatisticalModel conditioned on some external data. " alt="" coords="729,13,909,54"/>
-<area shape="rect" id="node6" href="classstatismo_1_1LowRankGPModelBuilder.html" title="statismo::LowRankGPModel\lBuilder\&lt; T \&gt;" alt="" coords="725,93,914,134"/>
-<area shape="rect" id="node8" href="classstatismo_1_1PCAModelBuilder.html" title="Creates StatisticalModel using Principal Component Analysis. " alt="" coords="712,172,927,199"/>
-<area shape="rect" id="node10" href="classstatismo_1_1PosteriorModelBuilder.html" title="Given a statistical model (prior) and a set of point constraints (likelihood), generate a new PCA mod..." alt="" coords="736,237,903,278"/>
+<area shape="rect" id="node11" href="classstatismo_1_1ModelBuilderBase.html" title="Base implementation for model builders. " alt="" coords="447,309,664,336"/>
+<area shape="rect" id="node2" href="classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="5,172,164,199"/>
+<area shape="rect" id="node4" href="classstatismo_1_1ConditionalModelBuilder.html" title="Creates a statistical model conditioned on some external data. " alt="" coords="729,13,909,54"/>
+<area shape="rect" id="node6" href="classstatismo_1_1LowRankGPModelBuilder.html" title="A model builder for building statistical models that are specified by an arbitrary Gaussian Process..." alt="" coords="725,93,914,134"/>
+<area shape="rect" id="node8" href="classstatismo_1_1PCAModelBuilder.html" title="Create StatisticalModel using Principal Component Analysis. " alt="" coords="712,172,927,199"/>
+<area shape="rect" id="node10" href="classstatismo_1_1PosteriorModelBuilder.html" title="Create a new StatisticalModel (posterior) from a prior statistical model and a set of of point constr..." alt="" coords="736,237,903,278"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -126,7 +126,7 @@ Collaboration diagram for statismo::ModelBuilder&lt; T &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classstatismo_1_1ModelBuilder__coll__graph.png" border="0" usemap="#statismo_1_1ModelBuilder_3_01T_01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="statismo_1_1ModelBuilder_3_01T_01_4_coll__map" id="statismo_1_1ModelBuilder_3_01T_01_4_coll__map">
-<area shape="rect" id="node2" href="classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="19,5,178,32"/>
+<area shape="rect" id="node2" href="classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="19,5,178,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -177,7 +177,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class statismo::ModelBuilder&lt; T &gt;</h3>
 
-<p>Common base class for all the model builder classes. </p>
+<p>Base abstract class for model builders. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>modules/core/include/statismo/core/<a class="el" href="ModelBuilder_8h_source.html">ModelBuilder.h</a></li>
 </ul>

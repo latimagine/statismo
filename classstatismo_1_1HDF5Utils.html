@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -94,76 +94,109 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classstatismo_1_1HDF5Utils-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">statismo::HDF5Utils Class Reference</div>  </div>
+<div class="title">statismo::HDF5Utils Class Reference<div class="ingroups"><a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Wrapper class that gathers HDF5 utilities.  
+ <a href="classstatismo_1_1HDF5Utils.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="HDF5Utils_8h_source.html">HDF5Utils.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a13ee457f205bd7a21b57d8624db91678"><td class="memItemLeft" align="right" valign="top">static H5::H5File&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a13ee457f205bd7a21b57d8624db91678">OpenOrCreateFile</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:a13ee457f205bd7a21b57d8624db91678"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open or create hdf5.  <a href="#a13ee457f205bd7a21b57d8624db91678">More...</a><br /></td></tr>
 <tr class="separator:a13ee457f205bd7a21b57d8624db91678"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab20134c06b1073a2b2fc4e6ad8f19882"><td class="memItemLeft" align="right" valign="top">static H5::Group&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ab20134c06b1073a2b2fc4e6ad8f19882">OpenPath</a> (H5::H5File &amp;file, const std::string &amp;path, bool createPath=false)</td></tr>
+<tr class="memdesc:ab20134c06b1073a2b2fc4e6ad8f19882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the hdf5 group or creates it if it doesn't exist.  <a href="#ab20134c06b1073a2b2fc4e6ad8f19882">More...</a><br /></td></tr>
 <tr class="separator:ab20134c06b1073a2b2fc4e6ad8f19882"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe4d29764a276a4fa28226e62d3712ec"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#afe4d29764a276a4fa28226e62d3712ec">ReadMatrix</a> (const H5::H5Location &amp;fg, const char *name, MatrixType &amp;matrix)</td></tr>
+<tr class="memdesc:afe4d29764a276a4fa28226e62d3712ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a Matrix from a HDF5 group.  <a href="#afe4d29764a276a4fa28226e62d3712ec">More...</a><br /></td></tr>
 <tr class="separator:afe4d29764a276a4fa28226e62d3712ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af78642f17c149c829f8dff2c72334af8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#af78642f17c149c829f8dff2c72334af8">ReadMatrix</a> (const H5::H5Location &amp;fg, const char *name, unsigned maxNumColumns, MatrixType &amp;matrix)</td></tr>
+<tr class="memdesc:af78642f17c149c829f8dff2c72334af8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a submatrix from the file, with the given number of columns.  <a href="#af78642f17c149c829f8dff2c72334af8">More...</a><br /></td></tr>
 <tr class="separator:af78642f17c149c829f8dff2c72334af8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ebfea9f6fa0e6a6138b69695f496b86"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a9ebfea9f6fa0e6a6138b69695f496b86"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a9ebfea9f6fa0e6a6138b69695f496b86">ReadMatrixOfType</a> (const H5::H5Location &amp;fg, const char *name, typename <a class="el" href="structstatismo_1_1GenericEigenTraits.html">GenericEigenTraits</a>&lt; T &gt;::MatrixType &amp;matrix)</td></tr>
+<tr class="memdesc:a9ebfea9f6fa0e6a6138b69695f496b86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a Matrix of a given type from a HDF5 File.  <a href="#a9ebfea9f6fa0e6a6138b69695f496b86">More...</a><br /></td></tr>
 <tr class="separator:a9ebfea9f6fa0e6a6138b69695f496b86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42b3906753fced90a96d5fcd697aff9e"><td class="memItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a42b3906753fced90a96d5fcd697aff9e">WriteMatrix</a> (const H5::H5Location &amp;fg, const char *name, const MatrixType &amp;matrix)</td></tr>
+<tr class="memdesc:a42b3906753fced90a96d5fcd697aff9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a Matrix to the HDF5 File.  <a href="#a42b3906753fced90a96d5fcd697aff9e">More...</a><br /></td></tr>
 <tr class="separator:a42b3906753fced90a96d5fcd697aff9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8a66d0713b4ff1a96777a24d3e200b8"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ab8a66d0713b4ff1a96777a24d3e200b8"><td class="memTemplItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ab8a66d0713b4ff1a96777a24d3e200b8">WriteMatrixOfType</a> (const H5::H5Location &amp;fg, const char *name, const typename <a class="el" href="structstatismo_1_1GenericEigenTraits.html">GenericEigenTraits</a>&lt; T &gt;::MatrixType &amp;matrix)</td></tr>
+<tr class="memdesc:ab8a66d0713b4ff1a96777a24d3e200b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a Matrix of the given type to the HDF5 File.  <a href="#ab8a66d0713b4ff1a96777a24d3e200b8">More...</a><br /></td></tr>
 <tr class="separator:ab8a66d0713b4ff1a96777a24d3e200b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac589af8729f1ec34512a9bac6ce583be"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ac589af8729f1ec34512a9bac6ce583be">ReadVector</a> (const H5::H5Location &amp;fg, const char *name, unsigned maxNumElements, VectorType &amp;vector)</td></tr>
+<tr class="memdesc:ac589af8729f1ec34512a9bac6ce583be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a Vector from a HDF5 File with the given number of elements.  <a href="#ac589af8729f1ec34512a9bac6ce583be">More...</a><br /></td></tr>
 <tr class="separator:ac589af8729f1ec34512a9bac6ce583be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb93b2743bd8ebcfd81caff94374f46d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#abb93b2743bd8ebcfd81caff94374f46d">ReadVector</a> (const H5::H5Location &amp;fg, const char *name, VectorType &amp;vector)</td></tr>
+<tr class="memdesc:abb93b2743bd8ebcfd81caff94374f46d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a Vector from a HDF5 File.  <a href="#abb93b2743bd8ebcfd81caff94374f46d">More...</a><br /></td></tr>
 <tr class="separator:abb93b2743bd8ebcfd81caff94374f46d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabbf41aed506fe40a61da29893a8f81d"><td class="memTemplParams" colspan="2"><a class="anchor" id="aabbf41aed506fe40a61da29893a8f81d"></a>
 template&lt;class T &gt; </td></tr>
 <tr class="memitem:aabbf41aed506fe40a61da29893a8f81d"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>ReadVectorOfType</b> (const H5::H5Location &amp;fg, const char *name, typename <a class="el" href="structstatismo_1_1GenericEigenTraits.html">GenericEigenTraits</a>&lt; T &gt;::VectorType &amp;vector)</td></tr>
 <tr class="separator:aabbf41aed506fe40a61da29893a8f81d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c087294df667cb61961d0314523e92e"><td class="memItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a4c087294df667cb61961d0314523e92e">WriteVector</a> (const H5::H5Location &amp;fg, const char *name, const VectorType &amp;vector)</td></tr>
+<tr class="memdesc:a4c087294df667cb61961d0314523e92e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a vector to the HDF5 File.  <a href="#a4c087294df667cb61961d0314523e92e">More...</a><br /></td></tr>
 <tr class="separator:a4c087294df667cb61961d0314523e92e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a496d7d3c0187be0f0a8ae34ff8e87e99"><td class="memTemplParams" colspan="2"><a class="anchor" id="a496d7d3c0187be0f0a8ae34ff8e87e99"></a>
 template&lt;class T &gt; </td></tr>
 <tr class="memitem:a496d7d3c0187be0f0a8ae34ff8e87e99"><td class="memTemplItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memTemplItemRight" valign="bottom"><b>WriteVectorOfType</b> (const H5::H5Location &amp;fg, const char *name, const typename <a class="el" href="structstatismo_1_1GenericEigenTraits.html">GenericEigenTraits</a>&lt; T &gt;::VectorType &amp;vector)</td></tr>
 <tr class="separator:a496d7d3c0187be0f0a8ae34ff8e87e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1062a4d7d96c9bf7c97122ae10861f0e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a1062a4d7d96c9bf7c97122ae10861f0e">DumpFileToHDF5</a> (const char *filename, const H5::H5Location &amp;fg, const char *name)</td></tr>
+<tr class="memdesc:a1062a4d7d96c9bf7c97122ae10861f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a file (in binary mode) and saves it as a byte array in the hdf5 file.  <a href="#a1062a4d7d96c9bf7c97122ae10861f0e">More...</a><br /></td></tr>
 <tr class="separator:a1062a4d7d96c9bf7c97122ae10861f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a950952771dab041939e5800b12016bc1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a950952771dab041939e5800b12016bc1">GetFileFromHDF5</a> (const H5::H5Location &amp;fg, const char *name, const char *filename)</td></tr>
+<tr class="memdesc:a950952771dab041939e5800b12016bc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read an entry from an HDF5 byte array and writes it to a file.  <a href="#a950952771dab041939e5800b12016bc1">More...</a><br /></td></tr>
 <tr class="separator:a950952771dab041939e5800b12016bc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf9d37712d4185b1dbd6e518d3746063"><td class="memItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#acf9d37712d4185b1dbd6e518d3746063">WriteString</a> (const H5::H5Location &amp;fg, const char *name, const std::string &amp;s)</td></tr>
+<tr class="memdesc:acf9d37712d4185b1dbd6e518d3746063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a string to the hdf5 file.  <a href="#acf9d37712d4185b1dbd6e518d3746063">More...</a><br /></td></tr>
 <tr class="separator:acf9d37712d4185b1dbd6e518d3746063"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa93af126a2c103181ce33e2265f62572"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#aa93af126a2c103181ce33e2265f62572">ReadString</a> (const H5::H5Location &amp;fg, const char *name)</td></tr>
+<tr class="memdesc:aa93af126a2c103181ce33e2265f62572"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a string from the given group.  <a href="#aa93af126a2c103181ce33e2265f62572">More...</a><br /></td></tr>
 <tr class="separator:aa93af126a2c103181ce33e2265f62572"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9789707b0f2919d44f708993e8a10cb"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#aa9789707b0f2919d44f708993e8a10cb">WriteStringAttribute</a> (const H5::H5Object &amp;fg, const char *name, const std::string &amp;s)</td></tr>
+<tr class="memdesc:aa9789707b0f2919d44f708993e8a10cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a string attribute for the given group.  <a href="#aa9789707b0f2919d44f708993e8a10cb">More...</a><br /></td></tr>
 <tr class="separator:aa9789707b0f2919d44f708993e8a10cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b82afdc6796d1c038cfb1f8a4055fd8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a7b82afdc6796d1c038cfb1f8a4055fd8">WriteIntAttribute</a> (const H5::H5Object &amp;fg, const char *name, int value)</td></tr>
+<tr class="memdesc:a7b82afdc6796d1c038cfb1f8a4055fd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write an int attribute for the given group.  <a href="#a7b82afdc6796d1c038cfb1f8a4055fd8">More...</a><br /></td></tr>
 <tr class="separator:a7b82afdc6796d1c038cfb1f8a4055fd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af821069610dbfe3bd38292e7f1a18eba"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#af821069610dbfe3bd38292e7f1a18eba">ReadStringAttribute</a> (const H5::H5Object &amp;fg, const char *name)</td></tr>
+<tr class="memdesc:af821069610dbfe3bd38292e7f1a18eba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a string attribute from the given group.  <a href="#af821069610dbfe3bd38292e7f1a18eba">More...</a><br /></td></tr>
 <tr class="separator:af821069610dbfe3bd38292e7f1a18eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae60f73020e2314a5065f7bc33bc7a00a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ae60f73020e2314a5065f7bc33bc7a00a">ReadIntAttribute</a> (const H5::H5Object &amp;fg, const char *name)</td></tr>
+<tr class="memdesc:ae60f73020e2314a5065f7bc33bc7a00a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a int attribute from the given group.  <a href="#ae60f73020e2314a5065f7bc33bc7a00a">More...</a><br /></td></tr>
 <tr class="separator:ae60f73020e2314a5065f7bc33bc7a00a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab81669ef2529c87d9e5d0c41fa9ffbde"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ab81669ef2529c87d9e5d0c41fa9ffbde">ReadInt</a> (const H5::H5Location &amp;fg, const char *name)</td></tr>
+<tr class="memdesc:ab81669ef2529c87d9e5d0c41fa9ffbde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read an integer from the hdf5 file.  <a href="#ab81669ef2529c87d9e5d0c41fa9ffbde">More...</a><br /></td></tr>
 <tr class="separator:ab81669ef2529c87d9e5d0c41fa9ffbde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04d82d7bb2091e5951ea468cabefbe2e"><td class="memItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a04d82d7bb2091e5951ea468cabefbe2e">WriteInt</a> (const H5::H5Location &amp;fg, const char *name, int value)</td></tr>
+<tr class="memdesc:a04d82d7bb2091e5951ea468cabefbe2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write an integer to the hdf5 file.  <a href="#a04d82d7bb2091e5951ea468cabefbe2e">More...</a><br /></td></tr>
 <tr class="separator:a04d82d7bb2091e5951ea468cabefbe2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69d30ec9338b7e23a07b64abf3628ab3"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a69d30ec9338b7e23a07b64abf3628ab3">ReadFloat</a> (const H5::H5Location &amp;fg, const char *name)</td></tr>
+<tr class="memdesc:a69d30ec9338b7e23a07b64abf3628ab3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a double from the hdf5 file.  <a href="#a69d30ec9338b7e23a07b64abf3628ab3">More...</a><br /></td></tr>
 <tr class="separator:a69d30ec9338b7e23a07b64abf3628ab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae86d6b683e7ac725b4fd0df1c782c5db"><td class="memItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ae86d6b683e7ac725b4fd0df1c782c5db">WriteFloat</a> (const H5::H5Location &amp;fg, const char *name, float value)</td></tr>
+<tr class="memdesc:ae86d6b683e7ac725b4fd0df1c782c5db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a double to the hdf5 file.  <a href="#ae86d6b683e7ac725b4fd0df1c782c5db">More...</a><br /></td></tr>
 <tr class="separator:ae86d6b683e7ac725b4fd0df1c782c5db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9890d26fd9671f0d7db5bf8c930be79f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9890d26fd9671f0d7db5bf8c930be79f"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a9890d26fd9671f0d7db5bf8c930be79f">ReadArray</a> (const H5::H5Location &amp;fg, const char *name, std::vector&lt; T &gt; &amp;array)</td></tr>
+<tr class="memdesc:a9890d26fd9671f0d7db5bf8c930be79f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read an array from the hdf5 group.  <a href="#a9890d26fd9671f0d7db5bf8c930be79f">More...</a><br /></td></tr>
 <tr class="separator:a9890d26fd9671f0d7db5bf8c930be79f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6995f24c35c0d79a31c849b8d80281a3"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a6995f24c35c0d79a31c849b8d80281a3"><td class="memTemplItemLeft" align="right" valign="top">static H5::DataSet&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#a6995f24c35c0d79a31c849b8d80281a3">WriteArray</a> (const H5::H5Location &amp;fg, const char *name, std::vector&lt; T &gt; const &amp;array)</td></tr>
+<tr class="memdesc:a6995f24c35c0d79a31c849b8d80281a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write an array to the hdf5 group.  <a href="#a6995f24c35c0d79a31c849b8d80281a3">More...</a><br /></td></tr>
 <tr class="separator:a6995f24c35c0d79a31c849b8d80281a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae86bba074cdd9eb471954f5b8412bd5b"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ae86bba074cdd9eb471954f5b8412bd5b">ExistsObjectWithName</a> (const H5::H5Location &amp;fg, const std::string &amp;name)</td></tr>
+<tr class="memitem:ae86bba074cdd9eb471954f5b8412bd5b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae86bba074cdd9eb471954f5b8412bd5b"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1HDF5Utils.html#ae86bba074cdd9eb471954f5b8412bd5b">ExistsObjectWithName</a> (const H5::H5Location &amp;fg, const std::string &amp;name)</td></tr>
+<tr class="memdesc:ae86bba074cdd9eb471954f5b8412bd5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether an object (direct child) of fg with the given name exists. <br /></td></tr>
 <tr class="separator:ae86bba074cdd9eb471954f5b8412bd5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Wrapper class that gathers HDF5 utilities. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a1062a4d7d96c9bf7c97122ae10861f0e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -201,49 +234,16 @@ template&lt;class T &gt; </td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads a file (in binary mode) and saves it as a byte array in the hdf5 file. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a file (in binary mode) and saves it as a byte array in the hdf5 file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filename</td><td>The filename of the file to be stored </td></tr>
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the entry </td></tr>
+    <tr><td class="paramname">filename</td><td>filename of the file to be stored </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a class="anchor" id="ae86bba074cdd9eb471954f5b8412bd5b"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool statismo::HDF5Utils::ExistsObjectWithName </td>
-          <td>(</td>
-          <td class="paramtype">const H5::H5Location &amp;&#160;</td>
-          <td class="paramname"><em>fg</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Check whether an object (direct child) of fg with the given name exists </p>
 
 </div>
 </div>
@@ -284,11 +284,13 @@ template&lt;class T &gt; </td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads an entry from an HDF5 byte array and Writes it to a file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read an entry from an HDF5 byte array and writes it to a file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry </td></tr>
-    <tr><td class="paramname">filename</td><td>The filename where the data from the HDF5 file is stored. </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">filename</td><td>filename where the data from the HDF5 file is stored </td></tr>
   </table>
   </dd>
 </dl>
@@ -316,7 +318,14 @@ template&lt;class T &gt; </td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Opens the hdf5 file with the given name, or creates it if the file does not exist </p>
+
+<p>Open or create hdf5. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>Path to the file </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -357,11 +366,13 @@ template&lt;class T &gt; </td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Opens the hdf5 group or creates it if it doesn't exist. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Opens the hdf5 group or creates it if it doesn't exist. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">file</td><td>A file object </td></tr>
-    <tr><td class="paramname">path</td><td>An absolute path that defines a group </td></tr>
-    <tr><td class="paramname">createPath</td><td>if true, creates the path if it does not exist</td></tr>
+    <tr><td class="paramname">file</td><td>file object </td></tr>
+    <tr><td class="paramname">path</td><td>absolute path that defines a group </td></tr>
+    <tr><td class="paramname">createPath</td><td>if true, creates the path if it does not exist </td></tr>
   </table>
   </dd>
 </dl>
@@ -408,11 +419,13 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads an array from the hdf5 group </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read an array from the hdf5 group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name </td></tr>
-    <tr><td class="paramname">array</td><td>The array (type std::vector&lt;T&gt;) to be Read, contents will be lost </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">array</td><td>output array </td></tr>
   </table>
   </dd>
 </dl>
@@ -450,14 +463,15 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads an dobule from the hdf5 file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a double from the hdf5 file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the Read number </dd></dl>
 
 </div>
 </div>
@@ -492,14 +506,15 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads an integer from the hdf5 file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read an integer from the hdf5 file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the integeter </dd></dl>
 
 </div>
 </div>
@@ -534,14 +549,15 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads a int attribute from the given group </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Reads a int attribute from the given group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>the hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry in the group </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry in the group </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the value </dd></dl>
 
 </div>
 </div>
@@ -582,11 +598,13 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Read a Matrix from a HDF5 File </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a Matrix from a HDF5 group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The group </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the entry </td></tr>
-    <tr><td class="paramname">matrix</td><td>The output matrix </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">matrix</td><td>output matrix </td></tr>
   </table>
   </dd>
 </dl>
@@ -636,12 +654,14 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Read a submatrix from the file, with the given number of Columns </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a submatrix from the file, with the given number of columns. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The group </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the entry </td></tr>
-    <tr><td class="paramname">maxNumColumns</td><td>The number of columns to be Read </td></tr>
-    <tr><td class="paramname">matrix</td><td>The output matrix </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">maxNumColumns</td><td>number of columns to be read </td></tr>
+    <tr><td class="paramname">matrix</td><td>output matrix </td></tr>
   </table>
   </dd>
 </dl>
@@ -687,11 +707,13 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Read a Matrix of a given type from a HDF5 File </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a Matrix of a given type from a HDF5 File. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The group </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the entry </td></tr>
-    <tr><td class="paramname">matrix</td><td>The output matrix </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">matrix</td><td>output matrix </td></tr>
   </table>
   </dd>
 </dl>
@@ -729,14 +751,15 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads a string from the given group </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a string from the given group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>the hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry in the group </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the string </dd></dl>
 
 </div>
 </div>
@@ -771,14 +794,15 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads a string attribute from the given group </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a string attribute from the given group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>the hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry in the group </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the value </dd></dl>
 
 </div>
 </div>
@@ -825,12 +849,14 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Read a Vector from a HDF5 File with the given number of elements </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a Vector from a HDF5 File with the given number of elements. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry </td></tr>
-    <tr><td class="paramname">maxNumElements</td><td>The number of elements to be Read from the file </td></tr>
-    <tr><td class="paramname">vector</td><td>the output vector </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">maxNumElements</td><td>number of elements to be read from the file </td></tr>
+    <tr><td class="paramname">vector</td><td>output vector </td></tr>
   </table>
   </dd>
 </dl>
@@ -874,11 +900,13 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Read a Vector from a HDF5 File </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read a Vector from a HDF5 File. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry </td></tr>
-    <tr><td class="paramname">vector</td><td>the output vector </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">vector</td><td>output vector </td></tr>
   </table>
   </dd>
 </dl>
@@ -924,11 +952,13 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Writes an array to the hdf5 group </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write an array to the hdf5 group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name </td></tr>
-    <tr><td class="paramname">array</td><td>The array (type std::vector&lt;T&gt;) to be written </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">array</td><td>array to be written </td></tr>
   </table>
   </dd>
 </dl>
@@ -972,11 +1002,13 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Writes an double to the hdf5 file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write a double to the hdf5 file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name </td></tr>
-    <tr><td class="paramname">value</td><td>The value to be written </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">value</td><td>value to be written </td></tr>
   </table>
   </dd>
 </dl>
@@ -1020,10 +1052,12 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Writes an integer to the hdf5 file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write an integer to the hdf5 file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
     <tr><td class="paramname">value</td><td>The value to be written </td></tr>
   </table>
   </dd>
@@ -1068,11 +1102,13 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Writes an int attribute for the given group </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write an int attribute for the given group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the entry in the group </td></tr>
-    <tr><td class="paramname">value</td><td>the int value to be written </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">value</td><td>int value to be written </td></tr>
   </table>
   </dd>
 </dl>
@@ -1116,10 +1152,12 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Write a Matrix to the HDF5 File </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write a Matrix to the HDF5 File. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
     <tr><td class="paramname">matrix</td><td>to be written </td></tr>
   </table>
   </dd>
@@ -1166,10 +1204,12 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Write a Matrix of the given type to the HDF5 File </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write a Matrix of the given type to the HDF5 File. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
     <tr><td class="paramname">matrix</td><td>to be written </td></tr>
   </table>
   </dd>
@@ -1214,11 +1254,13 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Writes a string to the hdf5 file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write a string to the hdf5 file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the entry in the group </td></tr>
-    <tr><td class="paramname">s</td><td>The string to be written </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry in the group </td></tr>
+    <tr><td class="paramname">s</td><td>string to be written </td></tr>
   </table>
   </dd>
 </dl>
@@ -1262,11 +1304,13 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Writes a string attribute for the given group </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write a string attribute for the given group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the entry in the group </td></tr>
-    <tr><td class="paramname">s</td><td>The string to be written </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
+    <tr><td class="paramname">s</td><td>string to be written </td></tr>
   </table>
   </dd>
 </dl>
@@ -1310,10 +1354,12 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Write a vector to the HDF5 File </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write a vector to the HDF5 File. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fg</td><td>The hdf5 group </td></tr>
-    <tr><td class="paramname">name</td><td>the name of the entry </td></tr>
+    <tr><td class="paramname">fg</td><td>hdf5 group </td></tr>
+    <tr><td class="paramname">name</td><td>name of the entry </td></tr>
     <tr><td class="paramname">vector</td><td>to be written </td></tr>
   </table>
   </dd>

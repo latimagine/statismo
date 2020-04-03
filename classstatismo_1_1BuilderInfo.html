@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -96,11 +96,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#friends">Friends</a> &#124;
 <a href="classstatismo_1_1BuilderInfo-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">statismo::BuilderInfo Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
+<div class="title">statismo::BuilderInfo Class Reference<span class="mlabels"><span class="mlabel">final</span></span><div class="ingroups"><a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Holds information about the data and the parameters used by a specific modelbuilder.  
+<p>Store meta information about the model.  
  <a href="classstatismo_1_1BuilderInfo.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ModelInfo_8h_source.html">ModelInfo.h</a>&gt;</code></p>
@@ -122,20 +122,27 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>ParameterInfoList</b
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3d8b7304a1c4dfed259e258c8fe1361a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#a3d8b7304a1c4dfed259e258c8fe1361a">BuilderInfo</a> (std::string modelBuilderName, std::string buildTime, DataInfoList di, ParameterInfoList pi)</td></tr>
+<tr class="memitem:a3d8b7304a1c4dfed259e258c8fe1361a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d8b7304a1c4dfed259e258c8fe1361a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BuilderInfo</b> (std::string modelBuilderName, std::string buildTime, DataInfoList di, ParameterInfoList pi)</td></tr>
 <tr class="separator:a3d8b7304a1c4dfed259e258c8fe1361a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cd4299a3b0ef1bc9a3049ae0148cadf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5cd4299a3b0ef1bc9a3049ae0148cadf"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BuilderInfo</b> (std::string modelBuilderName, DataInfoList di, ParameterInfoList pi)</td></tr>
 <tr class="separator:a5cd4299a3b0ef1bc9a3049ae0148cadf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a373e13a38b24f9418ab7963579c9f1a4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#a373e13a38b24f9418ab7963579c9f1a4">BuilderInfo</a> ()=default</td></tr>
-<tr class="separator:a373e13a38b24f9418ab7963579c9f1a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58ebd7e460cab0bd8dc5ae80651d2c90"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#a58ebd7e460cab0bd8dc5ae80651d2c90">Save</a> (const H5::H5Location &amp;modelBuilderGroup) const </td></tr>
+<tr class="memitem:a58ebd7e460cab0bd8dc5ae80651d2c90"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a58ebd7e460cab0bd8dc5ae80651d2c90"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#a58ebd7e460cab0bd8dc5ae80651d2c90">Save</a> (const H5::H5Location &amp;modelBuilderGroup) const </td></tr>
+<tr class="memdesc:a58ebd7e460cab0bd8dc5ae80651d2c90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save builder info to an hdf5 group. <br /></td></tr>
 <tr class="separator:a58ebd7e460cab0bd8dc5ae80651d2c90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e00552890b03c7fa97871d975e5bf1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#a7e00552890b03c7fa97871d975e5bf1b">Load</a> (const H5::H5Location &amp;modelBuilderGroup)</td></tr>
+<tr class="memitem:a7e00552890b03c7fa97871d975e5bf1b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e00552890b03c7fa97871d975e5bf1b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#a7e00552890b03c7fa97871d975e5bf1b">Load</a> (const H5::H5Location &amp;modelBuilderGroup)</td></tr>
+<tr class="memdesc:a7e00552890b03c7fa97871d975e5bf1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load builder info from an hdf5 group. <br /></td></tr>
 <tr class="separator:a7e00552890b03c7fa97871d975e5bf1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae02d9bbbb04d408e468b86f261248656"><td class="memItemLeft" align="right" valign="top">const DataInfoList &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#ae02d9bbbb04d408e468b86f261248656">GetDataInfo</a> () const </td></tr>
+<tr class="memitem:ae02d9bbbb04d408e468b86f261248656"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae02d9bbbb04d408e468b86f261248656"></a>
+const DataInfoList &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#ae02d9bbbb04d408e468b86f261248656">GetDataInfo</a> () const </td></tr>
+<tr class="memdesc:ae02d9bbbb04d408e468b86f261248656"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the data info. <br /></td></tr>
 <tr class="separator:ae02d9bbbb04d408e468b86f261248656"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcadf7806a4d5092913e5651bc092386"><td class="memItemLeft" align="right" valign="top">const ParameterInfoList &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#adcadf7806a4d5092913e5651bc092386">GetParameterInfo</a> () const </td></tr>
+<tr class="memitem:adcadf7806a4d5092913e5651bc092386"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcadf7806a4d5092913e5651bc092386"></a>
+const ParameterInfoList &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1BuilderInfo.html#adcadf7806a4d5092913e5651bc092386">GetParameterInfo</a> () const </td></tr>
+<tr class="memdesc:adcadf7806a4d5092913e5651bc092386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the parameter info. <br /></td></tr>
 <tr class="separator:adcadf7806a4d5092913e5651bc092386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -145,139 +152,12 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>ModelInfo</b></td></
 <tr class="separator:a9e5ba9407d294997890e902998e9b680"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Holds information about the data and the parameters used by a specific modelbuilder. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a3d8b7304a1c4dfed259e258c8fe1361a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">statismo::BuilderInfo::BuilderInfo </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>modelBuilderName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>buildTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">BuilderInfo::DataInfoList&#160;</td>
-          <td class="paramname"><em>di</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">BuilderInfo::ParameterInfoList&#160;</td>
-          <td class="paramname"><em>pi</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Creates a new <a class="el" href="classstatismo_1_1BuilderInfo.html" title="Holds information about the data and the parameters used by a specific modelbuilder. ">BuilderInfo</a> object with the given information </p>
-
-</div>
-</div>
-<a class="anchor" id="a373e13a38b24f9418ab7963579c9f1a4"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">statismo::BuilderInfo::BuilderInfo </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Create a new, empty BilderInfo object </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ae02d9bbbb04d408e468b86f261248656"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const BuilderInfo::DataInfoList &amp; statismo::BuilderInfo::GetDataInfo </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Returns the data info </p>
-
-</div>
-</div>
-<a class="anchor" id="adcadf7806a4d5092913e5651bc092386"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const BuilderInfo::ParameterInfoList &amp; statismo::BuilderInfo::GetParameterInfo </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Returns the parameter info </p>
-
-</div>
-</div>
-<a class="anchor" id="a7e00552890b03c7fa97871d975e5bf1b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void statismo::BuilderInfo::Load </td>
-          <td>(</td>
-          <td class="paramtype">const H5::H5Location &amp;&#160;</td>
-          <td class="paramname"><em>modelBuilderGroup</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Loads the builder info from the given group in the HDF5 file. </p>
-
-</div>
-</div>
-<a class="anchor" id="a58ebd7e460cab0bd8dc5ae80651d2c90"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void statismo::BuilderInfo::Save </td>
-          <td>(</td>
-          <td class="paramtype">const H5::H5Location &amp;&#160;</td>
-          <td class="paramname"><em>modelBuilderGroup</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Saves the builder info to the given group in the HDF5 file </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<div class="textblock"><p>Store meta information about the model. </p>
+<p>Meta information consists of:</p><ul>
+<li>the name (uri) of the datasets used to build the models,</li>
+<li>specific parameters of the builders </li>
+</ul>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>modules/core/include/statismo/core/<a class="el" href="ModelInfo_8h_source.html">ModelInfo.h</a></li>
 <li>modules/core/src/ModelInfo.cxx</li>
 </ul>

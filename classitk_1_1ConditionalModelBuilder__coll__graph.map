@@ -1,4 +1,4 @@
 <map id="itk::ConditionalModelBuilder&lt; Representer &gt;" name="itk::ConditionalModelBuilder&lt; Representer &gt;">
 <area shape="rect" id="node3" href="$classstatismo_1_1ImplWrapper.html" title="statismo::ImplWrapper\l\&lt; statismo::ConditionalModel\lBuilder\&lt; Representer \&gt;, statismo\l::SafeInitializer \&gt;" alt="" coords="212,57,427,127"/>
-<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,79,164,105"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="5,79,164,105"/>
 </map>

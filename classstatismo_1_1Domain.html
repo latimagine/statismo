@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -95,9 +95,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classstatismo_1_1Domain-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">statismo::Domain&lt; PointType &gt; Class Template Reference</div>  </div>
+<div class="title">statismo::Domain&lt; PointType &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents the domain on which a statistical model is defined.  
+ <a href="classstatismo_1_1Domain.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Domain_8h_source.html">Domain.h</a>&gt;</code></p>
 <table class="memberdecls">
@@ -109,157 +112,34 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>DomainPointsListType
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acb2d56433f9faf54dce9eb77678d37ee"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#acb2d56433f9faf54dce9eb77678d37ee">Domain</a> ()=default</td></tr>
+<tr class="memitem:acb2d56433f9faf54dce9eb77678d37ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb2d56433f9faf54dce9eb77678d37ee"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#acb2d56433f9faf54dce9eb77678d37ee">Domain</a> ()=default</td></tr>
+<tr class="memdesc:acb2d56433f9faf54dce9eb77678d37ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an empty domain. <br /></td></tr>
 <tr class="separator:acb2d56433f9faf54dce9eb77678d37ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab34e78976593ec10800311d8deb25ada"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#ab34e78976593ec10800311d8deb25ada">Domain</a> (DomainPointsListType domainPoints)</td></tr>
+<tr class="memitem:ab34e78976593ec10800311d8deb25ada"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab34e78976593ec10800311d8deb25ada"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#ab34e78976593ec10800311d8deb25ada">Domain</a> (DomainPointsListType domainPoints)</td></tr>
+<tr class="memdesc:ab34e78976593ec10800311d8deb25ada"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new domain from the given list of points (copy version) <br /></td></tr>
 <tr class="separator:ab34e78976593ec10800311d8deb25ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e41837a73a9b62f03826a4ecafc0e08"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#a3e41837a73a9b62f03826a4ecafc0e08">Domain</a> (DomainPointsListType &amp;&amp;domainPoints)</td></tr>
+<tr class="memitem:a3e41837a73a9b62f03826a4ecafc0e08"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e41837a73a9b62f03826a4ecafc0e08"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#a3e41837a73a9b62f03826a4ecafc0e08">Domain</a> (DomainPointsListType &amp;&amp;domainPoints)</td></tr>
+<tr class="memdesc:a3e41837a73a9b62f03826a4ecafc0e08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new domain from the given list of points (move version) <br /></td></tr>
 <tr class="separator:a3e41837a73a9b62f03826a4ecafc0e08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f6efc08080b48be4838812d366b06b9"><td class="memItemLeft" align="right" valign="top">DomainPointsListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#a0f6efc08080b48be4838812d366b06b9">GetDomainPoints</a> () const </td></tr>
+<tr class="memitem:a0f6efc08080b48be4838812d366b06b9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f6efc08080b48be4838812d366b06b9"></a>
+DomainPointsListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#a0f6efc08080b48be4838812d366b06b9">GetDomainPoints</a> () const </td></tr>
+<tr class="memdesc:a0f6efc08080b48be4838812d366b06b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of points that define the domain. <br /></td></tr>
 <tr class="separator:a0f6efc08080b48be4838812d366b06b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f9577d4d780c9ee4d5026e9ba81e2ad"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#a0f9577d4d780c9ee4d5026e9ba81e2ad">GetNumberOfPoints</a> () const </td></tr>
+<tr class="memitem:a0f9577d4d780c9ee4d5026e9ba81e2ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f9577d4d780c9ee4d5026e9ba81e2ad"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Domain.html#a0f9577d4d780c9ee4d5026e9ba81e2ad">GetNumberOfPoints</a> () const </td></tr>
+<tr class="memdesc:a0f9577d4d780c9ee4d5026e9ba81e2ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of points of the domain. <br /></td></tr>
 <tr class="separator:a0f9577d4d780c9ee4d5026e9ba81e2ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename PointType&gt;<br />
 class statismo::Domain&lt; PointType &gt;</h3>
 
-<p>This class represents the domain on which a statistical model is defined. A domain is simply a list of points. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="acb2d56433f9faf54dce9eb77678d37ee"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename PointType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classstatismo_1_1Domain.html">statismo::Domain</a>&lt; PointType &gt;::<a class="el" href="classstatismo_1_1Domain.html">Domain</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Create an empty domain </p>
-
-</div>
-</div>
-<a class="anchor" id="ab34e78976593ec10800311d8deb25ada"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename PointType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classstatismo_1_1Domain.html">statismo::Domain</a>&lt; PointType &gt;::<a class="el" href="classstatismo_1_1Domain.html">Domain</a> </td>
-          <td>(</td>
-          <td class="paramtype">DomainPointsListType&#160;</td>
-          <td class="paramname"><em>domainPoints</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Create a new domain from the given list of points (copy version) </p>
-
-</div>
-</div>
-<a class="anchor" id="a3e41837a73a9b62f03826a4ecafc0e08"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename PointType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classstatismo_1_1Domain.html">statismo::Domain</a>&lt; PointType &gt;::<a class="el" href="classstatismo_1_1Domain.html">Domain</a> </td>
-          <td>(</td>
-          <td class="paramtype">DomainPointsListType &amp;&amp;&#160;</td>
-          <td class="paramname"><em>domainPoints</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Create a new domain from the given list of points (move version) </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a0f6efc08080b48be4838812d366b06b9"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename PointType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">DomainPointsListType <a class="el" href="classstatismo_1_1Domain.html">statismo::Domain</a>&lt; PointType &gt;::GetDomainPoints </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns a list of points that define the domain </p>
-
-</div>
-</div>
-<a class="anchor" id="a0f9577d4d780c9ee4d5026e9ba81e2ad"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename PointType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::size_t <a class="el" href="classstatismo_1_1Domain.html">statismo::Domain</a>&lt; PointType &gt;::GetNumberOfPoints </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns the number of points of the domain </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<p>Represents the domain on which a statistical model is defined. </p>
+<p>A domain is simply a list of points. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>modules/core/include/statismo/core/<a class="el" href="Domain_8h_source.html">Domain.h</a></li>
 </ul>
 </div><!-- contents -->

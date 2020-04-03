@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -95,9 +95,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classstatismo_1_1Clonable-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">statismo::Clonable&lt; Derived &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
+<div class="title">statismo::Clonable&lt; Derived &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span><div class="ingroups"><a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Base class for class in hierarchy that needs copy/assign capabilities.  
+ <a href="classstatismo_1_1Clonable.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Clonable_8h_source.html">Clonable.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -110,15 +115,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a98083a0ab081a418334df5ed5b7eb273"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98083a0ab081a418334df5ed5b7eb273"></a>
 <a class="el" href="classstatismo_1_1Clonable.html">Clonable</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classstatismo_1_1Clonable.html">Clonable</a> &amp;)=delete</td></tr>
 <tr class="separator:a98083a0ab081a418334df5ed5b7eb273"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a271938a1772c0313166eb917fce3cb66"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a271938a1772c0313166eb917fce3cb66"></a>
-Derived *&#160;</td><td class="memItemRight" valign="bottom"><b>CloneSelf</b> () const </td></tr>
+<tr class="memitem:a271938a1772c0313166eb917fce3cb66"><td class="memItemLeft" align="right" valign="top">Derived *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Clonable.html#a271938a1772c0313166eb917fce3cb66">CloneSelf</a> () const </td></tr>
+<tr class="memdesc:a271938a1772c0313166eb917fce3cb66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone object.  <a href="#a271938a1772c0313166eb917fce3cb66">More...</a><br /></td></tr>
 <tr class="separator:a271938a1772c0313166eb917fce3cb66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3394a73a1ce52891d00c448be8e7f32a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3394a73a1ce52891d00c448be8e7f32a"></a>
-UniquePtrType&lt; Derived &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SafeCloneSelf</b> () const </td></tr>
+<tr class="memitem:a3394a73a1ce52891d00c448be8e7f32a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__Core.html#ga1bd20b8b2fb3b4dd582df27b4b0fcb06">UniquePtrType</a>&lt; Derived &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Clonable.html#a3394a73a1ce52891d00c448be8e7f32a">SafeCloneSelf</a> () const </td></tr>
+<tr class="memdesc:a3394a73a1ce52891d00c448be8e7f32a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone object.  <a href="#a3394a73a1ce52891d00c448be8e7f32a">More...</a><br /></td></tr>
 <tr class="separator:a3394a73a1ce52891d00c448be8e7f32a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1766ba455b74985db7ca4f0bdf2bde54"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1766ba455b74985db7ca4f0bdf2bde54"></a>
-template&lt;typename Deletor &gt; </td></tr>
-<tr class="memitem:a1766ba455b74985db7ca4f0bdf2bde54"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; Derived, Deletor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SafeCloneSelfWithCustomDeletor</b> () const </td></tr>
+<tr class="memitem:a1766ba455b74985db7ca4f0bdf2bde54"><td class="memTemplParams" colspan="2">template&lt;typename Deletor &gt; </td></tr>
+<tr class="memitem:a1766ba455b74985db7ca4f0bdf2bde54"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; Derived, Deletor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Clonable.html#a1766ba455b74985db7ca4f0bdf2bde54">SafeCloneSelfWithCustomDeletor</a> () const </td></tr>
+<tr class="memdesc:a1766ba455b74985db7ca4f0bdf2bde54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone object.  <a href="#a1766ba455b74985db7ca4f0bdf2bde54">More...</a><br /></td></tr>
 <tr class="separator:a1766ba455b74985db7ca4f0bdf2bde54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
@@ -127,6 +132,104 @@ Protected Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Clonable</b> (const <a class="el" href="classstatismo_1_1Clonable.html">Clonable</a> &amp;)=default</td></tr>
 <tr class="separator:a0a66b7587442b4df80039a254ef69798"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename Derived&gt;<br />
+class statismo::Clonable&lt; Derived &gt;</h3>
+
+<p>Base class for class in hierarchy that needs copy/assign capabilities. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a271938a1772c0313166eb917fce3cb66"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Derived* <a class="el" href="classstatismo_1_1Clonable.html">statismo::Clonable</a>&lt; Derived &gt;::CloneSelf </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clone object. </p>
+<dl class="section return"><dt>Returns</dt><dd>Object cloned as a raw pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3394a73a1ce52891d00c448be8e7f32a"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__Core.html#ga1bd20b8b2fb3b4dd582df27b4b0fcb06">UniquePtrType</a>&lt;Derived&gt; <a class="el" href="classstatismo_1_1Clonable.html">statismo::Clonable</a>&lt; Derived &gt;::SafeCloneSelf </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clone object. </p>
+<dl class="section return"><dt>Returns</dt><dd>Object cloned as a unique pointer with internal default deletor </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1766ba455b74985db7ca4f0bdf2bde54"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived&gt; </div>
+<div class="memtemplate">
+template&lt;typename Deletor &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt;Derived, Deletor&gt; <a class="el" href="classstatismo_1_1Clonable.html">statismo::Clonable</a>&lt; Derived &gt;::SafeCloneSelfWithCustomDeletor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clone object. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Deletor</td><td>Custom deletor for the returned unique pointer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object cloned as a unique pointer </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>modules/core/include/statismo/core/<a class="el" href="Clonable_8h_source.html">Clonable.h</a></li>
 </ul>

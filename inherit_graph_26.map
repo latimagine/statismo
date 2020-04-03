@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classstatismo_1_1Domain.html" title="statismo::Domain\&lt; PointType \&gt;" alt="" coords="5,5,213,32"/>
+<area shape="rect" id="node1" href="$classstatismo_1_1Clonable.html" title="statismo::Clonable\l\&lt; Representer\&lt; vtkPolyData \&gt; \&gt;" alt="" coords="5,5,219,47"/>
+<area shape="rect" id="node2" href="$classstatismo_1_1Representer.html" title="statismo::Representer\l\&lt; vtkPolyData \&gt;" alt="" coords="301,5,451,47"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1RepresenterBase.html" title="statismo::RepresenterBase\l\&lt; vtkPolyData, vtkStandardMesh\lRepresenter \&gt;" alt="" coords="533,31,749,87"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1vtkStandardMeshRepresenter.html" title="Representer for vtkPolyData, which stores the representer data in the standard mesh format defined fo..." alt="" coords="797,39,980,80"/>
+<area shape="rect" id="node5" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; vtkStandardMeshRepresenter \&gt;" alt="" coords="267,71,485,112"/>
 </map>

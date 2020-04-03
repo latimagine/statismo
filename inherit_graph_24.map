@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structstatismo_1_1details_1_1TranslateImpl.html" title="statismo::details::\lTranslateImpl\&lt; Callable, R \&gt;" alt="" coords="5,5,196,47"/>
+<area shape="rect" id="node1" href="$classstatismo_1_1Clonable.html" title="statismo::Clonable\l\&lt; Representer\&lt; statismo\l::VectorType \&gt; \&gt;" alt="" coords="5,5,172,61"/>
+<area shape="rect" id="node2" href="$classstatismo_1_1Representer.html" title="statismo::Representer\l\&lt; statismo::VectorType \&gt;" alt="" coords="236,13,407,54"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1RepresenterBase.html" title="statismo::RepresenterBase\l\&lt; statismo::VectorType,\l TrivialVectorialRepresenter \&gt;" alt="" coords="471,39,665,95"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1TrivialVectorialRepresenter.html" title="A trivial representer, that does no representation at all, but works directly with vectorial data..." alt="" coords="713,46,880,87"/>
+<area shape="rect" id="node5" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; TrivialVectorialRepresenter \&gt;" alt="" coords="220,78,423,119"/>
 </map>

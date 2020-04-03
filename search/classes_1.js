@@ -10,6 +10,5 @@ var searchData=
   ['clonable_3c_20representer_3c_20vtkunstructuredgrid_20_3e_20_3e',['Clonable&lt; Representer&lt; vtkUnstructuredGrid &gt; &gt;',['../classstatismo_1_1Clonable.html',1,'statismo']]],
   ['conditionalmodelbuilder',['ConditionalModelBuilder',['../classitk_1_1ConditionalModelBuilder.html',1,'itk']]],
   ['conditionalmodelbuilder',['ConditionalModelBuilder',['../classstatismo_1_1ConditionalModelBuilder.html',1,'statismo']]],
-  ['consoleoutputsilencer',['ConsoleOutputSilencer',['../classstatismo_1_1cli_1_1ConsoleOutputSilencer.html',1,'statismo::cli']]],
   ['crossvalidationfold',['CrossValidationFold',['../classstatismo_1_1CrossValidationFold.html',1,'statismo']]]
 ];

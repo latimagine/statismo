@@ -1,6 +1,6 @@
 <map id="statismo::PosteriorModelBuilder&lt; T &gt;" name="statismo::PosteriorModelBuilder&lt; T &gt;">
 <area shape="rect" id="node2" href="$classstatismo_1_1ModelBuilderBase.html" title="statismo::ModelBuilderBase\l\&lt; T, PosteriorModelBuilder\&lt; T \&gt; \&gt;" alt="" coords="465,27,687,69"/>
-<area shape="rect" id="node3" href="$classstatismo_1_1ModelBuilder.html" title="Common base class for all the model builder classes. " alt="" coords="221,5,408,32"/>
-<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="statismo::NonCopyable" alt="" coords="5,5,164,32"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1ModelBuilder.html" title="Base abstract class for model builders. " alt="" coords="221,5,408,32"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1NonCopyable.html" title="Base class for non copyable classes. " alt="" coords="5,5,164,32"/>
 <area shape="rect" id="node5" href="$classstatismo_1_1GenericFactory.html" title="statismo::GenericFactory\l\&lt; PosteriorModelBuilder\&lt; T \&gt; \&gt;" alt="" coords="212,57,417,98"/>
 </map>

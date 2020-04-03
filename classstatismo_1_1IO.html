@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -99,7 +99,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="classstatismo_1_1IO.html" title="The IO class is used to Load() and or Save() a StatisticalModel. The Load and Save functions are stat...">IO</a> class is used to Load() and or Save() a <a class="el" href="classstatismo_1_1StatisticalModel.html" title="Representation of a linear statistical model (PCA Model). ">StatisticalModel</a>. The Load and Save functions are static and as such there's no need to create an instance of this class.  
+<p>The <a class="el" href="classstatismo_1_1IO.html" title="The IO class is used to Load/Save a StatisticalModel. ">IO</a> class is used to Load/Save a <a class="el" href="classstatismo_1_1StatisticalModel.html" title="Representation of a linear statistical model (PCA Model). ">StatisticalModel</a>.  
  <a href="classstatismo_1_1IO.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="IO_8h_source.html">IO.h</a>&gt;</code></p>
@@ -112,24 +112,34 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>StatisticalModelType
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a3860df9b063ae24327faebaaad03d4bf"><td class="memItemLeft" align="right" valign="top">static UniquePtrType&lt; <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1IO.html#a3860df9b063ae24327faebaaad03d4bf">LoadStatisticalModel</a> (typename <a class="el" href="classstatismo_1_1Representer.html">StatisticalModelType::RepresenterType</a> *representer, const std::string &amp;filename, unsigned maxNumberOfPCAComponents=std::numeric_limits&lt; unsigned &gt;::max())</td></tr>
+<tr class="memitem:a3860df9b063ae24327faebaaad03d4bf"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="group__Core.html#ga1bd20b8b2fb3b4dd582df27b4b0fcb06">UniquePtrType</a>&lt; <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1IO.html#a3860df9b063ae24327faebaaad03d4bf">LoadStatisticalModel</a> (typename <a class="el" href="classstatismo_1_1Representer.html">StatisticalModelType::RepresenterType</a> *representer, const std::string &amp;filename, unsigned maxNumberOfPCAComponents=std::numeric_limits&lt; unsigned &gt;::max())</td></tr>
+<tr class="memdesc:a3860df9b063ae24327faebaaad03d4bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load statistical model from file.  <a href="#a3860df9b063ae24327faebaaad03d4bf">More...</a><br /></td></tr>
 <tr class="separator:a3860df9b063ae24327faebaaad03d4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b1fe99b060e68d58080cf3f9696dda6"><td class="memItemLeft" align="right" valign="top">static UniquePtrType&lt; <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1IO.html#a8b1fe99b060e68d58080cf3f9696dda6">LoadStatisticalModel</a> (typename <a class="el" href="classstatismo_1_1Representer.html">StatisticalModelType::RepresenterType</a> *representer, const H5::Group &amp;modelRoot, unsigned maxNumberOfPCAComponents=std::numeric_limits&lt; unsigned &gt;::max())</td></tr>
+<tr class="memitem:a8b1fe99b060e68d58080cf3f9696dda6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="group__Core.html#ga1bd20b8b2fb3b4dd582df27b4b0fcb06">UniquePtrType</a>&lt; <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1IO.html#a8b1fe99b060e68d58080cf3f9696dda6">LoadStatisticalModel</a> (typename <a class="el" href="classstatismo_1_1Representer.html">StatisticalModelType::RepresenterType</a> *representer, const H5::Group &amp;modelRoot, unsigned maxNumberOfPCAComponents=std::numeric_limits&lt; unsigned &gt;::max())</td></tr>
+<tr class="memdesc:a8b1fe99b060e68d58080cf3f9696dda6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load statistical model from group.  <a href="#a8b1fe99b060e68d58080cf3f9696dda6">More...</a><br /></td></tr>
 <tr class="separator:a8b1fe99b060e68d58080cf3f9696dda6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe951a1a2727dc9ce87b26d0df421dde"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1IO.html#afe951a1a2727dc9ce87b26d0df421dde">SaveStatisticalModel</a> (const <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> *const model, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:afe951a1a2727dc9ce87b26d0df421dde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the statistical model to a HDF5 file.  <a href="#afe951a1a2727dc9ce87b26d0df421dde">More...</a><br /></td></tr>
 <tr class="separator:afe951a1a2727dc9ce87b26d0df421dde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af91a954a4ee68efb8c4f5345ecbf8169"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1IO.html#af91a954a4ee68efb8c4f5345ecbf8169">SaveStatisticalModel</a> (const <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> &amp;model, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:af91a954a4ee68efb8c4f5345ecbf8169"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save statistical model.  <a href="#af91a954a4ee68efb8c4f5345ecbf8169">More...</a><br /></td></tr>
 <tr class="separator:af91a954a4ee68efb8c4f5345ecbf8169"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbf445484bc328caa7e636b92d5d1c8c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1IO.html#acbf445484bc328caa7e636b92d5d1c8c">SaveStatisticalModel</a> (const <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> &amp;model, const H5::Group &amp;modelRoot)</td></tr>
+<tr class="memdesc:acbf445484bc328caa7e636b92d5d1c8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save statistical model to the given HDF5 group.  <a href="#acbf445484bc328caa7e636b92d5d1c8c">More...</a><br /></td></tr>
 <tr class="separator:acbf445484bc328caa7e636b92d5d1c8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class statismo::IO&lt; T &gt;</h3>
 
-<p>The <a class="el" href="classstatismo_1_1IO.html" title="The IO class is used to Load() and or Save() a StatisticalModel. The Load and Save functions are stat...">IO</a> class is used to Load() and or Save() a <a class="el" href="classstatismo_1_1StatisticalModel.html" title="Representation of a linear statistical model (PCA Model). ">StatisticalModel</a>. The Load and Save functions are static and as such there's no need to create an instance of this class. </p>
-<p>The Template parameter is the same as the one of the <a class="el" href="classstatismo_1_1StatisticalModel.html" title="Representation of a linear statistical model (PCA Model). ">StatisticalModel</a> class.</p>
-<dl class="section note"><dt>Note</dt><dd>Here we use a bunch of static methods instead of namespaces because it is easier to manipulate (just alias the class instantiation instead of setting the template param for each function) and the class can be passed as template parameter. </dd></dl>
+<p>The <a class="el" href="classstatismo_1_1IO.html" title="The IO class is used to Load/Save a StatisticalModel. ">IO</a> class is used to Load/Save a <a class="el" href="classstatismo_1_1StatisticalModel.html" title="Representation of a linear statistical model (PCA Model). ">StatisticalModel</a>. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>see <a class="el" href="classstatismo_1_1StatisticalModel.html" title="Representation of a linear statistical model (PCA Model). ">StatisticalModel</a></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>A bunch of static methods is used instead of namespace because it is easier to manipulate (just alias the class instantiation instead of setting the template param for each function) and the class can be passed as template parameter </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a3860df9b063ae24327faebaaad03d4bf"></a>
 <div class="memitem">
@@ -141,7 +151,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static UniquePtrType&lt;<a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a>&gt; <a class="el" href="classstatismo_1_1IO.html">statismo::IO</a>&lt; T &gt;::LoadStatisticalModel </td>
+          <td class="memname">static <a class="el" href="group__Core.html#ga1bd20b8b2fb3b4dd582df27b4b0fcb06">UniquePtrType</a>&lt;<a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a>&gt; <a class="el" href="classstatismo_1_1IO.html">statismo::IO</a>&lt; T &gt;::LoadStatisticalModel </td>
           <td>(</td>
           <td class="paramtype">typename <a class="el" href="classstatismo_1_1Representer.html">StatisticalModelType::RepresenterType</a> *&#160;</td>
           <td class="paramname"><em>representer</em>, </td>
@@ -170,12 +180,13 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns a new statistical model, which is loaded from the given HDF5 file</p>
+
+<p>Load statistical model from file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">representer</td><td><a class="el" href="classstatismo_1_1Representer.html" title="Provides the interface between statismo and the dataset type the application uses. ">Representer</a> bound to the model </td></tr>
-    <tr><td class="paramname">filename</td><td>Path to hdf5 file </td></tr>
-    <tr><td class="paramname">maxNumberOfPCAComponents</td><td>The maximal number of pca components that are loaded to create the model. </td></tr>
+    <tr><td class="paramname">representer</td><td>representer bound to the model </td></tr>
+    <tr><td class="paramname">filename</td><td>path to hdf5 file </td></tr>
+    <tr><td class="paramname">maxNumberOfPCAComponents</td><td>maximal number of pca components loaded to create the model. </td></tr>
   </table>
   </dd>
 </dl>
@@ -192,7 +203,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static UniquePtrType&lt;<a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a>&gt; <a class="el" href="classstatismo_1_1IO.html">statismo::IO</a>&lt; T &gt;::LoadStatisticalModel </td>
+          <td class="memname">static <a class="el" href="group__Core.html#ga1bd20b8b2fb3b4dd582df27b4b0fcb06">UniquePtrType</a>&lt;<a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a>&gt; <a class="el" href="classstatismo_1_1IO.html">statismo::IO</a>&lt; T &gt;::LoadStatisticalModel </td>
           <td>(</td>
           <td class="paramtype">typename <a class="el" href="classstatismo_1_1Representer.html">StatisticalModelType::RepresenterType</a> *&#160;</td>
           <td class="paramname"><em>representer</em>, </td>
@@ -221,12 +232,13 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns a new statistical model, which is stored in the given HDF5 Group</p>
+
+<p>Load statistical model from group. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">representer</td><td><a class="el" href="classstatismo_1_1Representer.html" title="Provides the interface between statismo and the dataset type the application uses. ">Representer</a> bound to the model </td></tr>
+    <tr><td class="paramname">representer</td><td>representer bound to the model </td></tr>
     <tr><td class="paramname">modelRoot</td><td>H5 group where the model is saved </td></tr>
-    <tr><td class="paramname">maxNumberOfPCAComponents</td><td>The maximal number of pca components that are loaded to create the model. </td></tr>
+    <tr><td class="paramname">maxNumberOfPCAComponents</td><td>maximal number of pca components loaded to create the model. </td></tr>
   </table>
   </dd>
 </dl>
@@ -266,10 +278,12 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Saves the statistical model to a HDF5 file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Saves the statistical model to a HDF5 file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">model</td><td>A pointer to the model you'd like to save. </td></tr>
-    <tr><td class="paramname">filename</td><td>The filename (preferred extension is .h5) </td></tr>
+    <tr><td class="paramname">model</td><td>pointer to the model </td></tr>
+    <tr><td class="paramname">filename</td><td>filename (preferred extension is .h5) </td></tr>
   </table>
   </dd>
 </dl>
@@ -309,10 +323,12 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Saves the statistical model to a HDF5 file </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Save statistical model. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">model</td><td>The model to save </td></tr>
-    <tr><td class="paramname">filename</td><td>The filename (preferred extension is .h5) </td></tr>
+    <tr><td class="paramname">model</td><td>model to save </td></tr>
+    <tr><td class="paramname">filename</td><td>filename (preferred extension is .h5) </td></tr>
   </table>
   </dd>
 </dl>
@@ -352,10 +368,12 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Saves the statistical model to the given HDF5 group. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Save statistical model to the given HDF5 group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">model</td><td>the model you'd like to save </td></tr>
-    <tr><td class="paramname">modelRoot</td><td>the group where to store the model </td></tr>
+    <tr><td class="paramname">model</td><td>model to save </td></tr>
+    <tr><td class="paramname">modelRoot</td><td>group where to store the model </td></tr>
   </table>
   </dd>
 </dl>

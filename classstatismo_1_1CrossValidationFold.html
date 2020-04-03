@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -95,11 +95,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classstatismo_1_1CrossValidationFold-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">statismo::CrossValidationFold&lt; T &gt; Class Template Reference</div>  </div>
+<div class="title">statismo::CrossValidationFold&lt; T &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__DataManagers.html">Data management classes and routines</a> &#124; <a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Holds training and test data used for Crossvalidation.  
+<p>Wrapper to hold training and test data used for Crossvalidation.  
  <a href="classstatismo_1_1CrossValidationFold.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="DataManager_8h_source.html">DataManager.h</a>&gt;</code></p>
@@ -110,143 +110,34 @@ Public Types</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>DataItemType</b> = <a class="el" href="classstatismo_1_1DataItem.html">DataItem</a>&lt; T &gt;</td></tr>
 <tr class="separator:affa896234f99c03fb3982561230fa341"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1f02dfe7de594767f0fcdb00bfdf7c5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1f02dfe7de594767f0fcdb00bfdf7c5"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>DataItemListType</b> = std::list&lt; SharedPtrType&lt; <a class="el" href="classstatismo_1_1DataItem.html">DataItemType</a> &gt;&gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>DataItemListType</b> = std::list&lt; <a class="el" href="group__Core.html#ga9e1dabcb09b95497c4a093de0c2a6370">SharedPtrType</a>&lt; <a class="el" href="classstatismo_1_1DataItem.html">DataItemType</a> &gt;&gt;</td></tr>
 <tr class="separator:ae1f02dfe7de594767f0fcdb00bfdf7c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3e4506439b841292ee91aaa5f21dd61e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#a3e4506439b841292ee91aaa5f21dd61e">CrossValidationFold</a> ()=default</td></tr>
+<tr class="memitem:a3e4506439b841292ee91aaa5f21dd61e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e4506439b841292ee91aaa5f21dd61e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#a3e4506439b841292ee91aaa5f21dd61e">CrossValidationFold</a> ()=default</td></tr>
+<tr class="memdesc:a3e4506439b841292ee91aaa5f21dd61e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an empty fold. <br /></td></tr>
 <tr class="separator:a3e4506439b841292ee91aaa5f21dd61e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc372d1ec4408dd2f7322d541e274b6d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#abc372d1ec4408dd2f7322d541e274b6d">CrossValidationFold</a> (DataItemListType trainingData, DataItemListType testingData)</td></tr>
+<tr class="memitem:abc372d1ec4408dd2f7322d541e274b6d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc372d1ec4408dd2f7322d541e274b6d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#abc372d1ec4408dd2f7322d541e274b6d">CrossValidationFold</a> (DataItemListType trainingData, DataItemListType testingData)</td></tr>
+<tr class="memdesc:abc372d1ec4408dd2f7322d541e274b6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a fold with the given <em>trainingData</em> and <em>testingData</em>. <br /></td></tr>
 <tr class="separator:abc372d1ec4408dd2f7322d541e274b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3b93bd999e6c1b692a93787cf2200af"><td class="memItemLeft" align="right" valign="top">DataItemListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#ad3b93bd999e6c1b692a93787cf2200af">GetTrainingData</a> () const </td></tr>
+<tr class="memitem:ad3b93bd999e6c1b692a93787cf2200af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3b93bd999e6c1b692a93787cf2200af"></a>
+DataItemListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#ad3b93bd999e6c1b692a93787cf2200af">GetTrainingData</a> () const </td></tr>
+<tr class="memdesc:ad3b93bd999e6c1b692a93787cf2200af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get training data. <br /></td></tr>
 <tr class="separator:ad3b93bd999e6c1b692a93787cf2200af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c83b440410c45f3788f9b6df751bbbc"><td class="memItemLeft" align="right" valign="top">DataItemListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#a1c83b440410c45f3788f9b6df751bbbc">GetTestingData</a> () const </td></tr>
+<tr class="memitem:a1c83b440410c45f3788f9b6df751bbbc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c83b440410c45f3788f9b6df751bbbc"></a>
+DataItemListType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1CrossValidationFold.html#a1c83b440410c45f3788f9b6df751bbbc">GetTestingData</a> () const </td></tr>
+<tr class="memdesc:a1c83b440410c45f3788f9b6df751bbbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get testing data. <br /></td></tr>
 <tr class="separator:a1c83b440410c45f3788f9b6df751bbbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class statismo::CrossValidationFold&lt; T &gt;</h3>
 
-<p>Holds training and test data used for Crossvalidation. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a3e4506439b841292ee91aaa5f21dd61e"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classstatismo_1_1CrossValidationFold.html">statismo::CrossValidationFold</a>&lt; T &gt;::<a class="el" href="classstatismo_1_1CrossValidationFold.html">CrossValidationFold</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Create an empty fold </p>
-
-</div>
-</div>
-<a class="anchor" id="abc372d1ec4408dd2f7322d541e274b6d"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classstatismo_1_1CrossValidationFold.html">statismo::CrossValidationFold</a>&lt; T &gt;::<a class="el" href="classstatismo_1_1CrossValidationFold.html">CrossValidationFold</a> </td>
-          <td>(</td>
-          <td class="paramtype">DataItemListType&#160;</td>
-          <td class="paramname"><em>trainingData</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">DataItemListType&#160;</td>
-          <td class="paramname"><em>testingData</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Create a fold with the given trainingData and testingData </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a1c83b440410c45f3788f9b6df751bbbc"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">DataItemListType <a class="el" href="classstatismo_1_1CrossValidationFold.html">statismo::CrossValidationFold</a>&lt; T &gt;::GetTestingData </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Get a list holding the testing data </p>
-
-</div>
-</div>
-<a class="anchor" id="ad3b93bd999e6c1b692a93787cf2200af"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">DataItemListType <a class="el" href="classstatismo_1_1CrossValidationFold.html">statismo::CrossValidationFold</a>&lt; T &gt;::GetTrainingData </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Get a list holding the training data </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<p>Wrapper to hold training and test data used for Crossvalidation. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>modules/core/include/statismo/core/<a class="el" href="DataManager_8h_source.html">DataManager.h</a></li>
 </ul>
 </div><!-- contents -->

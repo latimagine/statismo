@@ -2,13 +2,18 @@ var searchData=
 [
   ['testclone',['TestClone',['../classGenericRepresenterValidator.html#a2392a45b33441f42110ff0b638444165',1,'GenericRepresenterValidator']]],
   ['testdimensions',['TestDimensions',['../classGenericRepresenterValidator.html#aad4d1b5c337691f483459ee1e4175f6d',1,'GenericRepresenterValidator']]],
+  ['testdomainvalid',['TestDomainValid',['../classGenericRepresenterValidator.html#a46280f41db7a9e10d355211c9fc0b8a2',1,'GenericRepresenterValidator']]],
   ['testgetname',['TestGetName',['../classGenericRepresenterValidator.html#a2dd54e942bdbf7a4990ab1e9f7b169d9',1,'GenericRepresenterValidator']]],
   ['testpointsampledimension',['TestPointSampleDimension',['../classGenericRepresenterValidator.html#af03b3b825fe35cd04a65b877beda2175',1,'GenericRepresenterValidator']]],
   ['testpointsampletopointsamplevectorandback',['TestPointSampleToPointSampleVectorAndBack',['../classGenericRepresenterValidator.html#a2cb4bed200482be33507e5ab389ef9fe',1,'GenericRepresenterValidator']]],
+  ['testsamplepointevaluation',['TestSamplePointEvaluation',['../classGenericRepresenterValidator.html#a46807a9696ab0f92da3fea535d722d0b',1,'GenericRepresenterValidator']]],
   ['testsampletovectorandback',['TestSampleToVectorAndBack',['../classGenericRepresenterValidator.html#ae13fde06185ae8fa4943d0e88dd78494',1,'GenericRepresenterValidator']]],
   ['testsamplevectordimensions',['TestSampleVectorDimensions',['../classGenericRepresenterValidator.html#a00450f3d7eddfc4f8c96756d3c03c380',1,'GenericRepresenterValidator']]],
   ['testsamplevectorhascorrectvalueatpoint',['TestSampleVectorHasCorrectValueAtPoint',['../classGenericRepresenterValidator.html#a127adc164b889784b5b72e4bc73ed9b1',1,'GenericRepresenterValidator']]],
   ['testsaveload',['TestSaveLoad',['../classGenericRepresenterValidator.html#acb948c33767f11cb100cb6bbc509d12f',1,'GenericRepresenterValidator']]],
+  ['tolower',['ToLower',['../group__Core.html#gada05ab7871f1d47c96e3cf79964458c1',1,'statismo::utils']]],
+  ['tolowercopy',['ToLowerCopy',['../group__Core.html#ga224e37dbf973060f47d3740ddf0819f2',1,'statismo::utils']]],
   ['transformpoint',['TransformPoint',['../classitk_1_1InterpolatingStatisticalDeformationModelTransform.html#abf649e33107696667d95ef6c282f3d8d',1,'itk::InterpolatingStatisticalDeformationModelTransform::TransformPoint()'],['../classitk_1_1StatisticalDeformationModelTransform.html#af3067dbc60aff52b5fcc232d54297b8c',1,'itk::StatisticalDeformationModelTransform::TransformPoint()']]],
+  ['translate',['Translate',['../group__Core.html#ga711a4e8a67dccc070927ad04f0b60baf',1,'statismo']]],
   ['trivialpointvaluewithcovariancelistwithuniformnoise',['TrivialPointValueWithCovarianceListWithUniformNoise',['../classstatismo_1_1PosteriorModelBuilder.html#a9894b54722043a310137df9060f9f07f',1,'statismo::PosteriorModelBuilder']]]
 ];

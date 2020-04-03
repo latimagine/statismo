@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.1</span>
+   &#160;<span id="projectnumber">0.11.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -41,7 +41,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -94,37 +94,43 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classstatismo_1_1GenericFactory-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">statismo::GenericFactory&lt; T &gt; Class Template Reference</div>  </div>
+<div class="title">statismo::GenericFactory&lt; T &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Generic factory.  
+ <a href="classstatismo_1_1GenericFactory.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="GenericFactory_8h_source.html">GenericFactory.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ad965315d07f5dec63a586517ac7b23bc"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:ad965315d07f5dec63a586517ac7b23bc"><td class="memTemplParams" colspan="2"><a class="anchor" id="ad965315d07f5dec63a586517ac7b23bc"></a>
+template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:ad965315d07f5dec63a586517ac7b23bc"><td class="memTemplItemLeft" align="right" valign="top">static T *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#ad965315d07f5dec63a586517ac7b23bc">Create</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:ad965315d07f5dec63a586517ac7b23bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple object creation without smart-memory management. <br /></td></tr>
 <tr class="separator:ad965315d07f5dec63a586517ac7b23bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78964956653411c95d3d822aa35ca8f0"><td class="memTemplParams" colspan="2"><a class="anchor" id="a78964956653411c95d3d822aa35ca8f0"></a>
-template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a78964956653411c95d3d822aa35ca8f0"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SafeCreate</b> (Args &amp;&amp;...args)</td></tr>
+<tr class="memitem:a78964956653411c95d3d822aa35ca8f0"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a78964956653411c95d3d822aa35ca8f0"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#a78964956653411c95d3d822aa35ca8f0">SafeCreate</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a78964956653411c95d3d822aa35ca8f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object creation with smart-memory management.  <a href="#a78964956653411c95d3d822aa35ca8f0">More...</a><br /></td></tr>
 <tr class="separator:a78964956653411c95d3d822aa35ca8f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa484a715a577664811d1b5aaf570d41"><td class="memTemplParams" colspan="2"><a class="anchor" id="afa484a715a577664811d1b5aaf570d41"></a>
-template&lt;typename Deletor , typename... Args&gt; </td></tr>
-<tr class="memitem:afa484a715a577664811d1b5aaf570d41"><td class="memTemplItemLeft" align="right" valign="top">static std::unique_ptr&lt; T, Deletor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SafeCreateWithCustomDeletor</b> (Args &amp;&amp;...args)</td></tr>
+<tr class="memitem:afa484a715a577664811d1b5aaf570d41"><td class="memTemplParams" colspan="2">template&lt;typename Deletor , typename... Args&gt; </td></tr>
+<tr class="memitem:afa484a715a577664811d1b5aaf570d41"><td class="memTemplItemLeft" align="right" valign="top">static std::unique_ptr&lt; T, Deletor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#afa484a715a577664811d1b5aaf570d41">SafeCreateWithCustomDeletor</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:afa484a715a577664811d1b5aaf570d41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object creation with smart-memory management.  <a href="#afa484a715a577664811d1b5aaf570d41">More...</a><br /></td></tr>
 <tr class="separator:afa484a715a577664811d1b5aaf570d41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b36ece6061c2ca93287965ff451d037"><td class="memTemplParams" colspan="2"><a class="anchor" id="a6b36ece6061c2ca93287965ff451d037"></a>
-template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a6b36ece6061c2ca93287965ff451d037"><td class="memTemplItemLeft" align="right" valign="top">static std::unique_ptr&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SafeCreateStd</b> (Args &amp;&amp;...args)</td></tr>
+<tr class="memitem:a6b36ece6061c2ca93287965ff451d037"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a6b36ece6061c2ca93287965ff451d037"><td class="memTemplItemLeft" align="right" valign="top">static std::unique_ptr&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classstatismo_1_1GenericFactory.html#a6b36ece6061c2ca93287965ff451d037">SafeCreateStd</a> (Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a6b36ece6061c2ca93287965ff451d037"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object creation with smart-memory management.  <a href="#a6b36ece6061c2ca93287965ff451d037">More...</a><br /></td></tr>
 <tr class="separator:a6b36ece6061c2ca93287965ff451d037"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class statismo::GenericFactory&lt; T &gt;</h3>
 
-<p>Generic factory used to gather common code related to object creation </p>
+<p>Generic factory. </p>
+<p>The generic factory is used by base implementations for object creation. It is implemented to avoid the code replication of object creation in each child class. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ad965315d07f5dec63a586517ac7b23bc"></a>
+<a class="anchor" id="a78964956653411c95d3d822aa35ca8f0"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -136,7 +142,7 @@ template&lt;typename... Args&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static T* <a class="el" href="classstatismo_1_1GenericFactory.html">statismo::GenericFactory</a>&lt; T &gt;::Create </td>
+          <td class="memname">static auto <a class="el" href="classstatismo_1_1GenericFactory.html">statismo::GenericFactory</a>&lt; T &gt;::SafeCreate </td>
           <td>(</td>
           <td class="paramtype">Args &amp;&amp;...&#160;</td>
           <td class="paramname"><em>args</em></td><td>)</td>
@@ -149,7 +155,77 @@ template&lt;typename... Args&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Generic object factory for model </p>
+
+<p>Object creation with smart-memory management. </p>
+<dl class="section return"><dt>Returns</dt><dd>a unique_ptr with the framework internal custom deletor </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6b36ece6061c2ca93287965ff451d037"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::unique_ptr&lt;T&gt; <a class="el" href="classstatismo_1_1GenericFactory.html">statismo::GenericFactory</a>&lt; T &gt;::SafeCreateStd </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>args</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Object creation with smart-memory management. </p>
+<dl class="section return"><dt>Returns</dt><dd>a unique_ptr with the default deletor </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afa484a715a577664811d1b5aaf570d41"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename Deletor , typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::unique_ptr&lt;T, Deletor&gt; <a class="el" href="classstatismo_1_1GenericFactory.html">statismo::GenericFactory</a>&lt; T &gt;::SafeCreateWithCustomDeletor </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>args</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Object creation with smart-memory management. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Deletor</td><td>deletor used for unique_ptr </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a unique_ptr with the given Deletor </dd></dl>
 
 </div>
 </div>
