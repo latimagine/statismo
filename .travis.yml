@@ -23,7 +23,6 @@ matrix:
       env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=ON USE_SYSTEM_VTK=ON USE_ITK_EIGEN=ON USE_ITK_HDF5=ON BUILD_WRAPPING=ON
       compiler: clang
       before_install:
-        - brew uninstall python@2
         - brew install swig
         - brew install vtk
         - brew install itk
