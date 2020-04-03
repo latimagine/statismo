@@ -7,10 +7,7 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
 
 RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && apt-get update
 
-RUN apt-get install -y git cmake tar mesa-common-dev freeglut3-dev g++-7
-
-ENV CC=gcc-7
-ENV CXX=g++-7
+RUN apt-get install -y git cmake tar mesa-common-dev freeglut3-dev build-essential
 
 # Eigen system deployed with cmake
 WORKDIR "/usr/src/"

@@ -7,10 +7,7 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
 
 RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && apt-get update
 
-RUN apt-get install -y git cmake tar valgrind pandoc doxygen mesa-common-dev freeglut3-dev g++-7
-
-ENV CC=gcc-7
-ENV CXX=g++-7
+RUN apt-get install -y git cmake tar valgrind pandoc doxygen mesa-common-dev freeglut3-dev build-essential
 
 # Eigen system deployed with cmake
 WORKDIR "/usr/src/"
@@ -50,7 +47,9 @@ WORKDIR "/usr/src/statismo/build/Statismo-build"
 RUN make install
 
 # Tests
-RUN ctest --timeout 7200 -D ExperimentalMemCheck
+# Some with and some without memcheck as runtime is too long
+RUN ctest -V --timeout 3600 -D ExperimentalMemCheck -R "basicStatismoTest|utilsStatismoTest|itkStandardImageRepresenterTest|itkStandardMeshRepresenterTest|statismo-build-deformation-model-test-2d|statismo-sample-test-2d-image|statismo-reduce-model-test-2d|statismo-posterior-test-2d|statismo-build-deformation-model-test-3d|statismo-reduce-model-test-3d|statismo-posterior-test-3d|PosteriorModelBuilderTest|PCAModelBuilderWithSelfAdjointEigenSolverTest|PCAModelBuilderTest|vtkStandardImageRepresenterTest|vtkStandardMeshRepresenterTest"
+RUN ctest --timeout 3600 -E "basicStatismoTest|utilsStatismoTest|itkStandardImageRepresenterTest|itkStandardMeshRepresenterTest|statismo-build-deformation-model-test-2d|statismo-sample-test-2d-image|statismo-reduce-model-test-2d|statismo-posterior-test-2d|statismo-build-deformation-model-test-3d|statismo-reduce-model-test-3d|statismo-posterior-test-3d|PosteriorModelBuilderTest|PCAModelBuilderWithSelfAdjointEigenSolverTest|PCAModelBuilderTest|vtkStandardImageRepresenterTest|vtkStandardMeshRepresenterTest"
 
 # Test app
 WORKDIR "/usr/src"
