@@ -78,18 +78,27 @@ use of virtual environment here.
 > source statismo-conan-venv/bin/activate
 (statismo-conan-venv)> python -m pip install --upgrade pip
 (statismo-conan-venv)> pip install conan --upgrade
-(statismo-conan-venv)> bash statismo/deploy/pack/conan/conan_install.sh $statismo_source_dir
+(statismo-conan-venv)> bash $statismo_root/deploy/pack/conan/conan_install.sh $statismo_source_dir
 ~~~
+
+You can also use the provided [Dockerfile](../../deploy/docker/Dockerfile-conan) to install
+the framework through conan (see [next section](#Docker)). You can find more details on using
+conan through docker [here](https://docs.conan.io/en/latest/howtos/run_conan_in_docker.html#docker-conan).
 
 ### Docker
 
 A template [Dockerfile](../../deploy/docker/Dockerfile) can be used to install the project within a container.
 
-Here it the workflow to build and run the image:
+Here it the workflow to build and run the image (from the docker directory):
 
 ```
 docker build . -t statismo-img
 docker run -i -t statismo-img /bin/bash
+```
+
+For the conan image, you need to provide an additional argument to specify the branch to build:
+```
+docker build --no-cache --rm --build-arg git_branch=master --file ./deploy/docker/Dockerfile-conan --tag statismo-conan-img .
 ```
 
 Build Configuration
