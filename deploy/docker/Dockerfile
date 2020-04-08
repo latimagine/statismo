@@ -5,12 +5,10 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
 
 RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && apt-get update
 
-RUN apt-get update \
-  && apt-get install -y python3-pip python3-dev git cmake mesa-common-dev freeglut3-dev python3-pip swig\
+RUN apt-get install -y python3-pip python3-dev git cmake mesa-common-dev freeglut3-dev python3-pip swig\
   && cd /usr/local/bin \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip
-  
 
 RUN git clone https://github.com/kenavolic/statismo --branch master /usr/src/statismo
 

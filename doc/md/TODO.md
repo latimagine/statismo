@@ -21,7 +21,7 @@ Wish List
 * Make Statismo available as a debian package again
 * Make Statismo available through homebrew again
 * Make Statismo VTK python wrapper available through pip
-* Add a conan packaging layer to the framework
+* Improve conan packaging layer
 
 # Compatibility
 

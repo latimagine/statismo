@@ -227,23 +227,27 @@ else()
   endif()
   # If HDF5_DIR has been transferred, it will find it with first priority
   find_package(HDF5 1.10.2 CONFIG PATHS ${HDF5_DIR} COMPONENTS C CXX ${HDF5_COMPONENT_TYPE} NO_DEFAULT_PATH)
-  if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
-    # In case static/shared components does not exist
-    find_package(HDF5 1.10.2 CONFIG PATHS ${HDF5_DIR} COMPONENTS C CXX NO_DEFAULT_PATH)
-  endif()
-  if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
-    find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
-  endif()
-  if(HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND AND HDF5_${HDF5_COMPONENT_TYPE}_CXX_FOUND)
-    # handle both case where hdf5 export targets have a namespace or not
-    if (TARGET hdf5::hdf5-${HDF5_COMPONENT_TYPE})
-      set(HDF5_LIBRARIES hdf5::hdf5-${HDF5_COMPONENT_TYPE} hdf5::hdf5_cpp-${HDF5_COMPONENT_TYPE})
-    else()
-      set(HDF5_LIBRARIES hdf5-${HDF5_COMPONENT_TYPE} hdf5_cpp-${HDF5_COMPONENT_TYPE})
-    endif()
+  if (TARGET HDF5::HDF5) # Conan target
+    set(HDF5_LIBRARIES HDF5::HDF5)
   else()
-    # Package is imported the cmake way
-    set(HDF5_LIBRARIES ${HDF5_C_LIBRARIES} ${HDF5_CXX_LIBRARIES})
+    if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
+      # In case static/shared components does not exist
+      find_package(HDF5 1.10.2 CONFIG PATHS ${HDF5_DIR} COMPONENTS C CXX NO_DEFAULT_PATH)
+    endif()
+    if (NOT HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND)
+      find_package(HDF5 1.10.2 REQUIRED COMPONENTS C CXX)
+    endif()
+    if(HDF5_${HDF5_COMPONENT_TYPE}_C_FOUND AND HDF5_${HDF5_COMPONENT_TYPE}_CXX_FOUND)
+      # handle both case where hdf5 export targets have a namespace or not
+      if (TARGET hdf5::hdf5-${HDF5_COMPONENT_TYPE})
+        set(HDF5_LIBRARIES hdf5::hdf5-${HDF5_COMPONENT_TYPE} hdf5::hdf5_cpp-${HDF5_COMPONENT_TYPE})
+      else()
+        set(HDF5_LIBRARIES hdf5-${HDF5_COMPONENT_TYPE} hdf5_cpp-${HDF5_COMPONENT_TYPE})
+      endif()
+    else()
+      # Package is imported the cmake way
+      set(HDF5_LIBRARIES ${HDF5_C_LIBRARIES} ${HDF5_CXX_LIBRARIES})
+    endif()
   endif()
   include_directories(${HDF5_INCLUDE_DIR})
   set(CONFIG_HDF5_DIR ${HDF5_DIR})

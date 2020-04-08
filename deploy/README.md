@@ -12,6 +12,10 @@ File Hierarchy
 │   └── Dockerfile-*            : List of docker recipes used for offline validation
 ├── pack
 │   └── debian                  : Debian packaging (not maintained anymore, see #Packaging)
+│   └── conan                   : Scripts for conan packaging
+│       └── conan-recipes       : Local recipes not available in any remote artifactory repo
+│       └── test_package        : Conan deployment tests for statismo
+│       └── conan_install.sh    : Installation utility script
 ├── scripts
 │   └── linux_offline_tests.sh  : Script used to run offline validation tests with docker container
 │   └── win_offline_tests.sh    : Scripts used to run offline validation tests on a virtual machine

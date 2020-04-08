@@ -24,6 +24,13 @@ The install and run is tested with the following dependencies versions:
 | VTK                               | 8.0.0 -> 8.2.0                  |
 | ITK                               | 5.0 -> 5.0.1                    |
 
+Packaging/deployment is tested against the following tools versions:
+
+| Tool                              | Version Range                   |
+| ----------------------------------|---------------------------------|
+| Conan                             | 1.24                            |
+| Docker                            | 18                              |
+
 > :information_source: This tables are not exhaustive thus the project might work
 > with other configurations... or not! If you need to work with older versions of ITK, VTK, HDF5, Eigen, you can fallback to the original project as well!
 
@@ -57,6 +64,22 @@ Here is a typical workflow to build and install the project:
 > cd Statismo-build
 > cmake --install . --config Release
 ```
+
+### Conan (Experimental)
+
+> :warning: The conan packaging layer is experimental for now
+> and only available on Linux (tested on Ubuntu 18.04).
+
+The first step is to install [conan](https://docs.conan.io/en/latest/). Prefer the
+use of virtual environment here.
+
+~~~
+> virtualenv -p /usr/bin/python3 statismo-conan-venv
+> source statismo-conan-venv/bin/activate
+(statismo-conan-venv)> python -m pip install --upgrade pip
+(statismo-conan-venv)> pip install conan --upgrade
+(statismo-conan-venv)> bash statismo/deploy/pack/conan/conan_install.sh $statismo_source_dir
+~~~
 
 ### Docker
 
@@ -214,8 +237,9 @@ Note that dependencies are installed with *apt* on Linux, *chocolatey* on Window
 |Linux Bionic |HDF5 system, Eigen internal |[docker file](../../deploy/docker/Dockerfile-hdf5-sys-eigen-dl-static-release)|
 |Linux Bionic |ITK internal, VTK internal, HDF5 system, Eigen system, doc generation |[docker file](../../deploy/docker/Dockerfile-hdf5-sys-eigen-sys-itk-dl-vtk-dl-static-debug-with-doc)|
 |Linux Bionic |ITK system, HDF5 system, Eigen system |[docker file](../../deploy/docker/Dockerfile-hdf5-sys-eigen-sys-itk-sys-shared-release)|
-|Linux Bionic |ITK internal, VTK internal, ITK HDF5, ITK Eigen |[docker file](../../deploy/docker/Dockerfile-itkhdf5--itkeigen--itk-dl-vtk-dl-shared-release-with-wrapping)|
+|Linux Bionic |ITK internal, VTK internal, ITK HDF5, ITK Eigen |[docker file](../../deploy/docker/Dockerfile-itkhdf5-itkeigen-itk-dl-vtk-dl-shared-release-with-wrapping)|
 |Linux Bionic |ITK system, ITK HDF5, ITK Eigen |[docker file](../../deploy/docker/Dockerfile-itkhdf5-itkeigen-itk-sys-static-debug)|
+|Linux Bionic |Conan |[Docker file](../../deploy/docker/Dockerfile-conan)|
 
 ### Platform Details
 
@@ -241,6 +265,7 @@ See [build issues](#Known-Build-Issues) for possible problems on OSX.
 |Windows      |*BUILD_SHARED_LIBS* forced to off on Win32 causing wrong system hdf5 libs to be selected in ITK | [link](https://github.com/InsightSoftwareConsortium/ITK/issues/1658) |Apply the patch |
 |Windows      |ITK compilation failure with VS2019 in Debug mode | [link](https://discourse.itk.org/t/itk-5-0-deformableregistration15-cxx/1948) | Compile ITK with *-DCMAKE_CXX_FLAGS='/FS'*|
 |Windows      |ITK path too long | - | Compile Statismo with *-DITK_EXTRA_OPTIONS:STRING="-DITK_SKIP_PATH_LENGTH_CHECKS=1"* |
+|All      |compiler internal error | - | This can be due to your system being short in RAM |
 
 Check Installation
 ===================

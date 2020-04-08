@@ -165,11 +165,11 @@ commands should help you for setting up a new environment:
 ```
 > virtualenv -p /usr/bin/python3 statismo-venv
 > source statismo-venv/bin/activate
-> python -m pip install --upgrade pip
+(statismo-venv)> python -m pip install --upgrade pip
 # The requirements defined in modules/VTK/wrapping
-> pip install -r requirements.txt
-> export PYTHONPATH=$PYTHONPATH:/path/to/vtk/install/dir/lib/python3.5/site-packages:/path/to/statismo/install/dir/lib/python3.5/site-packages
-> export LD_LIBRARY_PATH=/path/to/vtk/install/dir/lib:/path/to/statismo/install/dir/lib:$LD_LIBRARY_PATH
+(statismo-venv)> pip install -r requirements.txt
+(statismo-venv)> export PYTHONPATH=$PYTHONPATH:/path/to/vtk/install/dir/lib/python3.5/site-packages:/path/to/statismo/install/dir/lib/python3.5/site-packages
+(statismo-venv)> export LD_LIBRARY_PATH=/path/to/vtk/install/dir/lib:/path/to/statismo/install/dir/lib:$LD_LIBRARY_PATH
 ```
 
 > :information_source: At the root of Statismo build directory, you can
@@ -193,7 +193,7 @@ Usage examples can be found in the [unit tests scripts](https://github.com/kenav
 Build an Application upon Statismo
 ----------------------------------
 
-### General
+### CMake App
 
 > :information_source: The prerequisite is that Statismo is installed
 > in a directory *${statismo_install_dir}*
@@ -234,6 +234,98 @@ set PATH=%vtk_install_dir%\dist\bin;%itk_install_dir%\bin;hdf5_install_dir\bin;%
 > :information_source: Do not hesitate to browse the installation sample
 > scripts described [here](INSTALL.md#Configuration-Examples). It can guide
 > you as often, a demo app is installed in the validation process.
+
+### CMake/Conan App
+
+> :information_source: The prerequisite is that Statismo was installed
+> with conan package manager as described [here](INSTALL.md#Conan-(Experimental)).
+
+An example layout could be:
+~~~
+├── CMakeLists.txt  : CMake main script
+├── conanfile.txt   : Conan description file
+├── main.cpp        : Executable file
+~~~
+
+*CMakeLists.txt*:
+~~~
+cmake_minimum_required(VERSION 3.5)
+project(Demo VERSION 0.1.0 LANGUAGES CXX)
+
+# Setup dependencies via Conan
+if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+                  "${CMAKE_BINARY_DIR}/conan.cmake")
+endif()
+include(${CMAKE_BINARY_DIR}/conan.cmake)
+
+conan_cmake_run(CONANFILE conanfile.txt
+                BASIC_SETUP
+                BUILD missing)
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
+# Create an executable
+find_package(statismo CONFIG REQUIRED)
+include(${STATISMO_USE_FILE})
+
+add_executable(${PROJECT_NAME}
+    main.cpp
+)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${CONAN_LIBS}
+)
+~~~
+
+*main.cpp*:
+~~~
+#include "statismo/VTK/vtkStandardMeshRepresenter.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+#include <iostream>
+
+int main() {
+    std::cout << "DEMO: Creating an ITK representer" << std::endl;
+    auto itkrep = itk::StandardMeshRepresenter<float, 3>::New();
+    std::cout << "DEMO: ITK representer created at " << itkrep.GetPointer() << std::endl;
+    
+    std::cout << "DEMO: Creating a VTK representer" << std::endl;
+    auto vtkrep = statismo::vtkStandardMeshRepresenter::SafeCreate();
+    std::cout << "DEMO: VTK representer created at " << vtkrep.get() << std::endl;
+
+    return EXIT_SUCCESS;
+}
+~~~
+
+*conanfile.txt*:
+~~~
+[requires]
+statismo/0.12.0@user/stable
+itk/5.0.1@user/stable
+vtk/8.2.0@user/stable
+
+[options]
+*:shared=True
+
+[generators]
+cmake_find_package_multi
+cmake_paths
+
+[imports]
+bin, *.dll -> ./bin
+lib, *.dylib* -> ./bin
+lib, *.so* -> ./bin
+~~~
+
+To compile and run the application:
+~~~
+(statismo-conan-venv)> cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
+(statismo-conan-venv)> cd build
+(statismo-conan-venv)> cmake --build . --config Release
+(statismo-conan-venv)> export LD_LIBRARY_PATH=./bin
+(statismo-conan-venv)> ./bin/Demo
+~~~
 
 ### Error Handling
 

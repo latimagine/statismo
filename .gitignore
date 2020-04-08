@@ -8,6 +8,8 @@ build/*
 build-*/
 build_*/
 *build/*
+deploy/pack/conan/test_package/build/
+deploy/pack/conan/conan-recipes/vtk/test_package/build/
 CMakeCache.txt
 CMakeFiles
 *.orig

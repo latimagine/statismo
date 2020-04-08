@@ -47,6 +47,7 @@ tag=$1
 check_version_cmake=0
 check_version_readme=0
 check_version_changelog=0
+check_version_conan=0
 check_buildstatus_branch=0
 check_doc_branch=0
 
@@ -67,6 +68,12 @@ grep "# \[$tag\]" CHANGELOG.md > /dev/null 2>&1
 
 if [[ "$?" -ne "0" ]]; then
   check_version_changelog=1
+fi
+
+grep "version = \"$tag\"" conanfile.py > /dev/null 2>&1
+
+if [[ "$?" -ne "0" ]]; then
+  check_version_conan=1
 fi
 
 echo "--- Checking ci branches"
@@ -101,6 +108,11 @@ if [[ $check_version_changelog == 0 ]]; then
   echo "Version item in CHANGELOG: OK"
 else
   echo "Version item in CHANGELOG: KO (Create a version item in CHANGELOG)"
+fi
+if [[ $check_version_conan == 0 ]]; then
+  echo "Version item in conanfile.py: OK"
+else
+  echo "Version item in conanfile.py: KO"
 fi
 if [[ $check_buildstatus_branch == 0 ]]; then
   echo "Build Status reference branch: OK"
