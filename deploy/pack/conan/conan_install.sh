@@ -46,7 +46,7 @@ echo "Start of conan install..."
 echo "Statismo location: ${STATISMO_ROOT}"
 
 echo "Installing VTK..."
-cd ${STATISMO_ROOT}/deploy/pack/conan/conan-recipes/vtk && conan create -s compiler.libcxx=libstdc++11 . user/stable > /tmp/conancreatevtk.log 2>&1
+cd ${STATISMO_ROOT}/deploy/pack/conan/conan-recipes/vtk && conan create -s compiler.libcxx=libstdc++11 . user/stable
 
 if [[ "$?" -ne "0" ]]; then
  echo "Failed: Installing VTK failed (see /tmp/conancreatevtk.log for details)!"
@@ -54,7 +54,7 @@ if [[ "$?" -ne "0" ]]; then
 fi
 
 echo "Installing ITK..."
-cd ${STATISMO_ROOT}/deploy/pack/conan/conan-recipes/itk && conan create -s compiler.libcxx=libstdc++11 . user/stable > /tmp/conancreateitk.log 2>&1
+cd ${STATISMO_ROOT}/deploy/pack/conan/conan-recipes/itk && conan create -s compiler.libcxx=libstdc++11 . user/stable
 
 if [[ "$?" -ne "0" ]]; then
  echo "Failed: Installing ITK failed (see /tmp/conancreateitk.log for details)!"
@@ -62,7 +62,7 @@ if [[ "$?" -ne "0" ]]; then
 fi
 
 echo "Installing Statismo..."
-cd ${STATISMO_ROOT} && conan create -s compiler.libcxx=libstdc++11 -tf ${STATISMO_ROOT}/deploy/pack/conan/test_package  . user/stable > /tmp/conancreatestatismo.log 2>&1
+cd ${STATISMO_ROOT} && conan create -s compiler.libcxx=libstdc++11 -tf ${STATISMO_ROOT}/deploy/pack/conan/test_package  . user/stable
 
 if [[ "$?" -ne "0" ]]; then
  echo "Failed: Installing Statismo failed (see /tmp/conancreatestatismo.log for details)!"
