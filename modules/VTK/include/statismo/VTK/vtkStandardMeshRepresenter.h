@@ -43,6 +43,7 @@
 #include "statismo/core/Domain.h"
 #include "statismo/core/Representer.h"
 #include "statismo/VTK/vtkPoint.h"
+#include "statismo/VTK/StatismoVTKExport.h"
 
 #include <H5Cpp.h>
 
@@ -52,6 +53,11 @@
 namespace statismo
 {
 
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup VTK
+ */
 template <>
 struct RepresenterTraits<vtkPolyData>
 {
@@ -62,12 +68,13 @@ struct RepresenterTraits<vtkPolyData>
 };
 
 /**
- * \brief A representer for vtkPolyData, which stores the representer data in the standard
+ * \brief Representer for vtkPolyData, which stores the representer data in the standard
  * mesh format defined for statismo.
  *
- * \see Representer
+ * \ingroup Representers
+ * \ingroup VTK
  */
-class vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
+class STATISMO_VTK_EXPORT vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
 {
 public:
   using RepresenterBaseType = RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>;

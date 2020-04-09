@@ -48,6 +48,13 @@
 namespace statismo
 {
 
+/**
+ * \brief Status of an action
+ *
+ * The status is either a success or an error code
+ *
+ * \ingroup Core
+ */
 enum class Status
 {
   SUCCESS = 0,
@@ -63,9 +70,6 @@ enum class Status
   UNKNOWN_ERROR
 };
 
-/**
- * \brief Base exception
- */
 class IException : public virtual std::exception
 {
 public:
@@ -73,9 +77,6 @@ public:
   Rethrow() const = 0;
 };
 
-/**
- * \brief Rethrowable exception
- */
 template <typename Base, typename Derived>
 class Rethrowable : public Base
 {
@@ -90,7 +91,8 @@ public:
 };
 
 /**
- * \brief Generic Exception class for the statismo Library.
+ * \brief Generic exception class for the framework
+ * \ingroup Core
  */
 class StatisticalModelException : public std::runtime_error
 {
@@ -131,7 +133,7 @@ struct TranslateImpl
     {
       return std::make_tuple(ex.GetStatus(), std::nullopt);
     }
-    catch (...)
+    catch (const std::exception & e)
     {
       return std::make_tuple(Status::INTERNAL_ERROR, std::nullopt);
     }
@@ -162,8 +164,12 @@ struct TranslateImpl<Callable, void>
 } // namespace details
 
 /**
- * \brief Exception conversion utilities to build exception safe interface over
- *        Statismo
+ * \brief Exception conversion routine used to convert exception to
+ *        a tuple
+ * \return A tuple with first field containing the Status and the
+ *         second field an (optional) value returned by the code
+ *         block under translation
+ * \ingroup Core
  */
 template <typename Callable>
 auto
@@ -173,7 +179,10 @@ Translate(Callable && f)
 }
 
 /**
- * \brief Exception conversion result check
+ * \brief Check the returned result of Translate is a success
+ * \param res object returned by Translate
+ * \sa Translate
+ * \ingroup Core
  */
 template <typename R>
 bool
@@ -183,7 +192,12 @@ CheckResult(const std::tuple<Status, std::optional<R>> & res)
 }
 
 /**
- * \brief Exception conversion result check and assert
+ * \brief Check the returned result of Translate is a success
+ *        and the second field is as expected
+ * \param res object returned by Translate
+ * \param expected expected returned value of the block under translation
+ * \sa Translate
+ * \ingroup Core
  */
 template <typename R>
 bool

@@ -202,7 +202,7 @@ TestBuildModel()
 } // namespace
 
 int
-PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char ** argv) // NOLINT
+PCAModelBuilderWithSelfAdjointEigenSolverTest(int argc, char * argv[]) // NOLINT
 {
   if (argc < 2)
   {

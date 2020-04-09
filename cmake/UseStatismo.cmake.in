@@ -1,0 +1,26 @@
+#
+# This file sets up include directories for a project to use Statismo.  
+# It should not be included directly, but rather through the STATISMO_USE_FILE setting
+# obtained from StatismoConfig.cmake.
+#
+
+if (STATISMO_ITK_SUPPORT AND STATISMO_USE_ITK_HDF5)
+  include_directories(${HDF5_INCLUDE_DIRS})
+else()
+  find_package(HDF5 REQUIRED PATHS ${HDF5_DIR} NO_DEFAULT_PATH)
+  include_directories(${HDF5_INCLUDE_DIR})
+endif()
+
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+# Including ITK before VTK seems to solve some issues
+# with macro redefinition due to the use of itkVtkGkue
+if(STATISMO_ITK_SUPPORT)
+  find_package(ITK REQUIRED PATHS ${ITK_DIR} NO_DEFAULT_PATH)
+  include_directories(${ITK_INCLUDE_DIRS})
+endif()
+
+if(STATISMO_VTK_SUPPORT)
+  find_package(VTK REQUIRED PATHS ${VTK_DIR} NO_DEFAULT_PATH)
+  include_directories(${VTK_INCLUDE_DIRS})
+endif()

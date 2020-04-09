@@ -48,16 +48,13 @@ class Group;
 namespace statismo
 {
 /**
- * \brief The IO class is used to Load() and or Save() a StatisticalModel. The Load and Save functions are static and as
- * such there's no need to create an instance of this class.
+ * \brief The IO class is used to Load/Save a StatisticalModel
+ * \tparam T see StatisticalModel
  *
- * The Template parameter is the same as the one of the StatisticalModel class.
- *
- * \note Here we use a bunch of static methods instead of namespaces because it
+ * \note A bunch of static methods is used instead of namespace because it
  * is easier to manipulate (just alias the class instantiation instead of setting
  * the template param for each function) and the class can be passed as template
- * parameter.
- *
+ * parameter
  */
 template <typename T>
 class IO
@@ -70,11 +67,10 @@ public:
   using StatisticalModelType = StatisticalModel<T>;
 
   /**
-   * Returns a new statistical model, which is loaded from the given HDF5 file
-   *
-   * \param representer Representer bound to the model
-   * \param filename Path to hdf5 file
-   * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
+   * \brief Load statistical model from file
+   * \param representer representer bound to the model
+   * \param filename path to hdf5 file
+   * \param maxNumberOfPCAComponents maximal number of pca components loaded
    * to create the model.
    */
   static UniquePtrType<StatisticalModelType>
@@ -100,11 +96,10 @@ public:
   }
 
   /**
-   * Returns a new statistical model, which is stored in the given HDF5 Group
-   *
-   * \param representer Representer bound to the model
+   * \brief Load statistical model from group
+   * \param representer representer bound to the model
    * \param modelRoot H5 group where the model is saved
-   * \param maxNumberOfPCAComponents The maximal number of pca components that are loaded
+   * \param maxNumberOfPCAComponents maximal number of pca components loaded
    * to create the model.
    */
   static UniquePtrType<StatisticalModelType>
@@ -123,10 +118,11 @@ public:
       int minorVersion = 0;
       int majorVersion = 0;
 
-      if (!hdf5utils::ExistsObjectWithName(modelRoot, "version"))
+      if (!HDF5Utils::ExistsObjectWithName(modelRoot, "version"))
       {
-        // this is an old statismo format, that had not been versioned. We set the version to 0.8 as this is the last
-        // version that stores the old format
+        // This is an old statismo format, that was versioned.
+        // We set the version to 0.8 as this is the last
+        // version that stores the old format.
         std::cout << "Warning: version attribute does not exist in hdf5 file. Assuming version 0.8" << std::endl;
         minorVersion = gk_oldFileVersionMinor;
         majorVersion = gk_oldFileVersionMajor;
@@ -134,17 +130,17 @@ public:
       else
       {
         auto versionGroup = modelRoot.openGroup("./version");
-        minorVersion = hdf5utils::ReadInt(versionGroup, "./minorVersion");
-        majorVersion = hdf5utils::ReadInt(versionGroup, "./majorVersion");
+        minorVersion = HDF5Utils::ReadInt(versionGroup, "./minorVersion");
+        majorVersion = HDF5Utils::ReadInt(versionGroup, "./majorVersion");
       }
 
       auto       modelGroup = modelRoot.openGroup("./model");
       VectorType mean;
-      hdf5utils::ReadVector(modelGroup, "./mean", mean);
+      HDF5Utils::ReadVector(modelGroup, "./mean", mean);
       VectorType pcaVariance;
-      hdf5utils::ReadVector(modelGroup, "./pcaVariance", maxNumberOfPCAComponents, pcaVariance);
+      HDF5Utils::ReadVector(modelGroup, "./pcaVariance", maxNumberOfPCAComponents, pcaVariance);
 
-      auto noiseVariance = hdf5utils::ReadFloat(modelGroup, "./noiseVariance");
+      auto noiseVariance = HDF5Utils::ReadFloat(modelGroup, "./noiseVariance");
 
       // Depending on the statismo version, the pcaBasis matrix was stored as U*D or U (where U are the orthonormal PCA
       // Basis functions and D the standard deviations). Here we make sure that we fill the pcaBasisMatrix (which
@@ -152,7 +148,7 @@ public:
       MatrixType pcaBasisMatrix;
       if (majorVersion == gk_oldFileVersionMinor && minorVersion == gk_oldFileVersionMajor)
       {
-        hdf5utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
+        HDF5Utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
         VectorType D = pcaVariance.array().sqrt(); // NOLINT
         MatrixType orthonormalPCABasisMatrix = pcaBasisMatrix * DiagMatrixType(D).inverse();
         newModel =
@@ -160,7 +156,7 @@ public:
       }
       else if (majorVersion == gk_currenFileVersionMajor && minorVersion == gk_currentFileVersionMinor)
       {
-        hdf5utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
+        HDF5Utils::ReadMatrix(modelGroup, "./pcaBasis", maxNumberOfPCAComponents, pcaBasisMatrix);
         newModel = StatisticalModelType::SafeCreate(representer, mean, pcaBasisMatrix, pcaVariance, noiseVariance);
       }
       else
@@ -186,9 +182,9 @@ public:
 
 
   /**
-   * Saves the statistical model to a HDF5 file
-   * \param model A pointer to the model you'd like to save.
-   * \param filename The filename (preferred extension is .h5)
+   * \brief Saves the statistical model to a HDF5 file
+   * \param model pointer to the model
+   * \param filename filename (preferred extension is .h5)
    * */
   static void
   SaveStatisticalModel(const StatisticalModelType * const model, const std::string & filename)
@@ -201,9 +197,9 @@ public:
   }
 
   /**
-   * Saves the statistical model to a HDF5 file
-   * \param model The model to save
-   * \param filename The filename (preferred extension is .h5)
+   * \brief Save statistical model
+   * \param model model to save
+   * \param filename filename (preferred extension is .h5)
    * */
   static void
   SaveStatisticalModel(const StatisticalModelType & model, const std::string & filename)
@@ -226,16 +222,16 @@ public:
     auto modelRoot = file.openGroup("/");
     auto versionGroup = modelRoot.createGroup("version");
 
-    hdf5utils::WriteInt(versionGroup, "majorVersion", 0);
-    hdf5utils::WriteInt(versionGroup, "minorVersion", 9);
+    HDF5Utils::WriteInt(versionGroup, "majorVersion", 0);
+    HDF5Utils::WriteInt(versionGroup, "minorVersion", 9);
 
     SaveStatisticalModel(model, modelRoot);
   };
 
   /**
-   * Saves the statistical model to the given HDF5 group.
-   * \param model the model you'd like to save
-   * \param modelRoot the group where to store the model
+   * \brief Save statistical model to the given HDF5 group.
+   * \param model model to save
+   * \param modelRoot group where to store the model
    * */
   static void
   SaveStatisticalModel(const StatisticalModelType & model, const H5::Group & modelRoot)
@@ -243,20 +239,21 @@ public:
     try
     {
       // create the group structure
-      auto dataTypeStr = TypeToString(model.GetRepresenter()->GetType());
+      using RepresenterType = typename StatisticalModelType::RepresenterType;
+      auto dataTypeStr = RepresenterType::TypeToString(model.GetRepresenter()->GetType());
       auto representerGroup = modelRoot.createGroup("./representer");
 
-      hdf5utils::WriteStringAttribute(representerGroup, "name", model.GetRepresenter()->GetName());
-      hdf5utils::WriteStringAttribute(representerGroup, "version", model.GetRepresenter()->GetVersion());
-      hdf5utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
+      HDF5Utils::WriteStringAttribute(representerGroup, "name", model.GetRepresenter()->GetName());
+      HDF5Utils::WriteStringAttribute(representerGroup, "version", model.GetRepresenter()->GetVersion());
+      HDF5Utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
 
       model.GetRepresenter()->Save(representerGroup);
 
       auto modelGroup = modelRoot.createGroup("./model");
-      hdf5utils::WriteMatrix(modelGroup, "./pcaBasis", model.GetOrthonormalPCABasisMatrix());
-      hdf5utils::WriteVector(modelGroup, "./pcaVariance", model.GetPCAVarianceVector());
-      hdf5utils::WriteVector(modelGroup, "./mean", model.GetMeanVector());
-      hdf5utils::WriteFloat(modelGroup, "./noiseVariance", model.GetNoiseVariance());
+      HDF5Utils::WriteMatrix(modelGroup, "./pcaBasis", model.GetOrthonormalPCABasisMatrix());
+      HDF5Utils::WriteVector(modelGroup, "./pcaVariance", model.GetPCAVarianceVector());
+      HDF5Utils::WriteVector(modelGroup, "./mean", model.GetMeanVector());
+      HDF5Utils::WriteFloat(modelGroup, "./noiseVariance", model.GetNoiseVariance());
 
       model.GetModelInfo().Save(modelRoot);
     }

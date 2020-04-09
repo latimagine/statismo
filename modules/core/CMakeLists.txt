@@ -8,12 +8,7 @@ file(GLOB _target_headers
 )
 
 add_library(statismo_core ${statismo_LIB_TYPE}
-  src/HDF5Utils.cxx 
   src/ModelInfo.cxx
-  src/RandUtils.cxx
-  src/Representer.cxx
-  src/Utils.cxx
-  src/ThreadPool.cxx 
 )
 
 set(_deps
@@ -37,8 +32,8 @@ target_compile_features(statismo_core PUBLIC cxx_std_17)
 target_compile_options(statismo_core PRIVATE "${STATISMO_COMPILE_OPTIONS}")
 set_target_properties(statismo_core PROPERTIES
   DEBUG_POSTFIX "-d"
-  VERSION "${statismo_LIB_VERSION}"
-  SOVERSION "${statismo_LIB_SOVERSION}"
+  VERSION ${statismo_LIB_VERSION}
+  SOVERSION ${statismo_LIB_SOVERSION}
 )
 
 if(${BUILD_WITH_TIDY})

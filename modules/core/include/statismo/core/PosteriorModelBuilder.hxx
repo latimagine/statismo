@@ -180,7 +180,7 @@ PosteriorModelBuilder<T>::BuildNewModelFromModel(const StatisticalModelType *   
 
   VectorType D2MinusRho = D2 - VectorType::Ones(D2.rows()) * rho2;
   // the values of D2 can be negative. We need to be careful when taking the root
-  for (unsigned i = 0; i < D2MinusRho.rows(); i++)
+  for (i = 0; i < D2MinusRho.rows(); i++)
   {
     D2MinusRho(i) = std::max((ScalarType)0, D2(i));
   }
@@ -240,10 +240,10 @@ PosteriorModelBuilder<T>::BuildNewModelFromModel(const StatisticalModelType *   
   if (computeScores)
   {
     // get the scores from the input model
-    for (unsigned i = 0; i < inputScores.cols(); i++)
+    for (i = 0; i < inputScores.cols(); i++)
     {
       // reconstruct the sample from the input model and project it back into the model
-      typename RepresenterType::DatasetPointerType ds = inputModel->DrawSample(inputScores.col(i));
+      auto ds = inputModel->DrawSample(inputScores.col(i));
       scores.col(i) = PosteriorModel->ComputeCoefficients(ds);
       representer->DeleteDataset(ds);
     }

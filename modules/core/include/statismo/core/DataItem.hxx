@@ -54,7 +54,7 @@ template <typename T>
 UniquePtrType<DataItem<T>>
 BasicDataItem<T>::Load(const RepresenterType * representer, const H5::Group & dsGroup)
 {
-  auto sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
+  auto sampleType = HDF5Utils::ReadString(dsGroup, "./sampletype");
   if (sampleType == "DataItem")
   {
     UniquePtrType<DataItem<T>> newSample{ BasicDataItem<T>::Create(representer) };
@@ -70,7 +70,7 @@ template <typename T>
 UniquePtrType<DataItem<T>>
 DataItemWithSurrogates<T>::Load(const RepresenterType * representer, const H5::Group & dsGroup)
 {
-  auto sampleType = hdf5utils::ReadString(dsGroup, "./sampletype");
+  auto sampleType = HDF5Utils::ReadString(dsGroup, "./sampletype");
   if (sampleType == "DataItem")
   {
     return BasicDataItem<T>::Load(representer, dsGroup);

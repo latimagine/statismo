@@ -76,7 +76,7 @@ TestRepresenterForMesh()
 } // namespace
 
 int
-vtkStandardMeshRepresenterTest(int argc, char ** argv)
+vtkStandardMeshRepresenterTest(int argc, char * argv[])
 {
   if (argc < 2)
   {

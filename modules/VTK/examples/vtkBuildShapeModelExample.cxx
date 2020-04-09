@@ -43,6 +43,7 @@
 
 #include <vtkDirectory.h>
 #include <vtkPolyDataReader.h>
+#include <vtkNew.h>
 
 #include <iostream>
 #include <memory>

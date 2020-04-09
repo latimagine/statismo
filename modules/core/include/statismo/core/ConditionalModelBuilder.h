@@ -50,25 +50,24 @@ namespace statismo
 {
 
 /**
- * \brief Creates a StatisticalModel conditioned on some external data
+ * \brief Creates a statistical model conditioned on some external data
  *
  * The principle of this class is to exploit supplementary information (surrogate variables) describing
- * the samples (e.g. the age and gender of the subject) to generate a conditional statistical model.
- * This class assumes a joint multivariate gaussian distribution of the sample vector and the continuous surrogates
- * Categorical surrogates are taken into account by selecting the subset of samples that fit in the requested
- * categories.
+ * the samples (e.g. the age and gender of the subject) to generate a conditional statistical model as described
+ * in  \cite 1.
  *
- * For mathematical details and illustrations, see the paper
- * Conditional Variability of Statistical Shape Models Based on Surrogate Variables
- * R. Blanc, M. Reyes, C. Seiler and G. Szekely, In Proc. MICCAI 2009
+ * This class assumes a joint multivariate gaussian distribution of the sample vector and
+ * the continuous surrogates.
  *
- * CAVEATS:
- * 	- conditioning on too many categories may lead to small or empty training sets
- * 	- using more surrogate variables than training samples may cause instabilities
+ * Categorical surrogates (e.g. gender) are taken into account by selecting the subset of samples that fit in the
+ * requested categories.
  *
- * The class does not implement missing data functionalities.
+ * \warning Conditioning on too many categories may lead to small or empty training sets
+ * \warning Using more surrogate variables than training samples may cause instabilities
  *
  * \sa DataManagerWithSurrogates
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 template <typename T>
 class ConditionalModelBuilder : public ModelBuilderBase<T, ConditionalModelBuilder<T>>
@@ -86,19 +85,18 @@ public:
   friend Superclass;
 
   /**
-   * Builds a new model from the provided data and the requested constraints.
+   * Builds new model from provided data and requested constraints.
    *
-   * \param sampleSet A list training samples with associated surrogate data - typically obtained from a
+   * \param sampleSet List training samples with associated surrogate data - typically obtained from a
    * DataManagerWithSurrogates.
-   * \param surrogateTypesInfo A vector with length corresponding to the number of surrogate
+   * \param surrogateTypesInfo Vector with length corresponding to the number of surrogate
    * variables, indicating whether a variable is continuous or categorical - typically obtained from a
    * DataManagerWithSurrogates.
-   * \param conditioningInfo A vector (length = \a surrogateTypes) indicating which
-   * surrogates are used for conditioning, and the conditioning value.
-   * \param noiseVariance  The variance of the noise
-   * assumed on our data
-   * \param modelVarianceRetained  The ratio of retained variance for the model
-   * \return a new statistical model
+   * \param conditioningInfo Vector indicating which surrogates are used for conditioning,
+   * and the conditioning value.
+   * \param noiseVariance  Variance of the noise assumed on data
+   * \param modelVarianceRetained  Ratio of retained variance for the model
+   * \return New statistical model
    *
    */
   UniquePtrType<StatisticalModelType>
@@ -109,7 +107,7 @@ public:
                 double                              modelVarianceRetained = 1.0f) const;
 
 private:
-  unsigned
+  std::size_t
   PrepareData(const DataItemListType &            DataItemList,
               const SurrogateTypeInfoType &       surrogateTypesInfo,
               const CondVariableValueVectorType & conditioningInfo,
@@ -117,7 +115,7 @@ private:
               MatrixType &                        surrogateMatrix,
               VectorType &                        conditions) const;
 
-  CondVariableValueVectorType m_conditioningInfo; // keep in storage
+  CondVariableValueVectorType m_conditioningInfo;
 };
 
 
@@ -125,4 +123,4 @@ private:
 
 #include "ConditionalModelBuilder.hxx"
 
-#endif /* __CONDITIONAL_MODEL_BUILDER_H_ */
+#endif

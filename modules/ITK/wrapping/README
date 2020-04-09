@@ -1,8 +1,0 @@
-ITK python wrapping should be done through an ITK external module
-that has an automatic procedure for wrapping modules.
-
-See discussion:
-- https://discourse.itk.org/t/make-a-c-library-available-as-a-python-module/2644/4
-
-When/If implemented, this README should point towards the external module
-implementation.

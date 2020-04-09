@@ -46,8 +46,11 @@ namespace statismo
 {
 /**
  * \brief Helper class that represents a vtkPoint.
- * In vtk a point is just of type  T*. The statismo library relies on a proper
- * copy semantics, and hence requires such a wrapper..
+ *
+ * In vtk, a point is just of type T*. The statismo library relies on a proper
+ * copy semantics, and hence requires such a wrapper.
+ *
+ * \ingroup VTK
  */
 class vtkPoint
 {

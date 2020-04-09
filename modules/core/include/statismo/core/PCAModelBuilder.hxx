@@ -246,8 +246,8 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
 
     default:
       throw StatisticalModelException("Unrecognized decomposition/eigenvalue solver method.");
-      return nullptr;
   }
+  return nullptr;
 }
 
 

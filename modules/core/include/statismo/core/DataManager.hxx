@@ -46,6 +46,7 @@
 
 #include <iostream>
 #include <random>
+#include <limits>
 
 namespace statismo
 {
@@ -78,10 +79,10 @@ DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::stri
   {
     // loading representer
     auto representerGroup = file.openGroup("./representer");
-    auto repName = hdf5utils::ReadStringAttribute(representerGroup, "name");
-    auto repTypeStr = hdf5utils::ReadStringAttribute(representerGroup, "datasetType");
-    auto versionStr = hdf5utils::ReadStringAttribute(representerGroup, "version");
-    auto type = TypeFromString(repTypeStr);
+    auto repName = HDF5Utils::ReadStringAttribute(representerGroup, "name");
+    auto repTypeStr = HDF5Utils::ReadStringAttribute(representerGroup, "datasetType");
+    auto versionStr = HDF5Utils::ReadStringAttribute(representerGroup, "version");
+    auto type = RepresenterType::TypeFromString(repTypeStr);
     if (type == RepresenterDataType::CUSTOM || type == RepresenterDataType::UNKNOWN)
     {
       if (repName != representer->GetName())
@@ -106,7 +107,8 @@ DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::stri
     {
       std::ostringstream os;
       os << "The representer that was provided cannot be used to load the dataset ";
-      os << "(" << TypeToString(type) << " != " << TypeToString(representer->GetType()) << ").";
+      os << "(" << RepresenterType::TypeToString(type)
+         << " != " << RepresenterType::TypeToString(representer->GetType()) << ").";
       os << "Cannot load hdf5 file.";
       throw StatisticalModelException(os.str().c_str(), Status::INVALID_DATA_ERROR);
     }
@@ -116,7 +118,7 @@ DataManagerBase<T, Derived>::Load(RepresenterType * representer, const std::stri
       UniquePtrType<DataManagerBase>(DataManagerBase::Create(representer, std::forward<Args>(args)...));
 
     auto     dataGroup = file.openGroup("/data");
-    unsigned numds = hdf5utils::ReadInt(dataGroup, "./NumberOfDatasets");
+    unsigned numds = HDF5Utils::ReadInt(dataGroup, "./NumberOfDatasets");
     for (unsigned num = 0; num < numds; num++)
     {
       std::ostringstream ss;
@@ -159,16 +161,22 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
   try
   {
     auto representerGroup = file.createGroup("./representer");
-    auto dataTypeStr = TypeToString(m_representer->GetType());
+    auto dataTypeStr = RepresenterType::TypeToString(m_representer->GetType());
 
-    hdf5utils::WriteStringAttribute(representerGroup, "name", m_representer->GetName());
-    hdf5utils::WriteStringAttribute(representerGroup, "version", m_representer->GetVersion());
-    hdf5utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
+    HDF5Utils::WriteStringAttribute(representerGroup, "name", m_representer->GetName());
+    HDF5Utils::WriteStringAttribute(representerGroup, "version", m_representer->GetVersion());
+    HDF5Utils::WriteStringAttribute(representerGroup, "datasetType", dataTypeStr);
 
     this->m_representer->Save(representerGroup);
 
     auto dataGroup = file.createGroup("./data");
-    hdf5utils::WriteInt(dataGroup, "./NumberOfDatasets", this->m_dataItemList.size());
+
+    if (this->m_dataItemList.size() > std::numeric_limits<int>::max())
+    {
+      throw StatisticalModelException("too many dataset to write", Status::OUT_OF_RANGE_ERROR);
+    }
+
+    HDF5Utils::WriteInt(dataGroup, "./NumberOfDatasets", static_cast<int>(this->m_dataItemList.size()));
 
     unsigned num{ 0 };
     for (const auto & item : m_dataItemList)
@@ -207,15 +215,15 @@ DataManagerBase<T, Derived>::GetCrossValidationFolds(unsigned nFolds, bool isRan
                                     Status::BAD_INPUT_ERROR);
   }
 
-  unsigned nElemsPerFold = GetNumberOfSamples() / nFolds;
+  auto nElemsPerFold = GetNumberOfSamples() / nFolds;
 
   // we create a vector with as many entries as datasets. Each entry contains the
   // fold the entry belongs to
-  std::vector<unsigned> batchAssignment(GetNumberOfSamples());
+  std::vector<std::size_t> batchAssignment(GetNumberOfSamples());
 
-  for (unsigned i = 0; i < GetNumberOfSamples(); i++)
+  for (std::size_t i = 0; i < GetNumberOfSamples(); i++)
   {
-    batchAssignment[i] = std::min(i / nElemsPerFold, nFolds);
+    batchAssignment[i] = std::min(i / nElemsPerFold, static_cast<std::size_t>(nFolds));
   }
 
   // randomly shuffle the vector
@@ -223,7 +231,7 @@ DataManagerBase<T, Derived>::GetCrossValidationFolds(unsigned nFolds, bool isRan
   {
     std::random_device rd;
     std::mt19937       g(rd());
-    std::shuffle(batchAssignment.begin(), batchAssignment.end(), g);
+    std::shuffle(std::begin(batchAssignment), std::end(batchAssignment), g);
   }
 
   // now we create the folds

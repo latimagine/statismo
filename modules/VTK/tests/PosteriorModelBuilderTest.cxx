@@ -99,10 +99,10 @@ TestPosteriorMain()
 
   auto testSample = dataManager->GetData().back()->GetSample();
 
-  auto     domaintPointsList = representer->GetDomain().GetDomainPoints();
-  unsigned nDomainPoints = representer->GetDomain().GetNumberOfPoints();
+  auto domaintPointsList = representer->GetDomain().GetDomainPoints();
+  auto nDomainPoints = representer->GetDomain().GetNumberOfPoints();
 
-  for (unsigned ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / kNPointsFixed)
+  for (std::size_t ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / kNPointsFixed)
   {
     pvcList.emplace_back(PointValuePairType(domaintPointsList[ptId], testSample->GetPoint(ptId)),
                          kPointCovarianceMatrix);
@@ -113,7 +113,7 @@ TestPosteriorMain()
 
   auto posteriorMean = posteriorModel->DrawMean();
 
-  for (unsigned ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / kNPointsTest)
+  for (std::size_t ptId = 0; ptId < nDomainPoints; ptId = ptId + nDomainPoints / kNPointsTest)
   {
     STATISMO_ASSERT_LTE(vtkMath::Distance2BetweenPoints(posteriorMean->GetPoint(ptId), testSample->GetPoint(ptId)),
                         kTolerance * kTolerance);
@@ -224,7 +224,7 @@ TestPosteriorOnePoint()
 } // namespace
 
 int
-PosteriorModelBuilderTest(int argc, char ** argv) // NOLINT
+PosteriorModelBuilderTest(int argc, char * argv[]) // NOLINT
 {
   if (argc < 2)
   {

@@ -49,8 +49,11 @@ namespace statismo
 
 /**
  * \brief Helper class that represents a vtkPixel of arbitrary type and dimension
- * In vtk a pixel is just of type  T*. The statismo library relies on a proper
+ *
+ * In vtk, a pixel is just of type  T*. The statismo library relies on a proper
  * copy semantics, and hence requires such a wrapper.
+ *
+ * \ingroup VTK
  */
 class vtkNDPixel
 {

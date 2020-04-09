@@ -6,16 +6,20 @@
 
 LC_ALL=C
 
+if [[ "$NO_VERIFY" ]]; then
+  echo 'pre-commit hook skipped' 1>&2
+  exit 0
+fi
+
 local_branch="$(git rev-parse --abbrev-ref HEAD)"
+valid_branch="^(feat|fix|sanity|prerelease|release|hotfix)\/[a-z0-9._-]+$"
 
-valid_branch_regex="^(feat|fix|sanity|prerelease|release|hotfix)\/[a-z0-9._-]+$"
-
-message="There is something wrong with your branch name. Branch names in this project must adhere to this contract: $valid_branch_regex. Your commit will be rejected. You should rename your branch to a valid name and try again."
-
-if [[ ! $local_branch =~ $valid_branch_regex ]]
+if [[ ! $local_branch =~ $valid_branch ]]
 then
-    echo "$message"
-    exit 1
+  echo "There is something wrong with your branch name"
+  echo "Expected format: $valid_branch"
+  echo "Commit is rejected! Rename your branch!"
+  exit 1
 fi
 
 exit 0

@@ -56,8 +56,11 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for statismo::ReducedVarianceModelBuilder class.
- * \see statismo::ReducedVariance for detailed documentation.
+ * \brief ITK wrapper for statismo::ReducedVarianceModelBuilder class
+ *
+ * \sa statismo::ReducedVarianceModelBuilder for detailed documentation
+ * \ingroup ITK
+ * \ingroup ModelBuilders
  */
 template <typename Representer>
 class ReducedVarianceModelBuilder

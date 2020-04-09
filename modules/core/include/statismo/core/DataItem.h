@@ -47,9 +47,14 @@
 
 namespace statismo
 {
-/* \class DataItem
- * \brief Holds all the information for a given sample.
- * Use GetSample() to recover a Sample
+
+/**
+ * \brief Base abstract class for data item
+ *
+ * A data item holds information about a given sample.
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class DataItem : public NonCopyable
@@ -59,52 +64,56 @@ public:
   using DatasetPointerType = typename RepresenterType::DatasetPointerType;
 
   /**
-   *  Load from group
+   * \brief Load sample from group
    */
   virtual void
   LoadFromGroup(const H5::Group & dsGroup) = 0;
 
   /**
-   *  Save the sample data to the hdf5 group dsGroup.
+   * \brief Save sample to group
    */
   virtual void
   Save(const H5::Group & dsGroup) const = 0;
 
   /**
-   * Get the URI of the original dataset
+   * \brief Get URI of the original dataset
    */
   virtual std::string
   GetDatasetURI() const = 0;
 
   /**
-   * Get the representer used to create this sample
+   * \brief Get representer used for sample creation
    */
   virtual const RepresenterType *
   GetRepresenter() const = 0;
 
   /**
-   * Get the vectorial representation of this sample
+   * \brief Get sample vectorial representation
    */
   virtual VectorType
   GetSampleVector() const = 0;
 
   /**
-   * Returns the sample in the representation given by the representer
-   * \warning This method generates a new object containing the sample. If the Representer does not provide a smart
-   * pointer, the user is responsible for releasing memory.
+   * \brief Get the sample
+   * \return Sample in the representer representation
+   * \warning If returned type is a raw pointer, ownership is transferred
+   * to the caller
    */
   virtual DatasetPointerType
   GetSample() const = 0;
 
   /**
-   * Generic delete function
+   * \brief Generic delete function
    */
   virtual void
   Delete() = 0;
 };
 
 /**
- * \brief Base class for data item
+ * \brief Base implementation for data item
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T, typename Derived>
 class DataItemBase
@@ -165,8 +174,8 @@ protected:
   void
   LoadFromGroup(const H5::Group & dsGroup) override
   {
-    hdf5utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
-    m_uri = hdf5utils::ReadString(dsGroup, "./URI");
+    HDF5Utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
+    m_uri = HDF5Utils::ReadString(dsGroup, "./URI");
 
     LoadInternalImpl(dsGroup);
   }
@@ -174,8 +183,8 @@ protected:
   void
   SaveToGroup(const H5::Group & dsGroup) const
   {
-    hdf5utils::WriteVector(dsGroup, "./samplevector", m_sampleVector);
-    hdf5utils::WriteString(dsGroup, "./URI", m_uri);
+    HDF5Utils::WriteVector(dsGroup, "./samplevector", m_sampleVector);
+    HDF5Utils::WriteString(dsGroup, "./URI", m_uri);
 
     SaveInternalImpl(dsGroup);
   }
@@ -192,8 +201,11 @@ private:
   VectorType              m_sampleVector;
 };
 
-/* \class BasicDataItem
- * \brief Standard data item implementation
+/**
+ * \brief Standard data item
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class BasicDataItem : public DataItemBase<T, BasicDataItem<T>>
@@ -204,7 +216,7 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * Create a new DataItem object, using the data from the group in the HDF5 file
+   * \brief Load a new data item object
    * \param representer representer
    * \param dsGroup group in the hdf5 file for this dataset
    */
@@ -215,7 +227,7 @@ protected:
   void
   SaveInternalImpl(const H5::Group & dsGroup) const override
   {
-    hdf5utils::WriteString(dsGroup, "./sampletype", "DataItem");
+    HDF5Utils::WriteString(dsGroup, "./sampletype", "DataItem");
   }
 
   void
@@ -234,12 +246,22 @@ private:
   {}
 };
 
-/* \class DataItemWithSurrogates
- * \brief Specific data item implementation that associates surrogates to the data
+/**
+ * \brief Data item with surrogates
  *
- * In particular, it enables to associate categorical or continuous variables with a sample,
- * in a vectorial representation. The vector is provided by a file providing the
- * values in ascii format (empty space or EOL separating the values) \sa DataItem \sa DataManagerWithSurrogates
+ * Specific data item implementation that associates surrogates to the data.
+ *
+ * This kind of item makes it possible to associate categorical or continuous variables
+ * with a sample, in a vectorial representation.
+ *
+ * The vector is provided by a file providing the values in ascii format (empty space or EOL separating the values)
+ * as described in \ref md_data_README "data description".
+ *
+ * \sa DataItem
+ * \sa DataManagerWithSurrogates
+ *
+ * \ingroup DataManagers
+ * \ingroup Core
  */
 template <typename T>
 class DataItemWithSurrogates : public DataItemBase<T, DataItemWithSurrogates<T>>
@@ -256,7 +278,7 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * Create a new DataItem object, using the data from the group in the HDF5 file
+   * \brief Load a new DataItemWithSurrogates object
    * \param representer representer
    * \param dsGroup group in the hdf5 file for this dataset
    */
@@ -294,16 +316,16 @@ private:
   void
   LoadInternalImpl(const H5::Group & dsGroup) override
   {
-    hdf5utils::ReadVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
-    m_surrogateFilename = hdf5utils::ReadString(dsGroup, "./surrogateFilename");
+    HDF5Utils::ReadVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
+    m_surrogateFilename = HDF5Utils::ReadString(dsGroup, "./surrogateFilename");
   }
 
   void
   SaveInternalImpl(const H5::Group & dsGroup) const override
   {
-    hdf5utils::WriteString(dsGroup, "./sampletype", "DataItemWithSurrogates");
-    hdf5utils::WriteVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
-    hdf5utils::WriteString(dsGroup, "./surrogateFilename", this->m_surrogateFilename);
+    HDF5Utils::WriteString(dsGroup, "./sampletype", "DataItemWithSurrogates");
+    HDF5Utils::WriteVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
+    HDF5Utils::WriteString(dsGroup, "./surrogateFilename", this->m_surrogateFilename);
   }
 
   std::string m_surrogateFilename;

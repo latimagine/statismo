@@ -43,7 +43,10 @@
 namespace statismo
 {
 
-/* \class Clonable base class
+/**
+ * \brief Base class for class in hierarchy that needs
+ *        copy/assign capabilities
+ * \ingroup Core
  */
 template <typename Derived>
 class Clonable
@@ -57,18 +60,31 @@ public:
   Clonable &
   operator=(const Clonable &) = delete;
 
+  /**
+   * \brief Clone object
+   * \return Object cloned as a raw pointer
+   */
   Derived *
   CloneSelf() const
   {
     return this->CloneImpl();
   }
 
+  /**
+   * \brief Clone object
+   * \return Object cloned as a unique pointer with internal default deletor
+   */
   UniquePtrType<Derived>
   SafeCloneSelf() const
   {
     return SafeCloneSelfWithCustomDeletor<DefaultDeletor<Derived>>();
   }
 
+  /**
+   * \brief Clone object
+   * \tparam Deletor Custom deletor for the returned unique pointer
+   * \return Object cloned as a unique pointer
+   */
   template <typename Deletor>
   std::unique_ptr<Derived, Deletor>
   SafeCloneSelfWithCustomDeletor() const

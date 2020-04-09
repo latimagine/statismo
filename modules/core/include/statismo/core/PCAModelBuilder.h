@@ -51,9 +51,12 @@
 namespace statismo
 {
 /**
- * \brief Creates StatisticalModel using Principal Component Analysis.
+ * \brief Create StatisticalModel using Principal Component Analysis.
  *
  * This class implements the classical PCA based approach to Statistical Models.
+ *
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 template <typename T>
 class PCAModelBuilder : public ModelBuilderBase<T, PCAModelBuilder<T>>
@@ -68,29 +71,25 @@ public:
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * \brief The EigenValueMethod enum This type is used to specify which decomposition method resp. eigenvalue solver
-   * sould be used. Default is JacobiSVD which is the most accurate but for larger systems quite slow. In this case the
-   * SelfAdjointEigensolver is more appropriate (especially, if there are more examples than variables).
+   * \brief Decomposition method resp. eigenvalue solver
    */
   enum class EigenValueMethod
   {
-    JACOBI_SVD,
-    SELF_ADJOINT_EIGEN_SOLVER
+    JACOBI_SVD,               /**< most accurate but quite slow for larger systems */
+    SELF_ADJOINT_EIGEN_SOLVER /**< more appropriate for large systems (especially, if there are more examples than
+                                 variables) */
   };
 
   virtual ~PCAModelBuilder() = default; // NOLINT
 
   /**
-   * Build a new model from the training data provided in the dataManager.
-   * \param sampleDataList A sampleSet holding the data
-   * \param noiseVariance The variance of N(0, noiseVariance) distributed noise on the points.
+   * \brief Build a new model from the training data provided in the dataManager
+   * \param sampleDataList sample set holding the data
+   * \param noiseVariance variance of N(0, noiseVariance) distributed noise on the points
    * If this parameter is set to 0, we have a standard PCA model. For values > 0 we have a PPCA model.
-   * \param computeScores Determines whether the scores (the pca coefficients of the examples) are computed and stored
-   * as model info (computing the scores may take a long time for large models). \param method Specifies the method
-   * which is used for the decomposition resp. eigenvalue solver.
-   *
-   * \return A new Statistical model
-   * \warning The method allocates a new Statistical Model object, that needs to be deleted by the user.
+   * \param computeScores determines whether the scores (the pca coefficients of the examples) are computed and stored
+   * as model info (computing the scores may take a long time for large models).
+   * \param method Specifies the method which is used for the decomposition
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModel(const DataItemListType & sampleDataList,
@@ -100,7 +99,6 @@ public:
 
 
 private:
-  // to prevent use
   PCAModelBuilder() = default;
 
   UniquePtrType<StatisticalModelType>

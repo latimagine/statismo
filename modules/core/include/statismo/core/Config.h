@@ -35,8 +35,12 @@
  *
  */
 
-#ifndef __STATISMO_CONFIG_H_
-#define __STATISMO_CONFIG_H_
+/**
+ * \defgroup Core Core module classes and routines
+ */
+
+#ifndef __STATISMO_CORE_CONFIG_H_
+#define __STATISMO_CORE_CONFIG_H_
 
 static constexpr unsigned gk_oldFileVersionMajor = 0;
 static constexpr unsigned gk_oldFileVersionMinor = 8;

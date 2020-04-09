@@ -52,6 +52,11 @@
 
 namespace statismo
 {
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup ITK
+ */
 template <typename T, auto N>
 struct RepresenterTraits<::itk::Image<T, N>>
 {
@@ -67,11 +72,10 @@ namespace itk
 {
 
 /**
+ * \brief Representer for scalar and vector valued images
  * \ingroup Representers
- * \brief A representer for scalar and vector valued images
- * \sa Representer
+ * \ingroup ITK
  */
-
 template <typename Pixel, unsigned IMAGE_DIMENSION>
 class StandardImageRepresenter
   : public Object
@@ -88,10 +92,10 @@ public:
   friend Base;
   friend typename Base::ObjectFactoryType;
 
-  /** New macro for creation of through a Smart Pointer. */
+  /** New macro for creation of through a Smart Pointer */
   itkSimpleNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
+  /** Run-time type information (and related methods) */
   itkTypeMacro(StandardImageRepresenter, Object);
 
   using ImageType = itk::Image<Pixel, IMAGE_DIMENSION>;
@@ -120,7 +124,7 @@ public:
 
   void DeleteDataset(DatasetConstPointerType) const override
   {
-    // no op
+    // no op as ITK uses ref counted smart pointers
   }
   DatasetPointerType
   CloneDataset(DatasetConstPointerType d) const override;

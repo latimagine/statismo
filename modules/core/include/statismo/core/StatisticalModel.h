@@ -75,6 +75,7 @@ namespace statismo
  * provides the method to sample from this probability distribution, and to compute the probability of given samples
  * directly.
  *
+ * \ingroup Core
  */
 template <typename T>
 class StatisticalModel
@@ -100,15 +101,10 @@ public:
   using PointValueWithCovariancePairType = std::pair<PointValuePairType, PointCovarianceMatrixType>;
   using PointValueWithCovarianceListType = std::list<PointValueWithCovariancePairType>;
 
-  /**
-   * Destructor
-   */
   virtual ~StatisticalModel(); // NOLINT
 
   /**
-   * Destroy the object.
-   * The same effect can be achieved by deleting the object in the usual
-   * way using the c++ delete keyword.
+   * \brief Destroy the object.
    */
   void
   Delete()
@@ -118,191 +114,170 @@ public:
 
 
   /**
-   * @name General Info
+   * \name General Info
    */
   ///@{
   /**
-   * \return The number of PCA components in the model
+   * \brief Get the number of PCA components in the model
    */
   unsigned int
   GetNumberOfPrincipalComponents() const;
 
   /**
-   * \return A model info object \sa ModelInfo
+   * \brief Get model info object
+   * \sa ModelInfo
    */
   const ModelInfo &
   GetModelInfo() const;
   ///@}
 
   /**
-   * @name Sample from the model
+   * \name Sample from the model
    *
    * \warning Note that these methods return a new Sample. If the representer used returns naked pointers (i.e. not
-   * smart pointers), the sample needs to be deleted manually.
+   * smart pointers), the sample needs to be deleted manually with DeleteDataset.
    */
   ///@{
 
 
   /**
-   * Returns the value of the given sample at the point specified with the ptId
-   *
-   * \param sample A sample
-   * \param ptId the point id where to evaluate the sample
-   *
-   * \return The value of the sample, at the specified point
+   * \brief Get the value of the given sample at a given point
+   * \param sample sample
+   * \param ptId point id where to evaluate the sample
    */
   ValueType
   EvaluateSampleAtPoint(DatasetConstPointerType sample, unsigned ptId) const;
 
 
   /**
-   * Returns the value of the given sample corresponding to the given domain point
-   *
-   * \param sample A sample
-   * \param point the (domain) point on which the sample should be evaluated.
-   *
-   * \return The value of the sample, at the specified point
+   * \brief Get the value of the given sample corresponding to the given domain point
+   * \param sample sample
+   * \param point the (domain) point on which the sample should be evaluated
    */
   ValueType
   EvaluateSampleAtPoint(DatasetConstPointerType sample, const PointType & point) const;
 
 
   /**
-   * \return A new sample representing the mean of the model
+   * \brief Get a new sample representing the mean of the model
    */
   DatasetPointerType
   DrawMean() const;
 
   /**
-   * Draws the sample with the given coefficients
-   *
-   * \param coefficients A coefficient vector. The size of the coefficient vector should be smaller
+   * \brief Draw the sample with the given coefficients
+   * \param coefficients coefficient vector. The size of the coefficient vector should be smaller
    * than number of factors in the model. Otherwise an exception is thrown.
-   * \param addNoise If true, the Gaussian noise assumed in the model is added to the sample
-   *
-   * \return A new sample
-   * */
+   * \param addNoise if true, the Gaussian noise assumed in the model is added to the sample
+   */
   DatasetPointerType
   DrawSample(const VectorType & coefficients, bool addNoise = false) const;
 
   /**
-   * As StatisticalModel::DrawSample, but where the coefficients are chosen at random according to a standard normal
-   * distribution
-   *
-   * \param addNoise If true, the Gaussian noise assumed in the model is added to the sample
-   *
-   * \return A new sample
-   * \sa DrawSample
+   * \brief Draw a sample with random coefficients
+   * \see DrawSample
    */
   DatasetPointerType
   DrawSample(bool addNoise = false) const;
 
-
   /**
-   * Draws the sample corresponding to the ith pca matrix
-   *
-   * \param pcaComponentCount The number of the PCA Basis to be retrieved
-   *
-   * \return A new sample
-   * */
+   * \brief Draw the sample corresponding to the ith pca matrix
+   * \param pcaComponentCount number of the PCA Basis to be retrieved
+   */
   DatasetPointerType
   DrawPCABasisSample(unsigned pcaComponentCount) const;
 
 
   /**
-   * @name Point sampling and point information
+   * \name Point sampling and point information
    */
   ///@{
 
   /**
-   * Returns the mean of the model, evaluated at the given point.
-   *
-   * \param point A point on the domain the model is defined
-   * \return The mean Sample evaluated at the point point
+   * \brief Get the mean of the model evaluated at the given point
+   * \param point point on the domain the model is defined
    */
   ValueType
   DrawMeanAtPoint(const PointType & point) const;
 
   /**
-   * Returns the mean of the model, evaluated at the given pointid.
-   *
-   * \param pointId The pointId of the point where it should be evaluated (as defined by the representer)
-   * \return The mean sample evaluated at the given pointId \see DrawMeanAtPoint
+   * \brief Get the mean of the model evaluated at the given point index
+   * \param pointId pointId of the point where it should be evaluated (as defined by the representer)
    */
   ValueType
   DrawMeanAtPoint(unsigned pointId) const;
 
   /**
-   * Returns the value of the sample defined by coefficients at the specified point.
-   * This method computes the value of the sample only for the given point, and is thus much more
-   * efficient that calling DrawSample, if only a few points are of interest.
-   *
-   * \param coefficients the coefficients of the sample
+   * \brief Get the value of the sample defined by coefficients at the specified point.
+   * \param coefficients coefficients of the sample
    * \param point point of the sample where it is evaluated
    * \param addNoise if true, the Gaussian noise assumed in the model is added to the sample
+   *
+   * This method computes the value of the sample only for the given point, and is thus much more
+   * efficient that calling DrawSample, if only a few points are of interest.
    */
   ValueType
   DrawSampleAtPoint(const VectorType & coefficients, const PointType & point, bool addNoise = false) const;
 
   /**
-   * Returns the value of the sample defined by coefficients at the specified pointID.
-   * This method computes the value of the sample only for the given point, and is thus much more
-   * efficient that calling DrawSample, if only a few points are of interest.
-   *
-   * \param coefficients the coefficients of the sample
+   * \brief Get the value of the sample defined by coefficients at the specified point index
+   * \param coefficients coefficients of the sample
    * \param ptId point of the sample where it is evaluated
    * \param addNoise if true, the Gaussian noise assumed in the model is added to the sample
+   *
+   * This method computes the value of the sample only for the given point, and is thus much more
+   * efficient that calling DrawSample, if only a few points are of interest.
    */
   ValueType
   DrawSampleAtPoint(const VectorType & coefficients, unsigned ptId, bool addNoise = false) const;
 
 
   /**
-   * Computes the jacobian of the Statistical model at a given point
-   * \param pt The point where the Jacobian is computed
+   * \brief Compute the jacobian of the Statistical model at a given point
+   * \param pt point where the Jacobian is computed
    * \return Jacobian matrix
    */
   MatrixType
   GetJacobian(const PointType & pt) const;
 
   /**
-   * Computes the jacobian of the Statistical model at a specified pointID
-   * \param ptId The pointID where the Jacobian is computed
+   * \brief Compute the jacobian of the Statistical model at a specified point index
+   * \param ptId pointID where the Jacobian is computed
    * \return Jacobian matrix
    */
   MatrixType
   GetJacobian(unsigned ptId) const;
 
   /**
-   * Returns the variance in the model for point pt
+   * \brief Get the variance in the model for point pt
    * \param pt1 point 1
    * \param pt2 point 2
-   *
-   * @returns a d x d covariance matrix
+   * \return a d x d covariance matrix
    */
   MatrixType
   GetCovarianceAtPoint(const PointType & pt1, const PointType & pt2) const;
 
   /**
-   * Returns the variance in the model for point pt
+   * \brief Get the variance in the model for point pt
    * \param ptId1 point 1
    * \param ptId2 point 2
-   * @returns a d x d covariance matrix
+   * \return a d x d covariance matrix
    */
   MatrixType
   GetCovarianceAtPoint(unsigned ptId1, unsigned ptId2) const;
   ///@}
 
-
   /**
-   * @name Statistical Information from Dataset
+   * \name Statistical Information from Dataset
    */
   ///@{
 
   /**
-   * Returns the covariance matrix for the model. If the model is defined on
-   * n points, in d dimensions, then this is a \f$nd \times nd\f$ matrix of
+   * \brief Get the covariance matrix for the model
+   *
+   * If the model is defined on n points, in d dimensions, then this is a \f$nd \times nd\f$ matrix of
    * n \f$d \times d \f$ block matrices corresponding to the covariance at each point.
+   *
    * \warning This method is only useful when $n$ is small, since otherwise the matrix
    * becomes huge.
    */
@@ -310,102 +285,80 @@ public:
   GetCovarianceMatrix() const;
 
   /**
-   * Returns the probability of observing the given dataset under this model.
+   * \brief Get the probability of observing the given dataset under this model
+   *
    * If the coefficients \f$\alpha \in \mathbf{R}^n\f$ define the dataset, the probability is
    * \f$
    * (2 \pi)^{- \frac{n}{2}} \exp(||\alpha||)
    * \f$
-   *
-   *
-   * \param dataset The dataset
-   * \return The probability
    */
   double
   ComputeProbability(DatasetConstPointerType dataset) const;
 
   /**
-   * Returns the log probability of observing a given dataset.
-   *
-   * \param dataset The dataset
-   * \return The log probability
-   *
+   * \brief Get the log probability of observing a given dataset.
    */
   double
   ComputeLogProbability(DatasetConstPointerType dataset) const;
 
 
   /**
-   * Returns the probability of observing the given coefficients under this model.
+   * \brief Get the probability of observing the given coefficients under this model.
+   * \param coefficients coefficients \f$\alpha \in \mathbf{R}^n\f$
+   *
    * If the coefficients \f$\alpha \in \mathbf{R}^n\f$ define the dataset, the probability is
    * \f$
    * (2 \pi)^{- \frac{n}{2}} \exp(||\alpha||)
    * \f$
-   *
-   *
-   * \param coefficients The coefficients \f$\alpha \in \mathbf{R}^n\f$
-   * \return The probability
    */
   double
   ComputeProbabilityOfCoefficients(const VectorType & coefficients) const;
 
   /**
-   * Returns the log probability of observing given coefficients.
-   *
-   * \param coefficients The coefficients \f$\alpha \in \mathbf{R}^n\f$
-   * \return The log probability
-   *
+   * \brief Get the log probability of observing given coefficients.
+   * \param coefficients coefficients \f$\alpha \in \mathbf{R}^n\f$
    */
   double
   ComputeLogProbabilityOfCoefficients(const VectorType & coefficients) const;
 
 
   /**
-   * Returns the mahalonoibs distance for the given dataset.
+   * \brief Get the mahalonoibs distance for the given dataset.
    */
   double
   ComputeMahalanobisDistance(DatasetConstPointerType dataset) const;
 
 
   /**
-   * Returns the coefficients of the latent variables for the given dataset, i.e.
+   * \brief Get the coefficients of the latent variables for the given dataset, i.e.
    * the vectors of numbers \f$\alpha \f$, such that for the dataset \f$S\f$ it holds that
    * \f$ S = \mu + U \alpha\f$
-   *
-   * @returns The coefficient vector \f$\alpha\f$
+   * \return The coefficient vector \f$\alpha\f$
    */
   VectorType
   ComputeCoefficients(DatasetConstPointerType dataset) const;
 
 
   /**
-   * Returns the coefficients of the latent variables for the given values provided in the PointValueList.
-   * This is useful, when only a part of the dataset is given.
-   * The method is described in the paper
-   *
-   * Probabilistic Modeling and Visualization of the Flexibility in Morphable Models,
-   * M. Luethi, T. Albrecht and T. Vetter, Mathematics of Surfaces, 2009
-   *
+   * \brief Get the coefficients of the latent variables for the given values provided in the PointValueList.
    * \param pointValueList A list with PointValuePairs .
    * \param pointValueNoiseVariance The variance of estimated (gaussian) noise at the known points
    *
+   * This is useful, when only a part of the dataset is given.
+   * The method is described in the paper \cite 5 .
    */
   VectorType
   ComputeCoefficientsForPointValues(const PointValueListType & pointValueList,
                                     double                     pointValueNoiseVariance = 0.0) const;
 
   /**
-   * Similar to ComputeCoefficientsForPointValues, only here there is no global pointValueNoiseVariance.
-   * Instead, a covariance matrix with noise values is specified for each point.
-   * The returned coefficients are the mean of the posterior model described in
+   * \brief Similar to ComputeCoefficientsForPointValues, only here there is no global pointValueNoiseVariance
+   * \param pointValuesWithCovariance A list with PointValuePairs and PointCovarianceMatrices
    *
-   * Posterior Shape Models
-   * Thomas Albrecht, Marcel Luethi, Thomas Gerig, Thomas Vetter
-   * Medical Image Analysis 2013
+   * Instead, a covariance matrix with noise values is specified for each point.
+   * The returned coefficients are the mean of the posterior model described in \cite 4 .
    *
    * To get the full posterior model, use the PosteriorModelBuilder
-   *
-   * \param pointValuesWithCovariance A list with PointValuePairs and PointCovarianceMatrices.
-   *
    */
   VectorType
   ComputeCoefficientsForPointValuesWithCovariance(
@@ -413,40 +366,38 @@ public:
 
 
   /**
-   * Same as ComputeCoefficientsForPointValues(const PointValueListType&  pointValues), but used when the
-   * point ids, rather than the points are known.
-   *
-   * \param pointIdValueList A list with (Point,Value) pairs, a list of (PointId, Value) is provided.
-   * \param pointValueNoiseVariance The variance of estimated (gaussian) noise at the known points
+   * \brief Version with point indices
+   * \param pointIdValueList list with (Point,Value) pairs, a list of (PointId, Value) is provided
+   * \param pointValueNoiseVariance variance of estimated (gaussian) noise at the known points
    */
-  // RB: I had to modify the method name, to avoid prototype collisions when the PointType corresponds to unsigned (=
-  // type of the point id)
   VectorType
   ComputeCoefficientsForPointIDValues(const PointIdValueListType & pointIdValueList,
                                       double                       pointValueNoiseVariance = 0.0) const;
 
 
   /**
-   * @name Low level access
-   * These methods provide a low level interface to  the model content. They are of only limited use for
+   * \name Low level access
+   * These methods provide a low level interface to the model content. They are of only limited use for
    * an application. Prefer whenever possible the high level functions.
    */
   ///@{
 
   /**
-   * Returns the variance of the noise of the error term, that was set when the model was built.
+   * \brief Get the variance of the noise of the error term, that was set when the model was built.
    */
   float
   GetNoiseVariance() const;
 
   /**
-   * Returns a vector where each element holds the variance of the corresponding principal component in data space
-   * */
+   * \brief Get a vector where each element holds the variance of the corresponding principal component in data space
+   */
   const VectorType &
   GetPCAVarianceVector() const;
 
   /**
-   * Returns a vector holding the mean. Assume the mean \f$\mu \subset \mathbf{R}^d\f$ is defined on
+   * \brief Get a vector holding the mean
+   *
+   * Assume the mean \f$\mu \subset \mathbf{R}^d\f$ is defined on
    * \f$p\f$ points, the returned mean vector \f$m\f$ has dimensionality \f$m \in \mathbf{R}^{dp} \f$, i.e.
    * the \f$d\f$ components are stacked into the vector. The order of the components in the vector is
    * undefined and depends on the representer.
@@ -455,18 +406,18 @@ public:
   GetMeanVector() const;
 
   /**
-   * Returns a matrix with the PCA Basis as its columns.
+   * \brief Get a matrix with the PCA Basis as its columns
+   *
    * Assume the shapes \f$s \subset \mathbf{R}^d\f$ are defined on
    * \f$n\f$ points, the returned matrix \f$W\f$ has dimensionality \f$W \in \mathbf{R}^{dp \times n} \f$, i.e.
    * the \f$d\f$ components are stacked into the matrix. The order of the components in the matrix is
    * undefined and depends on the representer.
-   *
    */
   const MatrixType &
   GetPCABasisMatrix() const;
 
   /**
-   * Returns the PCA Matrix, but with its principal axis normalized to unit length.
+   * \brief Get the PCA Matrix, but with its principal axis normalized to unit length
    * \warning This is more expensive than GetPCABasisMatrix as the matrix has to be computed
    * and a copy is returned
    */
@@ -474,9 +425,9 @@ public:
   GetOrthonormalPCABasisMatrix() const;
 
   /**
-   * Returns an instance for the given coefficients as a vector.
-   * \param coefficients the coefficients of the sample
-   * \param addNoise If true, the Gaussian noise assumed in the model is added to the sample
+   * \brief Get an instance for the given coefficients as a vector
+   * \param coefficients coefficients of the sample
+   * \param addNoise if true, the Gaussian noise assumed in the model is added to the sample
    */
   VectorType
   DrawSampleVector(const VectorType & coefficients, bool addNoise = false) const;
@@ -485,21 +436,22 @@ public:
 
   ///@{
   /**
-   * Sets the model information. This is for library internal use only.
+   * \brief Set the model information
+   * \warning This is for library internal use only
    */
   void
   SetModelInfo(const ModelInfo & modelInfo);
 
   /**
-   * Computes the coefficients for the given sample vector.
-   * This is for library internal use only.
+   * \brief Compute the coefficients for the given sample vector
+   * \warning This is for library internal use only
    */
   VectorType
   ComputeCoefficientsForSampleVector(const VectorType & sample) const;
 
 
   /**
-   * Return an instance of the representer
+   * \brief Get an instance of the representer
    */
   const RepresenterType *
   GetRepresenter() const
@@ -509,7 +461,7 @@ public:
 
 
   /**
-   * Return the domain of the statistical model
+   * \brief Get the domain of the statistical model
    */
   const DomainType &
   GetDomain() const
@@ -525,8 +477,8 @@ private:
   CheckAndUpdateCachedParameters() const;
 
   /**
-   * Create an instance of the StatisticalModel
-   * \param representer An instance of the representer, used to convert the samples to dataset of the represented type.
+   * \brief Create an instance of the StatisticalModel
+   * \param representer an instance of the representer, used to convert the samples to dataset of the represented type.
    */
   StatisticalModel(const RepresenterType * representer,
                    VectorType              m,

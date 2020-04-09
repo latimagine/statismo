@@ -2,7 +2,7 @@
 
 # NAME
 
-statismo-warp-image - Applies a deformation field to an image.
+statismo-warp-image - applies a deformation field to an image
 
 
 # SYNOPSIS

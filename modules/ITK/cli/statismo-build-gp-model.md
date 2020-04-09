@@ -31,18 +31,18 @@ statismo-build-gp-model is used to build a shape or deformation model from a gau
 -p, \--parameters *KERNEL_PARAMETERS*
 :	*KERNEL_PARAMETERS* are the comma separated kernel parameters. The exact parameters depend on the kernel:
 
-	- gaussian: The gaussian kernel has one parameter
-		- sigma: This parameter is a float that sets the sigma parameter in the gaussian          kernel. Bigger values make the changes "smoother".
+    - gaussian: The gaussian kernel has one parameter
+        - sigma: This parameter is a float that sets the sigma parameter in the gaussian          kernel. Bigger values make the changes "smoother".
     - multiscale: The multiscale kernel has two parameters
-		- base level
+        - base level
         - number of levels
 
 <!-- 
-	- kernel with 2 parameters: this is an example for man writing purposes and is commented out
-		- param1: float of some sort
-		- param2: boolean of some sort
+    - kernel with 2 parameters: this is an example for man writing purposes and is commented out
+        - param1: float of some sort
+        - param2: boolean of some sort
 -->
-	
+    
 -s, \--scale *SCALE* 
 :	*SCALE* is a scaling factor the kernel is scaled with. The bigger this value is, the stronger the change is when modifying a model parameter.
 

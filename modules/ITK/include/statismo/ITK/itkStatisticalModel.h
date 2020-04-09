@@ -58,8 +58,10 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for the statismo::StatisticalModel class.
- * \see statismo::StatisticalModel for detailed documentation.
+ * \brief ITK wrapper for statismo::StatisticalModel class
+ *
+ * \sa statismo::StatisticalModel for detailed documentation
+ * \ingroup ITK
  */
 template <typename T>
 class StatisticalModel

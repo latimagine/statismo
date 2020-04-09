@@ -51,11 +51,10 @@ namespace itk
 {
 
 /**
- *
- * \brief An itk transform that allows for deformations defined by a given Statistical Deformation Model.
- *
+ * \brief Deformation transform used with scalar or vector valued Images
  *
  * \ingroup Transforms
+ * \ingroup ITK
  */
 template <typename DataSet, typename ScalarType, unsigned int DIMENSION>
 class ITK_EXPORT StatisticalDeformationModelTransform
@@ -76,9 +75,6 @@ public:
   using OutputPointType = typename Superclass::OutputPointType;
   using RepresenterType = typename Superclass::RepresenterType;
 
-  /**
-   * Clone the current transform
-   */
   virtual ::itk::LightObject::Pointer
   CreateAnother() const
   {
@@ -94,8 +90,8 @@ public:
    * Transform a given point according to the deformation induced by the StatisticalModel,
    * given the current parameters.
    *
-   * \param pt The point to tranform
-   * \return The transformed point
+   * \param pt point to tranform
+   * \return transformed point
    */
   virtual OutputPointType
   TransformPoint(const InputPointType & pt) const override

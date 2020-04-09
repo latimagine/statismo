@@ -2,7 +2,7 @@
 
 # NAME
 
-statismo-fit-image - fits a model iteratively to an image.
+statismo-fit-image - fits a model iteratively to an image
 
 
 # SYNOPSIS
@@ -68,9 +68,9 @@ The Landmarks format is as follows.
 Example
 :	pointA,2,-2,3
 
-	pointB,3.1,3,-5
+    pointB,3.1,3,-5
 
-	pointC,7,8,9.08
+    pointC,7,8,9.08
 
 
 Remark

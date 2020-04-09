@@ -55,8 +55,11 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for the statismo::PosteriorModelBuilder class.
- * \see statismo::PosteriorModelBuilder for detailed documentation.
+ * \brief ITK wrapper for statismo::PosteriorModelBuilder class
+ *
+ * \sa statismo::PosteriorModelBuilder for detailed documentation
+ * \ingroup ITK
+ * \ingroup ModelBuilders
  */
 template <typename T>
 class PosteriorModelBuilder

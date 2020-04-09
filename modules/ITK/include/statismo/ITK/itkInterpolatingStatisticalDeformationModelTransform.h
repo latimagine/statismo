@@ -53,14 +53,15 @@ namespace itk
 {
 
 /**
+ * \brief SSM deformation transform with interpolation
  *
- * \brief An itk transform that allows for deformations defined by a given Statistical Deformation Model.
+ * In contrast to the standard itk::StatisticalDeformationModelTransform, this transform performs a linear interpolation
+ * of the PCABasis. This has the advantage that a model can be fitted which has a much lower resolution that the image
+ * to be explained.
  *
- * In contrast to the standard StatisticalDeformationModelTransform, this transform performs a linear interpolation of
- * the PCABasis. This has the advantage that a model can be fitted which has a much lower resolution that the image,
- * that needs to be explained.
- *
+ * \sa itk::StatisticalDeformationModelTransform
  * \ingroup Transforms
+ * \ingroup ITK
  */
 template <typename Dataset, typename ScalarType, unsigned int DIMENSION>
 class ITK_EXPORT InterpolatingStatisticalDeformationModelTransform
@@ -84,9 +85,6 @@ public:
   using DeformationFieldType = typename RepresenterType::DatasetType;
   using InterpolatorType = VectorLinearInterpolateImageFunction<DeformationFieldType, ScalarType>;
 
-  /**
-   * Clone the current transform
-   */
   ::itk::LightObject::Pointer
   CreateAnother() const override
   {
@@ -99,6 +97,9 @@ public:
     return smartPtr;
   }
 
+  /**
+   * \brief Set the statistical shape model
+   */
   virtual void
   SetStatisticalModel(const StatisticalModelType * model)
   {
@@ -144,11 +145,11 @@ public:
   }
 
   /**
-   * Transform a given point according to the deformation induced by the StatisticalModel,
+   * \brief Transform a given point according to the deformation induced by the StatisticalModel,
    * given the current parameters.
    *
-   * \param pt The point to tranform
-   * \return The transformed point
+   * \param pt point to tranform
+   * \return transformed point
    */
   OutputPointType
   TransformPoint(const InputPointType & pt) const override

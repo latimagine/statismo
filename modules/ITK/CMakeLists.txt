@@ -36,6 +36,13 @@ endif()
 
 # Install
 
+install(TARGETS statismo_ITK
+  EXPORT statismoTargets
+  RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+  LIBRARY DESTINATION ${INSTALL_LIB_DIR}
+  ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
+)
+
 install(FILES ${_target_headers}
   DESTINATION ${INSTALL_INCLUDE_DIR}/${_target_include_dir_suffix}
 )

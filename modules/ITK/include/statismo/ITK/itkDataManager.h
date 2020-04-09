@@ -54,8 +54,11 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for statismo::DataManager class.
- * \see statismo::DataManager for detailed documentation.
+ * \brief ITK wrapper for statismo::DataManager class
+ *
+ * \sa statismo::DataManager for detailed documentation
+ * \ingroup DataManagers
+ * \ingroup ITK
  */
 template <typename T>
 class DataManager

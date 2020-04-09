@@ -51,7 +51,7 @@ namespace statismo
 {
 
 template <typename T>
-unsigned
+std::size_t
 ConditionalModelBuilder<T>::PrepareData(const DataItemListType &            sampleDataList,
                                         const SurrogateTypeInfoType &       surrogateTypesInfo,
                                         const CondVariableValueVectorType & conditioningInfo,
@@ -161,7 +161,8 @@ ConditionalModelBuilder<T>::BuildNewModel(const DataItemListType &            sa
   {
     // the scores in the pca model correspond to the parameters of each sample in the model.
     MatrixType B = pcaModel->GetModelInfo().GetScoresMatrix().transpose();
-    assert(B.rows() == nSamples);
+
+    assert(static_cast<std::size_t>(B.rows()) == nSamples);
     assert(B.cols() == nPCAComponents);
 
     // A is the joint data matrix B, X, where X contains the conditional information for each sample
@@ -209,6 +210,7 @@ ConditionalModelBuilder<T>::BuildNewModel(const DataItemListType &            sa
 
     // keep only the necessary number of modes, wrt modelVarianceRetained...
     double totalRemainingVariance = singularValues.sum(); //
+
     // and count the number of modes required for the model
     double   cumulatedVariance = singularValues(0);
     unsigned numComponentsToReachPrescribedVariance{ 1 };
@@ -248,7 +250,8 @@ ConditionalModelBuilder<T>::BuildNewModel(const DataItemListType &            sa
     typename BuilderInfo::DataInfoList di;
     for (const auto & item : sampleDataList)
     {
-      const auto *       sampleData = dynamic_cast<const DataItemWithSurrogatesType *>(item.get());
+      const auto * sampleData = dynamic_cast<const DataItemWithSurrogatesType *>(item.get());
+
       std::ostringstream os;
       os << "URI_" << (di.size() / 2);
       di.emplace_back(os.str().c_str(), sampleData->GetDatasetURI());

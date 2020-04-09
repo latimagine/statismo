@@ -47,11 +47,17 @@
 #include <vector>
 #include <memory>
 
+/**
+ * \defgroup ModelBuilders Statistical model building classes and routines
+ */
+
 namespace statismo
 {
 
 /**
- * \brief Common base class for all the model builder classes
+ * \brief Base abstract class for model builders
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 template <typename T>
 class ModelBuilder : public NonCopyable
@@ -100,10 +106,10 @@ protected:
 };
 
 /**
- * \brief Base class for model builder
+ * \brief Base implementation for model builders
  *
- * The main purposes of this class are:
- *  - gathering model builder common code (creation/deletion) in a generic way
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 template <typename T, typename Derived>
 class ModelBuilderBase
@@ -113,7 +119,6 @@ class ModelBuilderBase
 public:
   using ObjectFactoryType = GenericFactory<Derived>;
 
-  /// Delete basic implementation
   virtual void
   Delete()
   {
@@ -123,4 +128,4 @@ public:
 
 } // namespace statismo
 
-#endif /* __MODELBUILDER_H_ */
+#endif

@@ -49,11 +49,12 @@
 namespace statismo
 {
 
-/*
- * Thread safe unordered map
+/**
+ * \brief Thread safe unordered map
+ * \note This is not lock-based not fine-grained implementation
+ *        and implements only the currently needed interface
  *
- * \note: This is not lock-based not fine-grained implementation
- *        and implement only the current needed interface
+ * \ingroup Core
  */
 template <class Key,
           class T,
@@ -107,10 +108,11 @@ private:
   mutable std::mutex m_guard;
 };
 
-/*
- * Thread safe queue
+/**
+ * \brief Thread safe queue
+ * \note Implementation taken from "C++ concurrency in action", A. Williams
  *
- * Implementation taken from "C++ concurrency in action", A. Williams
+ * \ingroup Core
  */
 template <typename T>
 class SafeQueue : public NonCopyable

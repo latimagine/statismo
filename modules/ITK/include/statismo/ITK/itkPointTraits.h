@@ -42,8 +42,11 @@
 
 namespace statismo
 {
-/*
- * \brief Specialization for an ITK point
+
+/**
+ * \brief Specialization for ITK point
+ *
+ * \ingroup ITK
  */
 template <typename T, unsigned int DIM>
 struct PointTraits<::itk::Point<T, DIM>>

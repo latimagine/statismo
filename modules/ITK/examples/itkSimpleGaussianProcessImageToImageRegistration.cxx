@@ -42,15 +42,16 @@
 #include "statismo/ITK/itkStandardImageRepresenter.h"
 #include "statismo/ITK/itkStatisticalModel.h"
 
-#include "itkCommand.h"
-#include "itkDirectory.h"
-#include "itkImage.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkImageRegistrationMethod.h"
-#include "itkLBFGSOptimizer.h"
-#include "itkLinearInterpolateImageFunction.h"
-#include "itkMeanSquaresImageToImageMetric.h"
+#include <itkCommand.h>
+#include <itkDirectory.h>
+#include <itkImage.h>
+#include <itkVector.h>
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
+#include <itkImageRegistrationMethod.h>
+#include <itkLBFGSOptimizer.h>
+#include <itkLinearInterpolateImageFunction.h>
+#include <itkMeanSquaresImageToImageMetric.h>
 
 
 #include <iostream>

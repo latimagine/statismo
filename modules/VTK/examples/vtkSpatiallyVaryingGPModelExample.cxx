@@ -17,6 +17,7 @@
 #include "statismo/VTK/vtkStandardMeshRepresenter.h"
 
 #include <vtkPolyDataReader.h>
+#include <vtkNew.h>
 
 #include <iostream>
 #include <memory>

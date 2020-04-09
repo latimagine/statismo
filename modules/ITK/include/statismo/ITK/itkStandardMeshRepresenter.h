@@ -44,6 +44,7 @@
 #include "statismo/core/Hash.h"
 #include "statismo/ITK/itkConfig.h" // this needs to be the first include file
 #include "statismo/ITK/itkPixelConversionTraits.h"
+#include "statismo/ITK/itkPointTraits.h"
 
 #include <itkMesh.h>
 #include <itkObject.h>
@@ -53,6 +54,11 @@
 
 namespace statismo
 {
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup ITK
+ */
 template <typename T, auto N>
 struct RepresenterTraits<::itk::Mesh<T, N>>
 {
@@ -69,9 +75,9 @@ namespace itk
 {
 
 /**
+ * \brief Representer for scalar valued itk mesh
  * \ingroup Representers
- * \brief A representer for scalar valued itk Meshs
- * \sa Representer
+ * \ingroup ITK
  */
 template <typename Pixel, unsigned MESH_DIMENSION>
 class StandardMeshRepresenter
@@ -79,7 +85,6 @@ class StandardMeshRepresenter
   , public Object
 {
 public:
-  /* Standard class typedefs. */
   using Self = StandardMeshRepresenter;
   using Superclass = Object;
   using Pointer = SmartPointer<Self>;
@@ -98,11 +103,7 @@ public:
   using DatasetConstPointerType = typename RepresenterBaseType::DatasetConstPointerType;
   using PointsContainerType = typename MeshType::PointsContainer;
   using PointsLocatorType = itk::PointsLocator<PointsContainerType>;
-
-  /// The type of the data set to be used
   using DatasetType = MeshType;
-
-  // An unordered map is used to cache pointid for corresponding points
   using PointCacheType = std::unordered_map<PointType, unsigned, statismo::Hash<PointType>>;
 
   /** New macro for creation of through a Smart Pointer. */
@@ -121,7 +122,7 @@ public:
   }
 
   void DeleteDataset(DatasetPointerType) const override{
-    // no op
+    // no op as itk uses ref counted smart pointers
   };
   DatasetPointerType
   CloneDataset(DatasetConstPointerType mesh) const override;
@@ -168,8 +169,6 @@ public:
   virtual unsigned
   GetNumberOfPoints() const;
 
-  /// return the point id associated with the given point
-  /// \warning This works currently only for points that are defined on the reference
   unsigned
   GetPointIdForPoint(const PointType & pt) const override;
 

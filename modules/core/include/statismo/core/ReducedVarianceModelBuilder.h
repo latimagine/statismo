@@ -53,37 +53,31 @@ namespace statismo
 {
 
 /**
- * \brief Builds a new model which retains only the specified total variance
- *
+ * \brief Create a StatisticalModel which retains only the specified total variance
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 template <typename Representer>
 class ReducedVarianceModelBuilder : public ModelBuilderBase<Representer, ReducedVarianceModelBuilder<Representer>>
 {
-
 public:
   using Superclass = ModelBuilderBase<Representer, ReducedVarianceModelBuilder<Representer>>;
   using StatisticalModelType = typename Superclass::StatisticalModelType;
   friend typename Superclass::ObjectFactoryType;
 
   /**
-   * Build a new model from the given model, which retains only the leading principal components
-   *
-   * \param model Statistical model
-   * \param numberOfPrincipalComponents The number of kept component
-   * \return a new statistical model
+   * \brief Build a new model from the given model, which retains only the leading principal components
+   * \param model statistical model
+   * \param numberOfPrincipalComponents number of components to keep
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModelWithLeadingComponents(const StatisticalModelType * model, unsigned numberOfPrincipalComponents) const;
 
 
   /**
-   * Build a new model from the given model, which retains only the specified variance
-   *
-   * \param model A statistical model.
-   * \param totalVariance The fraction of the variance to be retained
-   * \return a new statistical model
-   *
-   * \warning The returned model needs to be explicitly deleted by the user of this method.
+   * \brief Build a new model from the given model, which retains only the specified variance
+   * \param model statistical model.
+   * \param totalVariance fraction of the variance to be retained
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModelWithVariance(const StatisticalModelType * model, double totalVariance) const;

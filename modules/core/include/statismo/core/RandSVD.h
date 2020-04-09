@@ -50,7 +50,7 @@
 namespace statismo
 {
 /**
- * TODO comment and add reference to paper
+ * \ingroup Core
  */
 template <typename ScalarType>
 class RandSVD
@@ -107,7 +107,6 @@ private:
   VectorType m_D;
   MatrixType m_U;
 };
-
 
 } // namespace statismo
 #endif

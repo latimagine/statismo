@@ -42,26 +42,37 @@
 #include "statismo/core/CoreTraits.h"
 #include "statismo/core/Clonable.h"
 #include "statismo/core/GenericFactory.h"
-#include "statismo/core/StatismoCoreExport.h"
 
 #include <H5Cpp.h>
 #include <string>
 #include <memory>
 
+/**
+ * \defgroup Representers Representers classes and routines
+ */
 
 namespace statismo
 {
 /**
+ * \brief Traits class that must be defined for new representers
+ *
  * When defining a new representer, a traits class must be bound to it with the
  * following attributes:
  * - DatasetPointerType
  * - DatasetConstPointerType
  * - PointType
  * - ValueType
+ *
+ * \ingroup Representers
+ * \ingroup Core
  */
 template <class T>
 struct RepresenterTraits;
 
+/**
+ * \brief Data type manipulated by the representer
+ * \ingroup Representers
+ */
 enum class RepresenterDataType
 {
   UNKNOWN = 0,
@@ -73,29 +84,86 @@ enum class RepresenterDataType
   CUSTOM = 99
 };
 
-STATISMO_CORE_EXPORT RepresenterDataType
-                     TypeFromString(const std::string & s);
-
-STATISMO_CORE_EXPORT std::string
-                     TypeToString(RepresenterDataType type);
-
 /**
- * \brief Provides the interface between statismo and the dataset type the application uses.
+ * \brief Provides the interface between statismo framework and the dataset type an application
+ * layer uses.
  *
- * A Representer is a type that provides the connection between the statismo library
- * and the application. It distinguishes three different representations of the data, and provides methods for
+ * A Representer is a type that provides the connection between statismo library
+ * and the application layer. It distinguishes three different representations of the data, and provides methods for
  * conversion between those representations:
  * - a Dataset, typically as read from a file on the disk
  * - a Sample, which is a geometric (generally a rigid or affine) transform of the dataset
  * - a SampleVector, which is an internal representation (vector) useful from the statistical analysis.
  *
  * A good starting point to define a new representer is to look at \a TrivialVectorialRepresenter
+ *
+ * \ingroup Representers
+ * \ingroup Core
  */
 template <class T>
 class Representer : public Clonable<Representer<T>>
 {
 
 public:
+  static RepresenterDataType
+  TypeFromString(const std::string & s)
+  {
+    if (s == "POINT_SET")
+    {
+      return RepresenterDataType::POINT_SET;
+    }
+
+    if (s == "POLYGON_MESH")
+    {
+      return RepresenterDataType::POLYGON_MESH;
+    }
+
+    if (s == "VOLUME_MESH")
+    {
+      return RepresenterDataType::VOLUME_MESH;
+    }
+
+    if (s == "IMAGE")
+    {
+      return RepresenterDataType::IMAGE;
+    }
+
+    if (s == "VECTOR")
+    {
+      return RepresenterDataType::VECTOR;
+    }
+
+    if (s == "CUSTOM")
+    {
+      return RepresenterDataType::CUSTOM;
+    }
+
+    return RepresenterDataType::UNKNOWN;
+  }
+
+  static std::string
+  TypeToString(RepresenterDataType type)
+  {
+    switch (type)
+    {
+      case RepresenterDataType::POINT_SET:
+        return "POINT_SET";
+      case RepresenterDataType::POLYGON_MESH:
+        return "POLYGON_MESH";
+      case RepresenterDataType::VOLUME_MESH:
+        return "VOLUME_MESH";
+      case RepresenterDataType::IMAGE:
+        return "IMAGE";
+      case RepresenterDataType::VECTOR:
+        return "VECTOR";
+      case RepresenterDataType::CUSTOM:
+        return "CUSTOM";
+      default:
+        break;
+    }
+
+    return "UNKNOWN";
+  }
   /**
    * \name Type definitions
    */
@@ -134,29 +202,28 @@ public:
   ///@{
 
   /**
-   * Returns representer identifier
+   * \brief Get representer identifier
    */
   virtual std::string
   GetName() const = 0;
 
   /**
-   * Returns representer data type
+   * \brief Get representer data type
    */
   virtual RepresenterDataType
   GetType() const = 0;
 
   /**
-   * Returns representer version
+   * \brief Get representer version
    */
   virtual std::string
   GetVersion() const = 0;
 
   /**
-   * Returns the dimensionality of the dataset
-   *
+   * \brief Get the dimensionality of the dataset
    * - for a mesh, should be 3
    * - for a scalar image, should be 1
-   * -
+   * - etc.
    */
   virtual unsigned
   GetDimensions() const = 0;
@@ -168,22 +235,29 @@ public:
    * \name Object creation and destruction
    */
   ///@{
-  /** Creates a new representer object, with the
-   * the information defined inthe given hdf5 group
+  /**
+   * \brief Creates a new representer object, with the
+   * the information defined in the given hdf5 group
    * \sa Save
    */
   virtual void
   Load(const H5::Group & fg) = 0;
 
-  /** Delete the representer object */
+  /**
+   * \brief Delete the representer object
+   */
   virtual void
   Delete() = 0;
 
   /**
-   * \name Adapter methods
+   * \brief Delete a dataset
    */
   virtual void
   DeleteDataset(DatasetPointerType d) const = 0;
+
+  /**
+   * \brief Clone a dataset
+   */
   virtual DatasetPointerType
   CloneDataset(DatasetConstPointerType d) const = 0;
   ///@}
@@ -194,43 +268,48 @@ public:
   ///@{
 
   /**
-   * Returns the Domain for this representers. The domain is essentially a list of all the points on which the model is
-   * defined. \sa statismo::Domain
+   * \brief Get the Domain for this representer
+   *
+   * The domain is essentially a list of all the points on which the model is
+   * defined.
    */
   virtual const statismo::Domain<PointType> &
   GetDomain() const = 0;
 
+  /**
+   * \brief Get reference dataset
+   */
   virtual DatasetConstPointerType
   GetReference() const = 0;
 
   /**
-   * Converts a Dataset::PointType to a vector in statismo::Vector
+   * \brief Convert a dataset point to an internal vector
    */
   virtual VectorType
   PointToVector(const PointType & pt) const = 0;
 
   /**
-   * Returns a vectorial representation of the given sample.
+   * \brief Get a vectorial representation of a sample
    */
   virtual VectorType
   SampleToSampleVector(DatasetConstPointerType sample) const = 0;
 
   /**
-   * Takes a vector of nd elements and converts it to a sample. The sample is a type
-   * that is represnter (e.g. an image, a mesh, etc).
+   * \brief Get a sample from an internal vector
    */
   virtual DatasetPointerType
   SampleVectorToSample(const VectorType & sample) const = 0;
 
   /**
-   * Returns the value of the sample at the point with the given id.
+   * \brief Get a \a sample value at point with index \a ptid
    */
   virtual ValueType
   PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const = 0;
 
   /**
-   * Take a point sample (i.e. the value of a sample at a given point) and converts it
-   * to its vector representation.
+   * \brief Take a point sample (i.e. the value of a sample at a given point) and converts it
+   * to its vector representation
+   *
    * The type of the point sample is a ValueType, that depends on the type of the dataset.
    * For a mesh this would for example be a 3D point,
    * while for a scalar image this would be a scalar value representing the intensity.
@@ -239,25 +318,26 @@ public:
   PointSampleVectorToPointSample(const VectorType & v) const = 0;
 
   /**
-   * Convert the given vector represenation of a pointSample back to its ValueType
+   * \brief Convert the given vector representation of a pointSample back to its ValueType
    * \sa PointSampleVectorToPointSample
    */
   virtual VectorType
   PointSampleToPointSampleVector(const ValueType & pointSample) const = 0;
 
   /**
-   * Defines the mapping between the point ids and the position in the vector.
-   * Assume for example that a 3D mesh type is representerd.
+   * \brief Define the mapping between the point ids and the position in the vector.
+   *
+   * Assuming for example that a 3D mesh type is represented.
    * A conversion strategy used in DatasetToSampleVector could be to return
    * a vector \f$(pt1_x, pt1_y, pt1_z, ..., ptn_x, ptn_y, ptn_z\f$.
-   * In this case, this method would return for inputs ptId, componentId
-   * the value ptId * 3 + componentId
+   * In this case, this method would return for inputs \a ptId, \a componentId
+   * the value \a ptId * 3 + \a componentId
    */
   virtual unsigned
   MapPointIdToInternalIdx(unsigned ptId, unsigned componentInd) const = 0;
 
   /**
-   * Given a point (the coordinates) return the pointId of this point.
+   * \brief Given a point (the coordinates) return the pointId of this point
    */
   virtual unsigned
   GetPointIdForPoint(const PointType & point) const = 0;
@@ -269,8 +349,7 @@ public:
    */
   ///@{
   /**
-   * Save the informatino that define this representer to the group
-   * in the HDF5 file given by fg.
+   * \brief Save the informatino that define this representer to the given hdf5 group
    */
   virtual void
   Save(const H5::Group & fg) const = 0;
@@ -278,10 +357,10 @@ public:
   ///@}
 
   /**
-   * \name Utiities
+   * \name Utilities
    */
   /*
-   * Returns a new dataset that corresponds to the zero element of the underlying vectorspace
+   * \brief Returns a new dataset that corresponds to the zero element of the underlying vectorspace
    * obtained when vectorizing a dataset.
    *
    */
@@ -290,13 +369,10 @@ public:
 };
 
 /**
- * \brief Base class for representer used to keep representer interface pure
+ * \brief Base implementation for representers
  *
- * The main purposes of this class are:
- *  - keeping the interface pure
- *  - providing a bridge between implementation and interface to avoid modifying the
- *    interface
- *  - gathering representers common code (creation/deletion) in a generic way
+ * \ingroup Representers
+ * \ingroup Core
  */
 template <typename T, typename Derived>
 class RepresenterBase
@@ -308,14 +384,12 @@ public:
   using DatasetPointerType = typename RepresenterTraits<T>::DatasetPointerType;
   using ObjectFactoryType = GenericFactory<Derived>;
 
-  /// Delete basic implementation
   void
   Delete() override
   {
     delete this;
   }
 
-  /// Returns a name that identifies the representer
   std::string
   GetName() const final
   {
@@ -328,8 +402,6 @@ public:
     return Derived::GetTypeImpl();
   }
 
-  /// Returns the dimensionality of the dataset (for a mesh this is 3, for a scalar image
-  /// this would be 1)
   unsigned
   GetDimensions() const final
   {
@@ -364,7 +436,8 @@ public:
       case RepresenterDataType::IMAGE:
       case RepresenterDataType::VECTOR:
       {
-        VectorType zeroVec = VectorType::Zero(this->GetDomain().GetNumberOfPoints() * GetDimensions());
+        VectorType zeroVec =
+          VectorType::Zero(static_cast<uint64_t>(this->GetDomain().GetNumberOfPoints()) * GetDimensions());
         return this->SampleVectorToSample(zeroVec);
         break;
       }
@@ -381,4 +454,4 @@ protected:
 };
 } // namespace statismo
 
-#endif /* REPRESENTER_H_ */
+#endif

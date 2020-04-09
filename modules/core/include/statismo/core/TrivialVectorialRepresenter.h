@@ -63,7 +63,11 @@ struct PointIdType
   unsigned ptId{ 0 };
 };
 
-
+/**
+ * \brief Representer trait specialization
+ * \ingroup Representers
+ * \ingroup Core
+ */
 template <>
 struct RepresenterTraits<statismo::VectorType>
 {
@@ -74,11 +78,22 @@ struct RepresenterTraits<statismo::VectorType>
   using ValueType = statismo::ScalarType;
 };
 
+/**
+ * \brief Point trait specialization
+ * \ingroup Representers
+ * \ingroup Core
+ */
+template <>
+struct PointTraits<statismo::PointIdType>
+{
+  static constexpr unsigned sk_realDimension = 1;
+};
 
 /**
  * \brief A trivial representer, that does no representation at all, but works directly with vectorial data
- *
  * \warning This representer is mainly for debugging purposes and not intended to be used for real projets
+ * \ingroup Representers
+ * \ingroup Core
  */
 class TrivialVectorialRepresenter : public RepresenterBase<statismo::VectorType, TrivialVectorialRepresenter>
 {
@@ -92,7 +107,7 @@ public:
   void
   Load(const H5::Group & fg) override
   {
-    InitializeObject(static_cast<unsigned>(statismo::hdf5utils::ReadInt(fg, "numberOfPoints")));
+    InitializeObject(static_cast<unsigned>(statismo::HDF5Utils::ReadInt(fg, "numberOfPoints")));
   }
 
   void DeleteDataset(DatasetPointerType) const override{};
@@ -157,7 +172,7 @@ public:
   void
   Save(const H5::Group & fg) const override
   {
-    hdf5utils::WriteInt(fg, "numberOfPoints", static_cast<int>(m_domain.GetNumberOfPoints()));
+    HDF5Utils::WriteInt(fg, "numberOfPoints", static_cast<int>(m_domain.GetNumberOfPoints()));
   }
 
   unsigned
@@ -197,10 +212,10 @@ private:
   }
 
   TrivialVectorialRepresenter() = default;
-  explicit TrivialVectorialRepresenter(unsigned numberOfPoints) { InitializeObject(numberOfPoints); }
+  explicit TrivialVectorialRepresenter(std::size_t numberOfPoints) { InitializeObject(numberOfPoints); }
 
   void
-  InitializeObject(unsigned numberOfPoints)
+  InitializeObject(std::size_t numberOfPoints)
   {
     // the domain for vectors correspond to the valid indices.
     typename DomainType::DomainPointsListType domainPoints;

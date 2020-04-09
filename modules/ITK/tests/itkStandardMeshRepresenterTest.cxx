@@ -89,7 +89,7 @@ TestRepresenterForMesh()
 } // namespace
 
 int
-itkStandardMeshRepresenterTest(int argc, char ** argv) // NOLINT
+itkStandardMeshRepresenterTest(int argc, char * argv[]) // NOLINT
 {
   if (argc < 2)
   {

@@ -2,7 +2,7 @@
 
 # NAME
 
-statismo-posterior - creates a posterior model from an existing model.
+statismo-posterior - creates a posterior model from an existing model
 
 
 # SYNOPSIS
@@ -46,9 +46,9 @@ The Landmarks format is as follows
 Example
 :	pointA,2,-2,3
 
-	pointB,3.1,3,-5
+    pointB,3.1,3,-5
 
-	pointC,7,8,9.08
+    pointC,7,8,9.08
 
 Remark
 :	In the case of 2D Images, either set the 3.coordinate to 0 or don't set it at all.

@@ -49,7 +49,9 @@ TestUtils()
 {
   rand::RandGen(0);
 
+#if !defined(_WIN32) && !defined(__APPLE__)
   STATISMO_ASSERT_EQ("02mw-y6id-9r3k-ltlh.txt", utils::CreateTmpName(".txt"));
+#endif
   STATISMO_ASSERT_EQ(utils::ToLowerCopy("MyTeST"), "mytest");
 
   const std::string kTestStr = "this,is,a comma, separated,string?";

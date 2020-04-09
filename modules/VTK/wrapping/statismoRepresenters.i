@@ -108,9 +108,9 @@ class vtkUnstructuredGridRepresenter : public RepresenterBase<vtkUnstructuredGri
     statismo::vtkUnstructuredGridRepresenter::AlignmentType GetAlignment() const;
       
     DatasetConstPointerType GetReference() const;
-        const DomainType& GetDomain() const;
-        unsigned GetNumberOfPoints() const;
-        unsigned GetPointIdForPoint(const vtkPoint & pt) const;
+    const DomainType& GetDomain() const;
+    unsigned GetNumberOfPoints() const;
+    unsigned GetPointIdForPoint(const vtkPoint & pt) const;
 
   private:
     vtkUnstructuredGridRepresenter();

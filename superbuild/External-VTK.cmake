@@ -1,14 +1,10 @@
-message("External project - VTK")
+message(STATUS "External project: VTK")
 
 set(_vtkOptions ${VTK_EXTRA_OPTIONS})
 
-if(APPLE)
-  set(_vtkOptions ${_vtkOptions} -DVTK_REQUIRED_OBJCXX_FLAGS:STRING="")
-endif()
-
 ExternalProject_Add(VTK
   GIT_REPOSITORY https://github.com/Kitware/VTK.git
-  GIT_TAG v8.2.0
+  GIT_TAG v8.2.0 # If you modify this, update the VTK_DIR at the end of the file
   SOURCE_DIR VTK
   BINARY_DIR VTK-build
   UPDATE_COMMAND ""
@@ -27,3 +23,6 @@ ExternalProject_Add(VTK
     -DVTK_PYTHON_VERSION:STRING=${STATISMO_PYTHON_VERSION}
     -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DEPENDENCIES_DIR}
 )
+
+# This is passed to Statismo so it is able to find it in priority
+set(VTK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/vtk-8.2/)

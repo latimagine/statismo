@@ -45,8 +45,13 @@ namespace statismo
 {
 
 /**
- * Generic factory used to gather common code
- * related to object creation
+ * \brief Generic factory
+ *
+ * The generic factory is used by base implementations for object
+ * creation. It is implemented to avoid the code replication of
+ * object creation in each child class.
+ *
+ * \ingroup Core
  */
 template <typename T>
 class GenericFactory
@@ -55,7 +60,7 @@ public:
   virtual ~GenericFactory() = default;
 
   /**
-   * Generic object factory for model
+   * \brief Simple object creation without smart-memory management
    */
   template <typename... Args>
   static T *
@@ -64,6 +69,11 @@ public:
     return new T(std::forward<Args>(args)...);
   }
 
+  /**
+   * \brief Object creation with smart-memory management
+   * \return a unique_ptr with the framework internal custom
+   * deletor
+   */
   template <typename... Args>
   static auto
   SafeCreate(Args &&... args)
@@ -71,6 +81,11 @@ public:
     return SafeCreateWithCustomDeletor<DefaultDeletor<T>>(std::forward<Args>(args)...);
   }
 
+  /**
+   * \brief Object creation with smart-memory management
+   * \tparam Deletor deletor used for unique_ptr
+   * \return a unique_ptr with the given Deletor
+   */
   template <typename Deletor, typename... Args>
   static std::unique_ptr<T, Deletor>
   SafeCreateWithCustomDeletor(Args &&... args)
@@ -79,6 +94,10 @@ public:
     return ptr;
   }
 
+  /**
+   * \brief Object creation with smart-memory management
+   * \return a unique_ptr with the default deletor
+   */
   template <typename... Args>
   static std::unique_ptr<T>
   SafeCreateStd(Args &&... args)

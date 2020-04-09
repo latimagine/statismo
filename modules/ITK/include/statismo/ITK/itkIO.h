@@ -45,12 +45,12 @@
 namespace itk
 {
 
-//
-// \todo In core module, static only classes have been replaced
-//       by namespace enclosed free function. See if it is in the itk
-//       spirit to do this here as well.
-//
-
+/**
+ * \brief ITK wrapper for statismo::IO class
+ *
+ * \sa statismo::IO
+ * \ingroup ITK
+ */
 template <typename T>
 class StatismoIO
 {

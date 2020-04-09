@@ -39,7 +39,9 @@
 namespace statismo
 {
 
-/* \class Non copyable base class
+/**
+ * \brief Base class for non copyable classes
+ * \ingroup Core
  */
 class NonCopyable
 {

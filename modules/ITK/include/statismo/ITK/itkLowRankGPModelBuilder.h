@@ -53,10 +53,12 @@ namespace itk
 {
 
 /**
- * \brief ITK Wrapper for statismo::LowRankGPModelBuilder class.
- * \see statismo::LowRankGPModelBuilder for detailed documentation.
+ * \brief ITK wrapper for statismo::LowRankGPModelBuilder class
+ *
+ * \sa statismo::LowRankGPModelBuilder for detailed documentation
+ * \ingroup ITK
+ * \ingroup ModelBuilders
  */
-
 template <typename T>
 class LowRankGPModelBuilder
   : public Object

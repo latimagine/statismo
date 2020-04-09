@@ -58,32 +58,41 @@ namespace statismo
 {
 
 /**
- * This class holds the result of the eigenfunction computation for
- * the points with index entries (lowerInd to upperInd)
+ * \brief This struct holds the result of the eigenfunction computation
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 struct EigenfunctionComputationResult
 {
+
+  /**
+   * \brief Ctor
+   * \param l lower index
+   * \param u upper index
+   * \param resMat result matrix
+   */
   EigenfunctionComputationResult(unsigned l, unsigned u, const MatrixType & resMat)
     : lowerInd(l)
     , upperInd(u)
     , resultForPoints(resMat)
   {}
 
-  unsigned   lowerInd;
-  unsigned   upperInd;
+  EigenfunctionComputationResult() = default;
+
+  unsigned   lowerInd{ 0 };
+  unsigned   upperInd{ 0 };
   MatrixType resultForPoints;
 };
 
 
 /**
- * A model builder for building statistical models that are specified by an arbitrary Gaussian Process.
- * For details on the theoretical basis for this type of model builder, see the paper:
+ * \brief A model builder for building statistical models that are specified
+ * by an arbitrary Gaussian Process.
  *
- * "A unified approach to shape model fitting and non-rigid registration"
- * Marcel Lüthi, Christoph Jud and Thomas Vetter
- * in Proceedings of the 4th International Workshop on Machine Learning in Medical Imaging,
- * LNCS 8184, pp.66-73 Nagoya, Japan, September 2013
+ * For details on the theoretical basis for this type of model builder, see \cite 3 .
  *
+ * \ingroup ModelBuilders
+ * \ingroup Core
  */
 template <typename T>
 class LowRankGPModelBuilder : public ModelBuilderBase<T, LowRankGPModelBuilder<T>>
@@ -101,12 +110,11 @@ public:
   friend ObjectFactoryType;
 
   /**
-   * Build a new model using a zero-mean Gaussian process with given kernel.
-   * \param kernel: A kernel (or covariance) function
-   * \param numComponents The number of components used for the low rank approximation.
-   * \param numPointsForNystrom  The number of points used for the Nystrom approximation
-   *
-   * \return a new statistical model representing the given Gaussian process
+   * \brief Build a new model using a zero-mean Gaussian process with given kernel
+   * \param kernel kernel (or covariance) function (see \ref Kernels)
+   * \param numComponents number of components used for the low rank approximation.
+   * \param numPointsForNystrom number of points used for the Nystrom approximation
+   * \return new statistical model representing the given Gaussian process
    */
   UniquePtrType<StatisticalModelType>
   BuildNewZeroMeanModel(const MatrixValuedKernelType & kernel,
@@ -118,13 +126,12 @@ public:
   }
 
   /**
-   * Build a new model using a Gaussian process with given mean and kernel.
-   * \param mean: A dataset that represents the mean (shape or deformation)
-   * \param kernel: A kernel (or covariance) function
-   * \param numComponents The number of components used for the low rank approximation.
-   * \param numPointsForNystrom  The number of points used for the Nystrom approximation
-   *
-   * \return a new statistical model representing the given Gaussian process
+   * \brief Build a new model using a Gaussian process with given mean and kernel
+   * \param mean dataset that represents the mean (shape or deformation)
+   * \param kernel kernel (or covariance) function (see \ref Kernels)
+   * \param numComponents number of components used for the low rank approximation.
+   * \param numPointsForNystrom number of points used for the Nystrom approximation
+   * \return new statistical model representing the given Gaussian process
    */
   UniquePtrType<StatisticalModelType>
   BuildNewModel(typename RepresenterType::DatasetConstPointerType mean,
@@ -234,4 +241,4 @@ private:
 
 } // namespace statismo
 
-#endif // __LOW_RANK_GP_MODEL_BUILDER_H_
+#endif

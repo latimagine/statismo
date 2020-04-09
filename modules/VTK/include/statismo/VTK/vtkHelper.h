@@ -35,6 +35,10 @@
  *
  */
 
+/**
+ * \defgroup VTK VTK module classes and routines
+ */
+
 #ifndef __STATISMO_VTK_HELPER_H_
 #define __STATISMO_VTK_HELPER_H_
 

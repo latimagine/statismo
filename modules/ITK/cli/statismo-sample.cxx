@@ -206,7 +206,7 @@ main(int argc, char ** argv)
       { "parameters",
         "p",
         "Makes it possible to specify a list of parameters and their positions that will then be used to draw a "
-        "sample. Parameters are speciefied in the following format: POSITION1:VALUE1 POSITIONn:VALUEn. Unspecified "
+        "sample. Parameters are specified in the following format: POSITION1:VALUE1,...,POSITIONn:VALUEn. Unspecified "
         "parameters will be set to 0. The first parameter is at position 1.",
         &poParameters.vParameters,
         {} })

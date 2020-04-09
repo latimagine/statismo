@@ -35,6 +35,10 @@
  *
  */
 
+/**
+ * \defgroup ITK ITK module classes and routines
+ */
+
 #ifndef __STATISMO_ITK_CONFIG_H_
 #define __STATISMO_ITK_CONFIG_H_
 
