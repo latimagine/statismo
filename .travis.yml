@@ -73,7 +73,7 @@ matrix:
         keep_history: true
         local_dir: ${TRAVIS_BUILD_DIR}/install/share/doc/statismo/html
         on:
-          all_branches: true
+          branch: master
     ##########################################################################
     # Gcc on Linux Xenial with:
     # - No ITK/VTK support
