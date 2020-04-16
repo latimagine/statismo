@@ -268,6 +268,22 @@ See [build issues](#Known-Build-Issues) for possible problems on Windows.
 
 See [build issues](#Known-Build-Issues) for possible problems on OSX.
 
+If you need to remove XCode, here is one of the possible way:
+~~~
+> brew install trash
+> xcode-select -p
+> trash /Applications/Xcode-11.3.1.app
+> trash /Applications/Xcode.app
+> sudo xcode-select --switch /Library/Developer/CommandLineTools
+~~~
+
+If you need to give clues to Statismo about SDKs locations, it is possible on first call
+to cmake configuration:
+~~~
+> cmake ../.. -DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 
+> cmake ../.. -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 
+~~~
+
 ### Known Build Issues
 
 | OS          | Issue          | External Link | Solution |
@@ -276,6 +292,7 @@ See [build issues](#Known-Build-Issues) for possible problems on OSX.
 |Windows      |ITK compilation failure with VS2019 in Debug mode | [link](https://discourse.itk.org/t/itk-5-0-deformableregistration15-cxx/1948) | Compile ITK with *-DCMAKE_CXX_FLAGS='/FS'*|
 |Windows      |ITK path too long | - | Compile Statismo with *-DITK_EXTRA_OPTIONS:STRING="-DITK_SKIP_PATH_LENGTH_CHECKS=1"* |
 |All      |compiler internal error | - | This can be due to your system being short in RAM |
+|OSx      |no member named 'xxx' in the global namespace | [link1](https://github.com/PointCloudLibrary/pcl/issues/2601), [link2](https://github.com/PointCloudLibrary/pcl/issues/2601) | use HOMEBREW_NO_AUTO_UPDATE to disable brew auto update, remove xcode or points Statismo to the right framework |
 
 Check Installation
 ===================
