@@ -47,7 +47,7 @@ namespace statismo::rand
  * \ingroup Core
  */
 inline std::minstd_rand &
-RandGen(unsigned seed = static_cast<unsigned>(std::time(nullptr)))
+RandGen(unsigned seed = static_cast<unsigned>(std::random_device{}()))
 {
   static std::minstd_rand s_rg{ seed };
   return s_rg;
