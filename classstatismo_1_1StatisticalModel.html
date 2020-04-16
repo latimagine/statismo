@@ -94,6 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classstatismo_1_1StatisticalModel-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">statismo::StatisticalModel&lt; T &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
@@ -167,6 +168,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>PointValueWithCovari
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a88961a64b253546ec2cde260b210d236"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88961a64b253546ec2cde260b210d236"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetLogger</b> (<a class="el" href="classstatismo_1_1Logger.html">Logger</a> *logger)</td></tr>
+<tr class="separator:a88961a64b253546ec2cde260b210d236"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a9cb4e0c6bc6529863a2fd90d21fe33"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a9cb4e0c6bc6529863a2fd90d21fe33"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1StatisticalModel.html#a8a9cb4e0c6bc6529863a2fd90d21fe33">Delete</a> ()</td></tr>
 <tr class="memdesc:a8a9cb4e0c6bc6529863a2fd90d21fe33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the object. <br /></td></tr>
@@ -198,9 +202,9 @@ DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="
 <tr class="memitem:a7d1014ac1f751cc5d3bf867b69f8078b"><td class="memItemLeft" align="right" valign="top">DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1StatisticalModel.html#a7d1014ac1f751cc5d3bf867b69f8078b">DrawSample</a> (bool addNoise=false) const </td></tr>
 <tr class="memdesc:a7d1014ac1f751cc5d3bf867b69f8078b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw a sample with random coefficients.  <a href="#a7d1014ac1f751cc5d3bf867b69f8078b">More...</a><br /></td></tr>
 <tr class="separator:a7d1014ac1f751cc5d3bf867b69f8078b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02fc5a15acd07b17ded5852f39051de3"><td class="memItemLeft" align="right" valign="top">DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1StatisticalModel.html#a02fc5a15acd07b17ded5852f39051de3">DrawPCABasisSample</a> (unsigned pcaComponentCount) const </td></tr>
-<tr class="memdesc:a02fc5a15acd07b17ded5852f39051de3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw the sample corresponding to the ith pca matrix.  <a href="#a02fc5a15acd07b17ded5852f39051de3">More...</a><br /></td></tr>
-<tr class="separator:a02fc5a15acd07b17ded5852f39051de3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb0394710aefb0672cf33131fa72be23"><td class="memItemLeft" align="right" valign="top">DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1StatisticalModel.html#aeb0394710aefb0672cf33131fa72be23">DrawPCABasisSample</a> (unsigned pcaComponentIndex) const </td></tr>
+<tr class="memdesc:aeb0394710aefb0672cf33131fa72be23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw the sample corresponding to the ith pca matrix.  <a href="#aeb0394710aefb0672cf33131fa72be23">More...</a><br /></td></tr>
+<tr class="separator:aeb0394710aefb0672cf33131fa72be23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Point sampling and point information</div></td></tr>
 <tr class="memitem:af84bd3fc7ab5009032d19ae66bd7547e"><td class="memItemLeft" align="right" valign="top">ValueType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1StatisticalModel.html#af84bd3fc7ab5009032d19ae66bd7547e">DrawMeanAtPoint</a> (const PointType &amp;point) const </td></tr>
 <tr class="memdesc:af84bd3fc7ab5009032d19ae66bd7547e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mean of the model evaluated at the given point.  <a href="#af84bd3fc7ab5009032d19ae66bd7547e">More...</a><br /></td></tr>
@@ -303,6 +307,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a91adbf525b1e02369559abee39a4d99e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91adbf525b1e02369559abee39a4d99e"></a>
 friend&#160;</td><td class="memItemRight" valign="bottom"><b>GenericFactory&lt; StatisticalModel&lt; T &gt; &gt;</b></td></tr>
 <tr class="separator:a91adbf525b1e02369559abee39a4d99e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:aa6b95eddbf1c6254ac44af222e1b991d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6b95eddbf1c6254ac44af222e1b991d"></a>
+<a class="el" href="classstatismo_1_1Logger.html">Logger</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLogger</b> () const </td></tr>
+<tr class="separator:aa6b95eddbf1c6254ac44af222e1b991d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -604,7 +614,7 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a02fc5a15acd07b17ded5852f39051de3"></a>
+<a class="anchor" id="aeb0394710aefb0672cf33131fa72be23"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -614,7 +624,7 @@ template&lt;typename T &gt; </div>
           <td class="memname"><a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModel</a>&lt; T &gt;::DatasetPointerType <a class="el" href="classstatismo_1_1StatisticalModel.html">statismo::StatisticalModel</a>&lt; T &gt;::DrawPCABasisSample </td>
           <td>(</td>
           <td class="paramtype">unsigned&#160;</td>
-          <td class="paramname"><em>pcaComponentCount</em></td><td>)</td>
+          <td class="paramname"><em>pcaComponentIndex</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -623,7 +633,7 @@ template&lt;typename T &gt; </div>
 <p>Draw the sample corresponding to the ith pca matrix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pcaComponentCount</td><td>number of the PCA Basis to be retrieved </td></tr>
+    <tr><td class="paramname">pcaComponentIndex</td><td>number of the PCA Basis to be retrieved </td></tr>
   </table>
   </dd>
 </dl>
@@ -659,7 +669,7 @@ template&lt;typename T &gt; </div>
 <p>Draw the sample with the given coefficients. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">coefficients</td><td>coefficient vector. The size of the coefficient vector should be smaller than number of factors in the model. Otherwise an exception is thrown. </td></tr>
+    <tr><td class="paramname">coefficients</td><td>coefficient vector. The size of the coefficient vector should be equal to the number of factors in the model. Otherwise an exception is thrown. </td></tr>
     <tr><td class="paramname">addNoise</td><td>if true, the Gaussian noise assumed in the model is added to the sample </td></tr>
   </table>
   </dd>

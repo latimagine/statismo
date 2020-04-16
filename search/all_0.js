@@ -1,5 +1,7 @@
 var searchData=
 [
   ['adddataset',['AddDataset',['../classstatismo_1_1DataManager.html#a04342209e7e48896ff573bb9d9e01419',1,'statismo::DataManager::AddDataset()'],['../classstatismo_1_1BasicDataManager.html#aed7254d7227ed0466de5b4305efec357',1,'statismo::BasicDataManager::AddDataset()'],['../classstatismo_1_1DataManagerWithSurrogates.html#a2d468811aeb2bee3d338da93b6579cba',1,'statismo::DataManagerWithSurrogates::AddDataset()']]],
-  ['adddatasetwithsurrogates',['AddDatasetWithSurrogates',['../classstatismo_1_1DataManagerWithSurrogates.html#a8737fc49cd520303233c2cc35880ef88',1,'statismo::DataManagerWithSurrogates']]]
+  ['adddatasetwithsurrogates',['AddDatasetWithSurrogates',['../classstatismo_1_1DataManagerWithSurrogates.html#a8737fc49cd520303233c2cc35880ef88',1,'statismo::DataManagerWithSurrogates']]],
+  ['addhandler',['AddHandler',['../classstatismo_1_1LoggerMultiHandlersThreaded.html#afbf02fa350cedcb9a4eda15b391be557',1,'statismo::LoggerMultiHandlersThreaded']]],
+  ['addhandlerlist',['AddHandlerList',['../classstatismo_1_1LoggerMultiHandlersThreaded.html#a88d859d53ad42deba5507a504e51f5f7',1,'statismo::LoggerMultiHandlersThreaded::AddHandlerList(HandlerListType &amp;&amp;list)'],['../classstatismo_1_1LoggerMultiHandlersThreaded.html#a0c5e83a3d8734f69c0b9d5c4c34405c8',1,'statismo::LoggerMultiHandlersThreaded::AddHandlerList(HandlerWithLevelListType &amp;&amp;list)'],['../classstatismo_1_1LoggerMultiHandlersThreaded.html#a9d8f2cf910d33805b1e45a692c945970',1,'statismo::LoggerMultiHandlersThreaded::AddHandlerList(HandlerListType &amp;&amp;list, LogLevel level)']]]
 ];

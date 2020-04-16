@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['callablewrapper',['CallableWrapper',['../classstatismo_1_1CallableWrapper.html',1,'statismo']]],
   ['callforwardimpl',['CallForwardImpl',['../classstatismo_1_1ImplWrapper.html#a63efeebd44a889dc3fad2f5592066b9d',1,'statismo::ImplWrapper::CallForwardImpl(Callable &amp;&amp;op, Args &amp;&amp;...args)'],['../classstatismo_1_1ImplWrapper.html#a8c08e34fbc804a2c69cd7006c5812319',1,'statismo::ImplWrapper::CallForwardImpl(Callable &amp;&amp;op, Args &amp;&amp;...args) const ']]],
   ['callforwardimpltrans',['CallForwardImplTrans',['../classstatismo_1_1ImplWrapper.html#a4326470cc57d5d455e7cd4f199ad20e4',1,'statismo::ImplWrapper::CallForwardImplTrans(Handler &amp;&amp;h, Callable &amp;&amp;op, Args &amp;&amp;...args)'],['../classstatismo_1_1ImplWrapper.html#aa65d50c77c4efc1ce063f122c8b89313',1,'statismo::ImplWrapper::CallForwardImplTrans(Handler &amp;&amp;h, Callable &amp;&amp;op, Args &amp;&amp;...args) const ']]],
   ['checkresult',['CheckResult',['../group__Core.html#ga2ce210befbd044a498e72073387c80d2',1,'statismo']]],
@@ -26,8 +27,8 @@ var searchData=
   ['computemahalanobisdistance',['ComputeMahalanobisDistance',['../classstatismo_1_1StatisticalModel.html#a697caea9120bbe373793bc8cd0b1bf22',1,'statismo::StatisticalModel']]],
   ['computeprobability',['ComputeProbability',['../classstatismo_1_1StatisticalModel.html#ac65800147424cfb6f8c0b6aa48916c1e',1,'statismo::StatisticalModel']]],
   ['computeprobabilityofcoefficients',['ComputeProbabilityOfCoefficients',['../classstatismo_1_1StatisticalModel.html#a627db5780c3442ee85d9b760f771ab0f',1,'statismo::StatisticalModel']]],
-  ['conditionalmodelbuilder',['ConditionalModelBuilder',['../classstatismo_1_1ConditionalModelBuilder.html',1,'statismo']]],
   ['conditionalmodelbuilder',['ConditionalModelBuilder',['../classitk_1_1ConditionalModelBuilder.html',1,'itk']]],
+  ['conditionalmodelbuilder',['ConditionalModelBuilder',['../classstatismo_1_1ConditionalModelBuilder.html',1,'statismo']]],
   ['core_20module_20classes_20and_20routines',['Core module classes and routines',['../group__Core.html',1,'']]],
   ['create',['Create',['../classstatismo_1_1GenericFactory.html#ad965315d07f5dec63a586517ac7b23bc',1,'statismo::GenericFactory']]],
   ['createtmpname',['CreateTmpName',['../group__Core.html#gad8d1073a0460d7dac237ca2d56cce335',1,'statismo::utils']]],

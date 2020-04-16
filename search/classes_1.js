@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['callablewrapper',['CallableWrapper',['../classstatismo_1_1CallableWrapper.html',1,'statismo']]],
   ['clonable',['Clonable',['../classstatismo_1_1Clonable.html',1,'statismo']]],
   ['clonable_3c_20representer_3c_20itk_3a_3aimage_3c_20pixel_2c_20image_5fdimension_20_3e_20_3e_20_3e',['Clonable&lt; Representer&lt; itk::Image&lt; Pixel, IMAGE_DIMENSION &gt; &gt; &gt;',['../classstatismo_1_1Clonable.html',1,'statismo']]],
   ['clonable_3c_20representer_3c_20itk_3a_3amesh_3c_20pixel_2c_20mesh_5fdimension_20_3e_20_3e_20_3e',['Clonable&lt; Representer&lt; itk::Mesh&lt; Pixel, MESH_DIMENSION &gt; &gt; &gt;',['../classstatismo_1_1Clonable.html',1,'statismo']]],

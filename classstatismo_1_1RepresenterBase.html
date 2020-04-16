@@ -93,6 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classstatismo_1_1RepresenterBase-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">statismo::RepresenterBase&lt; T, Derived &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__Representers.html">Representers classes and routines</a> &#124; <a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
@@ -154,6 +155,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>DomainType</b> = <a 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ae6af9ec03c9aee1a8bb8e50655fa0fe1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae6af9ec03c9aee1a8bb8e50655fa0fe1"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetLogger</b> (<a class="el" href="classstatismo_1_1Logger.html">Logger</a> *logger)</td></tr>
+<tr class="separator:ae6af9ec03c9aee1a8bb8e50655fa0fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75f5586c0715962d9b29504703467b1a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75f5586c0715962d9b29504703467b1a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1RepresenterBase.html#a75f5586c0715962d9b29504703467b1a">Delete</a> () override</td></tr>
 <tr class="memdesc:a75f5586c0715962d9b29504703467b1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete the representer object. <br /></td></tr>
@@ -248,6 +252,17 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memdesc:a1766ba455b74985db7ca4f0bdf2bde54 inherit pub_methods_classstatismo_1_1Clonable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone object.  <a href="#a1766ba455b74985db7ca4f0bdf2bde54">More...</a><br /></td></tr>
 <tr class="separator:a1766ba455b74985db7ca4f0bdf2bde54 inherit pub_methods_classstatismo_1_1Clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ac2d23c92598a6979c96dcf895941ca38"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2d23c92598a6979c96dcf895941ca38"></a>
+<a class="el" href="classstatismo_1_1Logger.html">Logger</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1RepresenterBase.html#ac2d23c92598a6979c96dcf895941ca38">GetLogger</a> () const override</td></tr>
+<tr class="memdesc:ac2d23c92598a6979c96dcf895941ca38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get logger. <br /></td></tr>
+<tr class="separator:ac2d23c92598a6979c96dcf895941ca38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classstatismo_1_1Clonable"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classstatismo_1_1Clonable')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classstatismo_1_1Clonable.html">statismo::Clonable&lt; Representer&lt; T &gt; &gt;</a></td></tr>
+<tr class="memitem:a0a66b7587442b4df80039a254ef69798 inherit pro_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a66b7587442b4df80039a254ef69798"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Clonable</b> (const <a class="el" href="classstatismo_1_1Clonable.html">Clonable</a> &amp;)=default</td></tr>
+<tr class="separator:a0a66b7587442b4df80039a254ef69798 inherit pro_methods_classstatismo_1_1Clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classstatismo_1_1Representer"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classstatismo_1_1Representer')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classstatismo_1_1Representer.html">statismo::Representer&lt; T &gt;</a></td></tr>
@@ -274,10 +289,6 @@ static Derived *&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <tr class="inherit_header pub_static_attribs_classstatismo_1_1Representer"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classstatismo_1_1Representer')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classstatismo_1_1Representer.html">statismo::Representer&lt; T &gt;</a></td></tr>
 <tr class="memitem:afd2601cde3551e236e9efb47fb0944cc inherit pub_static_attribs_classstatismo_1_1Representer"><td class="memItemLeft" align="right" valign="top">static constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1Representer.html#afd2601cde3551e236e9efb47fb0944cc">sk_realPointDimension</a> = <a class="el" href="structstatismo_1_1PointTraits.html">PointTraits</a>&lt;<a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a>&gt;::sk_realDimension</td></tr>
 <tr class="separator:afd2601cde3551e236e9efb47fb0944cc inherit pub_static_attribs_classstatismo_1_1Representer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_methods_classstatismo_1_1Clonable"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classstatismo_1_1Clonable')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classstatismo_1_1Clonable.html">statismo::Clonable&lt; Representer&lt; T &gt; &gt;</a></td></tr>
-<tr class="memitem:a0a66b7587442b4df80039a254ef69798 inherit pro_methods_classstatismo_1_1Clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a66b7587442b4df80039a254ef69798"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Clonable</b> (const <a class="el" href="classstatismo_1_1Clonable.html">Clonable</a> &amp;)=default</td></tr>
-<tr class="separator:a0a66b7587442b4df80039a254ef69798 inherit pro_methods_classstatismo_1_1Clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T, typename Derived&gt;<br />

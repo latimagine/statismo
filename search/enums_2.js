@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['status',['Status',['../group__Core.html#gac71ea560bddd658062ef5a0bf0f2e748',1,'statismo']]]
+  ['representerdatatype',['RepresenterDataType',['../group__Representers.html#ga7efc544e7d062becb3e3bfad4c266768',1,'statismo']]]
 ];

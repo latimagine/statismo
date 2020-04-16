@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['representerdatatype',['RepresenterDataType',['../group__Representers.html#ga7efc544e7d062becb3e3bfad4c266768',1,'statismo']]]
+  ['loglevel',['LogLevel',['../group__Core.html#ga33b9ef10db852ba7385add41edb54d63',1,'statismo']]]
 ];

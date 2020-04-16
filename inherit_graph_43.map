@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classstatismo_1_1RandSVD.html" title="statismo::RandSVD\&lt;\l ScalarType \&gt;" alt="" coords="5,5,152,47"/>
+<area shape="rect" id="node1" href="$classstatismo_1_1MatrixValuedKernel.html" title="Base class for matrix value kernels. " alt="" coords="5,104,199,145"/>
+<area shape="rect" id="node2" href="$classstatismo_1_1ProductKernel.html" title="A (matrix valued) kernel, which represents the product of two matrix valued kernels. " alt="" coords="261,5,423,47"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1ScaledKernel.html" title="A (matrix valued) kernel, which represents a scalar multiple of a matrix valued kernel. " alt="" coords="263,71,421,112"/>
+<area shape="rect" id="node4" href="$classstatismo_1_1SumKernel.html" title="A (matrix valued) kernel, which represents the sum of two matrix valued kernels. " alt="" coords="270,136,414,177"/>
+<area shape="rect" id="node5" href="$classstatismo_1_1UncorrelatedMatrixValuedKernel.html" title="Takes a scalar valued kernel and creates a matrix valued kernel of the given dimension. " alt="" coords="247,201,437,243"/>
 </map>

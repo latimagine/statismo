@@ -14,5 +14,6 @@ var searchData=
   ['datamanagerwithsurrogates',['DataManagerWithSurrogates',['../classitk_1_1DataManagerWithSurrogates.html',1,'itk']]],
   ['datamanagerwithsurrogates',['DataManagerWithSurrogates',['../classstatismo_1_1DataManagerWithSurrogates.html',1,'statismo']]],
   ['defaultdeletor',['DefaultDeletor',['../structstatismo_1_1DefaultDeletor.html',1,'statismo']]],
+  ['defaultformatter',['DefaultFormatter',['../structstatismo_1_1DefaultFormatter.html',1,'statismo']]],
   ['domain',['Domain',['../classstatismo_1_1Domain.html',1,'statismo']]]
 ];

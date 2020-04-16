@@ -2,6 +2,7 @@ var searchData=
 [
   ['worddelimiter',['WordDelimiter',['../structstatismo_1_1WordDelimiter.html',1,'statismo']]],
   ['workstealingqueue',['WorkStealingQueue',['../classstatismo_1_1WorkStealingQueue.html',1,'statismo']]],
+  ['write',['Write',['../classstatismo_1_1LogHandler.html#aad335e290c9655cd4d335920ac66feef',1,'statismo::LogHandler::Write()'],['../classstatismo_1_1BasicLogHandler.html#a118ce923db99fe045dea32969fb40e36',1,'statismo::BasicLogHandler::Write()']]],
   ['writearray',['WriteArray',['../classstatismo_1_1HDF5Utils.html#a6995f24c35c0d79a31c849b8d80281a3',1,'statismo::HDF5Utils']]],
   ['writefloat',['WriteFloat',['../classstatismo_1_1HDF5Utils.html#ae86d6b683e7ac725b4fd0df1c782c5db',1,'statismo::HDF5Utils']]],
   ['writeint',['WriteInt',['../classstatismo_1_1HDF5Utils.html#a04d82d7bb2091e5951ea468cabefbe2e',1,'statismo::HDF5Utils']]],

@@ -4,6 +4,19 @@ var searchData=
   ['loadfromgroup',['LoadFromGroup',['../classstatismo_1_1DataItem.html#a15809669f410db6f3db9ddf3d2aa0b30',1,'statismo::DataItem::LoadFromGroup()'],['../classstatismo_1_1DataItemBase.html#afb00251be3b3ff79d74e8fd8ade97ba9',1,'statismo::DataItemBase::LoadFromGroup()']]],
   ['loadstatisticalmodel',['LoadStatisticalModel',['../classstatismo_1_1IO.html#a3860df9b063ae24327faebaaad03d4bf',1,'statismo::IO::LoadStatisticalModel(typename StatisticalModelType::RepresenterType *representer, const std::string &amp;filename, unsigned maxNumberOfPCAComponents=std::numeric_limits&lt; unsigned &gt;::max())'],['../classstatismo_1_1IO.html#a8b1fe99b060e68d58080cf3f9696dda6',1,'statismo::IO::LoadStatisticalModel(typename StatisticalModelType::RepresenterType *representer, const H5::Group &amp;modelRoot, unsigned maxNumberOfPCAComponents=std::numeric_limits&lt; unsigned &gt;::max())']]],
   ['loadsurrogatetypes',['LoadSurrogateTypes',['../classstatismo_1_1DataManagerWithSurrogates.html#a8099f9666a4f99fc4b21dac79b11ce9f',1,'statismo::DataManagerWithSurrogates']]],
-  ['lowrankgpmodelbuilder',['LowRankGPModelBuilder',['../classstatismo_1_1LowRankGPModelBuilder.html',1,'statismo']]],
-  ['lowrankgpmodelbuilder',['LowRankGPModelBuilder',['../classitk_1_1LowRankGPModelBuilder.html',1,'itk']]]
+  ['log',['Log',['../classstatismo_1_1Logger.html#afd9792ca77094f2e46843874099f8aab',1,'statismo::Logger::Log()'],['../classstatismo_1_1LoggerMultiHandlersThreaded.html#a0536ab06dc4db1d3a25f863860071cb5',1,'statismo::LoggerMultiHandlersThreaded::Log()']]],
+  ['log_5fdebug',['LOG_DEBUG',['../group__Core.html#gga33b9ef10db852ba7385add41edb54d63aeded50d942c7c2d37d09ba8241ff017f',1,'statismo']]],
+  ['log_5ferror',['LOG_ERROR',['../group__Core.html#gga33b9ef10db852ba7385add41edb54d63a4490aa3d29644e716440fada68f54032',1,'statismo']]],
+  ['log_5ffatal',['LOG_FATAL',['../group__Core.html#gga33b9ef10db852ba7385add41edb54d63ab3a01170f5777f9867632e3e4a04e3a9',1,'statismo']]],
+  ['log_5finfo',['LOG_INFO',['../group__Core.html#gga33b9ef10db852ba7385add41edb54d63a41abf3cca8cee8cdae01749df7a991c6',1,'statismo']]],
+  ['log_5fwarning',['LOG_WARNING',['../group__Core.html#gga33b9ef10db852ba7385add41edb54d63ad0cb3df3102ca9270c5785af9a8c137f',1,'statismo']]],
+  ['logentry',['LogEntry',['../structstatismo_1_1LogEntry.html',1,'statismo']]],
+  ['logger',['Logger',['../classstatismo_1_1Logger.html',1,'statismo']]],
+  ['loggermultihandlersthreaded',['LoggerMultiHandlersThreaded',['../classstatismo_1_1LoggerMultiHandlersThreaded.html',1,'statismo']]],
+  ['loggermultihandlersthreaded',['LoggerMultiHandlersThreaded',['../classstatismo_1_1LoggerMultiHandlersThreaded.html#a127311c2fdfef02b518b332492da3c43',1,'statismo::LoggerMultiHandlersThreaded::LoggerMultiHandlersThreaded(LogLevel level, bool isThreaded=false)'],['../classstatismo_1_1LoggerMultiHandlersThreaded.html#adca6918ef2dbd2a7ce9739bb03064168',1,'statismo::LoggerMultiHandlersThreaded::LoggerMultiHandlersThreaded(HandlerWithLevelListType &amp;&amp;list, bool isThreaded=false)'],['../classstatismo_1_1LoggerMultiHandlersThreaded.html#a435de1106b84b18732210cdfa94fa5f7',1,'statismo::LoggerMultiHandlersThreaded::LoggerMultiHandlersThreaded(HandlerListType &amp;&amp;list, LogLevel level, bool isThreaded=false)'],['../classstatismo_1_1LoggerMultiHandlersThreaded.html#a49ac69b75cc337a3491f283916b315a2',1,'statismo::LoggerMultiHandlersThreaded::LoggerMultiHandlersThreaded(HandlerType &amp;&amp;handler, LogLevel level, bool isThreaded=false)']]],
+  ['loggermultihandlersthreadedimpl',['LoggerMultiHandlersThreadedImpl',['../structstatismo_1_1LoggerMultiHandlersThreaded_1_1LoggerMultiHandlersThreadedImpl.html',1,'statismo::LoggerMultiHandlersThreaded']]],
+  ['loghandler',['LogHandler',['../classstatismo_1_1LogHandler.html',1,'statismo']]],
+  ['loglevel',['LogLevel',['../group__Core.html#ga33b9ef10db852ba7385add41edb54d63',1,'statismo']]],
+  ['lowrankgpmodelbuilder',['LowRankGPModelBuilder',['../classitk_1_1LowRankGPModelBuilder.html',1,'itk']]],
+  ['lowrankgpmodelbuilder',['LowRankGPModelBuilder',['../classstatismo_1_1LowRankGPModelBuilder.html',1,'statismo']]]
 ];

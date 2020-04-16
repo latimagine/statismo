@@ -93,6 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classstatismo_1_1ModelBuilderBase-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">statismo::ModelBuilderBase&lt; T, Derived &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__ModelBuilders.html">Statistical model building classes and routines</a> &#124; <a class="el" href="group__Core.html">Core module classes and routines</a></div></div>  </div>
@@ -145,6 +146,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>DataItemListType</b>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a85c5d5111ec8aed0d2e7fd59f4b5ecb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85c5d5111ec8aed0d2e7fd59f4b5ecb7"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetLogger</b> (<a class="el" href="classstatismo_1_1Logger.html">Logger</a> *logger)</td></tr>
+<tr class="separator:a85c5d5111ec8aed0d2e7fd59f4b5ecb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ccc8f05f8fdb42736fcc1793634b467"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ccc8f05f8fdb42736fcc1793634b467"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Delete</b> ()</td></tr>
 <tr class="separator:a5ccc8f05f8fdb42736fcc1793634b467"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,6 +159,22 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Delete</b> ()
 <tr class="memitem:a82d3dc6e45061eab246a560704a6ab46 inherit pub_methods_classstatismo_1_1NonCopyable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82d3dc6e45061eab246a560704a6ab46"></a>
 <a class="el" href="classstatismo_1_1NonCopyable.html">NonCopyable</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classstatismo_1_1NonCopyable.html">NonCopyable</a> &amp;)=delete</td></tr>
 <tr class="separator:a82d3dc6e45061eab246a560704a6ab46 inherit pub_methods_classstatismo_1_1NonCopyable"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a22950224bf9f37ef60621d4ea6366c51"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22950224bf9f37ef60621d4ea6366c51"></a>
+<a class="el" href="classstatismo_1_1Logger.html">Logger</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLogger</b> () const </td></tr>
+<tr class="separator:a22950224bf9f37ef60621d4ea6366c51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classstatismo_1_1ModelBuilder"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classstatismo_1_1ModelBuilder')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classstatismo_1_1ModelBuilder.html">statismo::ModelBuilder&lt; T &gt;</a></td></tr>
+<tr class="memitem:a53517f8d37f80df6c7e73eab0c7da942 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53517f8d37f80df6c7e73eab0c7da942"></a>
+MatrixType&#160;</td><td class="memItemRight" valign="bottom"><b>ComputeScores</b> (const MatrixType &amp;matX, const <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> *model) const </td></tr>
+<tr class="separator:a53517f8d37f80df6c7e73eab0c7da942 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d7f834bb29a66885c974e0995d0700b inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d7f834bb29a66885c974e0995d0700b"></a>
+MatrixType&#160;</td><td class="memItemRight" valign="bottom"><b>ComputeScores</b> (const DataItemListType &amp;sampleDataList, const <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> *model) const </td></tr>
+<tr class="separator:a1d7f834bb29a66885c974e0995d0700b inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ad6a020a624c155f058ecf485ad15b3 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ad6a020a624c155f058ecf485ad15b3"></a>
+<a class="el" href="classstatismo_1_1ModelInfo.html">ModelInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CollectModelInfo</b> () const </td></tr>
+<tr class="separator:a1ad6a020a624c155f058ecf485ad15b3 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -176,16 +196,6 @@ static Derived *&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <tr class="memitem:a231a4cb070751e7e8ab97dc08bd8bceb inherit pub_static_attribs_classstatismo_1_1ModelBuilder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a231a4cb070751e7e8ab97dc08bd8bceb"></a>
 static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><b>sk_tolerance</b> = 1e-5</td></tr>
 <tr class="separator:a231a4cb070751e7e8ab97dc08bd8bceb inherit pub_static_attribs_classstatismo_1_1ModelBuilder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_methods_classstatismo_1_1ModelBuilder"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classstatismo_1_1ModelBuilder')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classstatismo_1_1ModelBuilder.html">statismo::ModelBuilder&lt; T &gt;</a></td></tr>
-<tr class="memitem:a53517f8d37f80df6c7e73eab0c7da942 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53517f8d37f80df6c7e73eab0c7da942"></a>
-MatrixType&#160;</td><td class="memItemRight" valign="bottom"><b>ComputeScores</b> (const MatrixType &amp;matX, const <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> *model) const </td></tr>
-<tr class="separator:a53517f8d37f80df6c7e73eab0c7da942 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d7f834bb29a66885c974e0995d0700b inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d7f834bb29a66885c974e0995d0700b"></a>
-MatrixType&#160;</td><td class="memItemRight" valign="bottom"><b>ComputeScores</b> (const DataItemListType &amp;sampleDataList, const <a class="el" href="classstatismo_1_1StatisticalModel.html">StatisticalModelType</a> *model) const </td></tr>
-<tr class="separator:a1d7f834bb29a66885c974e0995d0700b inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ad6a020a624c155f058ecf485ad15b3 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ad6a020a624c155f058ecf485ad15b3"></a>
-<a class="el" href="classstatismo_1_1ModelInfo.html">ModelInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CollectModelInfo</b> () const </td></tr>
-<tr class="separator:a1ad6a020a624c155f058ecf485ad15b3 inherit pro_methods_classstatismo_1_1ModelBuilder"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T, typename Derived&gt;<br />

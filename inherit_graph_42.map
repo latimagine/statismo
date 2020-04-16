@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structstatismo_1_1PointTraits_3_1_1itk_1_1Point_3_01T_00_01DIM_01_4_01_4.html" title="Specialization for ITK point. " alt="" coords="5,5,172,47"/>
+<area shape="rect" id="node1" href="$classstatismo_1_1MatrixValuedKernel.html" title="statismo::MatrixValuedKernel\l\&lt; Representer\&lt; T \&gt;::PointType \&gt;" alt="" coords="5,39,221,80"/>
+<area shape="rect" id="node2" href="$classstatismo_1_1SpatiallyVaryingKernel.html" title="Spatially&#45;varing kernel, as described in the paper . " alt="" coords="269,5,444,47"/>
+<area shape="rect" id="node3" href="$classstatismo_1_1StatisticalModelKernel.html" title="Statistical model kernel. " alt="" coords="270,71,443,112"/>
 </map>
