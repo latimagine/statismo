@@ -19,6 +19,7 @@ File Hierarchy
 │   └── examples                        : Examples scripts
 │   └── include                         : Header files
 │   └── tests                           : Test scripts
+│   └── .clang-tidy                     : Code style and sanity configuration file
 ├── VTK                                 : VTK compatibility module with python wrapping
 │   └── examples                        : Examples scripts
 │   └── include                         : Header files

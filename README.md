@@ -58,6 +58,16 @@ Any other code contribution or documentation improvement would be excellent too,
 
 Do not hesitate to keep the community alive by sharing your questions and experiences on the [group](https://groups.google.com/forum/#!forum/statismo-users).
 
+Version Numbers
+===============
+
+Statismo uses semantic versioning based on a sequence of identifiers (*x.y.z*) that are updated according to change significance and degree of compatility:
+* *x* is the major version (increment for changes which are not backward-compatible),
+* *y* is the minor version (increment for new but backward-compatible API features),
+* *z* is the patch version (increment for fixes that does not change the API).
+
+WARNING: Before the first *1.y.z* version, backward-compatibility is not ensured.
+
 License
 =======
 

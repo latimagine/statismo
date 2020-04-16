@@ -25,7 +25,7 @@ Wish List
 
 # Compatibility
 
-* Extend OS compatibility
+* Extend OS compatibility (macOS supported only through CI, limited support for Windows)
 * Extend build toolchain compatibility
 * Extend dependencies version compatibility
 * Make the framework interfaces Dll-proof on Windows
@@ -33,7 +33,7 @@ Wish List
 # Modernization
 
 * Use c++ 20 features
-* Update ITK module to use modern C++ to loop in ITK data structure
+* Update ITK module to use modern C++ in ITK data structure looping
 
 # Sanity
 

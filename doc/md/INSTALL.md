@@ -249,7 +249,7 @@ Note that dependencies are installed with *apt* on Linux, *chocolatey* on Window
 |Linux Bionic |ITK system, HDF5 system, Eigen system |[docker file](../../deploy/docker/Dockerfile-hdf5-sys-eigen-sys-itk-sys-shared-release)|
 |Linux Bionic |ITK internal, VTK internal, ITK HDF5, ITK Eigen |[docker file](../../deploy/docker/Dockerfile-itkhdf5-itkeigen-itk-dl-vtk-dl-shared-release-with-wrapping)|
 |Linux Bionic |ITK system, ITK HDF5, ITK Eigen |[docker file](../../deploy/docker/Dockerfile-itkhdf5-itkeigen-itk-sys-static-debug)|
-|Linux Bionic |Conan |[Docker file](../../deploy/docker/Dockerfile-conan)|
+|Linux Bionic |Conan |[docker file](../../deploy/docker/Dockerfile-conan)|
 
 ### Platform Details
 
@@ -292,7 +292,7 @@ to cmake configuration:
 |Windows      |ITK compilation failure with VS2019 in Debug mode | [link](https://discourse.itk.org/t/itk-5-0-deformableregistration15-cxx/1948) | Compile ITK with *-DCMAKE_CXX_FLAGS='/FS'*|
 |Windows      |ITK path too long | - | Compile Statismo with *-DITK_EXTRA_OPTIONS:STRING="-DITK_SKIP_PATH_LENGTH_CHECKS=1"* |
 |All      |compiler internal error | - | This can be due to your system being short in RAM |
-|OSx      |no member named 'xxx' in the global namespace | [link1](https://github.com/PointCloudLibrary/pcl/issues/2601), [link2](https://github.com/PointCloudLibrary/pcl/issues/2601) | use HOMEBREW_NO_AUTO_UPDATE to disable brew auto update, remove xcode or points Statismo to the right framework |
+|OSx      |*error: no member named 'xxx' in the global namespace* | [link1](https://github.com/PointCloudLibrary/pcl/issues/2601), [link2](https://github.com/PointCloudLibrary/pcl/issues/2601) | use HOMEBREW_NO_AUTO_UPDATE to disable brew auto update, remove xcode or points Statismo to the right framework |
 
 Check Installation
 ===================
