@@ -37,7 +37,10 @@
 
 #include "statismo/core/StatisticalModel.h"
 #include "statismo/core/IO.h"
+#include "statismo/core/LoggerMultiHandlersThreaded.h"
 #include "statismo/VTK/vtkStandardMeshRepresenter.h"
+#include "statismo/VTK/vtkStatismoOutputWindow.h"
+#include "statismo/VTK/vtkOutputWindowLogPolicies.h"
 
 #include <vtkPolyData.h>
 #include <vtkPolyDataReader.h>
@@ -81,6 +84,11 @@ main(int argc, char ** argv)
   std::string modelname(argv[1]);
   std::string resultdir(argv[2]);
 
+  // Logger (not threaded)
+  LoggerMultiHandlersThreaded logger{
+    std::make_unique<BasicLogHandler>(vtkOutputWindowLogWriter(), vtkMessageFormatter()), LogLevel::LOG_DEBUG
+  };
+  logger.Start();
 
   // All the statismo classes have to be parameterized with the RepresenterType.
   // For building a shape model with vtk, we use the vtkPolyDataRepresenter.
@@ -91,6 +99,8 @@ main(int argc, char ** argv)
     // To load a model, we call the static Load method, which returns (a pointer to) a
     // new StatisticalModel object
     auto representer = RepresenterType::SafeCreate();
+    representer->SetLogger(&logger);
+
     auto model = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), modelname);
 
     std::cout << "Loaded model with " << model->GetNumberOfPrincipalComponents() << " Principal Components"

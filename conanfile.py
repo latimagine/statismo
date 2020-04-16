@@ -22,13 +22,15 @@ class LibStatismoConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "with_tests": [True, False]
+        "with_tests": [True, False],
+        "with_logs": [True, False]
         # TODO: support more options as required by client projects
     }
     default_options = {
         "shared": True,
         "fPIC": True,
-        "with_tests": True
+        "with_tests": True,
+        "with_logs": False
         # TODO: support more options as required by client projects
     }
 
@@ -75,6 +77,7 @@ class LibStatismoConan(ConanFile):
         self._cmake.definitions["USE_ITK_EIGEN"] = "OFF"
         self._cmake.definitions["USE_ITK_HDF5"] = "OFF"
         self._cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
+        self._cmake.definitions["ENABLE_RUNTIME_LOGS"] = self.options.with_logs
         # TODO: Update when more options will be added
 
         if self.settings.os == "Macos":

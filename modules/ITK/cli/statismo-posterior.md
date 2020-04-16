@@ -18,43 +18,50 @@ statismo-posterior makes it possible to create posterior model for both shape an
 # OPTIONS
 
 -c, \--corresponding-mesh *FILE*
-:	*FILE* is the path to a file containing a mesh that is in correspondence. This option can only be used with shape models. If a mesh in correspondence is used, then no landmarks are needed and providing landmarks will result in failure.
+:   *FILE* is the path to a file containing a mesh that is in correspondence. This option can only be used with shape models. If a mesh in correspondence is used, then no landmarks are needed and providing landmarks will result in failure.
 
  -f, \--landmarks-fixed *FILE*
-:	*FILE* is the path to a file containing the fixed landmarks.
+:   *FILE* is the path to a file containing the fixed landmarks.
 
  -m, \--landmarks-moving *FILE*
-:	*FILE* is the path to a file containing the moving landmarks.
+:   *FILE* is the path to a file containing the moving landmarks.
 
 -v, \--landmarks-variance *VARIANCE*
-:	*VARIANCE* is the variance that will be used to build the posterior model. This is only needed when building models with landmarks.
+:   *VARIANCE* is the variance that will be used to build the posterior model. This is only needed when building models with landmarks.
 
 -t, \--type *TYPE*
-:	Specifies the type of the model. *TYPE* can either be **shape** or **deformation**.
+:   Specifies the type of the model. *TYPE* can either be **shape** or **deformation**.
 
 -d, \--dimensionality 
-:	Specifies the dimensionality of the model (either 2 or 3). This option is only available if the type is **deformation**.
+:   Specifies the dimensionality of the model (either 2 or 3). This option is only available if the type is **deformation**.
 
 -i, \--input-file *MODEL_FILE*
-:	*MODEL_FILE* is the path to the model.
+:   *MODEL_FILE* is the path to the model.
+
+-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file *LOG_FILE*
+:   Path to the log file (if not set, logs are output to standard output).
 
 
 # NOTE
+
 The Landmarks format is as follows
-:	Landmark name,1.coordinate,2.coordinate,3.coordinate
+:   Landmark name,1.coordinate,2.coordinate,3.coordinate
 
 Example
-:	pointA,2,-2,3
+:   pointA,2,-2,3
 
     pointB,3.1,3,-5
 
     pointC,7,8,9.08
 
 Remark
-:	In the case of 2D Images, either set the 3.coordinate to 0 or don't set it at all.
+:   In the case of 2D Images, either set the 3.coordinate to 0 or don't set it at all.
 
 Warning
-:	For now, landmark names with comma are not supported by the parser
+:   For now, landmark names with comma are not supported by the parser
 
 
 # EXAMPLES

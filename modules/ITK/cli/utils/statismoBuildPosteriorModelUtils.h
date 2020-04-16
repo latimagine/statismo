@@ -40,6 +40,11 @@
 #include <string>
 #include <fstream>
 
+namespace statismo
+{
+class Logger;
+}
+
 namespace statismo::cli
 {
 namespace details
@@ -133,7 +138,8 @@ static typename StatisticalModelType::Pointer
 BuildPosteriorDeformationModel(typename StatisticalModelType::Pointer model,
                                const std::string &                    fixedLandmarksFileName,
                                const std::string &                    movingLandmarksFileName,
-                               double                                 dLandmarksVariance)
+                               double                                 dLandmarksVariance,
+                               statismo::Logger *                     logger)
 {
   auto fixedLandmarks = details::ReadLandmarksFile<DataType>(fixedLandmarksFileName);
   auto movingLandmarks = details::ReadLandmarksFile<DataType>(movingLandmarksFileName);
@@ -158,6 +164,7 @@ BuildPosteriorDeformationModel(typename StatisticalModelType::Pointer model,
   using PosteriorModelBuilderType = ::itk::PosteriorModelBuilder<DataType>;
 
   auto posteriorModelBuilder = PosteriorModelBuilderType::New();
+  posteriorModelBuilder->SetLogger(logger);
   return posteriorModelBuilder->BuildNewModelFromModel(model, constraints, dLandmarksVariance, false);
 }
 
@@ -166,7 +173,8 @@ template <typename DataType, typename StatisticalModelType>
 static typename StatisticalModelType::Pointer
 BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
                          typename DataType::Pointer             mesh,
-                         double                                 dVariance)
+                         double                                 dVariance,
+                         statismo::Logger *                     logger)
 {
   if (mesh->GetNumberOfPoints() != model->GetRepresenter()->GetReference()->GetNumberOfPoints())
   {
@@ -183,6 +191,7 @@ BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
 
   using PosteriorModelBuilderType = ::itk::PosteriorModelBuilder<DataType>;
   auto posteriorModelBuilder = PosteriorModelBuilderType::New();
+  posteriorModelBuilder->SetLogger(logger);
   return posteriorModelBuilder->BuildNewModelFromModel(model, constraints, dVariance, false);
 }
 
@@ -191,7 +200,8 @@ static typename StatisticalModelType::Pointer
 BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
                          const std::string &                    fixedLandmarksFileName,
                          const std::string &                    movingLandmarksFileName,
-                         double                                 dLandmarksVariance)
+                         double                                 dLandmarksVariance,
+                         statismo::Logger *                     logger)
 {
   auto fixedLandmarks = details::ReadLandmarksFile<DataType>(fixedLandmarksFileName);
   auto movingLandmarks = details::ReadLandmarksFile<DataType>(movingLandmarksFileName);
@@ -217,6 +227,7 @@ BuildPosteriorShapeModel(typename StatisticalModelType::Pointer model,
 
   using PosteriorModelBuilderType = ::itk::PosteriorModelBuilder<DataType>;
   auto posteriorModelBuilder = PosteriorModelBuilderType::New();
+  posteriorModelBuilder->SetLogger(logger);
   return posteriorModelBuilder->BuildNewModelFromModel(model, constraints, dLandmarksVariance, false);
 }
 

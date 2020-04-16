@@ -31,6 +31,7 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
 #include "utils/itkPenalizingMeanSquaresImageToImageMetric.h"
 #include "utils/statismoFittingUtils.h"
 #include "utils/statismoBuildPosteriorModelUtils.h"
@@ -84,6 +85,9 @@ struct ProgramOptions
   double   dRegularizationWeight{ 0.0 };
 
   bool bPrintFittingInformation{ false };
+
+  bool        bIsQuiet{ false };
+  std::string strLogFile{ "" };
 };
 
 bool
@@ -132,7 +136,7 @@ GenerateAndSaveDisplacementField(typename ReferenceImageType::Pointer refImg,
 
 template <unsigned DIMENSIONS, typename RotationAndTranslationTransformType>
 void
-FitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSilencer)
+FitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSilencer, statismo::Logger * logger)
 {
   using ImageType = itk::Image<float, DIMENSIONS>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
@@ -162,6 +166,7 @@ FitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSi
   typename ImageType::Pointer movingImage = movingImageReader->GetOutput();
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   auto model = itk::StatismoIO<VectorImageType>::LoadStatisticalModel(representer, opt.strInputModelFileName);
 
   typename TransformType::Pointer transform;
@@ -169,7 +174,7 @@ FitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSi
   if (!opt.strInputMovingLandmarksFileName.empty())
   {
     model = statismo::cli::BuildPosteriorDeformationModel<VectorImageType, StatisticalModelType>(
-      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance);
+      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance, logger);
     transform = modelTransform;
   }
   else
@@ -202,7 +207,7 @@ FitImage(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * coSi
                                                     model->GetNumberOfPrincipalComponents(),
                                                     transform->GetNumberOfParameters(),
                                                     opt.bPrintFittingInformation,
-                                                    coSilencer);
+                                                    logger);
 
 
   auto metric = MetricType::New();
@@ -310,7 +315,10 @@ main(int argc, char ** argv)
         &poParameters.bPrintFittingInformation,
         false })
     .add_pos_opt<std::string>({ "Name of the output file where the fitted image will be written to.",
-                                &poParameters.strOutputFittedImageFileName });
+                                &poParameters.strOutputFittedImageFileName })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
+
 
   if (!parser.parse(argc, argv))
   {
@@ -325,17 +333,23 @@ main(int argc, char ** argv)
   }
 
   statismo::cli::ConsoleOutputSilencer coSilencer;
+  std::unique_ptr<statismo::Logger>    logger{ nullptr };
+  if (!poParameters.bIsQuiet)
+  {
+    logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+  }
+
   try
   {
     if (poParameters.uNumberOfDIMENSIONS == gk_dimensionality2D)
     {
       using RotationAndTranslationTransformType = itk::Rigid2DTransform<double>;
-      FitImage<gk_dimensionality2D, RotationAndTranslationTransformType>(poParameters, &coSilencer);
+      FitImage<gk_dimensionality2D, RotationAndTranslationTransformType>(poParameters, &coSilencer, logger.get());
     }
     else
     {
       using RotationAndTranslationTransformType = itk::VersorRigid3DTransform<double>;
-      FitImage<gk_dimensionality3D, RotationAndTranslationTransformType>(poParameters, &coSilencer);
+      FitImage<gk_dimensionality3D, RotationAndTranslationTransformType>(poParameters, &coSilencer, logger.get());
     }
   }
   catch (const ifstream::failure & e)

@@ -18,13 +18,19 @@ statismo-warp-image is used to apply a deformation field to an image. With this 
 # OPTIONS
 
 -d, \--dimensionality 
-:	Specifies the dimensionality of the image and deformation field (either 2 or 3).
+:   Specifies the dimensionality of the image and deformation field (either 2 or 3).
 
 -i, \--input-file *IMAGE_FILE*
-:	*MODEL_FILE* is the path to the original image.
+:   *MODEL_FILE* is the path to the original image.
 
 -f, \--input-deformation-field *DEFORMATION_FIELD_FILE*
-:	Draws the mean from the model and saves it.
+:   Draws the mean from the model and saves it.
+
+-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file *LOG_FILE*
+:   Path to the log file (if not set, logs are output to standard output).
 
 
 # EXAMPLES
@@ -48,7 +54,11 @@ Builds shape models from a list of meshes.
 Builds deformation models from a list of deformation fields
 
 *statismo-build-gp-model* (8).
-Builds shape or deformation models from a given gaussian process definition.
+Builds shape or deformation-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file
+:   Path to the log file (if not set, logs are output to standard output). models from a given gaussian process definition.
 
 ## Working with models
 

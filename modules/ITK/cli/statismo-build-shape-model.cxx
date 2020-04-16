@@ -31,6 +31,7 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
 #include "utils/statismoBuildModelUtils.h"
 
 #include "statismo/ITK/itkUtils.h"
@@ -58,11 +59,13 @@ namespace
 
 struct ProgramOptions
 {
-  string strDataListFile;
-  string strProcrustesMode;
-  string strProcrustesReferenceFile;
-  string strOutputFileName;
-  float  fNoiseVariance{ 0.0 };
+  string      strDataListFile;
+  string      strProcrustesMode;
+  string      strProcrustesReferenceFile;
+  string      strOutputFileName;
+  float       fNoiseVariance{ 0.0 };
+  bool        bIsQuiet{ false };
+  std::string strLogFile{ "" };
 };
 
 bool
@@ -79,7 +82,7 @@ IsOptionsConflictPresent(ProgramOptions & opt)
 }
 
 void
-BuildAndSaveShapeModel(const ProgramOptions & opt)
+BuildAndSaveShapeModel(const ProgramOptions & opt, statismo::Logger * logger)
 {
   const unsigned kDimensions = 3;
 
@@ -97,6 +100,7 @@ BuildAndSaveShapeModel(const ProgramOptions & opt)
   using FilterType = itk::TransformMeshFilter<MeshType, MeshType, Rigid3DTransformType>;
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   auto dataManager = DataManagerType::New();
   auto fileNames = statismo::cli::GetFileList(opt.strDataListFile);
 
@@ -150,6 +154,7 @@ BuildAndSaveShapeModel(const ProgramOptions & opt)
   }
 
   auto pcaModelBuilder = PCAModelBuilder::New();
+  pcaModelBuilder->SetLogger(logger);
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance);
   itk::StatismoIO<MeshType>::SaveStatisticalModel(model, opt.strOutputFileName);
 }
@@ -181,7 +186,9 @@ main(int argc, char ** argv)
         &poParameters.strProcrustesReferenceFile,
         "" })
     .add_opt<float>({ "noise", "n", "Noise variance of the PPCA model", &poParameters.fNoiseVariance, 0.0f, 0.0f })
-    .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName });
+    .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
 
   if (!parser.parse(argc, argv))
   {
@@ -195,9 +202,15 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
+  std::unique_ptr<statismo::Logger> logger{ nullptr };
+  if (!poParameters.bIsQuiet)
+  {
+    logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+  }
+
   try
   {
-    BuildAndSaveShapeModel(poParameters);
+    BuildAndSaveShapeModel(poParameters, logger.get());
   }
   catch (const ifstream::failure & e)
   {

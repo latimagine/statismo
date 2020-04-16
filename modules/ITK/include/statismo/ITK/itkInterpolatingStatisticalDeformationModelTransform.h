@@ -47,8 +47,6 @@
 #include <itkVector.h>
 #include <itkVectorLinearInterpolateImageFunction.h>
 
-#include <iostream>
-
 namespace itk
 {
 

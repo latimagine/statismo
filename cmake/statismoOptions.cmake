@@ -8,6 +8,7 @@ option(BUILD_SHARED_LIBS "Build shared libs" ON)
 option(BUILD_WITH_TIDY "Build with clang-tidy sanity check and code style" OFF)
 option(ITK_SUPPORT "Build ITK module" ON)
 option(VTK_SUPPORT "Build VTK module" ON)
+option(ENABLE_RUNTIME_LOGS "Enable runtime logging" OFF)
 include(${CMAKE_ROOT}/Modules/Documentation.cmake)
 mark_as_advanced(BUILD_DOCUMENTATION)
 

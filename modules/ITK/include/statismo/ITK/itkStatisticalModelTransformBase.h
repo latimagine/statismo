@@ -46,8 +46,6 @@
 #include <itkTransform.h>
 #include <itkVector.h>
 
-#include <iostream>
-
 /**
  * \defgroup Transforms ITK transforms classes and routines
  */

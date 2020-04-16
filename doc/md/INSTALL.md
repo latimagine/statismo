@@ -115,6 +115,7 @@ The main options with their usage are presented in the following table. See [Dep
 | BUILD_SHARED_LIBS          | Build shared or static libraries     |
 | BUILD_WRAPPING             | Build python wrapping for VTK module |
 | BUILD_CLI_TOOLS            | Build cli tools based on ITK module  |
+| ENABLE_RUNTIME_LOGS        | Enable logging at runtime            |
 
 > :information_source: Configuration examples are available [here](#Configuration-Examples)
 

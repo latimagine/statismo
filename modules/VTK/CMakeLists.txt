@@ -8,7 +8,9 @@ file(GLOB _target_headers
 )
 
 add_library(statismo_VTK ${statismo_LIB_TYPE}
+  src/vtkOutputWindowLogPolicies.cxx
   src/vtkStandardMeshRepresenter.cxx
+  src/vtkStatismoOutputWindow.cxx
   src/vtkUnstructuredGridRepresenter.cxx
 )
 target_link_libraries(statismo_VTK PUBLIC statismo_core ${VTK_LIBRARIES})

@@ -47,6 +47,7 @@ template <typename T, typename Derived>
 void
 DataItemBase<T, Derived>::Save(const H5::Group & dsGroup) const
 {
+  STATISMO_LOG_INFO("Saving data item");
   SaveToGroup(dsGroup);
 }
 

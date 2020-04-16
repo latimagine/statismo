@@ -43,8 +43,8 @@
 #include "statismo/core/Exceptions.h"
 #include "statismo/core/Utils.h"
 #include "statismo/core/HDF5Utils.h"
+#include "statismo/core/Logger.h"
 
-#include <iostream>
 #include <random>
 #include <limits>
 
@@ -54,7 +54,9 @@ namespace statismo
 template <typename T, typename Derived>
 DataManagerBase<T, Derived>::DataManagerBase(const RepresenterType * representer)
   : m_representer{ representer->SafeCloneSelf() }
-{}
+{
+  this->SetLogger(m_representer->GetLogger());
+}
 
 template <typename T, typename Derived>
 template <typename ConcreteDataItemType, typename... Args>
@@ -143,6 +145,8 @@ template <typename T, typename Derived>
 void
 DataManagerBase<T, Derived>::Save(const std::string & filename) const
 {
+  STATISMO_LOG_INFO("Saving data to file " + filename);
+
   using namespace H5;
 
   assert(m_representer);
@@ -155,6 +159,7 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
   catch (const H5::Exception & e)
   {
     std::string msg(std::string("Could not open HDF5 file for writing \n") + e.getCDetailMsg());
+    STATISMO_LOG_ERROR(msg);
     throw StatisticalModelException(msg.c_str(), Status::IO_ERROR);
   }
 
@@ -173,6 +178,7 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
 
     if (this->m_dataItemList.size() > std::numeric_limits<int>::max())
     {
+      STATISMO_LOG_ERROR("Too many dataset to write");
       throw StatisticalModelException("too many dataset to write", Status::OUT_OF_RANGE_ERROR);
     }
 
@@ -194,6 +200,7 @@ DataManagerBase<T, Derived>::Save(const std::string & filename) const
   {
     std::string msg =
       std::string("an exception occurred while writing data matrix to HDF5 file \n") + e.getCDetailMsg();
+    STATISMO_LOG_ERROR(msg);
     throw StatisticalModelException(msg.c_str(), Status::IO_ERROR);
   }
 }
@@ -209,6 +216,10 @@ template <typename T, typename Derived>
 typename DataManagerBase<T, Derived>::CrossValidationFoldListType
 DataManagerBase<T, Derived>::GetCrossValidationFolds(unsigned nFolds, bool isRandomized) const
 {
+  STATISMO_LOG_INFO("Retrieving validation folds");
+  STATISMO_LOG_INFO("Folds count: " + std::to_string(nFolds));
+  STATISMO_LOG_INFO("Sample count: " + std::to_string(GetNumberOfSamples()));
+
   if (nFolds <= 1 || nFolds > GetNumberOfSamples())
   {
     throw StatisticalModelException("Invalid number of folds specified in GetCrossValidationFolds",
@@ -263,6 +274,7 @@ template <typename T, typename Derived>
 typename DataManagerBase<T, Derived>::CrossValidationFoldListType
 DataManagerBase<T, Derived>::GetLeaveOneOutCrossValidationFolds() const
 {
+  STATISMO_LOG_INFO("Retrieving validation folds");
   CrossValidationFoldListType foldList;
   for (unsigned currentFold = 0; currentFold < GetNumberOfSamples(); currentFold++)
   {
@@ -292,6 +304,8 @@ template <typename T>
 void
 BasicDataManager<T>::AddDataset(DatasetConstPointerType dataset, const std::string & uri)
 {
+  STATISMO_LOG_INFO("Adding dataset with uri " + uri);
+
   auto sample = this->m_representer->CloneDataset(dataset);
   auto uw = MakeStackUnwinder([&]() { this->m_representer->DeleteDataset(sample); });
 

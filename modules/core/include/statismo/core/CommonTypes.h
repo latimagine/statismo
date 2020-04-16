@@ -206,6 +206,37 @@ MakeSharedPointer(T * t)
 }
 
 /**
+ * \brief Specific callable writer
+ *
+ * This wrapper can be used in order to transfer a non-copyable callable to
+ * an object that need a copyable one (e.g. non-copyable functor to std::function)
+ *
+ * \ingroup Core
+ */
+template <typename Callable>
+class CallableWrapper final
+{
+private:
+  std::shared_ptr<Callable> m_c;
+
+public:
+  template <typename... Args,
+            typename = typename std::enable_if<std::is_constructible<Callable, Args...>::value &&
+                                               !(sizeof...(Args) == 1 &&
+                                                 (std::is_same_v<CallableWrapper, std::decay_t<Args>> && ...))>::type>
+  explicit CallableWrapper(Args &&... args)
+    : m_c{ std::make_shared<Callable>(std::forward<Args>(args)...) }
+  {}
+
+  template <typename... Args>
+  void
+  operator()(Args &&... args)
+  {
+    (*m_c)(std::forward<Args>(args)...);
+  }
+};
+
+/**
  * \brief Stack unwinder used for RAII enforcement
  * \ingroup Core
  */

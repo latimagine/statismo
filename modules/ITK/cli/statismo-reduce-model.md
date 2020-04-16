@@ -21,16 +21,22 @@ statismo-reduce-model is used to reduce the number of components in a model. It'
 :   Specifies the model's type. **shape** and **deformation** are available model types.
 
 -d, \--dimensionality 
-:	Specifies the dimensionality of the model (either 2 or 3). This option is only available if the type is **deformation**.
+:   Specifies the dimensionality of the model (either 2 or 3). This option is only available if the type is **deformation**.
 
 -n, \--numcomponents 
-:	Creates a new model with the specified number of components
+:   Creates a new model with the specified number of components
 
 -v, \--totalvariance 
-:	Creates a new Model that will have a fraction of the old models' variance. This parameter is in percent and thus ranges from 0 to 100 and is in Percent.
+:   Creates a new Model that will have a fraction of the old models' variance. This parameter is in percent and thus ranges from 0 to 100 and is in Percent.
 
 -i, \--input-file *MODEL_FILE*
-:	*MODEL_FILE* is the path to the model.
+:   *MODEL_FILE* is the path to the model.
+
+-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file *LOG_FILE*
+:   Path to the log file (if not set, logs are output to standard output).
 
 
 # EXAMPLES

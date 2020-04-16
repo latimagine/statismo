@@ -1,9 +1,7 @@
 /*
  * This file is part of the statismo library.
  *
- * Author: Marcel Luethi (marcel.luethi@unibas.ch)
- *
- * Copyright (c) 2011 University of Basel
+ * Copyright (c) 2019 Laboratory of Medical Information Processing
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,77 +33,62 @@
  *
  */
 
-#ifndef __STATIMO_CORE_RAND_SVD_H_
-#define __STATIMO_CORE_RAND_SVD_H_
+#include "statismo/core/Logger.h"
+#include "statismo/VTK/vtkStatismoOutputWindow.h"
 
-#include "statismo/core/RandUtils.h"
+#include <vtkObjectFactory.h>
 
-#include <Eigen/Dense>
-
-#include <cmath>
-#include <limits>
-#include <random>
+vtkStandardNewMacro(statismo::vtkStatismoOutputWindow); // NOLINT
 
 namespace statismo
 {
-/**
- * \ingroup Core
- */
-template <typename ScalarType>
-class RandSVD
+
+vtkStatismoOutputWindow::vtkStatismoOutputWindow() = default;
+vtkStatismoOutputWindow::~vtkStatismoOutputWindow() = default;
+
+void
+vtkStatismoOutputWindow::DisplayText(const char * t)
 {
-public:
-  using VectorType = Eigen::Matrix<ScalarType, Eigen::Dynamic, 1>;
-  using MatrixType = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-  RandSVD(const MatrixType & A, unsigned k)
+  if (m_redirectLogger)
   {
-    unsigned n = A.rows();
-
-    static std::normal_distribution<> dist(0, 1);
-    static auto                       r = std::bind(dist, rand::RandGen());
-
-    // create gaussian random amtrix
-    MatrixType Omega(n, k);
-    for (unsigned i = 0; i < n; i++)
-    {
-      for (unsigned j = 0; j < k; j++)
-      {
-        Omega(i, j) = r();
-      }
-    }
-
-
-    MatrixType                              Y = A * A.transpose() * A * Omega;
-    Eigen::FullPivHouseholderQR<MatrixType> qr(Y);
-    MatrixType                              Q = qr.matrixQ().leftCols(k + k);
-
-    MatrixType B = Q.transpose() * A;
-
-    using SVDType = Eigen::JacobiSVD<MatrixType>;
-    SVDType    SVD(B, Eigen::ComputeThinU);
-    MatrixType Uhat = SVD.matrixU();
-    m_D = SVD.singularValues();
-    m_U = (Q * Uhat).leftCols(k);
+    m_redirectLogger->Log(LogEntry{ t }, LogLevel::LOG_INFO);
   }
+}
 
-  MatrixType
-  MatrixU() const
+void
+vtkStatismoOutputWindow::DisplayErrorText(const char * t)
+{
+  if (m_redirectLogger)
   {
-    return m_U;
+    m_redirectLogger->Log(LogEntry{ t }, LogLevel::LOG_ERROR);
   }
+}
 
-  VectorType
-  SingularValues() const
+void
+vtkStatismoOutputWindow::DisplayWarningText(const char * t)
+{
+  if (m_redirectLogger)
   {
-    return m_D;
+    m_redirectLogger->Log(LogEntry{ t }, LogLevel::LOG_WARNING);
   }
+}
 
+void
+vtkStatismoOutputWindow::DisplayGenericWarningText(const char * t)
+{
+  if (m_redirectLogger)
+  {
+    m_redirectLogger->Log(LogEntry{ t }, LogLevel::LOG_WARNING);
+  }
+}
 
-private:
-  VectorType m_D;
-  MatrixType m_U;
-};
+void
+vtkStatismoOutputWindow::DisplayDebugText(const char * t)
+{
+  if (m_redirectLogger)
+  {
+    m_redirectLogger->Log(LogEntry{ t }, LogLevel::LOG_DEBUG);
+  }
+}
 
 } // namespace statismo
-#endif

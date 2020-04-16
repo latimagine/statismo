@@ -67,8 +67,9 @@ vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::AssertCompatibility(Data
 {
   if (sizeof(TScalar) != const_cast<vtkStructuredPoints *>(data)->GetScalarSize())
   {
-    std::cout << "sizeof(TScalar) = " << sizeof(TScalar) << std::endl;
-    std::cout << "sizeof(TScalar) = " << const_cast<vtkStructuredPoints *>(data)->GetScalarSize() << std::endl;
+    STATISMO_LOG_DEBUG("TScalar size: " + std::to_string(sizeof(TScalar)));
+    STATISMO_LOG_DEBUG("vtkStructuredPoints scalar size: " +
+                       std::to_string(const_cast<vtkStructuredPoints *>(data)->GetScalarSize()));
     throw StatisticalModelException("incompatible data (bad scalar type) given to representer",
                                     statismo::Status::INVALID_DATA_ERROR);
   }
@@ -85,7 +86,9 @@ vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS> *
 vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::CloneImpl() const
 {
   // this works since Create deep copies the reference
-  return vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::Create(m_reference);
+  auto clone = vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::Create(m_reference);
+  clone->SetLogger(this->GetLogger());
+  return clone;
 }
 
 template <class TScalar, unsigned PIXEL_DIMENSIONS>
@@ -163,9 +166,8 @@ vtkStandardImageRepresenter<TScalar, PIXEL_DIMENSIONS>::LoadRef(const H5::Group 
 
   if (statismo::GetDataTypeId<TScalar>() != datatype)
   {
-    std::cout << "Warning: The datatype specified for the scalars does not match the TPixel template argument used in "
-                 "this representer."
-              << std::endl;
+    STATISMO_LOG_WARNING(
+      "The datatype specified for the scalars does not match the TPixel template argument used in the representer");
   }
 
   auto newImage = vtkSmartPointer<vtkStructuredPoints>::New();

@@ -35,12 +35,14 @@
  *
  */
 
+#include "statismo/core/LoggerMultiHandlersThreaded.h"
 #include "statismo/ITK/itkDataManager.h"
 #include "statismo/ITK/itkPCAModelBuilder.h"
 #include "statismo/ITK/itkStandardImageRepresenter.h"
 #include "statismo/ITK/itkIO.h"
 #include "statismo/ITK/itkStatisticalModel.h"
 #include "statismo/ITK/itkUtils.h"
+#include "statismo/ITK/itkOutputWindowLogPolicies.h"
 
 #include <itkImageFileReader.h>
 
@@ -68,6 +70,13 @@ DoRunExample(const char * dir, const char * modelname, double noiseVariance)
   using DataManagerType = itk::DataManager<ImageType>;
   using ImageFileReaderType = itk::ImageFileReader<ImageType>;
 
+  // Logger (not threaded)
+  statismo::LoggerMultiHandlersThreaded logger{ std::make_unique<statismo::BasicLogHandler>(
+                                                  statismo::itk::OutputWindowLogWriter(),
+                                                  statismo::itk::MessageFormatter()),
+                                                statismo::LogLevel::LOG_DEBUG };
+  logger.Start();
+
   auto filenames = statismo::itk::GetDirFiles(dir, ".vtk");
   assert(!filenames.empty());
 
@@ -77,6 +86,7 @@ DoRunExample(const char * dir, const char * modelname, double noiseVariance)
   refReader->Update();
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(&logger);
   representer->SetReference(refReader->GetOutput());
 
   auto dataManager = DataManagerType::New();
@@ -94,6 +104,7 @@ DoRunExample(const char * dir, const char * modelname, double noiseVariance)
   }
 
   auto pcaModelBuilder = ModelBuilderType::New();
+  pcaModelBuilder->SetLogger(&logger);
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), noiseVariance);
   itk::StatismoIO<ImageType>::SaveStatisticalModel(model, modelname);
 }

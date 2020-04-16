@@ -69,7 +69,9 @@ vtkUnstructuredGridRepresenter *
 vtkUnstructuredGridRepresenter::CloneImpl() const
 {
   // this works since Create deep copies the reference
-  return Create(m_reference, m_alignment);
+  auto clone = Create(m_reference, m_alignment);
+  clone->SetLogger(this->GetLogger());
+  return clone;
 }
 
 void

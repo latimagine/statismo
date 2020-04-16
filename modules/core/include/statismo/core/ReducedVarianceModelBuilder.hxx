@@ -44,8 +44,6 @@
 
 #include <Eigen/SVD>
 
-#include <iostream>
-
 namespace statismo
 {
 
@@ -55,6 +53,9 @@ ReducedVarianceModelBuilder<T>::BuildNewModelWithLeadingComponents(const Statist
                                                                    unsigned numberOfPrincipalComponents) const
 
 {
+  STATISMO_LOG_INFO("Building new model");
+  STATISMO_LOG_INFO("Number of principal components: " + std::to_string(numberOfPrincipalComponents));
+
   auto reducedModel =
     StatisticalModelType::SafeCreate(inputModel->GetRepresenter(),
                                      inputModel->GetMeanVector(),
@@ -87,6 +88,8 @@ UniquePtrType<typename ReducedVarianceModelBuilder<T>::StatisticalModelType>
 ReducedVarianceModelBuilder<T>::BuildNewModelWithVariance(const StatisticalModelType * inputModel,
                                                           double                       totalVariance) const
 {
+  STATISMO_LOG_INFO("Building new model");
+  STATISMO_LOG_INFO("Total variance: " + std::to_string(totalVariance));
 
   VectorType pcaVariance = inputModel->GetPCAVarianceVector();
   double     modelVariance = pcaVariance.sum();
@@ -109,6 +112,7 @@ UniquePtrType<typename ReducedVarianceModelBuilder<T>::StatisticalModelType>
 ReducedVarianceModelBuilder<T>::BuildNewModelFromModel(const StatisticalModelType * inputModel,
                                                        double                       totalVariance) const
 {
+  STATISMO_LOG_INFO("Building new model from model");
   return BuildNewModelWithVariance(inputModel, totalVariance);
 }
 

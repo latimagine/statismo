@@ -44,6 +44,7 @@
 #include "statismo/core/Representer.h"
 #include "statismo/core/GenericFactory.h"
 #include "statismo/core/NonCopyable.h"
+#include "statismo/core/Logger.h"
 
 #include <limits>
 #include <vector>
@@ -103,6 +104,12 @@ public:
 
   virtual ~StatisticalModel(); // NOLINT
 
+  virtual void
+  SetLogger(Logger * logger)
+  {
+    m_logger = logger;
+  }
+
   /**
    * \brief Destroy the object.
    */
@@ -117,11 +124,13 @@ public:
    * \name General Info
    */
   ///@{
+
   /**
    * \brief Get the number of PCA components in the model
    */
   unsigned int
   GetNumberOfPrincipalComponents() const;
+
 
   /**
    * \brief Get model info object
@@ -131,6 +140,7 @@ public:
   GetModelInfo() const;
   ///@}
 
+
   /**
    * \name Sample from the model
    *
@@ -138,7 +148,6 @@ public:
    * smart pointers), the sample needs to be deleted manually with DeleteDataset.
    */
   ///@{
-
 
   /**
    * \brief Get the value of the given sample at a given point
@@ -164,14 +173,16 @@ public:
   DatasetPointerType
   DrawMean() const;
 
+
   /**
    * \brief Draw the sample with the given coefficients
-   * \param coefficients coefficient vector. The size of the coefficient vector should be smaller
-   * than number of factors in the model. Otherwise an exception is thrown.
+   * \param coefficients coefficient vector. The size of the coefficient vector should be equal
+   * to the number of factors in the model. Otherwise an exception is thrown.
    * \param addNoise if true, the Gaussian noise assumed in the model is added to the sample
    */
   DatasetPointerType
   DrawSample(const VectorType & coefficients, bool addNoise = false) const;
+
 
   /**
    * \brief Draw a sample with random coefficients
@@ -180,12 +191,13 @@ public:
   DatasetPointerType
   DrawSample(bool addNoise = false) const;
 
+
   /**
    * \brief Draw the sample corresponding to the ith pca matrix
-   * \param pcaComponentCount number of the PCA Basis to be retrieved
+   * \param pcaComponentIndex number of the PCA Basis to be retrieved
    */
   DatasetPointerType
-  DrawPCABasisSample(unsigned pcaComponentCount) const;
+  DrawPCABasisSample(unsigned pcaComponentIndex) const;
 
 
   /**
@@ -200,12 +212,14 @@ public:
   ValueType
   DrawMeanAtPoint(const PointType & point) const;
 
+
   /**
    * \brief Get the mean of the model evaluated at the given point index
    * \param pointId pointId of the point where it should be evaluated (as defined by the representer)
    */
   ValueType
   DrawMeanAtPoint(unsigned pointId) const;
+
 
   /**
    * \brief Get the value of the sample defined by coefficients at the specified point.
@@ -218,6 +232,7 @@ public:
    */
   ValueType
   DrawSampleAtPoint(const VectorType & coefficients, const PointType & point, bool addNoise = false) const;
+
 
   /**
    * \brief Get the value of the sample defined by coefficients at the specified point index
@@ -240,6 +255,7 @@ public:
   MatrixType
   GetJacobian(const PointType & pt) const;
 
+
   /**
    * \brief Compute the jacobian of the Statistical model at a specified point index
    * \param ptId pointID where the Jacobian is computed
@@ -247,6 +263,7 @@ public:
    */
   MatrixType
   GetJacobian(unsigned ptId) const;
+
 
   /**
    * \brief Get the variance in the model for point pt
@@ -257,6 +274,7 @@ public:
   MatrixType
   GetCovarianceAtPoint(const PointType & pt1, const PointType & pt2) const;
 
+
   /**
    * \brief Get the variance in the model for point pt
    * \param ptId1 point 1
@@ -266,6 +284,7 @@ public:
   MatrixType
   GetCovarianceAtPoint(unsigned ptId1, unsigned ptId2) const;
   ///@}
+
 
   /**
    * \name Statistical Information from Dataset
@@ -284,6 +303,7 @@ public:
   MatrixType
   GetCovarianceMatrix() const;
 
+
   /**
    * \brief Get the probability of observing the given dataset under this model
    *
@@ -294,6 +314,7 @@ public:
    */
   double
   ComputeProbability(DatasetConstPointerType dataset) const;
+
 
   /**
    * \brief Get the log probability of observing a given dataset.
@@ -313,6 +334,7 @@ public:
    */
   double
   ComputeProbabilityOfCoefficients(const VectorType & coefficients) const;
+
 
   /**
    * \brief Get the log probability of observing given coefficients.
@@ -350,6 +372,7 @@ public:
   VectorType
   ComputeCoefficientsForPointValues(const PointValueListType & pointValueList,
                                     double                     pointValueNoiseVariance = 0.0) const;
+
 
   /**
    * \brief Similar to ComputeCoefficientsForPointValues, only here there is no global pointValueNoiseVariance
@@ -405,6 +428,7 @@ public:
   const VectorType &
   GetMeanVector() const;
 
+
   /**
    * \brief Get a matrix with the PCA Basis as its columns
    *
@@ -416,6 +440,7 @@ public:
   const MatrixType &
   GetPCABasisMatrix() const;
 
+
   /**
    * \brief Get the PCA Matrix, but with its principal axis normalized to unit length
    * \warning This is more expensive than GetPCABasisMatrix as the matrix has to be computed
@@ -423,6 +448,7 @@ public:
    */
   MatrixType
   GetOrthonormalPCABasisMatrix() const;
+
 
   /**
    * \brief Get an instance for the given coefficients as a vector
@@ -441,6 +467,7 @@ public:
    */
   void
   SetModelInfo(const ModelInfo & modelInfo);
+
 
   /**
    * \brief Compute the coefficients for the given sample vector
@@ -471,6 +498,13 @@ public:
 
   ///@}
 
+protected:
+  Logger *
+  GetLogger() const
+  {
+    return m_logger;
+  }
+
 private:
   // computes the M Matrix for the PPCA Method (see Bishop, PRML, Chapter 12)
   void
@@ -497,6 +531,7 @@ private:
   // the matrix M^{-1} in Bishops PRML book. This is roughly the Latent Covariance matrix (but not exactly)
   mutable MatrixType m_matMInverse;
   ModelInfo          m_modelInfo;
+  Logger *           m_logger{ nullptr };
 };
 
 } // namespace statismo

@@ -31,6 +31,7 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
 #include "utils/statismoBuildModelUtils.h"
 
 #include "statismo/ITK/itkDataManager.h"
@@ -51,11 +52,13 @@ namespace
 
 struct ProgramOptions
 {
-  bool     bComputeScores{ true };
-  string   strDataListFile;
-  string   strOutputFileName;
-  float    fNoiseVariance{ 0.0 };
-  unsigned uNumberOfDimensions{ 0 };
+  bool        bComputeScores{ true };
+  string      strDataListFile;
+  string      strOutputFileName;
+  float       fNoiseVariance{ 0.0 };
+  unsigned    uNumberOfDimensions{ 0 };
+  bool        bIsQuiet{ false };
+  std::string strLogFile{ "" };
 };
 
 bool
@@ -66,7 +69,7 @@ IsOptionsConflictPresent(const ProgramOptions & opt)
 
 template <unsigned DIMENSIONS>
 void
-BuildAndSaveDeformationModel(const ProgramOptions & opt)
+BuildAndSaveDeformationModel(const ProgramOptions & opt, statismo::Logger * logger)
 {
   using VectorPixelType = itk::Vector<float, DIMENSIONS>;
   using ImageType = itk::Image<VectorPixelType, DIMENSIONS>;
@@ -76,6 +79,7 @@ BuildAndSaveDeformationModel(const ProgramOptions & opt)
   using ModelBuilderType = itk::PCAModelBuilder<ImageType>;
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   auto dataManager = DataManagerType::New();
   auto fileNames = statismo::cli::GetFileList(opt.strDataListFile);
 
@@ -102,6 +106,7 @@ BuildAndSaveDeformationModel(const ProgramOptions & opt)
   }
 
   auto pcaModelBuilder = ModelBuilderType::New();
+  pcaModelBuilder->SetLogger(logger);
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), opt.fNoiseVariance, opt.bComputeScores);
   itk::StatismoIO<ImageType>::SaveStatisticalModel(model, opt.strOutputFileName);
 }
@@ -124,7 +129,10 @@ main(int argc, char ** argv)
       { "dimensionality", "d", "Dimensionality of the input image", &poParameters.uNumberOfDimensions, 3, 2, 3 }, true)
     .add_opt<float>({ "noise", "n", "Noise variance of the PPCA model", &poParameters.fNoiseVariance, 0.0f, 0.0f })
     .add_opt<bool>({ "scores", "s", "Compute scores (default true)", &poParameters.bComputeScores, true })
-    .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName });
+    .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
+
 
   if (!parser.parse(argc, argv))
   {
@@ -140,13 +148,19 @@ main(int argc, char ** argv)
 
   try
   {
+    std::unique_ptr<statismo::Logger> logger{ nullptr };
+    if (!poParameters.bIsQuiet)
+    {
+      logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+    }
+
     if (poParameters.uNumberOfDimensions == 2)
     {
-      BuildAndSaveDeformationModel<2>(poParameters);
+      BuildAndSaveDeformationModel<2>(poParameters, logger.get());
     }
     else
     {
-      BuildAndSaveDeformationModel<3>(poParameters);
+      BuildAndSaveDeformationModel<3>(poParameters, logger.get());
     }
   }
   catch (const ifstream::failure & e)

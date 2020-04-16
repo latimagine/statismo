@@ -83,7 +83,6 @@ ApplyDeformationFieldToImage(const ProgramOptions & opt)
 
   typename ImageType::Pointer origImg = origImgReader->GetOutput();
 
-
   auto defFieldReader = VectorImageReaderType::New();
   defFieldReader->SetFileName(opt.strInputDeformFieldFileName);
   defFieldReader->Update();

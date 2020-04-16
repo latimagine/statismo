@@ -42,6 +42,7 @@
 #include "statismo/core/CoreTraits.h"
 #include "statismo/core/Clonable.h"
 #include "statismo/core/GenericFactory.h"
+#include "statismo/core/Logger.h"
 
 #include <H5Cpp.h>
 #include <string>
@@ -53,6 +54,7 @@
 
 namespace statismo
 {
+
 /**
  * \brief Traits class that must be defined for new representers
  *
@@ -250,6 +252,12 @@ public:
   Delete() = 0;
 
   /**
+   * \brief Get logger
+   */
+  virtual Logger *
+  GetLogger() const = 0;
+
+  /**
    * \brief Delete a dataset
    */
   virtual void
@@ -384,6 +392,12 @@ public:
   using DatasetPointerType = typename RepresenterTraits<T>::DatasetPointerType;
   using ObjectFactoryType = GenericFactory<Derived>;
 
+  virtual void
+  SetLogger(Logger * logger)
+  {
+    m_logger = logger;
+  }
+
   void
   Delete() override
   {
@@ -450,7 +464,16 @@ public:
   }
 
 protected:
+  Logger *
+  GetLogger() const override
+  {
+    return m_logger;
+  }
+
   RepresenterBase() = default;
+
+private:
+  Logger * m_logger{ nullptr };
 };
 } // namespace statismo
 

@@ -49,8 +49,6 @@
 #include <itkTransformMeshFilter.h>
 #include <itkVector.h>
 
-#include <iostream>
-
 namespace itk
 {
 
@@ -68,6 +66,7 @@ StandardMeshRepresenter<Pixel, MESH_DIMENSION>::CloneImpl() const
   auto                       clone = new StandardMeshRepresenter();
   typename MeshType::Pointer clonedReference = this->CloneDataset(m_reference);
   clone->SetReference(clonedReference);
+  clone->SetLogger(this->GetLogger());
   return clone;
 }
 
@@ -152,9 +151,8 @@ StandardMeshRepresenter<Pixel, MESH_DIMENSION>::LoadRef(const H5::Group & fg) co
       auto type = static_cast<unsigned>(statismo::HDF5Utils::ReadIntAttribute(ds, "datatype"));
       if (type != PixelConversionTrait<Pixel>::GetDataType())
       {
-        std::cout << "Warning: The datatype specified for the scalars does not match the Pixel template argument used "
-                     "in this representer."
-                  << std::endl;
+        STATISMO_LOG_WARNING(
+          "The datatype specified for the scalars does not match the Pixel template argument used in this representer");
       }
       statismo::MatrixTypeDoublePrecision scalarMatDouble;
       statismo::HDF5Utils::ReadMatrixOfType<double>(pdGroup, "scalars", scalarMatDouble);

@@ -31,6 +31,7 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
 #include "utils/statismoBuildPosteriorModelUtils.h"
 
 #include "statismo/ITK/itkStandardImageRepresenter.h"
@@ -55,14 +56,16 @@ constexpr unsigned gk_dimensionality2D = 2;
 
 struct ProgramOptions
 {
-  string   strModelType;
-  string   strInputModelFileName;
-  string   strOutputModelFileName;
-  string   strInputMeshFileName;
-  string   strInputFixedLandmarksFileName;
-  string   strInputMovingLandmarksFileName;
-  double   dVariance{ 0.0 };
-  unsigned uNumberOfDimensions{ 0 };
+  string      strModelType;
+  string      strInputModelFileName;
+  string      strOutputModelFileName;
+  string      strInputMeshFileName;
+  string      strInputFixedLandmarksFileName;
+  string      strInputMovingLandmarksFileName;
+  double      dVariance{ 0.0 };
+  unsigned    uNumberOfDimensions{ 0 };
+  bool        bIsQuiet{ false };
+  std::string strLogFile{ "" };
 };
 
 bool
@@ -78,13 +81,14 @@ IsOptionsConflictPresent(ProgramOptions & opt)
 }
 
 void
-BuildPosteriorShapeModel(const ProgramOptions & opt)
+BuildPosteriorShapeModel(const ProgramOptions & opt, statismo::Logger * logger)
 {
   using DataType = itk::Mesh<float, gk_dimensionality3D>;
   using StatisticalModelType = itk::StatisticalModel<DataType>;
   using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensionality3D>;
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
 
   StatisticalModelType::Pointer constrainedModel;
@@ -92,7 +96,7 @@ BuildPosteriorShapeModel(const ProgramOptions & opt)
   {
     using PointsLocatorType = itk::PointsLocator<DataType::PointsContainer>;
     constrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
-      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance);
+      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance, logger);
   }
   else
   {
@@ -102,7 +106,7 @@ BuildPosteriorShapeModel(const ProgramOptions & opt)
     meshReader->Update();
     DataType::Pointer meshInCorrespondence = meshReader->GetOutput();
     constrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType>(
-      model, meshInCorrespondence, opt.dVariance);
+      model, meshInCorrespondence, opt.dVariance, logger);
   }
 
   itk::StatismoIO<DataType>::SaveStatisticalModel(constrainedModel, opt.strOutputModelFileName);
@@ -110,7 +114,7 @@ BuildPosteriorShapeModel(const ProgramOptions & opt)
 
 template <unsigned DIMENSIONALITY>
 void
-BuildPosteriorDeformationModel(const ProgramOptions & opt)
+BuildPosteriorDeformationModel(const ProgramOptions & opt, statismo::Logger * logger)
 {
   using VectorPixelType = itk::Vector<float, DIMENSIONALITY>;
   using DataType = itk::Image<VectorPixelType, DIMENSIONALITY>;
@@ -118,11 +122,12 @@ BuildPosteriorDeformationModel(const ProgramOptions & opt)
   using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, DIMENSIONALITY>;
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
 
   itk::StatismoIO<DataType>::SaveStatisticalModel(
     statismo::cli::BuildPosteriorDeformationModel<DataType, StatisticalModelType>(
-      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance),
+      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dVariance, logger),
     opt.strOutputModelFileName);
 }
 } // namespace
@@ -174,8 +179,11 @@ main(int argc, char ** argv)
                        "The variance that will be used to build the posterior model.",
                        &poParameters.dVariance,
                        1.0f })
-    .add_pos_opt<std::string>({ "Name of the output file where the posterior model will be written to.",
-                                &poParameters.strOutputModelFileName });
+    .add_pos_opt<std::string>(
+      { "Name of the output file where the posterior model will be written to.", &poParameters.strOutputModelFileName })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
+
 
   if (!parser.parse(argc, argv))
   {
@@ -191,19 +199,25 @@ main(int argc, char ** argv)
 
   try
   {
+    std::unique_ptr<statismo::Logger> logger{ nullptr };
+    if (!poParameters.bIsQuiet)
+    {
+      logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+    }
+
     if (poParameters.strModelType == "shape")
     {
-      BuildPosteriorShapeModel(poParameters);
+      BuildPosteriorShapeModel(poParameters, logger.get());
     }
     else
     {
       if (poParameters.uNumberOfDimensions == gk_dimensionality2D)
       {
-        BuildPosteriorDeformationModel<gk_dimensionality2D>(poParameters);
+        BuildPosteriorDeformationModel<gk_dimensionality2D>(poParameters, logger.get());
       }
       else
       {
-        BuildPosteriorDeformationModel<gk_dimensionality3D>(poParameters);
+        BuildPosteriorDeformationModel<gk_dimensionality3D>(poParameters, logger.get());
       }
     }
   }

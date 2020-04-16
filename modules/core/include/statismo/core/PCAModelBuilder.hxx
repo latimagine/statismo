@@ -45,8 +45,6 @@
 #include <Eigen/SVD>
 #include <Eigen/Eigenvalues>
 
-#include <iostream>
-
 namespace statismo
 {
 
@@ -58,7 +56,12 @@ PCAModelBuilder<T>::BuildNewModel(const DataItemListType & sampleDataList,
                                   EigenValueMethod         method) const
 {
 
+  STATISMO_LOG_INFO("Building new model");
+  STATISMO_LOG_INFO("Noise variance: " + std::to_string(noiseVariance));
+
   auto n = sampleDataList.size();
+  STATISMO_LOG_INFO("Sample count: " + std::to_string(n));
+
   if (n <= 0)
   {
     throw StatisticalModelException("Provided empty sample set. Cannot build the sample matrix",
@@ -105,6 +108,7 @@ PCAModelBuilder<T>::BuildNewModel(const DataItemListType & sampleDataList,
   i = 0;
   for (const auto & item : sampleDataList)
   {
+    STATISMO_LOG_INFO("Adding info about dataset with uri " + item->GetDatasetURI());
     std::ostringstream os;
     os << "URI_" << i++;
     dataInfo.emplace_back(os.str().c_str(), item->GetDatasetURI());
@@ -128,13 +132,17 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
                                           double                 noiseVariance,
                                           EigenValueMethod       method) const
 {
-
   unsigned n = matX0.rows();
   unsigned p = matX0.cols();
+
+  STATISMO_LOG_INFO("n: " + std::to_string(n));
+  STATISMO_LOG_INFO("p: " + std::to_string(p));
 
   switch (method)
   {
     case EigenValueMethod::JACOBI_SVD:
+
+      STATISMO_LOG_INFO("Using JACOBI_SVD method");
 
       using SVDType = Eigen::JacobiSVD<MatrixType>;
       using SVDDoublePrecisionType = Eigen::JacobiSVD<MatrixTypeDoublePrecision>;
@@ -173,6 +181,7 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
 
         if (numComponentsToKeep == 0)
         {
+          STATISMO_LOG_ERROR("No component to keep");
           throw StatisticalModelException("All the eigenvalues are below the given tolerance. Model cannot be built.");
         }
 
@@ -207,6 +216,7 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
 
         if (numComponentsToKeep == 0)
         {
+          STATISMO_LOG_ERROR("No component to keep");
           throw StatisticalModelException("All the eigenvalues are below the given tolerance. Model cannot be built.");
         }
 
@@ -219,6 +229,7 @@ PCAModelBuilder<T>::BuildNewModelInternal(const Representer<T> * representer,
 
     case EigenValueMethod::SELF_ADJOINT_EIGEN_SOLVER:
     {
+      STATISMO_LOG_INFO("Using SELF_ADJOINT_EIGEN_SOLVER method");
       // we compute the eigenvalues/eigenvectors of the full p x p  covariance matrix 1/(n-1) X0^TX0 directly
 
       using SelfAdjointEigenSolver = Eigen::SelfAdjointEigenSolver<MatrixType>;
