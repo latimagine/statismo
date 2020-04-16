@@ -1,9 +1,7 @@
 /*
  * This file is part of the statismo library.
  *
- * Author: Marcel Luethi (marcel.luethi@unibas.ch)
- *
- * Copyright (c) 2011 University of Basel
+ * Copyright (c) 2019 Laboratory of Medical Information Processing
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,77 +33,59 @@
  *
  */
 
-#ifndef __STATIMO_CORE_RAND_SVD_H_
-#define __STATIMO_CORE_RAND_SVD_H_
+#include "statismo/VTK/vtkOutputWindowLogPolicies.h"
 
-#include "statismo/core/RandUtils.h"
+#include <vtkOutputWindow.h>
 
-#include <Eigen/Dense>
-
-#include <cmath>
-#include <limits>
-#include <random>
+#include <string>
 
 namespace statismo
 {
-/**
- * \ingroup Core
- */
-template <typename ScalarType>
-class RandSVD
+
+void
+vtkOutputWindowLogWriter::operator()(const std::string & log) const
 {
-public:
-  using VectorType = Eigen::Matrix<ScalarType, Eigen::Dynamic, 1>;
-  using MatrixType = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-  RandSVD(const MatrixType & A, unsigned k)
+  std::size_t pos;
+  if ((pos = log.find(std::to_string(LogLevel::LOG_DEBUG))) == 0)
   {
-    unsigned n = A.rows();
-
-    static std::normal_distribution<> dist(0, 1);
-    static auto                       r = std::bind(dist, rand::RandGen());
-
-    // create gaussian random amtrix
-    MatrixType Omega(n, k);
-    for (unsigned i = 0; i < n; i++)
-    {
-      for (unsigned j = 0; j < k; j++)
-      {
-        Omega(i, j) = r();
-      }
-    }
-
-
-    MatrixType                              Y = A * A.transpose() * A * Omega;
-    Eigen::FullPivHouseholderQR<MatrixType> qr(Y);
-    MatrixType                              Q = qr.matrixQ().leftCols(k + k);
-
-    MatrixType B = Q.transpose() * A;
-
-    using SVDType = Eigen::JacobiSVD<MatrixType>;
-    SVDType    SVD(B, Eigen::ComputeThinU);
-    MatrixType Uhat = SVD.matrixU();
-    m_D = SVD.singularValues();
-    m_U = (Q * Uhat).leftCols(k);
+    vtkOutputWindow::GetInstance()->DisplayDebugText(
+      log.substr(1 + std::to_string(LogLevel::LOG_DEBUG).size()).c_str());
   }
-
-  MatrixType
-  MatrixU() const
+  else if ((pos = log.find(std::to_string(LogLevel::LOG_WARNING))) == 0)
   {
-    return m_U;
+    vtkOutputWindow::GetInstance()->DisplayWarningText(
+      log.substr(1 + std::to_string(LogLevel::LOG_WARNING).size()).c_str());
   }
-
-  VectorType
-  SingularValues() const
+  else if ((pos = log.find(std::to_string(LogLevel::LOG_ERROR))) == 0)
   {
-    return m_D;
+    vtkOutputWindow::GetInstance()->DisplayErrorText(
+      log.substr(1 + std::to_string(LogLevel::LOG_ERROR).size()).c_str());
   }
+  else if ((pos = log.find(std::to_string(LogLevel::LOG_FATAL))) == 0)
+  {
+    vtkOutputWindow::GetInstance()->DisplayErrorText(
+      log.substr(1 + std::to_string(LogLevel::LOG_FATAL).size()).c_str());
+  }
+  else if ((pos = log.find(std::to_string(LogLevel::LOG_INFO))) == 0)
+  {
+    vtkOutputWindow::GetInstance()->DisplayErrorText(log.substr(1 + std::to_string(LogLevel::LOG_INFO).size()).c_str());
+  }
+  else
+  {
+    vtkOutputWindow::GetInstance()->DisplayText(log.c_str());
+  }
+}
 
 
-private:
-  VectorType m_D;
-  MatrixType m_U;
-};
+std::string
+vtkMessageFormatter::operator()(const LogEntry & entry, LogLevel level) const
+{
+  std::string vtkMsg = std::to_string(level) + " ";
+  vtkMsg += entry.log;
+  vtkMsg += "\n";
+  vtkMsg += ("In " + entry.file + ", line " + entry.line);
+  vtkMsg += "\n";
+  return vtkMsg;
+}
 
 } // namespace statismo
-#endif

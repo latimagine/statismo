@@ -43,6 +43,7 @@
 #include "statismo/core/StatisticalModel.h"
 #include "statismo/core/GenericFactory.h"
 #include "statismo/core/NonCopyable.h"
+#include "statismo/core/Logger.h"
 
 #include <vector>
 #include <memory>
@@ -120,10 +121,26 @@ public:
   using ObjectFactoryType = GenericFactory<Derived>;
 
   virtual void
+  SetLogger(Logger * logger)
+  {
+    m_logger = logger;
+  }
+
+  virtual void
   Delete()
   {
     delete this;
   }
+
+protected:
+  Logger *
+  GetLogger() const
+  {
+    return m_logger;
+  }
+
+private:
+  Logger * m_logger{ nullptr };
 };
 
 } // namespace statismo

@@ -45,8 +45,6 @@
 #include <itkImage.h>
 #include <itkVector.h>
 
-#include <iostream>
-
 namespace itk
 {
 

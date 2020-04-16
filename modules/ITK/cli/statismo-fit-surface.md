@@ -20,53 +20,60 @@ statismo-fit-surface fits a model iteratively in to a target mesh and then saves
 ## General options
 
 -i, \--input-model *MODEL_FILE*
-:	*MODEL_FILE* is the path to the model.
+:   *MODEL_FILE* is the path to the model.
 
 -t, \--input-targetmesh *MESH_FILE*
-:	*MESH_FILE* is the path to the target mesh in to which the model will be fitted.
+:   *MESH_FILE* is the path to the target mesh in to which the model will be fitted.
 
 -w, \--regularization-weight *WEIGHT*
-:	*WEIGHT* is the regularization weight that is used to ensure that the model parameters don't deviate too much from the mean. The higher this weight is, the closer the model parameters should stay to the mean. Note: The regularization is the sum over the square of all model parameters.
+:   *WEIGHT* is the regularization weight that is used to ensure that the model parameters don't deviate too much from the mean. The higher this weight is, the closer the model parameters should stay to the mean. Note: The regularization is the sum over the square of all model parameters.
 
 -o, \--output-fit *FITTED_MESH_FILE*
-:	*FITTED_MESH_FILE* is the path where the fitted mesh will be saved. At least one of the two output meshes has to be specified. It's also possible to save both.
+:   *FITTED_MESH_FILE* is the path where the fitted mesh will be saved. At least one of the two output meshes has to be specified. It's also possible to save both.
 
 -j, \--output-projected *PROJECTED_MESH_FILE*
-:	*PROJECTED_MESH_FILE* is the path where the projected mesh will be saved. At least one of the two output meshes has to be specified. It's also possible to save both.
--n, \--number-of-iterations *NUM_ITERATIONS*
-:	the number of iterations used in the fitting process
+:   *PROJECTED_MESH_FILE* is the path where the projected mesh will be saved. At least one of the two output meshes has to be specified. It's also possible to save both.
 
-## Landmarks (optional, if one is set then all have to be set)
+-n, \--number-of-iterations *NUM_ITERATIONS*
+:   the number of iterations used in the fitting process
+
+-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file *LOG_FILE*
+:   Path to the log file (if not set, logs are output to standard output).
+
+## Landmarks (if one is set then all have to be set)
 
 -f, \--landmarks-fixed *FIXED_LANDMARKS_FILE*
-:	*FIXED_LANDMARKS_FILE* is the path to the the file containing the fixed landmarks.
+:   *FIXED_LANDMARKS_FILE* is the path to the the file containing the fixed landmarks.
 
 -m, \--landmarks-moving *MOVING_LANDMARKS_FILE*
-:	*MOVING_LANDMARKS_FILE* is the path to the the file containing the moving landmarks. (That's the landmarks on the target mesh)
+:   *MOVING_LANDMARKS_FILE* is the path to the the file containing the moving landmarks. (That's the landmarks on the target mesh)
 
 -v, \--landmarks-variance *VARIANCE*
-:	*VARIANCE* is the landmarks variance (an estimate for how accurate your landmarks are).
+:   *VARIANCE* is the landmarks variance (an estimate for how accurate your landmarks are).
 
-## Print fitting information (optional)
+## Print fitting information
 
 -p, \--print-fitting-information
-:	If this option is set, then fitting information such as the iteration number, the score as assigned by the metric and the current parameters will be printed.
+:   If this option is set, then fitting information such as the iteration number, the score as assigned by the metric and the current parameters will be printed.
 
 
 # NOTE
 
 The Landmarks format is as follows
-:	Landmark name,1.coordinate,2.coordinate,3.coordinate
+:   Landmark name,1.coordinate,2.coordinate,3.coordinate
 
 Example
-:	pointA,2,-2,3
+:   pointA,2,-2,3
 
     pointB,3.1,3,-5
 
     pointC,7,8,9.08
 
 Warning
-:	For now, landmark names with comma are not supported by the parser
+:   For now, landmark names with comma are not supported by the parser
  
 
 # EXAMPLES 
@@ -105,7 +112,11 @@ Draws samples from a model.
 *statismo-reduce-model* (8).
 Reduces the number of components in a model.
 
-*statismo-posterior* (8).
+*statismo-posterior* (-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file
+:   Path to the log file (if not set, logs are output to standard output).8).
 Creates a posterior model from an existing model.
 
 *statismo-fit-surface* (8).

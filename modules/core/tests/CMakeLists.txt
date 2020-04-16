@@ -2,6 +2,7 @@ include_directories(${UNIT_TEST_INCLUDE_DIR})
 
 set(_target_tests
   basicStatismoTest.cxx
+  loggerTest.cxx
   utilsStatismoTest.cxx
 )
 

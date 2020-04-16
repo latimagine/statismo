@@ -41,7 +41,6 @@
 #include "statismo/core/ModelInfo.h"
 
 #include <ctime>
-#include <iostream>
 #include <ctime>
 #include <memory>
 #include <vector>

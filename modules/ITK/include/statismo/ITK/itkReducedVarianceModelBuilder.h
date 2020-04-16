@@ -104,6 +104,12 @@ public:
     return itkModel;
   }
 
+  virtual void
+  SetLogger(statismo::Logger * logger)
+  {
+    this->CallForwardImpl(&ImplType::SetLogger, logger);
+  }
+
   [[deprecated]] typename StatisticalModel<Representer>::Pointer
   BuildNewModelFromModel(const StatisticalModel<Representer> * model, double totalVariance)
   {

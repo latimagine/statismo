@@ -41,10 +41,9 @@
 #include "statismo/core/ConditionalModelBuilder.h"
 #include "statismo/core/Exceptions.h"
 #include "statismo/core/PCAModelBuilder.h"
+#include "statismo/core/Logger.h"
 
 #include <Eigen/SVD>
-
-#include <iostream>
 
 
 namespace statismo
@@ -59,6 +58,7 @@ ConditionalModelBuilder<T>::PrepareData(const DataItemListType &            samp
                                         MatrixType &                        surrogateMatrix,
                                         VectorType &                        conditions) const
 {
+  STATISMO_LOG_INFO("Preparing data");
   assert(conditioningInfo.size() == surrogateTypesInfo.types.size());
 
   // 1- identify the continuous and categorical variables, which are used for conditioning and which are not
@@ -80,6 +80,9 @@ ConditionalModelBuilder<T>::PrepareData(const DataItemListType &            samp
     }
   }
 
+  STATISMO_LOG_INFO("Continuous surrogate count: " + std::to_string(indicesContinuousSurrogatesInUse.size()));
+  STATISMO_LOG_INFO("Categorical surrogate count: " + std::to_string(indicesCategoricalSurrogatesInUse.size()));
+
   conditions.resize(indicesContinuousSurrogatesInUse.size());
   for (unsigned i = 0; i < indicesContinuousSurrogatesInUse.size(); i++)
   {
@@ -96,10 +99,8 @@ ConditionalModelBuilder<T>::PrepareData(const DataItemListType &            samp
     const auto * sampleData = dynamic_cast<const DataItemWithSurrogatesType *>(item.get());
     if (!sampleData)
     {
-      // this is a normal sample without surrogate information.
-      // we simply discard it
-      std::cout << "WARNING: ConditionalModelBuilder, sample data " << item->GetDatasetURI()
-                << " has no surrogate data associated, and is ignored" << std::endl;
+      STATISMO_LOG_WARNING("Skipping sample because no surrogate data available for sample at url: " +
+                           item->GetDatasetURI());
       continue;
     }
 
@@ -132,6 +133,8 @@ ConditionalModelBuilder<T>::BuildNewModel(const DataItemListType &            sa
                                           float                               noiseVariance,
                                           double                              modelVarianceRetained) const
 {
+  STATISMO_LOG_INFO("Building new model");
+
   if (conditioningInfo.size() != surrogateTypesInfo.types.size())
   {
     throw StatisticalModelException("mismatch between conditioning info size and surrogates info size",
@@ -149,6 +152,8 @@ ConditionalModelBuilder<T>::BuildNewModel(const DataItemListType &            sa
   // build a normal PCA model
   using PCAModelBuilderType = PCAModelBuilder<T>;
   auto modelBuilder = PCAModelBuilderType::SafeCreate();
+  modelBuilder->SetLogger(this->GetLogger());
+
   auto pcaModel = modelBuilder->BuildNewModel(acceptedSamples, noiseVariance);
 
   unsigned nPCAComponents = pcaModel->GetNumberOfPrincipalComponents();

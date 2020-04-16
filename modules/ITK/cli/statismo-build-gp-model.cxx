@@ -31,6 +31,7 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
 // Add new kernels in this file (and document their usage in the statismo-build-gp-model.md file)
 #include "utils/statismoBuildGPModelKernels.h"
 
@@ -67,6 +68,8 @@ struct ProgramOptions
   int            iNrOfBasisFunctions{ 0 };
   unsigned       uNumberOfDimensions{ 0 };
   string         strOutputFileName;
+  bool           bIsQuiet{ false };
+  std::string    strLogFile{ "" };
 };
 
 string
@@ -97,7 +100,7 @@ IsOptionsConflictPresent(ProgramOptions & opt)
 
 template <class DataType, class RepresenterType, class DataReaderType, bool IS_SHAPE_MODEL, unsigned DIM>
 void
-BuildAndSaveModel(const ProgramOptions & opt)
+BuildAndSaveModel(const ProgramOptions & opt, statismo::Logger * logger)
 {
   auto it = statismo::cli::s_kernelMap.find(opt.strKernel);
   if (it == std::end(statismo::cli::s_kernelMap))
@@ -136,6 +139,7 @@ BuildAndSaveModel(const ProgramOptions & opt)
   DatasetPointerType  mean;
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   if (!opt.strOptionalModelPath.empty())
   {
     try
@@ -223,7 +227,9 @@ main(int argc, char ** argv)
                             "existing models in case of insufficient data.",
                             &poParameters.strOptionalModelPath,
                             "" })
-    .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName });
+    .add_pos_opt<std::string>({ "Name of the output file", &poParameters.strOutputFileName })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
 
 
   if (!parser.parse(argc, argv))
@@ -240,6 +246,12 @@ main(int argc, char ** argv)
 
   try
   {
+    std::unique_ptr<statismo::Logger> logger{ nullptr };
+    if (!poParameters.bIsQuiet)
+    {
+      logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+    }
+
     if (poParameters.strType == "shape")
     {
       using RepresenterType = itk::StandardMeshRepresenter<float, statismo::cli::gk_dimensionality3D>;
@@ -248,7 +260,7 @@ main(int argc, char ** argv)
                         RepresenterType,
                         DataReaderType,
                         true,
-                        statismo::cli::gk_dimensionality3D>(poParameters);
+                        statismo::cli::gk_dimensionality3D>(poParameters, logger.get());
     }
     else
     {
@@ -261,7 +273,7 @@ main(int argc, char ** argv)
                           RepresenterType,
                           DataReaderType,
                           false,
-                          statismo::cli::gk_dimensionality2D>(poParameters);
+                          statismo::cli::gk_dimensionality2D>(poParameters, logger.get());
       }
       else
       {
@@ -272,7 +284,7 @@ main(int argc, char ** argv)
                           RepresenterType,
                           DataReaderType,
                           false,
-                          statismo::cli::gk_dimensionality3D>(poParameters);
+                          statismo::cli::gk_dimensionality3D>(poParameters, logger.get());
       }
     }
   }

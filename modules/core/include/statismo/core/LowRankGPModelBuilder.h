@@ -139,6 +139,8 @@ public:
                 unsigned                                          numComponents,
                 unsigned                                          numPointsForNystrom = 500) const
   {
+    STATISMO_LOG_INFO("Building new model");
+    STATISMO_LOG_INFO("Component count: " + std::to_string(numComponents));
     auto domainPoints = m_representer->GetDomain().GetDomainPoints();
     auto numDomainPoints = m_representer->GetDomain().GetNumberOfPoints();
     auto kernelDim = kernel.GetDimension();
@@ -180,6 +182,8 @@ public:
         res.resultForPoints;
     }
     futvec.clear();
+
+    STATISMO_LOG_DEBUG("End of multithreaded computation");
 
     auto pcaVariance = nystrom->GetEigenvalues();
     auto mu = m_representer->SampleToSampleVector(mean);
@@ -234,7 +238,9 @@ private:
 
   LowRankGPModelBuilder(const RepresenterType * representer)
     : m_representer(representer)
-  {}
+  {
+    this->SetLogger(m_representer->GetLogger());
+  }
 
   const RepresenterType * m_representer;
 };

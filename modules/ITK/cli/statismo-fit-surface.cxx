@@ -31,6 +31,7 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
 #include "utils/itkPenalizingMeanSquaresPointSetToImageMetric.h"
 #include "utils/statismoBuildPosteriorModelUtils.h"
 #include "utils/statismoFittingUtils.h"
@@ -80,6 +81,9 @@ struct ProgramOptions
   string   strInputFixedLandmarksFileName;
   string   strInputMovingLandmarksFileName;
   double   dLandmarksVariance{ 0.0 };
+
+  bool        bIsQuiet{ false };
+  std::string strLogFile{ "" };
 };
 
 bool
@@ -167,7 +171,7 @@ ProjectOnTargetMesh(const DataType::Pointer & mesh, const DataType::Pointer & ta
 }
 
 void
-FitMesh(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSilencer)
+FitMesh(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSilencer, statismo::Logger * logger)
 {
   using MeshReaderType = itk::MeshFileReader<DataType>;
   using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensions>;
@@ -188,6 +192,7 @@ FitMesh(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSi
   DataType::Pointer targetMesh = meshReader->GetOutput();
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   auto model = StatisticalModelType::New();
   model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer.GetPointer(), opt.strInputModelFileName);
 
@@ -235,7 +240,7 @@ FitMesh(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSi
   else
   {
     constrainedModel = statismo::cli::BuildPosteriorShapeModel<DataType, StatisticalModelType, PointsLocatorType>(
-      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance);
+      model, opt.strInputFixedLandmarksFileName, opt.strInputMovingLandmarksFileName, opt.dLandmarksVariance, logger);
 
     StatisticalModelTransformType::Pointer modelTransform = StatisticalModelTransformType::New();
     modelTransform->SetStatisticalModel(constrainedModel);
@@ -250,7 +255,7 @@ FitMesh(const ProgramOptions & opt, statismo::cli::ConsoleOutputSilencer * pCOSi
                                                     model->GetNumberOfPrincipalComponents(),
                                                     transform->GetNumberOfParameters(),
                                                     opt.bPrintFittingInformation,
-                                                    pCOSilencer);
+                                                    logger);
 
 
   auto interpolator = InterpolatorType::New();
@@ -357,7 +362,10 @@ main(int argc, char ** argv)
         "p",
         "Prints information (the parameters, metric score and the iteration count) with each iteration while fitting.",
         &poParameters.bPrintFittingInformation,
-        false });
+        false })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
+
 
   if (!parser.parse(argc, argv))
   {
@@ -372,9 +380,16 @@ main(int argc, char ** argv)
   }
 
   statismo::cli::ConsoleOutputSilencer coSilencer;
+
+  std::unique_ptr<statismo::Logger> logger{ nullptr };
+  if (!poParameters.bIsQuiet)
+  {
+    logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+  }
+
   try
   {
-    FitMesh(poParameters, &coSilencer);
+    FitMesh(poParameters, &coSilencer, logger.get());
   }
   catch (const ifstream::failure & e)
   {

@@ -208,7 +208,9 @@ private:
   TrivialVectorialRepresenter *
   CloneImpl() const override
   {
-    return TrivialVectorialRepresenter::Create(m_domain.GetNumberOfPoints());
+    auto rep = TrivialVectorialRepresenter::Create(m_domain.GetNumberOfPoints());
+    rep->SetLogger(this->GetLogger());
+    return rep;
   }
 
   TrivialVectorialRepresenter() = default;

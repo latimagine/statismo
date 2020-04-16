@@ -24,18 +24,24 @@ In this case the file data.txt contains a list of filenames of meshes (which are
 # OPTIONS
 
 -l, \--data-list *DATA_LIST*
-:	*DATA_LIST* is the path to a file containing a list of mesh-files that will be used to create the shape model. Please only give the path to **one** mesh-file per line  in the data-list-file.
+:   *DATA_LIST* is the path to a file containing a list of mesh-files that will be used to create the shape model. Please only give the path to **one** mesh-file per line  in the data-list-file.
 
 -p, \--procrustes *PROCRUSTES_MODE*
-:	Specify how the data is aligned. *PROCRUSTES_MODE* can be **reference** which aligns all datasets rigidly to the reference or **GPA** which aligns all the datasets to the population mean.
+:   Specify how the data is aligned. *PROCRUSTES_MODE* can be **reference** which aligns all datasets rigidly to the reference or **GPA** which aligns all the datasets to the population mean.
 
 -r, \--reference *FILE* 
-:	Specify the reference used for model building. This is needed if *PROCRUSTES-MODE* is **reference**
+:   Specify the reference used for model building. This is needed if *PROCRUSTES-MODE* is **reference**
 
 -n, \--noise *NOISE*
-:	Specify the noise variance of the PPCA model. Defaults to 0
+:   Specify the noise variance of the PPCA model. Defaults to 0
 
- 
+-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file *LOG_FILE*
+:   Path to the log file (if not set, logs are output to standard output).
+
+
 # EXAMPLES 
 
 Build a model where the data is aligned to the procrustes mean

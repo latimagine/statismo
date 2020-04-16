@@ -35,12 +35,15 @@
  *
  */
 
+#include "statismo/core/LoggerMultiHandlersThreaded.h"
 #include "statismo/ITK/itkDataManager.h"
 #include "statismo/ITK/itkPCAModelBuilder.h"
 #include "statismo/ITK/itkStandardMeshRepresenter.h"
 #include "statismo/ITK/itkIO.h"
 #include "statismo/ITK/itkStatisticalModel.h"
 #include "statismo/ITK/itkUtils.h"
+#include "statismo/ITK/itkStatismoOutputWindow.h"
+
 
 #include <itkMesh.h>
 #include <itkMeshFileWriter.h>
@@ -66,7 +69,20 @@ DoRunExample(const char * referenceFilename, const char * dir, const char * mode
   using DataManagerType = itk::DataManager<MeshType>;
   using MeshReaderType = itk::MeshFileReader<MeshType>;
 
+  // Background logger
+  statismo::LoggerMultiHandlersThreaded logger{ std::make_unique<statismo::BasicLogHandler>(
+                                                  statismo::StdOutLogWriter(), statismo::DefaultFormatter()),
+                                                statismo::LogLevel::LOG_DEBUG,
+                                                true };
+  logger.Start();
+  // Redirect ITK log to Statismo logger
+  auto itkToStatismoLogger = itk::StatismoOutputWindow::New();
+  itkToStatismoLogger->SetLogger(&logger);
+
+  itk::StatismoOutputWindow::SetInstance(itkToStatismoLogger);
+
   auto representer = RepresenterType::New();
+  representer->SetLogger(&logger);
   auto refReader = MeshReaderType::New();
   refReader->SetFileName(referenceFilename);
   refReader->Update();
@@ -90,6 +106,7 @@ DoRunExample(const char * referenceFilename, const char * dir, const char * mode
   }
 
   auto pcaModelBuilder = ModelBuilderType::New();
+  pcaModelBuilder->SetLogger(&logger);
   auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0);
   itk::StatismoIO<MeshType>::SaveStatisticalModel(model, modelname);
 }

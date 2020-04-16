@@ -357,8 +357,8 @@ private:
   static thread_local std::size_t         m_tid;
 };
 
-thread_local WorkStealingQueue * ThreadPool::m_localQueue = nullptr; // NOLINT
-thread_local std::size_t         ThreadPool::m_tid = 0;              // NOLINT
+inline thread_local WorkStealingQueue * ThreadPool::m_localQueue = nullptr; // NOLINT
+inline thread_local std::size_t         ThreadPool::m_tid = 0;              // NOLINT
 
 } // namespace statismo
 

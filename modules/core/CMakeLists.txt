@@ -8,6 +8,7 @@ file(GLOB _target_headers
 )
 
 add_library(statismo_core ${statismo_LIB_TYPE}
+  src/LoggerMultiHandlersThreaded.cxx
   src/ModelInfo.cxx
 )
 
@@ -30,6 +31,11 @@ target_include_directories(statismo_core PUBLIC
 )
 target_compile_features(statismo_core PUBLIC cxx_std_17)
 target_compile_options(statismo_core PRIVATE "${STATISMO_COMPILE_OPTIONS}")
+
+if (ENABLE_RUNTIME_LOGS)
+  target_compile_definitions(statismo_core PUBLIC STATISMO_ENABLE_LOG)
+endif()
+
 set_target_properties(statismo_core PROPERTIES
   DEBUG_POSTFIX "-d"
   VERSION ${statismo_LIB_VERSION}

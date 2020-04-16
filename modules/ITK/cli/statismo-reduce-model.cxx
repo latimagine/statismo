@@ -31,6 +31,8 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
+
 #include "statismo/ITK/itkReducedVarianceModelBuilder.h"
 #include "statismo/ITK/itkStandardImageRepresenter.h"
 #include "statismo/ITK/itkStandardMeshRepresenter.h"
@@ -52,12 +54,14 @@ namespace
 
 struct ProgramOptions
 {
-  string   strInputFileName;
-  string   strOutputFileName;
-  unsigned uNumberOfComponents{ 0 };
-  unsigned uNumberOfDimensions{ 0 };
-  double   dTotalVariance{ 0.0 };
-  string   strType;
+  string      strInputFileName;
+  string      strOutputFileName;
+  unsigned    uNumberOfComponents{ 0 };
+  unsigned    uNumberOfDimensions{ 0 };
+  double      dTotalVariance{ 0.0 };
+  string      strType;
+  bool        bIsQuiet{ false };
+  std::string strLogFile{ "" };
 };
 
 bool
@@ -74,15 +78,17 @@ IsOptionsConflictPresent(ProgramOptions & opt)
 
 template <class DataType, class RepresenterType>
 void
-ReduceModel(const ProgramOptions & opt)
+ReduceModel(const ProgramOptions & opt, statismo::Logger * logger)
 {
   using StatisticalModelType = typename itk::StatisticalModel<DataType>;
   using ReducedVarianceModelBuilderType = typename itk::ReducedVarianceModelBuilder<DataType>;
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
   auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName);
 
-  auto                                   reducedVarModelBuilder = ReducedVarianceModelBuilderType::New();
+  auto reducedVarModelBuilder = ReducedVarianceModelBuilderType::New();
+  reducedVarModelBuilder->SetLogger(logger);
   typename StatisticalModelType::Pointer outputModel;
 
   if (opt.uNumberOfComponents != 0)
@@ -142,7 +148,10 @@ main(int argc, char ** argv)
                        0.0f,
                        100.0f })
     .add_pos_opt<std::string>(
-      { "Name of the output file where the reduced model will be written to.", &poParameters.strOutputFileName });
+      { "Name of the output file where the reduced model will be written to.", &poParameters.strOutputFileName })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
+
 
   if (!parser.parse(argc, argv))
   {
@@ -160,11 +169,18 @@ main(int argc, char ** argv)
   {
     const unsigned kDimensionality2D = 2;
     const unsigned kDimensionality3D = 3;
+
+    std::unique_ptr<statismo::Logger> logger{ nullptr };
+    if (!poParameters.bIsQuiet)
+    {
+      logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+    }
+
     if (poParameters.strType == "shape")
     {
       using DataType = itk::Mesh<float, kDimensionality3D>;
       using RepresenterType = itk::StandardMeshRepresenter<float, kDimensionality3D>;
-      ReduceModel<DataType, RepresenterType>(poParameters);
+      ReduceModel<DataType, RepresenterType>(poParameters, logger.get());
     }
     else
     {
@@ -173,14 +189,14 @@ main(int argc, char ** argv)
         using VectorPixelType = itk::Vector<float, kDimensionality2D>;
         using DataType = itk::Image<VectorPixelType, kDimensionality2D>;
         using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, kDimensionality2D>;
-        ReduceModel<DataType, RepresenterType>(poParameters);
+        ReduceModel<DataType, RepresenterType>(poParameters, logger.get());
       }
       else
       {
         using VectorPixelType = itk::Vector<float, kDimensionality3D>;
         using DataType = itk::Image<VectorPixelType, kDimensionality3D>;
         using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, kDimensionality3D>;
-        ReduceModel<DataType, RepresenterType>(poParameters);
+        ReduceModel<DataType, RepresenterType>(poParameters, logger.get());
       }
     }
   }

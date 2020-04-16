@@ -341,6 +341,32 @@ auto res = statismo::Translate([]() {
   });
 ```
 
+### Logging
+
+> :information_source: The prerequisite is that Statismo is configured
+> with *ENABLE_RUNTIME_LOGS=ON*
+
+The framework provides a logger implementation that enables logging in background and adding multiple log handlers to handle each log.
+
+A log handler consists of a formatter to format the log and an output
+writer to write the log somewhere.
+
+The following formatters are provided:
+* Statismo default formatter,
+* ITK formatter,
+* VTK formatter.
+
+The following writers are provided:
+* Standard output writer,
+* File writer,
+* ITK output window writer,
+* VTK output window writer.
+
+Moreover, two classes are provided to redirect VTK and ITK logs to Statismo logger.
+
+The following section will direct you towards examples where the logger
+is used.
+
 ### Examples list
 
 The following tables will point you towards C++ examples developed in the project.
@@ -358,6 +384,8 @@ VTK based examples:
 | Cross validation example                 |[link](../../modules/VTK/examples/vtkCrossValidationExample.cxx)|
 | Build model with reduced variance        |[link](../../modules/VTK/examples/vtkReduceModelVarianceExample.cxx)|
 | Spatially varying GP model               |[link](../../modules/VTK/examples/vtkSpatiallyVaryingGPModelExample.cxx)|
+| Redirect log to VTK output window        |[link](../../modules/VTK/examples/vtkBasicSamplingExample.cxx)|
+| Redirect VTK log to Statismo logger      |[link](../../modules/VTK/examples/vtkBuildPosteriorModelExample.cxx)|
 
 
 ITK based examples:
@@ -373,3 +401,5 @@ ITK based examples:
 | Gaussian process registration            |[link](../../modules/ITK/examples/itkLowRankGaussianProcessImageToImageRegistration.cxx)|
 | Shape model fitting                      |[link](../../modules/ITK/examples/itkShapeModelFitting.cxx)|
 | Gaussian process simple registration     |[link](../../modules/ITK/examples/itkSimpleGaussianProcessImageToImageRegistration.cxx)|
+| Redirect log to ITK output window        |[link](../../modules/ITK/examples/itkBuildDeformationModel.cxx)|
+| Redirect ITK log to Statismo logger      |[link](../../modules/ITK/examples/itkBuildShapeModel.cxx)|

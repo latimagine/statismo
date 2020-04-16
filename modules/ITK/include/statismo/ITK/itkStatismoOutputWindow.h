@@ -1,9 +1,7 @@
 /*
  * This file is part of the statismo library.
  *
- * Author: Marcel Luethi (marcel.luethi@unibas.ch)
- *
- * Copyright (c) 2011 University of Basel
+ * Copyright (c) 2019 Laboratory of Medical Information Processing
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,66 +33,65 @@
  *
  */
 
-#ifndef __STATIMO_ITK_STATISTICAL_SHAPE_MODEL_TRANSFORM_H_
-#define __STATIMO_ITK_STATISTICAL_SHAPE_MODEL_TRANSFORM_H_
+#ifndef __STATISMO_ITK_STATISMO_OUTPUT_WINDOW_H_
+#define __STATISMO_ITK_STATISMO_OUTPUT_WINDOW_H_
 
-#include "statismo/ITK/itkStandardImageRepresenter.h"
-#include "statismo/ITK/itkStatisticalModel.h"
-#include "statismo/ITK/itkStatisticalModelTransformBase.h"
+#include "statismo/ITK/StatismoITKExport.h"
 
-#include <itkImage.h>
-#include <itkVector.h>
+#include <itkOutputWindow.h>
+#include <itkObjectFactory.h>
+
+namespace statismo
+{
+class Logger;
+}
 
 namespace itk
 {
 
-/**
- *
- * \brief Deformation transform used with Mesh or PointSet
- *
- * \ingroup Transforms
- * \ingroup ITK
- */
-template <typename Representer, typename ScalarType, unsigned int DIMENSION>
-class ITK_EXPORT StatisticalShapeModelTransform
-  : public itk::StatisticalModelTransformBase<Representer, ScalarType, DIMENSION>
+class STATISMO_ITK_EXPORT StatismoOutputWindow : public OutputWindow
 {
 public:
-  /* Standard class using =s. */
-  using Self = StatisticalShapeModelTransform;
-  using Superclass = itk::StatisticalModelTransformBase<Representer, ScalarType, DIMENSION>;
+  using Self = StatismoOutputWindow;
+  using Superclass = OutputWindow;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
+  using LoggerType = statismo::Logger;
 
-  itkSimpleNewMacro(Self);
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(StatisticalShapeModelTransform, Superclass);
+  itkTypeMacro(StatismoOutputWindow, OutputWindow);
 
-  using InputPointType = typename Superclass::InputPointType;
-  using OutputPointType = typename Superclass::OutputPointType;
-  using RepresenterType = typename Superclass::RepresenterType;
+  itkNewMacro(StatismoOutputWindow);
 
-  ::itk::LightObject::Pointer
-  CreateAnother() const override
+  void
+  DisplayText(const char * t) override;
+
+  void
+  DisplayErrorText(const char * t) override;
+
+  void
+  DisplayWarningText(const char * t) override;
+
+  void
+  DisplayGenericOutputText(const char * t) override;
+
+  void
+  DisplayDebugText(const char * t) override;
+
+  void
+  SetLogger(LoggerType * logger)
   {
-    ::itk::LightObject::Pointer smartPtr;
-    Pointer                     another = Self::New().GetPointer();
-    this->CopyBaseMembers(another);
-
-    smartPtr = static_cast<Pointer>(another);
-    return smartPtr;
+    m_redirectLogger = logger;
   }
 
-  OutputPointType
-  TransformPoint(const InputPointType & pt) const override
+  LoggerType *
+  GetLogger() const
   {
-    return this->m_statisticalModel->DrawSampleAtPoint(this->m_coeffVector, pt);
+    return m_redirectLogger;
   }
 
-  StatisticalShapeModelTransform() = default;
+private:
+  statismo::Logger * m_redirectLogger{ nullptr };
 };
-
-
 } // namespace itk
 
 #endif

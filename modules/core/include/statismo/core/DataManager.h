@@ -43,6 +43,7 @@
 #include "statismo/core/NonCopyable.h"
 #include "statismo/core/Representer.h"
 #include "statismo/core/DataItem.h"
+#include "statismo/core/Logger.h"
 
 #include <list>
 
@@ -191,6 +192,12 @@ public:
    */
   virtual void
   Delete() = 0;
+
+  /**
+   * \brief Get logger
+   */
+  virtual Logger *
+  GetLogger() const = 0;
 };
 
 /**
@@ -238,6 +245,12 @@ public:
   CrossValidationFoldListType
   GetLeaveOneOutCrossValidationFolds() const override;
 
+  virtual void
+  SetLogger(Logger * logger)
+  {
+    m_logger = logger;
+  }
+
   void
   Delete() override
   {
@@ -251,8 +264,17 @@ protected:
   static UniquePtrType<DataManagerBase>
   Load(RepresenterType * representer, const std::string & filename, Args &&... args);
 
+  Logger *
+  GetLogger() const override
+  {
+    return m_logger;
+  }
+
   UniquePtrType<RepresenterType> m_representer;
   DataItemListType               m_dataItemList;
+
+private:
+  Logger * m_logger{ nullptr };
 };
 
 /**

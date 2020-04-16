@@ -1,9 +1,7 @@
 /*
  * This file is part of the statismo library.
  *
- * Author: Marcel Luethi (marcel.luethi@unibas.ch)
- *
- * Copyright (c) 2011 University of Basel
+ * Copyright (c) 2019 Laboratory of Medical Information Processing
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,77 +33,67 @@
  *
  */
 
-#ifndef __STATIMO_CORE_RAND_SVD_H_
-#define __STATIMO_CORE_RAND_SVD_H_
+#ifndef __STATISMO_VTK_STATISMO_OUTPUT_WINDOW_H_
+#define __STATISMO_VTK_STATISMO_OUTPUT_WINDOW_H_
 
-#include "statismo/core/RandUtils.h"
+#include "statismo/VTK/StatismoVTKExport.h"
 
-#include <Eigen/Dense>
-
-#include <cmath>
-#include <limits>
-#include <random>
+#include <vtkOutputWindow.h>
 
 namespace statismo
 {
+class Logger;
+
 /**
- * \ingroup Core
+ * \brief Specific output window used to redirect VTK log to Statismo logger
+ * \ingroup VTK
  */
-template <typename ScalarType>
-class RandSVD
+class STATISMO_VTK_EXPORT vtkStatismoOutputWindow : public vtkOutputWindow
 {
 public:
-  using VectorType = Eigen::Matrix<ScalarType, Eigen::Dynamic, 1>;
-  using MatrixType = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+  vtkTypeMacro(vtkStatismoOutputWindow, vtkOutputWindow); // NOLINT
 
-  RandSVD(const MatrixType & A, unsigned k)
+  static vtkStatismoOutputWindow *
+  New();
+
+  vtkStatismoOutputWindow(const vtkStatismoOutputWindow &) = delete;
+  void
+  operator=(const vtkStatismoOutputWindow &) = delete;
+
+  void
+  DisplayText(const char * t) override;
+
+  void
+  DisplayErrorText(const char * t) override;
+
+  void
+  DisplayWarningText(const char * t) override;
+
+  void
+  DisplayGenericWarningText(const char * t) override;
+
+  void
+  DisplayDebugText(const char * t) override;
+
+  void
+  SetLogger(Logger * logger)
   {
-    unsigned n = A.rows();
-
-    static std::normal_distribution<> dist(0, 1);
-    static auto                       r = std::bind(dist, rand::RandGen());
-
-    // create gaussian random amtrix
-    MatrixType Omega(n, k);
-    for (unsigned i = 0; i < n; i++)
-    {
-      for (unsigned j = 0; j < k; j++)
-      {
-        Omega(i, j) = r();
-      }
-    }
-
-
-    MatrixType                              Y = A * A.transpose() * A * Omega;
-    Eigen::FullPivHouseholderQR<MatrixType> qr(Y);
-    MatrixType                              Q = qr.matrixQ().leftCols(k + k);
-
-    MatrixType B = Q.transpose() * A;
-
-    using SVDType = Eigen::JacobiSVD<MatrixType>;
-    SVDType    SVD(B, Eigen::ComputeThinU);
-    MatrixType Uhat = SVD.matrixU();
-    m_D = SVD.singularValues();
-    m_U = (Q * Uhat).leftCols(k);
+    m_redirectLogger = logger;
   }
 
-  MatrixType
-  MatrixU() const
+  Logger *
+  GetLogger() const
   {
-    return m_U;
+    return m_redirectLogger;
   }
 
-  VectorType
-  SingularValues() const
-  {
-    return m_D;
-  }
-
+protected:
+  vtkStatismoOutputWindow();
+  ~vtkStatismoOutputWindow() override;
 
 private:
-  VectorType m_D;
-  MatrixType m_U;
+  statismo::Logger * m_redirectLogger{ nullptr };
 };
-
 } // namespace statismo
+
 #endif

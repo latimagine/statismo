@@ -1,9 +1,7 @@
 /*
  * This file is part of the statismo library.
  *
- * Author: Marcel Luethi (marcel.luethi@unibas.ch)
- *
- * Copyright (c) 2011 University of Basel
+ * Copyright (c) 2019 Laboratory of Medical Information Processing
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,77 +33,47 @@
  *
  */
 
-#ifndef __STATIMO_CORE_RAND_SVD_H_
-#define __STATIMO_CORE_RAND_SVD_H_
+#ifndef __STATISMO_LOGGING_UTILS_H_
+#define __STATISMO_LOGGING_UTILS_H_
 
-#include "statismo/core/RandUtils.h"
+#include "statismo/core/LoggerMultiHandlersThreaded.h"
+#include "statismo/ITK/itkStatismoOutputWindow.h"
 
-#include <Eigen/Dense>
+#include <string>
 
-#include <cmath>
-#include <limits>
-#include <random>
-
-namespace statismo
+namespace statismo::cli
 {
-/**
- * \ingroup Core
- */
-template <typename ScalarType>
-class RandSVD
+inline std::unique_ptr<statismo::Logger>
+CreateLogger(const std::string & filename)
 {
-public:
-  using VectorType = Eigen::Matrix<ScalarType, Eigen::Dynamic, 1>;
-  using MatrixType = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+  std::unique_ptr<statismo::LoggerMultiHandlersThreaded> logger;
 
-  RandSVD(const MatrixType & A, unsigned k)
+  if (filename.empty())
   {
-    unsigned n = A.rows();
+    logger = std::make_unique<statismo::LoggerMultiHandlersThreaded>(
+      std::make_unique<statismo::BasicLogHandler>(statismo::StdOutLogWriter(), statismo::DefaultFormatter()),
+      statismo::LogLevel::LOG_DEBUG,
+      false);
+  }
+  else
+  {
 
-    static std::normal_distribution<> dist(0, 1);
-    static auto                       r = std::bind(dist, rand::RandGen());
-
-    // create gaussian random amtrix
-    MatrixType Omega(n, k);
-    for (unsigned i = 0; i < n; i++)
-    {
-      for (unsigned j = 0; j < k; j++)
-      {
-        Omega(i, j) = r();
-      }
-    }
-
-
-    MatrixType                              Y = A * A.transpose() * A * Omega;
-    Eigen::FullPivHouseholderQR<MatrixType> qr(Y);
-    MatrixType                              Q = qr.matrixQ().leftCols(k + k);
-
-    MatrixType B = Q.transpose() * A;
-
-    using SVDType = Eigen::JacobiSVD<MatrixType>;
-    SVDType    SVD(B, Eigen::ComputeThinU);
-    MatrixType Uhat = SVD.matrixU();
-    m_D = SVD.singularValues();
-    m_U = (Q * Uhat).leftCols(k);
+    statismo::CallableWrapper<statismo::FileLogWriter> logHandler{ filename };
+    logger = std::make_unique<statismo::LoggerMultiHandlersThreaded>(
+      std::make_unique<statismo::BasicLogHandler>(logHandler, statismo::DefaultFormatter()),
+      statismo::LogLevel::LOG_DEBUG,
+      false);
   }
 
-  MatrixType
-  MatrixU() const
-  {
-    return m_U;
-  }
+  // Redirect ITK log to Statismo logger
+  auto itkToStatismoLogger = ::itk::StatismoOutputWindow::New();
+  itkToStatismoLogger->SetLogger(logger.get());
 
-  VectorType
-  SingularValues() const
-  {
-    return m_D;
-  }
+  ::itk::StatismoOutputWindow::SetInstance(itkToStatismoLogger);
+  logger->Start();
 
+  return logger;
+}
+} // namespace statismo::cli
 
-private:
-  VectorType m_D;
-  MatrixType m_U;
-};
-
-} // namespace statismo
 #endif

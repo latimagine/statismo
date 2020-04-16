@@ -20,53 +20,59 @@ statismo-fit-image iteratively fits a target image with the help of a model and 
 ## General options
 
 -i, \--input-model *MODEL_FILE*
-:	*MODEL_FILE* is the path to the model.
+:   *MODEL_FILE* is the path to the model.
 
 -m, \--input-movingimage *IMAGE_FILE*
-:	*IMAGE_FILE* is the path to the moving image.
+:   *IMAGE_FILE* is the path to the moving image.
 
 -f, \--input-fixedimage *IMAGE_FILE*
-:	*IMAGE_FILE* is the path to the fixed image.
+:   *IMAGE_FILE* is the path to the fixed image.
 
 -w, \--regularization-weight *WEIGHT*
-:	*WEIGHT* is the regularization weight that is used to ensure that the model parameters don't deviate too much from the mean. The higher this weight is, the closer the model parameters should stay to the mean. Note: The regularization is the sum over the square of all model parameters.
+:   *WEIGHT* is the regularization weight that is used to ensure that the model parameters don't deviate too much from the mean. The higher this weight is, the closer the model parameters should stay to the mean. Note: The regularization is the sum over the square of all model parameters.
 
 -n, \--number-of-iterations *NUM_ITERATIONS*
-:	the number of iterations used in the fitting process
+:   the number of iterations used in the fitting process
 
 -d, \--dimensionality 
-:	Specifies the dimensionality of the images and the model (either 2 or 3).
+:   Specifies the dimensionality of the images and the model (either 2 or 3).
 
 -a, \--output-model-deformationfield *DEFORMATION_FIELD_FILE*
-:	*DEFORMATION_FIELD_FILE* is the path where the deformation field caused by the model will be saved. This is equivalent to the entrie deformation field if landmarks were provided and in the case that no landmarks were provided, it doesn't include the translation and rotation.
+:   *DEFORMATION_FIELD_FILE* is the path where the deformation field caused by the model will be saved. This is equivalent to the entrie deformation field if landmarks were provided and in the case that no landmarks were provided, it doesn't include the translation and rotation.
 
 -e, \--output-deformationfield *DEFORMATION_FIELD_FILE*
-:	*DEFORMATION_FIELD_FILE* is the path where the entire deformation field will be saved. If no landmarks were provided, this includes the rotation and a translation.
+:   *DEFORMATION_FIELD_FILE* is the path where the entire deformation field will be saved. If no landmarks were provided, this includes the rotation and a translation.
 
-## Landmarks (optional, if one is set then all have to be set)
+-q, \--quiet
+:   Set this flag to disable log output.
+
+\--log-file *LOG_FILE*
+:   Path to the log file (if not set, logs are output to standard output).
+
+## Landmarks (if one is set then all have to be set)
 
 \--fixed-landmarks *FIXED_LANDMARKS_FILE*
-:	*FIXED_LANDMARKS_FILE* is the path to the the file containing the fixed landmarks.
+:   *FIXED_LANDMARKS_FILE* is the path to the the file containing the fixed landmarks.
 
 \--moving-landmarks *MOVING_LANDMARKS_FILE*
-:	*MOVING_LANDMARKS_FILE* is the path to the the file containing the moving landmarks. (That's the landmarks on the target image)
+:   *MOVING_LANDMARKS_FILE* is the path to the the file containing the moving landmarks. (That's the landmarks on the target image)
 
 -v, \--landmarks-variance *VARIANCE*
-:	*VARIANCE* is the landmarks variance (an estimate for how accurate your landmarks are).
+:   *VARIANCE* is the landmarks variance (an estimate for how accurate your landmarks are).
 
-## Print fitting information (optional)
+## Print fitting information
 
 -p, \--print-fitting-information
-:	If this option is set, then fitting information such as the iteration number, the score as assigned by the metric and the current parameters will be printed.
+:   If this option is set, then fitting information such as the iteration number, the score as assigned by the metric and the current parameters will be printed.
 
 
 # NOTE
 
 The Landmarks format is as follows.
-:	Landmark name,1.coordinate,2.coordinate,3.coordinate
+:   Landmark name,1.coordinate,2.coordinate,3.coordinate
 
 Example
-:	pointA,2,-2,3
+:   pointA,2,-2,3
 
     pointB,3.1,3,-5
 
@@ -74,10 +80,10 @@ Example
 
 
 Remark
-:	In the case of 2D Images, either set the 3.coordinate to 0 or don't set it at all.
+:   In the case of 2D Images, either set the 3.coordinate to 0 or don't set it at all.
 
 Warning
-:	For now, landmark names with comma are not supported by the parser
+:   For now, landmark names with comma are not supported by the parser
  
 # EXAMPLES 
 

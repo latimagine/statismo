@@ -42,6 +42,7 @@
 #include "statismo/core/HDF5Utils.h"
 #include "statismo/core/Representer.h"
 #include "statismo/core/NonCopyable.h"
+#include "statismo/core/Logger.h"
 
 #include <vector>
 
@@ -107,6 +108,12 @@ public:
    */
   virtual void
   Delete() = 0;
+
+  /**
+   * \brief Get logger
+   */
+  virtual Logger *
+  GetLogger() const = 0;
 };
 
 /**
@@ -153,6 +160,12 @@ public:
     return m_representer->SampleVectorToSample(m_sampleVector);
   }
 
+  virtual void
+  SetLogger(Logger * logger)
+  {
+    m_logger = logger;
+  }
+
   void
   Delete() override
   {
@@ -164,16 +177,28 @@ protected:
     : m_representer(representer)
     , m_uri(std::move(uri))
     , m_sampleVector(std::move(sampleVector))
-  {}
+  {
+    this->SetLogger(m_representer->GetLogger());
+  }
 
   explicit DataItemBase(const RepresenterType * representer)
     : m_representer(representer)
-  {}
+  {
+    this->SetLogger(m_representer->GetLogger());
+  }
+
+  Logger *
+  GetLogger() const override
+  {
+    return m_logger;
+  }
 
   // loads the internal state from the hdf5 file
   void
   LoadFromGroup(const H5::Group & dsGroup) override
   {
+    STATISMO_LOG_INFO("Loading item from group");
+
     HDF5Utils::ReadVector(dsGroup, "./samplevector", m_sampleVector);
     m_uri = HDF5Utils::ReadString(dsGroup, "./URI");
 
@@ -183,6 +208,8 @@ protected:
   void
   SaveToGroup(const H5::Group & dsGroup) const
   {
+    STATISMO_LOG_INFO("Saving item to group");
+
     HDF5Utils::WriteVector(dsGroup, "./samplevector", m_sampleVector);
     HDF5Utils::WriteString(dsGroup, "./URI", m_uri);
 
@@ -199,6 +226,7 @@ private:
   const RepresenterType * m_representer;
   std::string             m_uri;
   VectorType              m_sampleVector;
+  Logger *                m_logger{ nullptr };
 };
 
 /**
@@ -227,6 +255,7 @@ protected:
   void
   SaveInternalImpl(const H5::Group & dsGroup) const override
   {
+    STATISMO_LOG_INFO("Saving sample type to group");
     HDF5Utils::WriteString(dsGroup, "./sampletype", "DataItem");
   }
 
@@ -316,6 +345,7 @@ private:
   void
   LoadInternalImpl(const H5::Group & dsGroup) override
   {
+    STATISMO_LOG_INFO("Loading surrogate data from group");
     HDF5Utils::ReadVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
     m_surrogateFilename = HDF5Utils::ReadString(dsGroup, "./surrogateFilename");
   }
@@ -323,6 +353,7 @@ private:
   void
   SaveInternalImpl(const H5::Group & dsGroup) const override
   {
+    STATISMO_LOG_INFO("Saving surrogate data to group");
     HDF5Utils::WriteString(dsGroup, "./sampletype", "DataItemWithSurrogates");
     HDF5Utils::WriteVector(dsGroup, "./surrogateVector", this->m_surrogateVector);
     HDF5Utils::WriteString(dsGroup, "./surrogateFilename", this->m_surrogateFilename);

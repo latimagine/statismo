@@ -44,8 +44,6 @@
 
 #include <Eigen/SVD>
 
-#include <iostream>
-
 namespace statismo
 {
 
@@ -61,6 +59,7 @@ PosteriorModelBuilder<T>::BuildNewModel(const DataItemListType &   sampleDataLis
                                         double                     pointValuesNoiseVariance,
                                         double                     noiseVariance) const
 {
+  STATISMO_LOG_INFO("Building new model");
   return BuildNewModel(sampleDataList,
                        TrivialPointValueWithCovarianceListWithUniformNoise(pointValues, pointValuesNoiseVariance),
                        noiseVariance);
@@ -74,6 +73,7 @@ PosteriorModelBuilder<T>::BuildNewModelFromModel(const StatisticalModelType * in
                                                  double                       pointValuesNoiseVariance,
                                                  bool                         computeScores) const
 {
+  STATISMO_LOG_INFO("Building new model from model");
   return BuildNewModelFromModel(
     inputModel,
     TrivialPointValueWithCovarianceListWithUniformNoise(pointValues, pointValuesNoiseVariance),
@@ -105,6 +105,7 @@ PosteriorModelBuilder<T>::BuildNewModel(const DataItemListType &                
                                         const PointValueWithCovarianceListType & pointValuesWithCovariance,
                                         double                                   noiseVariance) const
 {
+  STATISMO_LOG_INFO("Building new model");
   using PCAModelBuilderType = PCAModelBuilder<T>;
   auto modelBuilder = PCAModelBuilderType::SafeCreate();
   auto model = modelBuilder->BuildNewModel(sampleDataList, noiseVariance);
@@ -119,11 +120,8 @@ PosteriorModelBuilder<T>::BuildNewModelFromModel(const StatisticalModelType *   
                                                  const PointValueWithCovarianceListType & pointValuesWithCovariance,
                                                  bool                                     computeScores) const
 {
+  STATISMO_LOG_INFO("Building new model from model");
   const RepresenterType * representer = inputModel->GetRepresenter();
-
-  // The naming of the variables correspond to those used in the paper
-  // "Posterior Shape Models"
-  // Thomas Albrecht, Marcel Luethi, Thomas Gerig, Thomas Vetter
 
   const MatrixType & Q = inputModel->GetPCABasisMatrix();
   const VectorType & mu = inputModel->GetMeanVector();

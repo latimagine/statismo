@@ -31,6 +31,8 @@
  *
  */
 
+#include "utils/statismoLoggingUtils.h"
+
 #include "statismo/ITK/itkStandardImageRepresenter.h"
 #include "statismo/ITK/itkStandardMeshRepresenter.h"
 #include "statismo/ITK/itkIO.h"
@@ -69,6 +71,8 @@ struct ProgramOptions
   bool           bSampleMean{ false };
   bool           bSampleReference{ false };
   unsigned       uNumberOfDimensions{ 0 };
+  bool           bIsQuiet{ false };
+  std::string    strLogFile{ "" };
 };
 
 bool
@@ -137,11 +141,13 @@ PopulateVectorWithParameters(const StringListType & paramsIn, VectorType & param
 
 template <class DataType, class RepresenterType, class DataWriterType>
 void
-DrawSampleFromModel(const ProgramOptions & opt)
+DrawSampleFromModel(const ProgramOptions & opt, statismo::Logger * logger)
 {
   using StatisticalModelType = itk::StatisticalModel<DataType>;
 
   auto representer = RepresenterType::New();
+  representer->SetLogger(logger);
+
   auto model = itk::StatismoIO<DataType>::LoadStatisticalModel(representer, opt.strInputFileName);
 
   typename DataType::Pointer output;
@@ -210,7 +216,9 @@ main(int argc, char ** argv)
         "parameters will be set to 0. The first parameter is at position 1.",
         &poParameters.vParameters,
         {} })
-    .add_pos_opt<std::string>({ "Name of the output file/the sample.", &poParameters.strOutputFileName });
+    .add_pos_opt<std::string>({ "Name of the output file/the sample.", &poParameters.strOutputFileName })
+    .add_flag({ "quiet", "q", "Quiet mode (no log).", &poParameters.bIsQuiet, false })
+    .add_opt<std::string>({ "log-file", "", "Path to the log file.", &poParameters.strLogFile, "" }, false);
 
   if (!parser.parse(argc, argv))
   {
@@ -226,12 +234,18 @@ main(int argc, char ** argv)
 
   try
   {
+    std::unique_ptr<statismo::Logger> logger{ nullptr };
+    if (!poParameters.bIsQuiet)
+    {
+      logger = statismo::cli::CreateLogger(poParameters.strLogFile);
+    }
+
     if (poParameters.strType == "shape")
     {
       using DataType = itk::Mesh<float, gk_dimensionality3D>;
       using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensionality3D>;
       using DataWriterType = itk::MeshFileWriter<DataType>;
-      DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
+      DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters, logger.get());
     }
     else
     {
@@ -241,7 +255,7 @@ main(int argc, char ** argv)
         using DataType = itk::Image<VectorPixelType, gk_dimensionality2D>;
         using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, gk_dimensionality2D>;
         using DataWriterType = itk::ImageFileWriter<DataType>;
-        DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
+        DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters, logger.get());
       }
       else
       {
@@ -249,7 +263,7 @@ main(int argc, char ** argv)
         using DataType = itk::Image<VectorPixelType, gk_dimensionality3D>;
         using RepresenterType = itk::StandardImageRepresenter<VectorPixelType, gk_dimensionality3D>;
         using DataWriterType = itk::ImageFileWriter<DataType>;
-        DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters);
+        DrawSampleFromModel<DataType, RepresenterType, DataWriterType>(poParameters, logger.get());
       }
     }
   }

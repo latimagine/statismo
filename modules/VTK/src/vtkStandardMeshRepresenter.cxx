@@ -62,7 +62,9 @@ vtkStandardMeshRepresenter::vtkStandardMeshRepresenter(DatasetConstPointerType r
 vtkStandardMeshRepresenter *
 vtkStandardMeshRepresenter::CloneImpl() const
 {
-  return Create(m_reference);
+  auto clone = Create(m_reference);
+  clone->SetLogger(this->GetLogger());
+  return clone;
 }
 
 void

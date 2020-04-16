@@ -16,20 +16,18 @@ statismo-build-gp-model is used to build a shape or deformation model from a gau
 
 # OPTIONS
 
-## Mandatory
-
 -t, \--type *TYPE*
-:	Specify the type of the model. *TYPE* can either be **shape** or **deformation**.
+:   Specify the type of the model. *TYPE* can either be **shape** or **deformation**.
 
 -d, \--dimensionality 
-:	Specifies the dimensionality of the input image (either 2 or 3). This option is only available if the type is **deformation**
+:   Specifies the dimensionality of the input image (either 2 or 3). This option is only available if the type is **deformation**
 
 -k, \--kernel *KERNEL* 
-:	Specify the kernel (covariance function) of the gaussian process.
+:   Specify the kernel (covariance function) of the gaussian process.
    Supported kernels: **gaussian**, **multiscale**
 
 -p, \--parameters *KERNEL_PARAMETERS*
-:	*KERNEL_PARAMETERS* are the comma separated kernel parameters. The exact parameters depend on the kernel:
+:   *KERNEL_PARAMETERS* are the comma separated kernel parameters. The exact parameters depend on the kernel:
 
     - gaussian: The gaussian kernel has one parameter
         - sigma: This parameter is a float that sets the sigma parameter in the gaussian          kernel. Bigger values make the changes "smoother".
@@ -44,18 +42,16 @@ statismo-build-gp-model is used to build a shape or deformation model from a gau
 -->
     
 -s, \--scale *SCALE* 
-:	*SCALE* is a scaling factor the kernel is scaled with. The bigger this value is, the stronger the change is when modifying a model parameter.
+:   *SCALE* is a scaling factor the kernel is scaled with. The bigger this value is, the stronger the change is when modifying a model parameter.
 
 -n, \--numberofbasisfunctions *NUMBER_OF_BASIS_FUNCTIONS* 
-:	*NUMBER_OF_BASIS_FUNCTIONS*  specifies how many parameters the model will have.
+:   *NUMBER_OF_BASIS_FUNCTIONS*  specifies how many parameters the model will have.
 
-## Optional
+-q, \--quiet
+:   Set this flag to disable log output.
 
--r, \--reference *REFERENCE_FILE*
-:	*REFERENCE_FILE* is the path to the reference file (a mesh or an image) that will be used to construct the model.
-
--m, \--input-model *MODEL_FILE*
-:	*MODEL_FILE* Extends an existing model with data from the specified kernel. This is useful to extend existing models in case of insufficient data.
+\--log-file *LOG_FILE*
+:   Path to the log file (if not set, logs are output to standard output).
 
 
 # EXAMPLES 

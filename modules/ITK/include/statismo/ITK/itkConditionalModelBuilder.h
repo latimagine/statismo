@@ -100,6 +100,12 @@ public:
     modelItk->SetStatismoImplObj(std::move(statismoModel));
     return modelItk;
   }
+
+  virtual void
+  SetLogger(statismo::Logger * logger)
+  {
+    this->CallForwardImpl(&ImplType::SetLogger, logger);
+  }
 };
 
 } // namespace itk

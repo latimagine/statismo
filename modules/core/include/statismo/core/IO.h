@@ -39,6 +39,7 @@
 #define __STATISMO_IO_H_
 
 #include "statismo/core/StatisticalModel.h"
+#include "statismo/core/Logger.h"
 
 namespace H5
 {
@@ -123,7 +124,14 @@ public:
         // This is an old statismo format, that was versioned.
         // We set the version to 0.8 as this is the last
         // version that stores the old format.
-        std::cout << "Warning: version attribute does not exist in hdf5 file. Assuming version 0.8" << std::endl;
+        if (representer->GetLogger())
+        {
+          representer->GetLogger()->Log(LogEntry{ "version attribute does not exist in hdf5 file. Assuming version 0.8",
+                                                  __FILE__,
+                                                  std::to_string(__LINE__) },
+                                        LogLevel::LOG_WARNING);
+        }
+
         minorVersion = gk_oldFileVersionMinor;
         majorVersion = gk_oldFileVersionMajor;
       }

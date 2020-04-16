@@ -52,8 +52,6 @@
 #include <itkPoint.h>
 #include <itkVector.h>
 
-#include <iostream>
-
 namespace itk
 {
 
@@ -71,6 +69,7 @@ StandardImageRepresenter<Pixel, IMAGE_DIMENSION>::CloneImpl() const
   auto               clone = new StandardImageRepresenter();
   DatasetPointerType clonedReference = this->CloneDataset(m_reference);
   clone->SetReference(clonedReference);
+  clone->SetLogger(this->GetLogger());
   return clone;
 }
 
@@ -154,9 +153,8 @@ StandardImageRepresenter<Pixel, IMAGE_DIMENSION>::LoadRef(const H5::Group & fg) 
   auto type = static_cast<unsigned>(statismo::HDF5Utils::ReadIntAttribute(ds, "datatype"));
   if (type != PixelConversionTrait<Pixel>::GetDataType())
   {
-    std::cout << "Warning: The datatype specified for the scalars does not match the Pixel template argument used in "
-                 "this representer."
-              << std::endl;
+    STATISMO_LOG_WARNING(
+      "The datatype specified for the scalars does not match the Pixel template argument used in this representer");
   }
 
   typename ImageType::RegionType region(start, size);

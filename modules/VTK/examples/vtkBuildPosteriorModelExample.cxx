@@ -39,7 +39,9 @@
 #include "statismo/core/PosteriorModelBuilder.h"
 #include "statismo/core/StatisticalModel.h"
 #include "statismo/core/IO.h"
+#include "statismo/core/LoggerMultiHandlersThreaded.h"
 #include "statismo/VTK/vtkStandardMeshRepresenter.h"
+#include "statismo/VTK/vtkStatismoOutputWindow.h"
 
 #include <vtkPolyData.h>
 #include <vtkPolyDataReader.h>
@@ -56,6 +58,8 @@
 // corresponding point. This is only true if the partial shape is close to the model mean. If this is not the
 // case, a more sophisticated method for establishing correspondence needs to be used.
 //
+
+using namespace statismo;
 
 namespace
 {
@@ -117,11 +121,23 @@ main(int argc, char ** argv)
   std::string posteriorModelName(argv[3]);
   std::string reconstructedShapeName(argv[4]);
 
+  // Background logger
+  LoggerMultiHandlersThreaded logger{ std::make_unique<BasicLogHandler>(StdOutLogWriter(), DefaultFormatter()),
+                                      LogLevel::LOG_DEBUG,
+                                      true };
+  logger.Start();
+  // Redirect VTK log to Statismo logger
+  vtkNew<vtkStatismoOutputWindow> vtkToStatismoLogger;
+  vtkToStatismoLogger->SetLogger(&logger);
+
+  vtkOutputWindow::SetInstance(vtkToStatismoLogger);
+
   try
   {
     auto partialShape = LoadVTKPolyData(partialShapeMeshName);
 
     auto representer = RepresenterType::SafeCreate();
+    representer->SetLogger(&logger);
     auto inputModel = statismo::IO<vtkPolyData>::LoadStatisticalModel(representer.get(), inputModelName);
 
     StatisticalModelType::PointValueListType constraints;
@@ -146,6 +162,7 @@ main(int argc, char ** argv)
     // the inaccuracy of our value (variance of the error).
 
     auto posteriorModelBuilder = PosteriorModelBuilderType::SafeCreate();
+    posteriorModelBuilder->SetLogger(&logger);
     auto constraintModel = posteriorModelBuilder->BuildNewModelFromModel(inputModel.get(), constraints, 0.5);
 
 

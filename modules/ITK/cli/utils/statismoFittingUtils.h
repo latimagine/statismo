@@ -34,10 +34,13 @@
 #ifndef __STATISMO_FITTING_UTILS_H_
 #define __STATISMO_FITTING_UTILS_H_
 
+#include "statismo/core/Logger.h"
+
 #include <itkCommand.h>
 
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 #ifdef _WIN32
 #  include <io.h>
@@ -154,23 +157,20 @@ public:
       return;
     }
 
-    if (m_coSilencer)
+    if (m_logger)
     {
-      m_coSilencer->EnableOutput();
-    }
-    std::cout << "Iteration: " << ++m_iterNo;
-    std::cout << "; Value: " << optimizer->GetCachedValue();
-    std::cout << "; Current Parameters: " << optimizer->GetCachedCurrentPosition() << std::endl;
-    if (m_coSilencer)
-    {
-      m_coSilencer->DisableOutput();
+      std::stringstream msg;
+      msg << "Iteration: " << ++m_iterNo;
+      msg << "; Value: " << optimizer->GetCachedValue();
+      msg << "; Current Parameters: " << optimizer->GetCachedCurrentPosition();
+      m_logger->Log(statismo::LogEntry{ msg.str(), __FILE__, std::to_string(__LINE__) }, statismo::LogLevel::LOG_DEBUG);
     }
   }
 
   void
-  SetConsoleSilencer(statismo::cli::ConsoleOutputSilencer * cos)
+  SetLogger(statismo::Logger * logger)
   {
-    m_coSilencer = cos;
+    m_logger = logger;
   }
 
 protected:
@@ -178,19 +178,19 @@ protected:
   virtual ~IterationStatusObserver() = default;
 
 private:
-  int                                    m_iterNo{ 0 };
-  statismo::cli::ConsoleOutputSilencer * m_coSilencer{ nullptr };
+  int                m_iterNo{ 0 };
+  statismo::Logger * m_logger{ nullptr };
 };
 
 
 template <typename OptimizerType>
 static void
-InitializeOptimizer(typename OptimizerType::Pointer        optimizer,
-                    unsigned                               numberOfIterations,
-                    unsigned                               numberOfModelComponents,
-                    unsigned                               totalNumberOfOptimizationParameters,
-                    bool                                   doPrintFittingInformation,
-                    statismo::cli::ConsoleOutputSilencer * coSilencer)
+InitializeOptimizer(typename OptimizerType::Pointer optimizer,
+                    unsigned                        numberOfIterations,
+                    unsigned                        numberOfModelComponents,
+                    unsigned                        totalNumberOfOptimizationParameters,
+                    bool                            doPrintFittingInformation,
+                    statismo::Logger *              logger)
 {
   constexpr unsigned uNumberOfRigid2DtransformComponents = 3;
   constexpr unsigned uNumberOfRigid3DtransformComponents = 6;
@@ -202,7 +202,7 @@ InitializeOptimizer(typename OptimizerType::Pointer        optimizer,
   {
     using ObserverType = IterationStatusObserver<OptimizerType>;
     auto obs = ObserverType::New();
-    obs->SetConsoleSilencer(coSilencer);
+    obs->SetLogger(logger);
     optimizer->AddObserver(::itk::IterationEvent(), obs);
   }
 

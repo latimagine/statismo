@@ -44,7 +44,6 @@
 
 #include <cmath>
 #include <fstream>
-#include <iostream>
 #include <string>
 
 namespace statismo
@@ -64,6 +63,8 @@ StatisticalModel<T>::StatisticalModel(const RepresenterType * representer,
 {
   VectorType d = m_pcaVariance.array().sqrt();
   m_pcaBasisMatrix = orthonormalPCABasis * DiagMatrixType(d);
+
+  this->SetLogger(m_representer->GetLogger());
 }
 
 
@@ -72,8 +73,8 @@ StatisticalModel<T>::~StatisticalModel()
 {
   if (m_representer != nullptr)
   {
-    //		 not all representers can implement a const correct version of delete.
-    //		 We therefore simply const cast it. This is save here.
+    // Not all representers can implement a const correct version of delete.
+    // We therefore simply const cast it. This is save here.
     const_cast<RepresenterType *>(m_representer)->Delete();
   }
 }
@@ -100,6 +101,7 @@ template <typename T>
 typename StatisticalModel<T>::DatasetPointerType
 StatisticalModel<T>::DrawMean() const
 {
+  STATISMO_LOG_DEBUG("Drawing Mean");
   VectorType coeffs = VectorType::Zero(this->GetNumberOfPrincipalComponents());
   return DrawSample(coeffs, false);
 }
@@ -126,7 +128,7 @@ template <typename T>
 typename StatisticalModel<T>::DatasetPointerType
 StatisticalModel<T>::DrawSample(bool addNoise) const
 {
-
+  STATISMO_LOG_DEBUG("Drawing Sample");
   // we create random coefficients and draw a random sample from the model
   VectorType coeffs = utils::GenerateNormalVector(GetNumberOfPrincipalComponents());
 
@@ -138,21 +140,26 @@ template <typename T>
 typename StatisticalModel<T>::DatasetPointerType
 StatisticalModel<T>::DrawSample(const VectorType & coefficients, bool addNoise) const
 {
+  STATISMO_LOG_DEBUG("Drawing Sample");
   return m_representer->SampleVectorToSample(DrawSampleVector(coefficients, addNoise));
 }
 
 
 template <typename T>
 typename StatisticalModel<T>::DatasetPointerType
-StatisticalModel<T>::DrawPCABasisSample(const unsigned pcaComponentCount) const
+StatisticalModel<T>::DrawPCABasisSample(const unsigned pcaComponentIndex) const
 {
-  if (pcaComponentCount >= this->GetNumberOfPrincipalComponents())
+  if (pcaComponentIndex >= this->GetNumberOfPrincipalComponents())
   {
-    throw StatisticalModelException("Wrong pcaComponentCount index provided to DrawPCABasisSample!");
+    STATISMO_LOG_DEBUG("Provided component index: " + std::to_string(pcaComponentIndex));
+    STATISMO_LOG_DEBUG("Model component count: " + std::to_string(this->GetNumberOfPrincipalComponents()));
+    STATISMO_LOG_ERROR("Bad component index");
+
+    throw StatisticalModelException("Wrong pcaComponentIndex index provided to DrawPCABasisSample!");
   }
 
 
-  return m_representer->SampleVectorToSample(m_pcaBasisMatrix.col(pcaComponentCount));
+  return m_representer->SampleVectorToSample(m_pcaBasisMatrix.col(pcaComponentIndex));
 }
 
 
@@ -160,10 +167,12 @@ template <typename T>
 VectorType
 StatisticalModel<T>::DrawSampleVector(const VectorType & coefficients, bool addNoise) const
 {
-
   if (coefficients.size() != this->GetNumberOfPrincipalComponents())
   {
-    throw StatisticalModelException("Incorrect number of coefficients provided !");
+    STATISMO_LOG_DEBUG("Provided coefficient count: " + std::to_string(coefficients.size()));
+    STATISMO_LOG_DEBUG("Model component count: " + std::to_string(this->GetNumberOfPrincipalComponents()));
+    STATISMO_LOG_ERROR("Bad coefficient count");
+    throw StatisticalModelException("Incorrect number of coefficients provided");
   }
 
   unsigned vectorSize = this->m_mean.size();
@@ -184,7 +193,6 @@ template <typename T>
 typename StatisticalModel<T>::ValueType
 StatisticalModel<T>::DrawSampleAtPoint(const VectorType & coefficients, const PointType & point, bool addNoise) const
 {
-
   unsigned ptId = this->m_representer->GetPointIdForPoint(point);
 
   return DrawSampleAtPoint(coefficients, ptId, addNoise);
@@ -194,7 +202,6 @@ template <typename T>
 typename StatisticalModel<T>::ValueType
 StatisticalModel<T>::DrawSampleAtPoint(const VectorType & coefficients, const unsigned ptId, bool addNoise) const
 {
-
   unsigned dim = m_representer->GetDimensions();
 
   VectorType v(dim);
@@ -209,6 +216,10 @@ StatisticalModel<T>::DrawSampleAtPoint(const VectorType & coefficients, const un
 
     if (idx >= m_mean.rows())
     {
+      STATISMO_LOG_DEBUG("Index: " + std::to_string(idx));
+      STATISMO_LOG_DEBUG("Mean rows count: " + std::to_string(m_mean.rows()));
+      STATISMO_LOG_ERROR("Invalid index");
+
       std::ostringstream os;
       os << "Invalid idx computed in DrawSampleAtPoint.";
       os << " The most likely cause of this error is that you provided an invalid point id (" << ptId << ")";
