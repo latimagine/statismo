@@ -11,7 +11,7 @@
 .PARAMETER install_dir
     Installation directory
 .PARAMETER install_type
-    Expected value: 'full' or 'debug' (in debug mode choco and downloaded packages are not retrieved)
+    Expected value: 'full', 'full-nochoco' or 'debug' (in debug mode choco and downloaded packages are not retrieved)
 #>
 
 #
@@ -20,7 +20,7 @@
 Param(
 [parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$branch,
 [parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$install_dir,
-[parameter(Mandatory=$true)][ValidateSet('full','debug', ignorecase=$False)][string]$install_type
+[parameter(Mandatory=$true)][ValidateSet('full','full-nochoco','debug', ignorecase=$False)][string]$install_type
 )
 
 #
@@ -96,7 +96,9 @@ If ($install_type -eq "full"){
     Invoke-Expression -Command "choco install -y -f chocolatey-core.extension"
     # Compilation toolchain
     Invoke-Expression -Command "choco install -y -f git.install --params '/SChannel'"
-    Invoke-Expression -Command "choco install -y -f visualstudio2019buildtools"
+    # Uncomment if not available on the target platform
+    # Warning: can cause a system restart
+    #Invoke-Expression -Command "choco install -y -f visualstudio2019buildtools"
     $cmake_arg = '"ADD_CMAKE_TO_PATH=User"'
     $cmake_choco = "choco install -y -f cmake.install --installargs '$cmake_arg'"
     Invoke-Expression -Command "$cmake_choco"
@@ -128,7 +130,7 @@ If ($install_type -eq "full"){
 $env:GIT_REDIRECT_STDERR = '2>&1'
 
 # vtk and itk from git
-If ($install_type -eq "full") {
+If ($install_type -eq "full" -Or $install_type -eq "full-nochoco") {
     Write-Host "Installing vtk/itk packages"
     
     Remove-Item -ErrorAction Ignore -force -Recurse $install_dir/itk | Out-Null
@@ -139,7 +141,7 @@ If ($install_type -eq "full") {
 }
 
 # hdf5 and eigen
-If ($install_type -eq "full"){
+If ($install_type -eq "full" -Or $install_type -eq "full-nochoco"){
     Write-Host "Installing system package from sources"
     Remove-Item -ErrorAction Ignore -force -Recurse $install_dir/eigen | Out-Null
     Remove-Item -ErrorAction Ignore -force -Recurse $install_dir/hdf5 | Out-Null
@@ -161,7 +163,7 @@ $hdf5_src_dir = "hdf5-1.10.2"
 #
 # Statismo install from git with python requirements
 #
-If ($install_type -eq "full"){
+If ($install_type -eq "full" -Or $install_type -eq "full-nochoco"){
     Write-Host "Installing statismo"
     
     Remove-Item -ErrorAction Ignore -force -Recurse $install_dir/statismo | Out-Null
@@ -219,7 +221,7 @@ New-Item -force -ItemType directory -Path $install_dir/vtk/build-debug | Out-Nul
 New-Item -force -ItemType directory -Path $install_dir/vtk/dist-debug | Out-Null
 Set-Location $install_dir/vtk/build-debug | Out-Null
 Invoke-Expression -Command "cmake .. -DCMAKE_INSTALL_PREFIX=$install_dir/vtk/dist-debug -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DVTK_BUILD_ALL_MODULES=OFF -DVTK_WRAP_PYTHON=OFF"
-Invoke-Expression -Command "cmake --build . --config Debug"
+Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
 Invoke-Expression -Command "cmake --install . --config Debug"
 
 Write-Host "-- Building VTK: OK"
@@ -230,7 +232,7 @@ New-Item -force -ItemType directory -Path $install_dir/itk/build-debug | Out-Nul
 New-Item -force -ItemType directory -Path $install_dir/itk/dist-debug | Out-Null
 Set-Location $install_dir/itk/build-debug | Out-Null
 Invoke-Expression -Command "cmake .. -DCMAKE_INSTALL_PREFIX=$install_dir/itk/dist-debug -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DITK_BUILD_DEFAULT_MODULES=ON -DModule_ITKReview=ON -DITK_LEGACY_REMOVE=ON -DITK_USE_SYSTEM_HDF5=OFF -DITK_USE_SYSTEM_EIGEN=OFF -DITK_SKIP_PATH_LENGTH_CHECKS=1 -DCMAKE_CXX_FLAGS='/FS'"
-Invoke-Expression -Command "cmake --build . --config Debug"
+Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
 Invoke-Expression -Command "cmake --install . --config Debug"
 
 Write-Host "-- Building ITK: OK"
@@ -241,7 +243,7 @@ New-Item -force -ItemType directory -Path $install_dir/statismo/build-debug | Ou
 New-Item -force -ItemType directory -Path $install_dir/statismo/dist-debug | Out-Null
 Set-Location $install_dir/statismo/build-debug
 Invoke-Expression -Command "cmake ../superbuild -DAUTOBUILD_STATISMO=ON -DBUILD_LONG_RUNNING_CLI_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_CLI_TOOLS_DOC=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_WRAPPING=OFF -DCMAKE_INSTALL_PREFIX=$install_dir/statismo/dist-debug -DUSE_SYSTEM_ITK=ON -DUSE_SYSTEM_VTK=ON -DITK_DIR=$install_dir/itk/dist-debug/lib/cmake/ITK-5.0 -DVTK_DIR=$install_dir/vtk/dist-debug/lib/cmake/vtk-8.2 -DUSE_ITK_EIGEN=ON -DUSE_ITK_HDF5=ON"
-Invoke-Expression -Command "cmake --build . --config Debug"
+Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
 Set-Location $install_dir/statismo/build-debug/Statismo-build | Out-Null
 Invoke-Expression -Command "ctest -C Debug"
 Invoke-Expression -Command "cmake --install . --config Debug"
@@ -253,7 +255,7 @@ Write-Host "-- Test Application built on Statismo..."
 New-Item -force -ItemType directory -Path $install_dir/app/build-debug | Out-Null
 Set-Location $install_dir/app/build-debug
 Invoke-Expression -Command "cmake .. -Dstatismo_DIR=$install_dir/statismo/dist-debug/CMake"
-Invoke-Expression -Command "cmake --build . --config Debug"
+Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
 Invoke-Expression -Command "./Debug/demo"
 
 Write-Host "-- Test Application built on Statismo: OK"
@@ -276,7 +278,7 @@ New-Item -force -ItemType directory -Path $install_dir/hdf5/build-release | Out-
 New-Item -force -ItemType directory -Path $install_dir/hdf5/dist-release | Out-Null
 Set-Location $install_dir/hdf5/build-release
 Invoke-Expression -Command "cmake ../$hdf5_src_dir  -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$install_dir/hdf5/dist-release -DHDF5_ENABLE_Z_LIB_SUPPORT=OFF -DHDF5_BUILD_CPP_LIB:BOOL=ON -DHDF5_BUILD_TOOLS=OFF -DBUILD_TESTING=OFF -DHDF5_BUILD_EXAMPLES=OFF -DHDF5_BUILD_JAVA=OFF"
-Invoke-Expression -Command "cmake --build . --config Release"
+Invoke-Expression -Command "cmake -j 6 --build . --config Release"
 Invoke-Expression -Command "cmake --install . --config Release"
 
 Write-Host "-- Building HDF5: OK"
@@ -287,7 +289,7 @@ New-Item -force -ItemType directory -Path $install_dir/statismo/build-release | 
 New-Item -force -ItemType directory -Path $install_dir/statismo/dist-release | Out-Null
 Set-Location $install_dir/statismo/build-release | Out-Null
 Invoke-Expression -Command "cmake ../superbuild  -DBUILD_WRAPPING=ON -DBUILD_DOCUMENTATION=OFF -DBUILD_CLI_TOOLS_DOC=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$install_dir/statismo/dist-release -DITK_EXTRA_OPTIONS:STRING='-DITK_SKIP_PATH_LENGTH_CHECKS=1' -DUSE_SYSTEM_EIGEN=ON -DUSE_SYSTEM_HDF5=ON -DEIGEN3_INCLUDE_DIR=$install_dir/eigen/$eigen_src_dir -DHDF5_DIR=$install_dir/hdf5/dist-release/cmake/hdf5"
-Invoke-Expression -Command "cmake --build . --config Release"
+Invoke-Expression -Command "cmake -j 6 --build . --config Release"
 Set-Location $install_dir/statismo/build-release/Statismo-build | Out-Null
 
 Write-Host "-- Building Statismo: OK"
