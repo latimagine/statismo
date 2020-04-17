@@ -154,7 +154,7 @@ struct STATISMO_CORE_EXPORT DefaultFormatter
  * able to handle multiple log handlers.
  *
  * This class is responsible for all the log mechanism except writing
- * and formatting dedicated to handlers register in the logger.
+ * and formatting dedicated to handlers registered in the logger.
  *
  * The logger dispatches a log to specific handlers according to the
  * log level. To know if a log should be passed or not, the logger checks:

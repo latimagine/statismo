@@ -28,6 +28,7 @@ The minimum versions for the build toochain (cmake, compilers, platform) and the
 ### Deployment
 
 * [+] Docker file
+* [+] Conan package (experimental)
 * [-] Debian packaging
 * [-] Homebrew packaging
 
@@ -49,6 +50,7 @@ The minimum versions for the build toochain (cmake, compilers, platform) and the
 * Use of modern cmake and c++
 * Application of DRY principle
 * Update header inclusion path with project/module name
+* ...
 
 # [0.7.0..0.11.0]
 

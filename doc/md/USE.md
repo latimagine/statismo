@@ -329,7 +329,7 @@ To compile and run the application:
 
 ### Error Handling
 
-Statismo used exception as error handling system. It might not be convenient to you.
+Statismo uses exception as error handling system. It might not be convenient to you.
 You can use the internal exception translator if needed to transform it to
 a c++ returned object.
 
