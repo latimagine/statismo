@@ -116,7 +116,14 @@ ModelInfo::Load(const H5::H5Location & publicFg)
   auto publicModelGroup = publicFg.openGroup("./modelinfo");
   try
   {
-    HDF5Utils::ReadMatrix(publicModelGroup, "./scores", m_scores);
+    if (HDF5Utils::ExistsObjectWithName(publicModelGroup, "scores"))
+    {
+      HDF5Utils::ReadMatrix(publicModelGroup, "./scores", m_scores);
+    }
+    else
+    {
+      m_scores.resize(0, 0);
+    }
   }
   catch (const H5::Exception & e)
   {
