@@ -250,8 +250,8 @@ LoggerMultiHandlersThreaded::RemoveHandler(LogHandleType handle)
 
   if (match != std::cend(m_impl->handlers))
   {
-    m_impl->handlers.erase(match);
     m_impl->levels.erase(std::cbegin(m_impl->levels) + std::distance(std::cbegin(m_impl->handlers), match));
+    m_impl->handlers.erase(match);
   }
 
   assert(m_impl->handlers.size() == m_impl->levels.size());
