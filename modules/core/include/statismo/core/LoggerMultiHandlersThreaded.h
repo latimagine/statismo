@@ -126,15 +126,13 @@ struct STATISMO_CORE_EXPORT StdOutLogWriter
  */
 struct FileLogWriter
 {
-  STATISMO_CORE_EXPORT explicit FileLogWriter(const std::string & f)
-    : file{ f }
-  {}
+  STATISMO_CORE_EXPORT explicit FileLogWriter(const std::string & f);
 
   STATISMO_CORE_EXPORT void
   operator()(const std::string & log);
 
 private:
-  std::ofstream file;
+  std::ofstream m_file;
 };
 
 /**

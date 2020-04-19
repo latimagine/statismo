@@ -71,10 +71,14 @@ StdOutLogWriter::operator()(const std::string & log) const
   std::cout << log << std::endl;
 }
 
+FileLogWriter::FileLogWriter(const std::string & f)
+  : m_file{ f }
+{}
+
 void
 FileLogWriter::operator()(const std::string & log)
 {
-  file << log << std::endl;
+  m_file << log << std::endl;
 }
 } // namespace statismo
 
