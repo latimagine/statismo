@@ -98,7 +98,7 @@ public:
   };
 
   STATISMO_VTK_EXPORT DatasetPointerType
-  CloneDataset(DatasetConstPointerType d) const override
+                      CloneDataset(DatasetConstPointerType d) const override
   {
     auto clone = DatasetPointerType::New();
     clone->DeepCopy(const_cast<vtkPolyData *>(d));
@@ -106,7 +106,7 @@ public:
   }
 
   STATISMO_VTK_EXPORT DatasetConstPointerType
-  GetReference() const override
+                      GetReference() const override
   {
     return m_reference;
   }
@@ -115,14 +115,14 @@ public:
   STATISMO_VTK_EXPORT statismo::VectorType
                       SampleToSampleVector(DatasetConstPointerType sample) const override;
   STATISMO_VTK_EXPORT DatasetPointerType
-  SampleVectorToSample(const statismo::VectorType & sample) const override;
+                      SampleVectorToSample(const statismo::VectorType & sample) const override;
 
   STATISMO_VTK_EXPORT ValueType
                       PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
   STATISMO_VTK_EXPORT statismo::VectorType
                       PointSampleToPointSampleVector(const ValueType & v) const override;
   STATISMO_VTK_EXPORT ValueType
-  PointSampleVectorToPointSample(const statismo::VectorType & v) const override;
+                      PointSampleVectorToPointSample(const statismo::VectorType & v) const override;
 
   STATISMO_VTK_EXPORT unsigned
   GetNumberOfPoints() const;

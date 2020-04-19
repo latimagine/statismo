@@ -66,27 +66,28 @@ class ModelInfo final
 public:
   using BuilderInfoList = std::vector<BuilderInfo>;
 
-  STATISMO_CORE_EXPORT ModelInfo() = default;
+  STATISMO_CORE_EXPORT
+  ModelInfo() = default;
 
   /**
    * \brief Ctor
    * \param scores matrix holding the scores
    * \param builderInfos list of BuilderInfo objects
    */
-  STATISMO_CORE_EXPORT ModelInfo(MatrixType scores, BuilderInfoList builderInfos);
+  STATISMO_CORE_EXPORT
+  ModelInfo(MatrixType scores, BuilderInfoList builderInfos);
 
   /**
    * \brief Ctor
    * \param scores matrix holding the scores
    */
-  STATISMO_CORE_EXPORT explicit
-  ModelInfo(MatrixType scores);
+  STATISMO_CORE_EXPORT explicit ModelInfo(MatrixType scores);
 
   /**
    * \brief Get all builder info
    */
   STATISMO_CORE_EXPORT BuilderInfoList
-  GetBuilderInfoList() const;
+                       GetBuilderInfoList() const;
 
   /**
    * \brief Get the score matrix
@@ -94,7 +95,7 @@ public:
    * coefficients of the i-th dataset in the model
    */
   STATISMO_CORE_EXPORT const MatrixType &
-  GetScoresMatrix() const;
+                             GetScoresMatrix() const;
 
   /**
    * \brief Save model info in an hdf5 group
@@ -138,14 +139,14 @@ public:
   using DataInfoList = KeyValueList;
   using ParameterInfoList = KeyValueList;
 
-  STATISMO_CORE_EXPORT BuilderInfo(std::string       modelBuilderName,
-                                  std::string       buildTime,
-                                  DataInfoList      di,
-                                  ParameterInfoList pi);
+  STATISMO_CORE_EXPORT
+  BuilderInfo(std::string modelBuilderName, std::string buildTime, DataInfoList di, ParameterInfoList pi);
 
-  STATISMO_CORE_EXPORT BuilderInfo(std::string modelBuilderName, DataInfoList di, ParameterInfoList pi);
+  STATISMO_CORE_EXPORT
+  BuilderInfo(std::string modelBuilderName, DataInfoList di, ParameterInfoList pi);
 
-  STATISMO_CORE_EXPORT BuilderInfo() = default;
+  STATISMO_CORE_EXPORT
+  BuilderInfo() = default;
 
   /**
    * \brief Save builder info to an hdf5 group
@@ -163,13 +164,13 @@ public:
    * \brief Get the data info
    */
   STATISMO_CORE_EXPORT const DataInfoList &
-  GetDataInfo() const;
+                             GetDataInfo() const;
 
   /**
    * \brief Get the parameter info
    */
   STATISMO_CORE_EXPORT const ParameterInfoList &
-  GetParameterInfo() const;
+                             GetParameterInfo() const;
 
 private:
   static void

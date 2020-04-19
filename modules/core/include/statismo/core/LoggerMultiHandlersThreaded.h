@@ -222,7 +222,7 @@ public:
    * \return handle that can be used to remove a handler
    */
   STATISMO_CORE_EXPORT LogHandleType
-  AddHandler(HandlerType && handler, LogLevel level = LogLevel::LOG_INFO);
+                       AddHandler(HandlerType && handler, LogLevel level = LogLevel::LOG_INFO);
 
   /**
    * \brief Add simple handler list
