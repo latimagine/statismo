@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-statismo%2F0.11.0-blue.svg)](https://github.com/kenavolic/statismo/releases)
-[![Build Status](https://api.travis-ci.org/kenavolic/statismo.svg?branch=develop)](https://travis-ci.org/kenavolic/statismo)
+[![Latest Release](https://img.shields.io/badge/release-statismo%2F0.12.0-blue.svg)](https://github.com/kenavolic/statismo/releases)
+[![Build Status](https://api.travis-ci.org/kenavolic/statismo.svg?branch=master)](https://travis-ci.org/kenavolic/statismo)
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://kenavolic.github.io/statismo/)
 [![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
