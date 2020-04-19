@@ -221,7 +221,7 @@ New-Item -force -ItemType directory -Path $install_dir/vtk/build-debug | Out-Nul
 New-Item -force -ItemType directory -Path $install_dir/vtk/dist-debug | Out-Null
 Set-Location $install_dir/vtk/build-debug | Out-Null
 Invoke-Expression -Command "cmake .. -DCMAKE_INSTALL_PREFIX=$install_dir/vtk/dist-debug -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DVTK_BUILD_ALL_MODULES=OFF -DVTK_WRAP_PYTHON=OFF"
-Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
+Invoke-Expression -Command "cmake --build . --config Debug -j6"
 Invoke-Expression -Command "cmake --install . --config Debug"
 
 Write-Host "-- Building VTK: OK"
@@ -232,7 +232,7 @@ New-Item -force -ItemType directory -Path $install_dir/itk/build-debug | Out-Nul
 New-Item -force -ItemType directory -Path $install_dir/itk/dist-debug | Out-Null
 Set-Location $install_dir/itk/build-debug | Out-Null
 Invoke-Expression -Command "cmake .. -DCMAKE_INSTALL_PREFIX=$install_dir/itk/dist-debug -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DITK_BUILD_DEFAULT_MODULES=ON -DModule_ITKReview=ON -DITK_LEGACY_REMOVE=ON -DITK_USE_SYSTEM_HDF5=OFF -DITK_USE_SYSTEM_EIGEN=OFF -DITK_SKIP_PATH_LENGTH_CHECKS=1 -DCMAKE_CXX_FLAGS='/FS'"
-Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
+Invoke-Expression -Command "cmake --build . --config Debug -j6"
 Invoke-Expression -Command "cmake --install . --config Debug"
 
 Write-Host "-- Building ITK: OK"
@@ -243,7 +243,7 @@ New-Item -force -ItemType directory -Path $install_dir/statismo/build-debug | Ou
 New-Item -force -ItemType directory -Path $install_dir/statismo/dist-debug | Out-Null
 Set-Location $install_dir/statismo/build-debug
 Invoke-Expression -Command "cmake ../superbuild -DAUTOBUILD_STATISMO=ON -DBUILD_LONG_RUNNING_CLI_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DBUILD_CLI_TOOLS_DOC=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_WRAPPING=OFF -DCMAKE_INSTALL_PREFIX=$install_dir/statismo/dist-debug -DUSE_SYSTEM_ITK=ON -DUSE_SYSTEM_VTK=ON -DITK_DIR=$install_dir/itk/dist-debug/lib/cmake/ITK-5.0 -DVTK_DIR=$install_dir/vtk/dist-debug/lib/cmake/vtk-8.2 -DUSE_ITK_EIGEN=ON -DUSE_ITK_HDF5=ON"
-Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
+Invoke-Expression -Command "cmake --build . --config Debug -j6"
 Set-Location $install_dir/statismo/build-debug/Statismo-build | Out-Null
 Invoke-Expression -Command "ctest -C Debug"
 Invoke-Expression -Command "cmake --install . --config Debug"
@@ -255,7 +255,7 @@ Write-Host "-- Test Application built on Statismo..."
 New-Item -force -ItemType directory -Path $install_dir/app/build-debug | Out-Null
 Set-Location $install_dir/app/build-debug
 Invoke-Expression -Command "cmake .. -Dstatismo_DIR=$install_dir/statismo/dist-debug/CMake"
-Invoke-Expression -Command "cmake -j 6 --build . --config Debug"
+Invoke-Expression -Command "cmake --build . --config Debug -j6"
 Invoke-Expression -Command "./Debug/demo"
 
 Write-Host "-- Test Application built on Statismo: OK"
@@ -272,13 +272,23 @@ Write-Host "-HDF5: Manually installed on system"
 Write-Host "-Options: Shared libs, release, python wrapping"
 Write-Host ""
 
+Write-Host "-- Building Eigen"
+
+New-Item -force -ItemType directory -Path $install_dir/eigen/build | Out-Null
+New-Item -force -ItemType directory -Path $install_dir/eigen/dist | Out-Null
+Set-Location $install_dir/eigen/build
+Invoke-Expression -Command "cmake ../$eigen_src_dir -DCMAKE_INSTALL_PREFIX=$install_dir/eigen/dist"
+Invoke-Expression -Command "cmake --install . --config Release"
+
+Write-Host "-- Building Eigen: OK"
+
 Write-Host "-- Building HDF5"
 
 New-Item -force -ItemType directory -Path $install_dir/hdf5/build-release | Out-Null
 New-Item -force -ItemType directory -Path $install_dir/hdf5/dist-release | Out-Null
 Set-Location $install_dir/hdf5/build-release
 Invoke-Expression -Command "cmake ../$hdf5_src_dir  -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$install_dir/hdf5/dist-release -DHDF5_ENABLE_Z_LIB_SUPPORT=OFF -DHDF5_BUILD_CPP_LIB:BOOL=ON -DHDF5_BUILD_TOOLS=OFF -DBUILD_TESTING=OFF -DHDF5_BUILD_EXAMPLES=OFF -DHDF5_BUILD_JAVA=OFF"
-Invoke-Expression -Command "cmake -j 6 --build . --config Release"
+Invoke-Expression -Command "cmake --build . --config Release -j6"
 Invoke-Expression -Command "cmake --install . --config Release"
 
 Write-Host "-- Building HDF5: OK"
@@ -288,8 +298,8 @@ Write-Host "-- Building Statismo"
 New-Item -force -ItemType directory -Path $install_dir/statismo/build-release | Out-Null
 New-Item -force -ItemType directory -Path $install_dir/statismo/dist-release | Out-Null
 Set-Location $install_dir/statismo/build-release | Out-Null
-Invoke-Expression -Command "cmake ../superbuild  -DBUILD_WRAPPING=ON -DBUILD_DOCUMENTATION=OFF -DBUILD_CLI_TOOLS_DOC=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$install_dir/statismo/dist-release -DITK_EXTRA_OPTIONS:STRING='-DITK_SKIP_PATH_LENGTH_CHECKS=1' -DUSE_SYSTEM_EIGEN=ON -DUSE_SYSTEM_HDF5=ON -DEIGEN3_INCLUDE_DIR=$install_dir/eigen/$eigen_src_dir -DHDF5_DIR=$install_dir/hdf5/dist-release/cmake/hdf5"
-Invoke-Expression -Command "cmake -j 6 --build . --config Release"
+Invoke-Expression -Command "cmake ../superbuild  -DBUILD_WRAPPING=ON -DBUILD_DOCUMENTATION=OFF -DBUILD_CLI_TOOLS_DOC=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$install_dir/statismo/dist-release -DITK_EXTRA_OPTIONS:STRING='-DITK_SKIP_PATH_LENGTH_CHECKS=1' -DUSE_SYSTEM_EIGEN=ON -DUSE_SYSTEM_HDF5=ON -DEigen3_DIR=$install_dir/eigen/dist/share/eigen3/cmake -DHDF5_DIR=$install_dir/hdf5/dist-release/cmake/hdf5"
+Invoke-Expression -Command "cmake --build . --config Release -j6"
 Set-Location $install_dir/statismo/build-release/Statismo-build | Out-Null
 
 Write-Host "-- Building Statismo: OK"

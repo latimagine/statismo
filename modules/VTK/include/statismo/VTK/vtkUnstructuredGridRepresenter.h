@@ -82,15 +82,14 @@ struct RepresenterTraits<vtkUnstructuredGrid>
  * \ingroup Representers
  * \ingroup VTK
  */
-class STATISMO_VTK_EXPORT vtkUnstructuredGridRepresenter
-  : public RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>
+class vtkUnstructuredGridRepresenter : public RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>
 {
 public:
   using RepresenterBaseType = RepresenterBase<vtkUnstructuredGrid, vtkUnstructuredGridRepresenter>;
   friend RepresenterBaseType;
   friend typename RepresenterBaseType::ObjectFactoryType;
 
-  enum class AlignmentType
+  enum class STATISMO_VTK_EXPORT AlignmentType
   {
     NONE = 999, // something that VTK does not define
     RIGID = VTK_LANDMARK_RIGIDBODY,
@@ -98,29 +97,29 @@ public:
     AFFINE = VTK_LANDMARK_AFFINE
   };
 
-  void
+  STATISMO_VTK_EXPORT void
   Load(const H5::Group & fg) override;
 
-  void
+  STATISMO_VTK_EXPORT void
   Save(const H5::Group & fg) const override;
 
-  AlignmentType
+  STATISMO_VTK_EXPORT AlignmentType
   GetAlignment() const
   {
     return m_alignment;
   }
 
-  const DomainType &
-  GetDomain() const override
+  STATISMO_VTK_EXPORT const DomainType &
+                            GetDomain() const override
   {
     return m_domain;
   }
 
-  void DeleteDataset(DatasetPointerType) const override{
+  STATISMO_VTK_EXPORT void DeleteDataset(DatasetPointerType) const override{
     // no op as smart pointers are now use a data type
   };
 
-  DatasetPointerType
+  STATISMO_VTK_EXPORT DatasetPointerType
   CloneDataset(DatasetConstPointerType d) const override
   {
     auto clone = DatasetPointerType::New();
@@ -128,34 +127,37 @@ public:
     return clone;
   }
 
-  DatasetConstPointerType
+  STATISMO_VTK_EXPORT DatasetConstPointerType
   GetReference() const override
   {
     return m_reference;
   }
 
-  statismo::VectorType
-  PointToVector(const PointType & pt) const override;
-  statismo::VectorType
-  SampleToSampleVector(DatasetConstPointerType sample) const override;
-  DatasetPointerType
+  STATISMO_VTK_EXPORT statismo::VectorType
+                      PointToVector(const PointType & pt) const override;
+  STATISMO_VTK_EXPORT statismo::VectorType
+                      SampleToSampleVector(DatasetConstPointerType sample) const override;
+  STATISMO_VTK_EXPORT DatasetPointerType
   SampleVectorToSample(const statismo::VectorType & sampleVec) const override;
 
-  ValueType
-  PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
-  statismo::VectorType
-  PointSampleToPointSampleVector(const ValueType & v) const override;
-  ValueType
+  STATISMO_VTK_EXPORT ValueType
+                      PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
+  STATISMO_VTK_EXPORT statismo::VectorType
+                      PointSampleToPointSampleVector(const ValueType & v) const override;
+  STATISMO_VTK_EXPORT ValueType
   PointSampleVectorToPointSample(const statismo::VectorType & v) const override;
 
-  unsigned
+  STATISMO_VTK_EXPORT unsigned
   GetNumberOfPoints() const;
-  unsigned
+  STATISMO_VTK_EXPORT unsigned
   GetPointIdForPoint(const PointType & pt) const override;
 
 private:
+  STATISMO_VTK_EXPORT
+  STATISMO_VTK_EXPORT
   vtkUnstructuredGridRepresenter();
   vtkUnstructuredGridRepresenter(const std::string & reference, AlignmentType alignment);
+  STATISMO_VTK_EXPORT
   vtkUnstructuredGridRepresenter(DatasetConstPointerType reference, AlignmentType alignment);
 
   static DatasetPointerType
@@ -163,8 +165,8 @@ private:
   static void
   WriteDataset(const std::string & filename, DatasetConstPointerType pd);
 
-  vtkUnstructuredGridRepresenter *
-  CloneImpl() const override;
+  STATISMO_VTK_EXPORT vtkUnstructuredGridRepresenter *
+                      CloneImpl() const override;
 
   static std::string
   GetNameImpl()

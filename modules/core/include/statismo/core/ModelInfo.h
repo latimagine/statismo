@@ -61,30 +61,31 @@ class BuilderInfo; // forward declaration
  *
  * \ingroup Core
  */
-class STATISMO_CORE_EXPORT ModelInfo final
+class ModelInfo final
 {
 public:
   using BuilderInfoList = std::vector<BuilderInfo>;
 
-  ModelInfo() = default;
+  STATISMO_CORE_EXPORT ModelInfo() = default;
 
   /**
    * \brief Ctor
    * \param scores matrix holding the scores
    * \param builderInfos list of BuilderInfo objects
    */
-  ModelInfo(MatrixType scores, BuilderInfoList builderInfos);
+  STATISMO_CORE_EXPORT ModelInfo(MatrixType scores, BuilderInfoList builderInfos);
 
   /**
    * \brief Ctor
    * \param scores matrix holding the scores
    */
-  explicit ModelInfo(MatrixType scores);
+  STATISMO_CORE_EXPORT explicit
+  ModelInfo(MatrixType scores);
 
   /**
    * \brief Get all builder info
    */
-  BuilderInfoList
+  STATISMO_CORE_EXPORT BuilderInfoList
   GetBuilderInfoList() const;
 
   /**
@@ -92,19 +93,19 @@ public:
    * \return a matrix where the i-th column corresponds to the
    * coefficients of the i-th dataset in the model
    */
-  const MatrixType &
+  STATISMO_CORE_EXPORT const MatrixType &
   GetScoresMatrix() const;
 
   /**
    * \brief Save model info in an hdf5 group
    */
-  void
+  STATISMO_CORE_EXPORT void
   Save(const H5::H5Location & publicFg) const;
 
   /**
    * \brief Load model info from tan hdf5 group
    */
-  void
+  STATISMO_CORE_EXPORT void
   Load(const H5::H5Location & publicFg);
 
 private:
@@ -124,7 +125,7 @@ private:
  *
  * \ingroup Core
  */
-class STATISMO_CORE_EXPORT BuilderInfo final
+class BuilderInfo final
 {
   friend class ModelInfo;
 
@@ -137,34 +138,37 @@ public:
   using DataInfoList = KeyValueList;
   using ParameterInfoList = KeyValueList;
 
-  BuilderInfo(std::string modelBuilderName, std::string buildTime, DataInfoList di, ParameterInfoList pi);
+  STATISMO_CORE_EXPORT BuilderInfo(std::string       modelBuilderName,
+                                  std::string       buildTime,
+                                  DataInfoList      di,
+                                  ParameterInfoList pi);
 
-  BuilderInfo(std::string modelBuilderName, DataInfoList di, ParameterInfoList pi);
+  STATISMO_CORE_EXPORT BuilderInfo(std::string modelBuilderName, DataInfoList di, ParameterInfoList pi);
 
-  BuilderInfo() = default;
+  STATISMO_CORE_EXPORT BuilderInfo() = default;
 
   /**
    * \brief Save builder info to an hdf5 group
    */
-  void
+  STATISMO_CORE_EXPORT void
   Save(const H5::H5Location & modelBuilderGroup) const;
 
   /**
    * \brief Load builder info from an hdf5 group
    */
-  void
+  STATISMO_CORE_EXPORT void
   Load(const H5::H5Location & modelBuilderGroup);
 
   /**
    * \brief Get the data info
    */
-  const DataInfoList &
+  STATISMO_CORE_EXPORT const DataInfoList &
   GetDataInfo() const;
 
   /**
    * \brief Get the parameter info
    */
-  const ParameterInfoList &
+  STATISMO_CORE_EXPORT const ParameterInfoList &
   GetParameterInfo() const;
 
 private:

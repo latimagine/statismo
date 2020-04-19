@@ -74,30 +74,30 @@ struct RepresenterTraits<vtkPolyData>
  * \ingroup Representers
  * \ingroup VTK
  */
-class STATISMO_VTK_EXPORT vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
+class vtkStandardMeshRepresenter : public RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>
 {
 public:
   using RepresenterBaseType = RepresenterBase<vtkPolyData, vtkStandardMeshRepresenter>;
   friend RepresenterBaseType;
   friend typename RepresenterBaseType::ObjectFactoryType;
 
-  void
+  STATISMO_VTK_EXPORT void
   Load(const H5::Group & fg) override;
 
-  void
+  STATISMO_VTK_EXPORT void
   Save(const H5::Group & fg) const override;
 
-  const DomainType &
-  GetDomain() const override
+  STATISMO_VTK_EXPORT const DomainType &
+                            GetDomain() const override
   {
     return m_domain;
   }
 
-  void DeleteDataset(DatasetPointerType) const override{
+  STATISMO_VTK_EXPORT void DeleteDataset(DatasetPointerType) const override{
     // no op as smart pointers are now use a data type
   };
 
-  DatasetPointerType
+  STATISMO_VTK_EXPORT DatasetPointerType
   CloneDataset(DatasetConstPointerType d) const override
   {
     auto clone = DatasetPointerType::New();
@@ -105,39 +105,40 @@ public:
     return clone;
   }
 
-  DatasetConstPointerType
+  STATISMO_VTK_EXPORT DatasetConstPointerType
   GetReference() const override
   {
     return m_reference;
   }
-  statismo::VectorType
-  PointToVector(const PointType & pt) const override;
-  statismo::VectorType
-  SampleToSampleVector(DatasetConstPointerType sample) const override;
-  DatasetPointerType
+  STATISMO_VTK_EXPORT statismo::VectorType
+                      PointToVector(const PointType & pt) const override;
+  STATISMO_VTK_EXPORT statismo::VectorType
+                      SampleToSampleVector(DatasetConstPointerType sample) const override;
+  STATISMO_VTK_EXPORT DatasetPointerType
   SampleVectorToSample(const statismo::VectorType & sample) const override;
 
-  ValueType
-  PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
-  statismo::VectorType
-  PointSampleToPointSampleVector(const ValueType & v) const override;
-  ValueType
+  STATISMO_VTK_EXPORT ValueType
+                      PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const override;
+  STATISMO_VTK_EXPORT statismo::VectorType
+                      PointSampleToPointSampleVector(const ValueType & v) const override;
+  STATISMO_VTK_EXPORT ValueType
   PointSampleVectorToPointSample(const statismo::VectorType & v) const override;
 
-  unsigned
+  STATISMO_VTK_EXPORT unsigned
   GetNumberOfPoints() const;
-  unsigned
+  STATISMO_VTK_EXPORT unsigned
   GetPointIdForPoint(const PointType & pt) const override;
 
 private:
+  STATISMO_VTK_EXPORT
   vtkStandardMeshRepresenter()
     : m_reference(DatasetPointerType::New())
   {}
-  explicit vtkStandardMeshRepresenter(const std::string & reference);
-  explicit vtkStandardMeshRepresenter(DatasetConstPointerType reference);
+  STATISMO_VTK_EXPORT explicit vtkStandardMeshRepresenter(const std::string & reference);
+  STATISMO_VTK_EXPORT explicit vtkStandardMeshRepresenter(DatasetConstPointerType reference);
 
-  vtkStandardMeshRepresenter *
-  CloneImpl() const override;
+  STATISMO_VTK_EXPORT vtkStandardMeshRepresenter *
+                      CloneImpl() const override;
 
   static std::string
   GetNameImpl()

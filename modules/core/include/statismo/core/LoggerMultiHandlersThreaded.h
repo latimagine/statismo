@@ -59,7 +59,7 @@ using LogHandleType = uintptr_t;
  *
  * \ingroup Core
  */
-class STATISMO_CORE_EXPORT LogHandler : public NonCopyable
+class LogHandler : public NonCopyable
 {
 public:
   /**
@@ -124,15 +124,16 @@ struct STATISMO_CORE_EXPORT StdOutLogWriter
  *
  * \ingroup Core
  */
-struct STATISMO_CORE_EXPORT FileLogWriter
+struct FileLogWriter
 {
-  explicit FileLogWriter(const std::string & f)
+  STATISMO_CORE_EXPORT explicit FileLogWriter(const std::string & f)
     : file{ f }
   {}
 
-  void
+  STATISMO_CORE_EXPORT void
   operator()(const std::string & log);
 
+private:
   std::ofstream file;
 };
 
@@ -165,7 +166,7 @@ struct STATISMO_CORE_EXPORT DefaultFormatter
  *
  * \ingroup Core
  */
-class STATISMO_CORE_EXPORT LoggerMultiHandlersThreaded : public Logger
+class LoggerMultiHandlersThreaded : public Logger
 {
 public:
   using HandlerType = std::unique_ptr<LogHandler>;
@@ -180,7 +181,7 @@ public:
    * \param isThreaded glag set to true if logging should be performed in
    *                       backgound
    */
-  explicit LoggerMultiHandlersThreaded(LogLevel level, bool isThreaded = false);
+  STATISMO_CORE_EXPORT explicit LoggerMultiHandlersThreaded(LogLevel level, bool isThreaded = false);
 
   /**
    * \brief Create a logger from a detailed handler list
@@ -188,7 +189,7 @@ public:
    * \param isThreaded flag set to true if logging should be performed in
    *                       backgound
    */
-  explicit LoggerMultiHandlersThreaded(HandlerWithLevelListType && list, bool isThreaded = false);
+  STATISMO_CORE_EXPORT explicit LoggerMultiHandlersThreaded(HandlerWithLevelListType && list, bool isThreaded = false);
 
   /**
    * \brief Create a logger from a simple handler list
@@ -197,7 +198,9 @@ public:
    * \param isThreaded Flag set to true if logging should be performed in
    *                       backgound
    */
-  explicit LoggerMultiHandlersThreaded(HandlerListType && list, LogLevel level, bool isThreaded = false);
+  STATISMO_CORE_EXPORT explicit LoggerMultiHandlersThreaded(HandlerListType && list,
+                                                            LogLevel           level,
+                                                            bool               isThreaded = false);
 
   /**
    * \brief Create a logger with a single handler
@@ -206,9 +209,11 @@ public:
    * \param isThreaded glag set to true if logging should be performed in
    *                       backgound
    */
-  explicit LoggerMultiHandlersThreaded(HandlerType && handler, LogLevel level, bool isThreaded = false);
+  STATISMO_CORE_EXPORT explicit LoggerMultiHandlersThreaded(HandlerType && handler,
+                                                            LogLevel       level,
+                                                            bool           isThreaded = false);
 
-  ~LoggerMultiHandlersThreaded(); // NOLINT
+  STATISMO_CORE_EXPORT ~LoggerMultiHandlersThreaded(); // NOLINT
 
   /**
    * \brief Add a simple handler
@@ -216,7 +221,7 @@ public:
    * \param level base level for this handler
    * \return handle that can be used to remove a handler
    */
-  LogHandleType
+  STATISMO_CORE_EXPORT LogHandleType
   AddHandler(HandlerType && handler, LogLevel level = LogLevel::LOG_INFO);
 
   /**
@@ -226,16 +231,16 @@ public:
    *
    * \note The handlers log filtering level will be set to the class default log level
    */
-  std::vector<LogHandleType>
-  AddHandlerList(HandlerListType && list);
+  STATISMO_CORE_EXPORT std::vector<LogHandleType>
+                       AddHandlerList(HandlerListType && list);
 
   /**
    * \brief Add detailed handler list
    * \param list handlers list with their specific base log level
    * \return Ordered list of handles that can be used to remove a handler
    */
-  std::vector<LogHandleType>
-  AddHandlerList(HandlerWithLevelListType && list);
+  STATISMO_CORE_EXPORT std::vector<LogHandleType>
+                       AddHandlerList(HandlerWithLevelListType && list);
 
   /**
    * \brief Add a simple handler list
@@ -243,39 +248,39 @@ public:
    * \param level base level for all the handlers in the list
    * \return Ordered list of handles that can be used to remove a handler
    */
-  std::vector<LogHandleType>
-  AddHandlerList(HandlerListType && list, LogLevel level);
+  STATISMO_CORE_EXPORT std::vector<LogHandleType>
+                       AddHandlerList(HandlerListType && list, LogLevel level);
 
   /**
    * \brief Remove single handler
    * \param handle log handle
    */
-  void
+  STATISMO_CORE_EXPORT void
   RemoveHandler(LogHandleType handle);
 
   /**
    * \brief Remove handler list
    * \param handles list of log handles
    */
-  void
+  STATISMO_CORE_EXPORT void
   RemoveHandlerList(const std::vector<LogHandleType> & handles);
 
   /**
    * \brief Return the number of active handler
    */
-  std::size_t
-  GetHandlersCount() const;
+  STATISMO_CORE_EXPORT std::size_t
+                       GetHandlersCount() const;
 
   /**
    * \brief Set base logging level
    */
-  void
+  STATISMO_CORE_EXPORT void
   SetDefaultLevel(LogLevel level);
 
   /**
    * \brief Start logger
    */
-  void
+  STATISMO_CORE_EXPORT void
   Start();
 
   /**
@@ -283,16 +288,16 @@ public:
    * \note RAII is ensured within the logger and stop is called on
    *       destruction
    */
-  void
+  STATISMO_CORE_EXPORT void
   Stop();
 
   /**
    * \brief Log an entry
    * \pre Start must be called
    */
-  void
+  STATISMO_CORE_EXPORT void
   Log(LogEntry && entry, LogLevel level) override;
-  void
+  STATISMO_CORE_EXPORT void
   Log(const LogEntry & entry, LogLevel level) override;
 
 private:

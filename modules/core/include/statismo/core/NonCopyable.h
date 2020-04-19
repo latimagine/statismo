@@ -36,6 +36,8 @@
 #ifndef __STATIMO_CORE_NON_COPYABLE_H_
 #define __STATIMO_CORE_NON_COPYABLE_H_
 
+#include "statismo/core/StatismoCoreExport.h"
+
 namespace statismo
 {
 
@@ -43,7 +45,7 @@ namespace statismo
  * \brief Base class for non copyable classes
  * \ingroup Core
  */
-class NonCopyable
+class STATISMO_CORE_EXPORT NonCopyable
 {
 public:
   virtual ~NonCopyable() = default;
