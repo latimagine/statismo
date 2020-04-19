@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+#
+# This hooks check the message format is allright
+#
+
+LC_ALL=C
+
+if [[ "$NO_VERIFY" ]]; then
+  echo 'commit-msg hook skipped' 1>&2
+  exit 0
+fi
+
+msg=$(cat $1)
+
+valid_msg="^(build|ci|doc|feat|fix|misc|perf|sanity|format|test): (.+)$"
+
+if [[ ! $msg =~ $valid_msg ]]
+then
+  echo "There is something wrong with your commit message"
+  echo "Expected format: $valid_msg"
+  echo "Commit is rejected! Reword your commit!"
+  exit 1
+fi
+
+exit 0

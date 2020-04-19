@@ -1,10 +1,4 @@
-if(WIN32)
-  # Fix for VS2012 that has _VARIADIC_MAX set to 5. For some of the examples, this does not seem to be sufficient.
-  #Don't set too high because it increases compiler memory usage / compile-time.
-  add_definitions( -D_VARIADIC_MAX=9 )
-endif()
-
-set( _examples
+set(_target_examples
   vtkBasicSamplingExample
   vtkBuildConditionalModelExample
   vtkBuildGaussianProcessShapeModelExample
@@ -16,8 +10,17 @@ set( _examples
   vtkSpatiallyVaryingGPModelExample
 )
 
-foreach( e ${_examples} )
-  add_executable( ${e} ${e}.cxx )
-  target_link_libraries( ${e} statismo_VTK )
+foreach(_ex ${_target_examples})
+  add_executable(${_ex} ${_ex}.cxx)
+  target_link_libraries(${_ex} statismo_VTK statismo_core ${VTK_LIBRARIES})
+  target_compile_options(${_ex} PRIVATE "${STATISMO_COMPILE_OPTIONS}")
+  set_target_properties(${_ex} PROPERTIES FOLDER examples)
+
+  if(${BUILD_WITH_TIDY})
+    set_target_properties(
+      ${_ex}  PROPERTIES
+    CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
+    )
+  endif()
 endforeach()
 

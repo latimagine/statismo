@@ -37,35 +37,63 @@
 
 #!/bin/sh
 
-export DATADIR=$PWD/../share/data
+export DATADIR=$PWD/../../../data/
 export RESDIR=/tmp/results
 mkdir $RESDIR
 
 # build a shape model from the hand data
 ./itkBuildShapeModel $DATADIR/hand_polydata/hand-0.vtk $DATADIR/hand_polydata/ $RESDIR/itkShapeModel.h5
 
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] itkBuildShapeModel failed!"
+  exit 1
+fi
+
 # build a shape model from the hand data keeping 75pc of the total variance
 ./itkBuildShapeModel_75pcvar $DATADIR/hand_polydata/hand-0.vtk $DATADIR/hand_polydata/ $RESDIR/itkShapeModel_75pcvar.h5
 
-# build an Image Intensity model using a ROI to ignore some pixels of the images
-./itkBuildImageIntensityModelOnROI $DATADIR/hand_images/hand-0.vtk $DATADIR/hand_images/hand_ROI.png $DATADIR/hand_images/ $RESDIR/ImageModelWithROI_Mean.vtk
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] itkBuildShapeModel_75pcvar failed!"
+  exit 1
+fi
 
 # Fitting the shape model to a point set (mesh)
 ./itkShapeModelFitting $RESDIR/itkShapeModel.h5 $DATADIR/hand_polydata/hand-1.vtk $RESDIR/fitted-hand-shape.vtk
- 
+
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] itkShapeModelFitting failed!"
+  exit 1
+fi
+
 # build a deformation model of the displacement fields that relate hand-0 with all the other examples
 ./itkBuildDeformationModel 2 $DATADIR/hand_dfs/ $RESDIR/itkDeformationModel.h5
 
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] itkBuildDeformationModel failed!"
+  exit 1
+fi
 
 # Fitting of the deformation model. For the fixed image we need to take image hand-0, as this was used as the fixed image
 # for the registration of the images (which resulted in the displacement fields).
 ./itkDeformationModelFitting $RESDIR/itkDeformationModel.h5 $DATADIR/hand_images/hand-0.vtk $DATADIR/hand_images/hand-1.vtk $RESDIR/fittet-hand-df.vtk
 
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] itkDeformationModelFitting failed!"
+  exit 1
+fi
+
 # Perform a basic Gaussian Process registration 
 ./itkSimpleGaussianProcessImageToImageRegistration $DATADIR/hand_images/hand-1.vtk $DATADIR/hand_images/hand-2.vtk $RESDIR/deformationfield-simplegp.vtk
 
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] itkSimpleGaussianProcessImageToImageRegistration failed!"
+  exit 1
+fi
+
 # Perform hybrid, Gaussian process registration
-./bin/itkLowRankGaussianProcessImageToImageRegistration $DATADIR/hand_images/hand-1.vtk $DATADIR/hand_landmarks/hand-1.fcsv $DATADIR/hand_images/hand-2.vtk $DATADIR/hand_landmarks/hand-2.fcsv $RESDIR/registered.vtk $RESDIR/deformationfield-hybridgp.vtk MeanSquares 70 100 0.1 100 100
+./itkLowRankGaussianProcessImageToImageRegistration $DATADIR/hand_images/hand-1.vtk $DATADIR/hand_landmarks/hand-1.fcsv $DATADIR/hand_images/hand-2.vtk $DATADIR/hand_landmarks/hand-2.fcsv $RESDIR/registered.vtk $RESDIR/deformationfield-hybridgp.vtk MeanSquares 70 100 0.1 100 100
 
-
-
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] itkLowRankGaussianProcessImageToImageRegistration failed!"
+  exit 1
+fi

@@ -1,12 +1,4 @@
-if(MSVC11) #i.e. Visual Studio 2012
-  # Fix for VS2012 that has _VARIADIC_MAX set to 5. Don't set too high because it increases compiler memory usage / compile-time.
-  add_definitions( -D_VARIADIC_MAX=10 )
-  # Fix for another VS2012 problem: not all TR1 options are automatically detected, therefore we force them here.
-  add_definitions( -D BOOST_HAS_TR1 )
-  add_definitions( -D BOOST_NO_0X_HDR_INITIALIZER_LIST )
-endif()
-
-set( _examples
+set(_target_examples
   itkBuildGaussianProcessDeformationModel
   itkBuildShapeModel_75pcvar
   itkLandmarkConstrainedShapeModelFitting
@@ -18,9 +10,15 @@ set( _examples
   itkSimpleGaussianProcessImageToImageRegistration
 )
 
-foreach( e ${_examples} )
-  add_executable( ${e} ${e}.cxx
-  )
-  target_link_libraries( ${e} statismo_core ${ITK_LIBRARIES} )
-endforeach()
+foreach(_ex ${_target_examples})
+  add_executable(${_ex} ${_ex}.cxx)
+  target_link_libraries(${_ex} statismo_ITK statismo_core)
+  target_compile_options(${_ex} PRIVATE "${STATISMO_COMPILE_OPTIONS}")
+  set_target_properties(${_ex} PROPERTIES FOLDER examples)
 
+  if(${BUILD_WITH_TIDY})
+    set_target_properties(
+      ${_ex}  PROPERTIES CXX_CLANG_TIDY "${WITH_CLANG_TIDY}"
+    )
+  endif()
+endforeach()

@@ -1,65 +1,90 @@
-find_package( PythonLibs REQUIRED )
-include_directories(${PYTHON_INCLUDE_PATH})
+cmake_policy(SET CMP0078 NEW)
 
-# VTK material for linking.
-# See also the list of required modules in ../CMakeLists.txt
-if( VTK_MAJOR_VERSION EQUAL 5 )
-  # VTK 5 needs additional libraries
-  set( VTK_LIBRARIES_PYTHON
-    vtkCommonPythonD
-    vtkPythonCore
+if(${CMAKE_VERSION} VERSION_GREATER 3.14.0)
+  cmake_policy(SET CMP0086 NEW)
+endif()
+
+# Give us path to exe SWIG_EXECUTABLE and dir SWIG_DIR
+find_package(SWIG REQUIRED)
+include(UseSWIG)
+
+# Pre build
+set(NUMPY_INCLUDE_DIR "" CACHE STRING "Numpy include directory path")
+mark_as_advanced(NUMPY_INCLUDE_DIR)
+
+# If not set, try to find it automatically
+if ("${NUMPY_INCLUDE_DIR}" STREQUAL "")
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
+    RESULTS_VARIABLE _numpy_search_res
+    ERROR_VARIABLE _numpy_search_err
+    OUTPUT_VARIABLE _numpy_search_out
+    #COMMAND_ECHO STDOUT
+    OUTPUT_STRIP_TRAILING_WHITESPACE # Important to fix format issue in flags.make
   )
-else()
-  set( VTK_LIBRARIES_PYTHON "" )
+  set(NUMPY_INCLUDE_DIR ${_numpy_search_out})
 endif()
 
-link_directories(
-  ${HDF5_LIBRARY_DIR}
-)
-
-# The wrapper requires access to numpy headers (see numpy.i).
-exec_program( ${PYTHON_EXECUTABLE}
-            ARGS "-c \"import numpy; print(numpy.get_include())\""
-            OUTPUT_VARIABLE NUMPY_INCLUDE_DIR
-            RETURN_VALUE NUMPY_NOT_FOUND
-           )
-set( NUMPY_INCLUDE_DIR ${NUMPY_INCLUDE_DIR} CACHE STRING "Numpy include path" )
-MARK_AS_ADVANCED( NUMPY_INCLUDE_DIR )
-if( NUMPY_NOT_FOUND )
-message( FATAL_ERROR "Numpy package/header is missing" )
-else()
-include_directories( "${NUMPY_INCLUDE_DIR}" )
+if ("${NUMPY_INCLUDE_DIR}" STREQUAL "")
+  message(FATAL_ERROR "numpy include directory not found (you can set it manually with NUMPY_INCLUDE_DIR)")
 endif()
 
-# Find SWIG
-find_package( SWIG REQUIRED )
-include( ${SWIG_USE_FILE} )
+# Target configuration
+set_source_files_properties(statismo.i PROPERTIES CPLUSPLUS ON SWIG_FLAGS "-includeall")
 
-# Prepare the wrapping library.
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${VTK_INCLUDE_DIRS})
-set_source_files_properties(statismo.i PROPERTIES CPLUSPLUS ON)
-set_source_files_properties(statismo.i PROPERTIES SWIG_FLAGS "-includeall")
-file( GLOB _Statismo_src ${statismo_SOURCE_DIR}/modules/VTK/src/*.cxx )
-if( "${CMAKE_VERSION}" VERSION_LESS "3.8.0" )
-  swig_add_module( statismo_VTK python statismo.i ${_Statismo_src} )
+swig_add_library(statismovtk
+ TYPE USE_BUILD_SHARED_LIBS
+ LANGUAGE python
+ SOURCES statismo.i)
+
+swig_link_libraries(statismovtk statismo_core
+  statismo_VTK
+  ${PYTHON_LIBRARIES}
+  ${VTK_LIBRARIES}
+  ${HDF5_LIBRARIES})
+
+target_include_directories(statismovtk PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${NUMPY_INCLUDE_DIR}>
+)
+target_compile_features(statismovtk PUBLIC cxx_std_17)
+target_compile_definitions(statismovtk PUBLIC -DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
+
+# Remove the warnings due to register keyword in python 2 api
+target_compile_options(statismovtk PRIVATE
+     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+          -Wno-register>
+)
+
+set_target_properties(statismovtk PROPERTIES
+  VERSION ${statismo_LIB_VERSION}
+  SOVERSION ${statismo_LIB_SOVERSION}
+)
+
+if(APPLE)
+  set_target_properties(statismovtk PROPERTIES
+    SUFFIX ".so"
+  )
+endif(APPLE)
+
+# Tests
+set(STATISMO_DATA_DIR "${statismo_SOURCE_DIR}/data/")
+set(STATISMOVTK_TEST_SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests/statismoTests")
+set(STATISMOVTK_MODULE_DIR $<TARGET_FILE_DIR:statismovtk>)
+
+if(MSVC)
+    set(_script_ext "bat")
 else()
-  swig_add_library( statismo_VTK
-                    MODULE LANGUAGE python
-                    SOURCES statismo.i ${_Statismo_src} )
+    set(_script_ext "sh")
 endif()
-swig_link_libraries( statismo_VTK statismo_core
-                     ${PYTHON_LIBRARIES}
-                     ${VTK_LIBRARIES} ${VTK_LIBRARIES_PYTHON}
-                     ${HDF5_LIBRARIES} )
 
-set_target_properties( _statismo_VTK PROPERTIES
-  DEBUG_POSTFIX "-d"
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tests/statismoTests/runVTKPythonTests.${_script_ext}.in ${PROJECT_BINARY_DIR}/runVTKPythonTests.${_script_ext}.gen @ONLY)
+file(GENERATE OUTPUT ${PROJECT_BINARY_DIR}/runVTKPythonTests$<CONFIG>.${_script_ext} INPUT ${PROJECT_BINARY_DIR}/runVTKPythonTests.${_script_ext}.gen)
+
+# Install
+set(_python_install_dir ${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
+install(TARGETS statismovtk
+    RUNTIME DESTINATION ${_python_install_dir}
+    LIBRARY DESTINATION ${_python_install_dir}
+    ARCHIVE DESTINATION ${_python_install_dir}
 )
 
-install( TARGETS _statismo_VTK
-  EXPORT statismoTargets
-  RUNTIME DESTINATION ${INSTALL_BIN_DIR}
-  LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-  ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/statismovtk.py DESTINATION ${_python_install_dir})

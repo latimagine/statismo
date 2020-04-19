@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+#
+# This hooks check the branch naming is allright
+#
+
+LC_ALL=C
+
+if [[ "$NO_VERIFY" ]]; then
+  echo 'pre-commit hook skipped' 1>&2
+  exit 0
+fi
+
+local_branch="$(git rev-parse --abbrev-ref HEAD)"
+valid_branch="^(feat|fix|sanity|prerelease|release|hotfix)\/[a-z0-9._-]+$"
+
+if [[ ! $local_branch =~ $valid_branch ]]
+then
+  echo "There is something wrong with your branch name"
+  echo "Expected format: $valid_branch"
+  echo "Commit is rejected! Rename your branch!"
+  exit 1
+fi
+
+exit 0

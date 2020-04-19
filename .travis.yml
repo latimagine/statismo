@@ -1,13 +1,199 @@
+# Based on https://github.com/Microsoft/GSL/blob/master/.travis.yml
+
 language: cpp
+sudo: false
+notifications:
+  email: false
 
-compiler:
-  - gcc
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/deps
 
-before_install:
-  - sudo apt-get install -y cmake libboost1.55-dev libboost1.55 libeigen3-dev libvtk6-dev libinsighttoolkit4-dev
+matrix:
+  include:
+    ##########################################################################
+    # Clang on MacOS with:
+    # - ITK/VTK support
+    # - Python wrapping
+    # - Release build
+    # - Shared libs
+    #
+    # NOTE: HOMEBREW_NO_AUTO_UPDATE is needed because some update broke the
+    #       build
+    #
+    ##########################################################################
+    - os: osx
+      osx_image: xcode11.3
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=ON USE_SYSTEM_VTK=ON USE_ITK_EIGEN=ON USE_ITK_HDF5=ON BUILD_WRAPPING=ON
+      compiler: clang
+      before_install:
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install swig
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install vtk
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install itk
+        - pip3 install numpy
+        - pip3 install spicy
+    ##########################################################################
+    # Visual studio on Windows with:
+    # - No ITK/VTK support
+    # - Release build
+    # - Shared libs
+    # - VS2017
+    ##########################################################################
+    - os: windows
+      env: CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
+      language: cpp
+    ##########################################################################
+    # Clang on Linux Xenial with:
+    # - No ITK/VTK support
+    # - Debug build
+    # - Static libs
+    # - Doc build
+    ##########################################################################
+    - os: linux
+      dist: xenial
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Debug BUILD_SHARED_LIBS=OFF BUILD_DOCUMENTATION=ON BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
+      addons:
+          apt:
+            packages:
+              - g++-7
+              - doxygen
+              - graphviz
+              - texlive-full
+            sources:
+              - ubuntu-toolchain-r-test
+      before_install:
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+        - sudo update-alternatives --config gcc
+        - gcc --version
+        - g++ --version
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $STATISMO_GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+        keep_history: true
+        local_dir: ${TRAVIS_BUILD_DIR}/install/share/doc/statismo/html
+        on:
+          branch: master
+    ##########################################################################
+    # Gcc on Linux Xenial with:
+    # - No ITK/VTK support
+    # - Release build
+    # - Shared libs
+    ##########################################################################
+    - os: linux
+      dist: xenial
+      env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 CHECK_FORMAT=ON BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=ON BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
+      addons:
+        apt:
+          packages: 
+            - g++-7
+            - clang-tidy-6.0
+            - clang-format-6.0
+          sources:
+            - ubuntu-toolchain-r-test
+      before_install:
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+        - sudo update-alternatives --config gcc
+        - sudo ln -f -s /usr/bin/clang-format-6.0 /usr/bin/clang-format
+        - clang-format --version
+    ##########################################################################
+    # Clang on Linux Bionic with:
+    # - VTK support
+    # - Release build
+    # - Shared libs
+    ##########################################################################
+    - os: linux
+      dist: bionic
+      env: C_COMPILER=clang CXX_COMPILER=clang++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_WITH_TIDY=OFF BUILD_TESTS=ON BUILD_CLI_TOOLS=OFF BUILD_LONG_RUNNING_CLI_TESTS=OFF ITK_SUPPORT=OFF VTK_SUPPORT=ON USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=OFF USE_ITK_HDF5=OFF BUILD_WRAPPING=OFF
+      addons:
+        apt:
+          packages:
+            - libgl1-mesa-dev
+            - python3-pip
+            - swig
+            - python3.6-dev
+    ##########################################################################
+    # Gcc on Linux Bionic with:
+    # - ITK support
+    # - Release build
+    # - Shared libs
+    ##########################################################################
+    - os: linux
+      dist: bionic
+      env: C_COMPILER=gcc CXX_COMPILER=g++ CHECK_FORMAT=OFF BUILD_TYPE=Release BUILD_SHARED_LIBS=ON BUILD_DOCUMENTATION=OFF BUILD_TESTS=ON BUILD_WITH_TIDY=OFF BUILD_CLI_TOOLS=ON BUILD_LONG_RUNNING_CLI_TESTS=ON ITK_SUPPORT=ON VTK_SUPPORT=OFF USE_SYSTEM_HDF5=OFF USE_SYSTEM_EIGEN=OFF USE_SYSTEM_ITK=OFF USE_SYSTEM_VTK=OFF USE_ITK_EIGEN=ON USE_ITK_HDF5=ON BUILD_WRAPPING=OFF
+
+install:
+  # Set the compiler variables properly
+  - |
+    if [[ "${TRAVIS_OS_NAME}" != "windows" ]]; then
+     export CC=${C_COMPILER}
+     export CXX=${CXX_COMPILER}
+     ${CXX} --version
+    fi
+
+  # Dependencies required by the CI are installed in ${TRAVIS_BUILD_DIR}/deps/
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir -p "${DEPS_DIR}"
+  - cd "${DEPS_DIR}"
+
+  # Travis machines have 2 cores
+  - JOBS=2
+
+  ############################################################################
+  # Install a recent CMake (unless already installed on OS X)
+  ############################################################################
+  - CMAKE_VERSION=3.15.3
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      CMAKE_URL="https://cmake.org/files/v${CMAKE_VERSION%.[0-9]}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz"
+      mkdir cmake && travis_retry wget --no-check-certificate -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+      export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install cmake || brew upgrade cmake
+    fi
+  - cmake --version
+
+before_script:
+  # have CMake to generate build files
+  - cd "${TRAVIS_BUILD_DIR}"
+  - mkdir build && cd build
+  - |
+    if [[ "${TRAVIS_OS_NAME}" != "windows" ]]; then
+      cmake ../superbuild -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DAUTOBUILD_STATISMO=OFF -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DBUILD_DOCUMENTATION=$BUILD_DOCUMENTATION -DBUILD_WITH_TIDY=$BUILD_WITH_TIDY -DBUILD_TESTS=$BUILD_TESTS -DBUILD_CLI_TOOLS=$BUILD_CLI_TOOLS -DBUILD_LONG_RUNNING_CLI_TESTS=$BUILD_LONG_RUNNING_CLI_TESTS -DITK_SUPPORT:BOOL=$ITK_SUPPORT -DVTK_SUPPORT:BOOL=$VTK_SUPPORT -DUSE_SYSTEM_HDF5=$USE_SYSTEM_HDF5 -DUSE_SYSTEM_EIGEN=$USE_SYSTEM_EIGEN -DUSE_SYSTEM_VTK=$USE_SYSTEM_VTK -DUSE_SYSTEM_ITK=$USE_SYSTEM_ITK -DUSE_ITK_EIGEN=$USE_ITK_EIGEN -DUSE_ITK_HDF5=$USE_ITK_HDF5 -DBUILD_WRAPPING=$BUILD_WRAPPING -DITK_EXTRA_OPTIONS:STRING="-DITK_SKIP_PATH_LENGTH_CHECKS=1"
+    else
+      cmake ../superbuild -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install -DAUTOBUILD_STATISMO=OFF -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DBUILD_DOCUMENTATION=$BUILD_DOCUMENTATION -DBUILD_WITH_TIDY=$BUILD_WITH_TIDY -DBUILD_TESTS=$BUILD_TESTS -DBUILD_CLI_TOOLS=$BUILD_CLI_TOOLS -DBUILD_LONG_RUNNING_CLI_TESTS=$BUILD_LONG_RUNNING_CLI_TESTS -DITK_SUPPORT:BOOL=$ITK_SUPPORT -DVTK_SUPPORT:BOOL=$VTK_SUPPORT -DUSE_SYSTEM_HDF5=$USE_SYSTEM_HDF5 -DUSE_SYSTEM_EIGEN=$USE_SYSTEM_EIGEN -DUSE_SYSTEM_VTK=$USE_SYSTEM_VTK -DUSE_SYSTEM_ITK=$USE_SYSTEM_ITK -DUSE_ITK_EIGEN=$USE_ITK_EIGEN -DUSE_ITK_HDF5=$USE_ITK_HDF5 -DBUILD_WRAPPING=$BUILD_WRAPPING -DITK_EXTRA_OPTIONS:STRING="-DITK_SKIP_PATH_LENGTH_CHECKS=1"
+    fi
 
 script:
-  - mkdir -p build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE:STRING=Release -DON_TRAVIS=True ../
-  - make -j2
+  - cmake --build . -j ${JOBS} --config ${BUILD_TYPE}
+  - cd "${TRAVIS_BUILD_DIR}/build/Statismo-build"
+  - |
+    if [[ "${CHECK_FORMAT}" == "ON" ]]; then
+      make format-check
+    fi
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      if [ $(cmake --build . -j ${JOBS} --config ${BUILD_TYPE} 2>&1 | grep -o 'warning:' | wc -l) -gt 2 ] ; then echo "too many warning, needs some tidy" && exit 1 ; fi
+    else
+      cmake --build . -j ${JOBS} --config ${BUILD_TYPE}
+    fi
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${TRAVIS_BUILD_DIR}/build/INSTALL/lib
+  - ctest -C ${BUILD_TYPE}
+  - |
+    if [[ "${TRAVIS_OS_NAME}" != "windows" ]] && [[ "${ITK_SUPPORT}" == "ON" ]]; then
+      cd "${TRAVIS_BUILD_DIR}/build/Statismo-build/bin"
+      cp ../../../modules/ITK/examples/runITKExamples.sh ./runITKExamples.sh
+      sh ./runITKExamples.sh
+    fi
+  - |
+    if [[ "${TRAVIS_OS_NAME}" != "windows" ]] && [[ "${VTK_SUPPORT}" == "ON" ]]; then
+      if [[ "${BUILD_WRAPPING}" == "ON" ]]; then
+        cd "${TRAVIS_BUILD_DIR}/build/Statismo-build"
+        sh ./runVTKPythonTests*.sh 
+      fi
+      cd "${TRAVIS_BUILD_DIR}/build/Statismo-build/bin"
+      cp ../../../modules/VTK/examples/runVTKExamples.sh ./runVTKExamples.sh
+      sh ./runVTKExamples.sh
+    fi
+  - cd "${TRAVIS_BUILD_DIR}/build/Statismo-build"
+  - cmake --install .

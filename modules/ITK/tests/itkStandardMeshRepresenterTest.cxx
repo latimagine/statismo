@@ -35,59 +35,75 @@
  *
  */
 
+#include "StatismoUnitTest.h"
+#include "statismo/core/GenericRepresenterValidator.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+
 #include <itkMeshFileReader.h>
 
-#include "genericRepresenterTest.hxx"
+namespace
+{
 
-#include "itkStandardMeshRepresenter.h"
+constexpr unsigned gk_dimensions = 3;
+using MeshType = itk::Mesh<float, gk_dimensions>;
 
-const unsigned Dimensions = 3;
-typedef itk::Mesh<float, Dimensions  > MeshType;
-typedef itk::StandardMeshRepresenter<float, Dimensions> RepresenterType;
+std::string g_dataDir;
 
-
-typedef GenericRepresenterTest<RepresenterType> RepresenterTestType;
-
-MeshType::Pointer loadMesh(const std::string& filename) {
-    itk::MeshFileReader<MeshType>::Pointer reader = itk::MeshFileReader<MeshType>::New();
-    reader->SetFileName(filename);
-    reader->Update();
-    MeshType::Pointer mesh = reader->GetOutput();
-    mesh->DisconnectPipeline();
-    return mesh;
+MeshType::Pointer
+LoadMesh(const std::string & filename)
+{
+  auto reader = itk::MeshFileReader<MeshType>::New();
+  reader->SetFileName(filename);
+  reader->Update();
+  MeshType::Pointer mesh = reader->GetOutput();
+  mesh->DisconnectPipeline();
+  return mesh;
 }
 
-int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::string datadir = std::string(argv[1]);
+int
+TestRepresenterForMesh()
+{
 
-    const std::string referenceFilename = datadir + "/hand_polydata/hand-0.vtk";
-    const std::string testDatasetFilename = datadir + "/hand_polydata/hand-1.vtk";
+  using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensions>;
+  using RepresenterValidatorType = GenericRepresenterValidator<RepresenterType>;
+  auto referenceFilename = g_dataDir + "/hand_polydata/hand-0.vtk";
+  auto testDatasetFilename = g_dataDir + "/hand_polydata/hand-1.vtk";
 
-    RepresenterType::Pointer representer = RepresenterType::New();
-    MeshType::Pointer reference = loadMesh(referenceFilename);
-    representer->SetReference(reference);
+  auto representer = RepresenterType::New();
+  auto reference = LoadMesh(referenceFilename);
+  representer->SetReference(reference);
 
-    // choose a test dataset, a point and its associate pixel value
+  // choose a test dataset, a point and its associate pixel value
 
-    MeshType::Pointer testDataset = loadMesh(testDatasetFilename);
-    unsigned testPtId = 0;
-    MeshType::PointType testPt;
-    reference->GetPoint(testPtId, &testPt);
-    MeshType::PointType testValue;
-    testDataset->GetPoint(testPtId, &testValue);
+  auto                testDataset = LoadMesh(testDatasetFilename);
+  unsigned            testPtId = 0;
+  MeshType::PointType testPt;
+  reference->GetPoint(testPtId, &testPt);
+  MeshType::PointType testValue;
+  testDataset->GetPoint(testPtId, &testValue);
+  RepresenterValidatorType validator(representer, testDataset, std::make_pair(testPt, testValue));
 
-    RepresenterTestType representerTest(representer, testDataset, std::make_pair(testPt, testValue));
-
-    if (representerTest.runAllTests() == true) {
-        return EXIT_SUCCESS;
-    } else {
-        return EXIT_FAILURE;
-    }
-
+  return (validator.RunAllTests() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
+} // namespace
 
+int
+itkStandardMeshRepresenterTest(int argc, char * argv[]) // NOLINT
+{
+  if (argc < 2)
+  {
+    std::cout << "Usage: " << argv[0] << " datadir" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  g_dataDir = argv[1];
+
+  auto res = statismo::Translate([]() {
+    return statismo::test::RunAllTests("itkStandardMeshRepresenterTest",
+                                       { { "TestRepresenterForMesh", TestRepresenterForMesh }
+
+                                       });
+  });
+
+  return !statismo::CheckResultAndAssert(res, EXIT_SUCCESS);
+}

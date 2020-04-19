@@ -1,35 +1,17 @@
-message( "External project - VTK" )
+message(STATUS "External project: VTK")
 
-find_package(Git)
-if(NOT GIT_FOUND)
-  message(ERROR "Cannot find git. git is required for Superbuild")
-endif()
-
-option( USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
-
-set(git_protocol "git")
-if(NOT USE_GIT_PROTOCOL)
-  set(git_protocol "http")
-endif()
-
-set( VTK_DEPENDENCIES )
-
-set( _vtkOptions )
-if( APPLE )
-  set( _vtkOptions -DVTK_REQUIRED_OBJCXX_FLAGS:STRING="" )
-endif()
+set(_vtkOptions ${VTK_EXTRA_OPTIONS})
 
 ExternalProject_Add(VTK
-  DEPENDS ${VTK_DEPENDENCIES}
-  GIT_REPOSITORY ${git_protocol}://vtk.org/VTK.git
-  GIT_TAG v6.3.0
+  GIT_REPOSITORY https://github.com/Kitware/VTK.git
+  GIT_TAG v8.2.0 # If you modify this, update the VTK_DIR at the end of the file
   SOURCE_DIR VTK
   BINARY_DIR VTK-build
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
-  CMAKE_GENERATOR ${EP_CMAKE_GENERATOR}
+  CMAKE_GENERATOR ${_ep_cmake_gen}
   CMAKE_ARGS
-    ${ep_common_args}
+    ${_ep_common_args}
     ${_vtkOptions}
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
@@ -37,7 +19,10 @@ ExternalProject_Add(VTK
     -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
     -DVTK_BUILD_ALL_MODULES:BOOL=OFF
     -DVTK_USE_SYSTEM_HDF5:BOOL=OFF
+    -DVTK_WRAP_PYTHON:BOOL=${BUILD_WRAPPING}
+    -DVTK_PYTHON_VERSION:STRING=${STATISMO_PYTHON_VERSION}
     -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DEPENDENCIES_DIR}
 )
 
-set( VTK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/vtk-6.1/ )
+# This is passed to Statismo so it is able to find it in priority
+set(VTK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/vtk-8.2/)

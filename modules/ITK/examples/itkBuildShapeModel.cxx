@@ -35,101 +35,98 @@
  *
  */
 
-#include <sys/types.h>
-#include <errno.h>
-#include <iostream>
+#include "statismo/core/LoggerMultiHandlersThreaded.h"
+#include "statismo/ITK/itkDataManager.h"
+#include "statismo/ITK/itkPCAModelBuilder.h"
+#include "statismo/ITK/itkStandardMeshRepresenter.h"
+#include "statismo/ITK/itkIO.h"
+#include "statismo/ITK/itkStatisticalModel.h"
+#include "statismo/ITK/itkUtils.h"
+#include "statismo/ITK/itkStatismoOutputWindow.h"
 
-#include <itkDirectory.h>
+
 #include <itkMesh.h>
 #include <itkMeshFileWriter.h>
 #include <itkMeshFileReader.h>
 
-#include "itkDataManager.h"
-#include "itkPCAModelBuilder.h"
-#include "itkStandardMeshRepresenter.h"
-#include "itkStatismoIO.h"
-#include "itkStatisticalModel.h"
+
+#include <iostream>
 
 /*
  * This example shows the ITK Wrapping of statismo can be used to build a shape model.
  */
 
-const unsigned Dimensions = 3;
-typedef itk::Mesh<float, Dimensions  > MeshType;
+namespace
+{
+constexpr unsigned gk_dimensions = 3;
+using MeshType = itk::Mesh<float, gk_dimensions>;
+using RepresenterType = itk::StandardMeshRepresenter<float, gk_dimensions>;
 
-typedef itk::StandardMeshRepresenter<float, Dimensions> RepresenterType;
+void
+DoRunExample(const char * referenceFilename, const char * dir, const char * modelname)
+{
+  using ModelBuilderType = itk::PCAModelBuilder<MeshType>;
+  using DataManagerType = itk::DataManager<MeshType>;
+  using MeshReaderType = itk::MeshFileReader<MeshType>;
 
+  // Background logger
+  statismo::LoggerMultiHandlersThreaded logger{ std::make_unique<statismo::BasicLogHandler>(
+                                                  statismo::StdOutLogWriter(), statismo::DefaultFormatter()),
+                                                statismo::LogLevel::LOG_DEBUG,
+                                                true };
+  logger.Start();
+  // Redirect ITK log to Statismo logger
+  auto itkToStatismoLogger = itk::StatismoOutputWindow::New();
+  itkToStatismoLogger->SetLogger(&logger);
 
-/*function... might want it in some class?*/
-int getdir (std::string dir, std::vector<std::string> &files, const std::string& extension=".*") {
-    itk::Directory::Pointer directory = itk::Directory::New();
-    directory->Load(dir.c_str());
+  itk::StatismoOutputWindow::SetInstance(itkToStatismoLogger);
 
-    for (unsigned i = 0; i < directory->GetNumberOfFiles(); i++) {
-        const char* filename = directory->GetFile(i);
-        if (extension == ".*" || std::string(filename).find(extension) != std::string::npos)
-            files.push_back(filename);
-    }
+  auto representer = RepresenterType::New();
+  representer->SetLogger(&logger);
+  auto refReader = MeshReaderType::New();
+  refReader->SetFileName(referenceFilename);
+  refReader->Update();
+  representer->SetReference(refReader->GetOutput());
 
-    return 0;
+  auto filenames = statismo::itk::GetDirFiles(dir, ".vtk");
+
+  auto dataManager = DataManagerType::New();
+  dataManager->SetRepresenter(representer);
+
+  for (const auto & file : filenames)
+  {
+    auto fullpath = std::string(dir) + "/" + file;
+
+    auto reader = MeshReaderType::New();
+    reader->SetFileName(fullpath.c_str());
+    reader->Update();
+
+    MeshType::Pointer mesh = reader->GetOutput();
+    dataManager->AddDataset(mesh, fullpath.c_str());
+  }
+
+  auto pcaModelBuilder = ModelBuilderType::New();
+  pcaModelBuilder->SetLogger(&logger);
+  auto model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0);
+  itk::StatismoIO<MeshType>::SaveStatisticalModel(model, modelname);
 }
+} // namespace
 
+int
+main(int argc, char * argv[])
+{
+  if (argc < 4)
+  {
+    std::cerr << "usage " << argv[0] << " referenceShape shapeDir modelname" << std::endl;
+    return 1;
+  }
 
+  const char * reference = argv[1];
+  const char * dir = argv[2];
+  const char * modelname = argv[3];
 
+  DoRunExample(reference, dir, modelname);
 
-void buildShapeModel(const char* referenceFilename, const char* dir, const char* modelname) {
-
-
-    typedef itk::PCAModelBuilder<MeshType> ModelBuilderType;
-    typedef itk::StatisticalModel<MeshType> StatisticalModelType;
-    typedef std::vector<std::string> StringVectorType;
-    typedef itk::DataManager<MeshType> DataManagerType;
-    typedef itk::MeshFileReader<MeshType> MeshReaderType;
-
-    RepresenterType::Pointer representer = RepresenterType::New();
-
-    MeshReaderType::Pointer refReader = MeshReaderType::New();
-    refReader->SetFileName(referenceFilename);
-    refReader->Update();
-    representer->SetReference(refReader->GetOutput());
-
-    StringVectorType filenames;
-    getdir(dir, filenames, ".vtk");
-
-    DataManagerType::Pointer dataManager = DataManagerType::New();
-    dataManager->SetRepresenter(representer);
-
-    for (StringVectorType::const_iterator it = filenames.begin(); it != filenames.end(); it++) {
-        std::string fullpath = (std::string(dir) + "/") + *it;
-
-        MeshReaderType::Pointer reader = MeshReaderType::New();
-        reader->SetFileName(fullpath.c_str());
-        reader->Update();
-        MeshType::Pointer mesh = reader->GetOutput();
-        dataManager->AddDataset(mesh, fullpath.c_str());
-    }
-
-    ModelBuilderType::Pointer pcaModelBuilder = ModelBuilderType::New();
-    StatisticalModelType::Pointer model = pcaModelBuilder->BuildNewModel(dataManager->GetData(), 0);
-    itk::StatismoIO<MeshType>::SaveStatisticalModel(model, modelname);
-
-
-
+  std::cout << "Model building is completed successfully." << std::endl;
+  return 0;
 }
-
-int main(int argc, char* argv[]) {
-
-    if (argc < 4) {
-        std::cout << "usage " << argv[0] << " referenceShape shapeDir modelname" << std::endl;
-        exit(-1);
-    }
-
-    const char* reference = argv[1];
-    const char* dir = argv[2];
-    const char* modelname = argv[3];
-
-    buildShapeModel(reference, dir, modelname);
-
-    std::cout << "Model building is completed successfully." << std::endl;
-}
-

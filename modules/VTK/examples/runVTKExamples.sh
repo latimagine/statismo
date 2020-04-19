@@ -37,24 +37,66 @@
 
 #!/bin/sh
 
-export DATADIR=$PWD/../share/data
+export DATADIR=$PWD/../../../data/
 export RESDIR=/tmp/results
 mkdir $RESDIR
+
+UNAME_RES="$(uname -s)"
+case "${UNAME_RES}" in
+    Linux*)     MACHINE=Linux;;
+    Darwin*)    MACHINE=Mac;;
+    CYGWIN*)    MACHINE=Cygwin;;
+    MINGW*)     MACHINE=MinGw;;
+    *)          MACHINE="UNKNOWN:${unameOut}"
+esac
 
 # build a shape model from the hand data
 ./vtkBuildShapeModelExample $DATADIR/hand_polydata/ $RESDIR/vtkShapeModel.h5
 
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] vtkBuildShapeModelExample failed!"
+  exit 1
+fi
+
 # build an intensity model 
-./vtkBuildIntensityModelExample $DATADIR/hand_images $RESDIR/./vtkIntensityModel.h5
+./vtkBuildIntensityModelExample $DATADIR/hand_images/ $RESDIR/vtkIntensityModel.h5
+
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] vtkBuildIntensityModelExample failed!"
+  exit 1
+fi
  
 # sample from the model and save results
-./vtkBasicSamplingExample $RESDIR/vtkShapeModel.h5 $RESDIR
+./vtkBasicSamplingExample $RESDIR/vtkShapeModel.h5 $RESDIR/
+
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] vtkBasicSamplingExample failed!"
+  exit 1
+fi
 
 # Crossvalidation 
 ./vtkCrossValidationExample $DATADIR/hand_polydata/ $RESDIR/
 
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] vtkCrossValidationExample failed!"
+  exit 1
+fi
+
 # Build a partially fixed model
 ./vtkBuildPosteriorModelExample $RESDIR/vtkShapeModel.h5 $DATADIR/hand_polydata/partial/hand-0-part.vtk $RESDIR/vtkPosteriorModel.h5 $RESDIR/hand-0-reconstruction.vtk
 
-# Build a conditional model
-./vtkBuildConditionalModelExample $DATADIR/hand_images $RESDIR/vtkConditionalModel.h5
+if [ "$?" -ne "0" ]; then
+  echo "[Failed] vtkBuildPosteriorModelExample failed!"
+  exit 1
+fi
+
+# This example fails on Mac (see Issues)
+if [ "${MACHINE}" = "Linux" ]; then
+  # Build a conditional model
+  ./vtkBuildConditionalModelExample $DATADIR/hand_images/ $RESDIR/vtkConditionalModel.h5
+
+  if [ "$?" -ne "0" ]; then
+    echo "[Failed] vtkBuildConditionalModelExample failed!"
+    exit 1
+  fi
+fi

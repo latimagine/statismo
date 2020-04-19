@@ -35,262 +35,210 @@
  *
  */
 
-#include "vtkUnstructuredGridRepresenter.h"
+#include "statismo/VTK/vtkUnstructuredGridRepresenter.h"
+#include "statismo/core/HDF5Utils.h"
+#include "statismo/core/Utils.h"
+#include "statismo/VTK/vtkHelper.h"
 
 #include <vtkDataArray.h>
 #include <vtkPoints.h>
 #include <vtkPointData.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
+#include <vtkNew.h>
 
-#include "HDF5Utils.h"
-#include "StatismoUtils.h"
+namespace statismo
+{
 
-vtkUnstructuredGridRepresenter::vtkUnstructuredGridRepresenter(DatasetConstPointerType reference, AlignmentType alignment)
-    :
-    m_alignment(alignment),
-    m_pdTransform(vtkTransformPolyDataFilter::New()) {
-    m_reference = vtkUnstructuredGrid::New();
-    m_reference->DeepCopy(const_cast<DatasetPointerType>(reference));
+vtkUnstructuredGridRepresenter::vtkUnstructuredGridRepresenter()
+  : m_reference{ DatasetPointerType::New() }
+  , m_pdTransform{ vtkSmartPointer<vtkTransformPolyDataFilter>::New() }
+  , m_alignment{ AlignmentType::NONE }
+{}
 
-    vtkDataArray* deformationVectors = m_reference->GetPointData()->GetVectors();
-    // set the domain
-    DomainType::DomainPointsListType ptList;
-    for (unsigned i = 0; i < m_reference->GetNumberOfPoints(); i++) {
-        //double* d = m_reference->GetPoint(i);
-        double* d = deformationVectors->GetTuple(i);
-        ptList.push_back(statismo::vtkPoint(d));
-    }
-    m_domain = DomainType(ptList);
+vtkUnstructuredGridRepresenter::vtkUnstructuredGridRepresenter(DatasetConstPointerType reference,
+                                                               AlignmentType           alignment)
+  : vtkUnstructuredGridRepresenter()
+{
+  m_alignment = alignment;
+
+  this->SetReference(reference);
 }
 
-
-vtkUnstructuredGridRepresenter::~vtkUnstructuredGridRepresenter() {
-    if (m_pdTransform != 0) {
-        m_pdTransform->Delete();
-        m_pdTransform = 0;
-    }
-    if (m_reference != 0) {
-        m_reference->Delete();
-        m_reference = 0;
-    }
+vtkUnstructuredGridRepresenter *
+vtkUnstructuredGridRepresenter::CloneImpl() const
+{
+  // this works since Create deep copies the reference
+  auto clone = Create(m_reference, m_alignment);
+  clone->SetLogger(this->GetLogger());
+  return clone;
 }
-
-
-vtkUnstructuredGridRepresenter*
-vtkUnstructuredGridRepresenter::Clone() const {
-    // this works since Create deep copies the reference
-    return Create(m_reference, m_alignment);
-}
-
-
-vtkUnstructuredGridRepresenter*
-vtkUnstructuredGridRepresenter::Load(const H5::CommonFG& fg) {
-
-
-    std::string tmpfilename = statismo::Utils::CreateTmpName(".vtk");
-
-    statismo::HDF5Utils::getFileFromHDF5(fg, "./reference", tmpfilename.c_str());
-    DatasetConstPointerType ref = ReadDataset(tmpfilename.c_str());
-    std::remove(tmpfilename.c_str());
-
-    int alignment = static_cast<AlignmentType>(statismo::HDF5Utils::readInt(fg, "./alignment"));
-    return vtkUnstructuredGridRepresenter::Create(ref, AlignmentType(alignment));
-
-}
-
-
 
 void
-vtkUnstructuredGridRepresenter::Save(const H5::CommonFG& fg) const {
-    std::string tmpfilename = statismo::Utils::CreateTmpName(".vtk");
+vtkUnstructuredGridRepresenter::Load(const H5::Group & fg)
+{
+  auto tmpfilename = statismo::utils::CreateTmpName(".vtk");
+  auto uw = statismo::MakeStackUnwinder([=]() { statismo::utils::RemoveFile(tmpfilename); });
 
-    WriteDataset(tmpfilename.c_str(), this->m_reference);
+  statismo::HDF5Utils::GetFileFromHDF5(fg, "./reference", tmpfilename.c_str());
 
-    statismo::HDF5Utils::dumpFileToHDF5(tmpfilename.c_str(), fg, "./reference" );
+  m_alignment = static_cast<AlignmentType>(statismo::HDF5Utils::ReadInt(fg, "./alignment"));
+  this->SetReference(ReadDataset(tmpfilename));
+}
 
-    std::remove(tmpfilename.c_str());
-    statismo::HDF5Utils::writeInt(fg, "./alignment", m_alignment);
+void
+vtkUnstructuredGridRepresenter::Save(const H5::Group & fg) const
+{
+  std::string tmpfilename = statismo::utils::CreateTmpName(".vtk");
+  auto        uw = statismo::MakeStackUnwinder([=]() { statismo::utils::RemoveFile(tmpfilename); });
+
+  WriteDataset(tmpfilename, this->m_reference);
+
+  statismo::HDF5Utils::DumpFileToHDF5(tmpfilename.c_str(), fg, "./reference");
+  statismo::HDF5Utils::WriteInt(fg, "./alignment", static_cast<int>(m_alignment));
 }
 
 statismo::VectorType
-vtkUnstructuredGridRepresenter::PointToVector(const PointType& pt) const {
-    // a vtk point is always 3 dimensional
-    statismo::VectorType v(3);
-    for (unsigned i = 0; i < 3; i++) {
-        v(i) = pt[i];
-    }
-    return v;
+vtkUnstructuredGridRepresenter::PointToVector(const PointType & pt) const
+{
+  return Eigen::Map<const VectorTypeDoublePrecision>(pt.Data(), 3).cast<float>();
 }
-
-vtkUnstructuredGridRepresenter::DatasetPointerType
-vtkUnstructuredGridRepresenter::DatasetToSample(DatasetConstPointerType _pd, DatasetInfo* notUsed) const {
-    assert(m_reference != 0);
-
-    vtkUnstructuredGrid* reference = const_cast<vtkUnstructuredGrid*>(this->m_reference);
-    vtkUnstructuredGrid* pd = const_cast<vtkUnstructuredGrid*>(_pd);
-
-
-    vtkUnstructuredGrid* alignedPd  = vtkUnstructuredGrid::New();
-
-    if (m_alignment != NONE) {
-
-        vtkLandmarkTransform* transform = vtkLandmarkTransform::New();
-        // we align all the dataset to the common reference
-
-        transform->SetSourceLandmarks(pd->GetPoints());
-        transform->SetTargetLandmarks(m_reference->GetPoints());
-        transform->SetMode(m_alignment);
-
-#if (VTK_MAJOR_VERSION == 5 )
-        m_pdTransform->SetInput(pd);
-#else
-        m_pdTransform->SetInputData(pd);
-#endif
-
-        m_pdTransform->SetTransform(transform);
-        m_pdTransform->Update();
-
-        // we need to shallow copy the objet to make sure it does not die with the transform
-        alignedPd->ShallowCopy(m_pdTransform->GetOutput());
-
-        transform->Delete();
-
-    } else {
-        // no alignment needed
-        alignedPd->DeepCopy(pd);
-    }
-
-    return alignedPd;
-}
-
 
 statismo::VectorType
-vtkUnstructuredGridRepresenter::SampleToSampleVector(DatasetConstPointerType _sample) const {
-    assert(m_reference != 0);
+vtkUnstructuredGridRepresenter::SampleToSampleVector(DatasetConstPointerType sample) const
+{
+  assert(m_reference);
 
-    vtkUnstructuredGrid* sample = const_cast<vtkUnstructuredGrid*>(_sample);
-    vtkDataArray* deformationVectors = sample->GetPointData()->GetVectors();
+  auto mutableSample = const_cast<vtkUnstructuredGrid *>(sample);
+  auto deformationVectors = mutableSample->GetPointData()->GetVectors();
 
-    statismo::VectorType sampleVec = statismo::VectorType::Zero(m_reference->GetNumberOfPoints() * 3);
-    // TODO make this more efficient using SetVoidArray of vtk
-    for (unsigned i = 0 ; i < m_reference->GetNumberOfPoints(); i++) {
-        for (unsigned j = 0; j < 3; j++) {
-            unsigned idx = MapPointIdToInternalIdx(i, j);
-            sampleVec(idx) = deformationVectors->GetTuple(i)[j];
-        }
+  statismo::VectorType sampleVec = statismo::VectorType::Zero(m_reference->GetNumberOfPoints() * 3);
+  for (unsigned i = 0; i < m_reference->GetNumberOfPoints(); i++)
+  {
+    for (unsigned j = 0; j < 3; j++)
+    {
+      sampleVec(MapPointIdToInternalIdx(i, j)) = deformationVectors->GetTuple(i)[j];
     }
-    return sampleVec;
+  }
+  return sampleVec;
 }
-
-
 
 vtkUnstructuredGridRepresenter::DatasetPointerType
-vtkUnstructuredGridRepresenter::SampleVectorToSample(const statismo::VectorType& sample) const {
+vtkUnstructuredGridRepresenter::SampleVectorToSample(const statismo::VectorType & sampleVec) const
+{
+  assert(m_reference);
 
-    assert (m_reference != 0);
+  auto reference = const_cast<vtkUnstructuredGrid *>(m_reference.GetPointer());
 
-    vtkUnstructuredGrid* reference = const_cast<vtkUnstructuredGrid*>(m_reference);
-    vtkUnstructuredGrid* pd = vtkUnstructuredGrid::New();
-    pd->DeepCopy(reference);
-    vtkDataArray* deformationVectors = pd->GetPointData()->GetVectors();
+  auto pd = vtkSmartPointer<vtkUnstructuredGrid>::New();
+  pd->DeepCopy(reference);
 
-    for (unsigned i = 0; i < reference->GetNumberOfPoints(); i++) {
-        statismo::vtkPoint pt;
-        for (unsigned d = 0; d < GetDimensions(); d++) {
-            unsigned idx = MapPointIdToInternalIdx(i, d);
-            pt[d] = sample(idx);
-        }
-        deformationVectors->SetTuple(i, pt.data());
+  auto * deformationVectors = pd->GetPointData()->GetVectors();
+
+  for (unsigned i = 0; i < reference->GetNumberOfPoints(); i++)
+  {
+    statismo::vtkPoint pt;
+    for (unsigned d = 0; d < GetDimensions(); d++)
+    {
+      pt[d] = sampleVec(MapPointIdToInternalIdx(i, d));
     }
+    deformationVectors->SetTuple(i, pt.Data());
+  }
 
-    return pd;
+  return pd;
 }
-
 
 vtkUnstructuredGridRepresenter::ValueType
-vtkUnstructuredGridRepresenter::PointSampleFromSample(DatasetConstPointerType sample_, unsigned ptid) const {
-    vtkUnstructuredGrid* sample = const_cast<DatasetPointerType>(sample_);
-    if (ptid >= sample->GetNumberOfPoints()) {
-        throw statismo::StatisticalModelException("invalid ptid provided to PointSampleFromSample");
-    }
-    vtkDataArray* deformationVectors = sample->GetPointData()->GetVectors();
-    return statismo::vtkPoint(deformationVectors->GetTuple(ptid));
+vtkUnstructuredGridRepresenter::PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const
+{
+  auto mutableSample = const_cast<vtkUnstructuredGrid *>(sample);
+  if (ptid >= mutableSample->GetNumberOfPoints())
+  {
+    throw statismo::StatisticalModelException("invalid ptid provided to PointSampleFromSample");
+  }
+  return statismo::vtkPoint(mutableSample->GetPointData()->GetVectors()->GetTuple(ptid));
 }
-
 
 statismo::VectorType
-vtkUnstructuredGridRepresenter::PointSampleToPointSampleVector(const ValueType& v) const {
-    statismo::VectorType vec(GetDimensions());
-    for (unsigned i = 0; i < GetDimensions(); i++) {
-        vec(i) = v[i];
-    }
-    return vec;
+vtkUnstructuredGridRepresenter::PointSampleToPointSampleVector(const ValueType & v) const
+{
+  statismo::VectorType vec(GetDimensions());
+  for (unsigned i = 0; i < GetDimensions(); i++)
+  {
+    vec(i) = v[i];
+  }
+  return vec;
 }
-
-
 
 vtkUnstructuredGridRepresenter::ValueType
-vtkUnstructuredGridRepresenter::PointSampleVectorToPointSample(const statismo::VectorType& v) const {
-    ValueType value;
-    for (unsigned i = 0; i < GetDimensions(); i++) {
-        value[i] = v(i);
-    }
-    return value;
+vtkUnstructuredGridRepresenter::PointSampleVectorToPointSample(const statismo::VectorType & v) const
+{
+  ValueType value;
+  for (unsigned i = 0; i < GetDimensions(); i++)
+  {
+    value[i] = v(i);
+  }
+  return value;
 }
-
-
-
 
 unsigned
-vtkUnstructuredGridRepresenter::GetPointIdForPoint(const PointType& pt) const {
-    assert (m_reference != 0);
-    return this->m_reference->FindPoint(const_cast<double*>(pt.data()));
+vtkUnstructuredGridRepresenter::GetPointIdForPoint(const PointType & pt) const
+{
+  assert(m_reference);
+  return this->m_reference->FindPoint(const_cast<double *>(pt.Data()));
 }
-
 
 unsigned
-vtkUnstructuredGridRepresenter::GetNumberOfPoints() const {
-    assert (m_reference != 0);
-
-    return this->m_reference->GetNumberOfPoints();
+vtkUnstructuredGridRepresenter::GetNumberOfPoints() const
+{
+  assert(m_reference);
+  return this->m_reference->GetNumberOfPoints();
 }
-
 
 
 vtkUnstructuredGridRepresenter::DatasetPointerType
-vtkUnstructuredGridRepresenter::ReadDataset(const std::string& filename) {
-    vtkUnstructuredGrid* pd = vtkUnstructuredGrid::New();
+vtkUnstructuredGridRepresenter::ReadDataset(const std::string & filename)
+{
+  vtkNew<vtkXMLUnstructuredGridReader> reader;
+  reader->SetFileName(filename.c_str());
+  reader->Update();
 
-    vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
-    reader->SetFileName(filename.c_str());
-    reader->Update();
-    if (reader->GetErrorCode() != 0) {
-        throw statismo::StatisticalModelException((std::string("Could not read file ") + filename).c_str());
-    }
-    pd->ShallowCopy(reader->GetOutput());
-    reader->Delete();
-    return pd;
+  if (reader->GetErrorCode() != 0)
+  {
+    throw statismo::StatisticalModelException((std::string("Could not read file ") + filename).c_str(),
+                                              Status::IO_ERROR);
+  }
+  return reader->GetOutput();
 }
 
+void
+vtkUnstructuredGridRepresenter::WriteDataset(const std::string & filename, DatasetConstPointerType pd)
+{
+  vtkNew<vtkXMLUnstructuredGridWriter> writer;
+  writer->SetFileName(filename.c_str());
+  writer->SetInputData(const_cast<vtkUnstructuredGrid *>(pd));
+  writer->Update();
 
-void vtkUnstructuredGridRepresenter::WriteDataset(const std::string& filename,DatasetConstPointerType pd) {
-    vtkXMLUnstructuredGridWriter* writer = vtkXMLUnstructuredGridWriter::New();
-    writer->SetFileName(filename.c_str());
-#if (VTK_MAJOR_VERSION == 5 )
-    writer->SetInput(const_cast<vtkUnstructuredGrid*>(pd));
-#else
-    writer->SetInputData(const_cast<vtkUnstructuredGrid*>(pd));
-#endif
-    writer->Update();
-    if (writer->GetErrorCode() != 0) {
-        throw statismo::StatisticalModelException((std::string("Could not read file ") + filename).c_str());
-    }
-    writer->Delete();
+  if (writer->GetErrorCode() != 0)
+  {
+    throw statismo::StatisticalModelException((std::string("Could not read file ") + filename).c_str(),
+                                              Status::IO_ERROR);
+  }
 }
 
+void
+vtkUnstructuredGridRepresenter::SetReference(DatasetConstPointerType reference)
+{
+  m_reference->DeepCopy(const_cast<vtkUnstructuredGrid *>(reference));
 
-
-void vtkUnstructuredGridRepresenter::DeleteDataset(DatasetPointerType d) {
-    d->Delete();
+  // set the domain
+  vtkDataArray *                   deformationVectors = m_reference->GetPointData()->GetVectors();
+  DomainType::DomainPointsListType ptList;
+  for (unsigned i = 0; i < m_reference->GetNumberOfPoints(); i++)
+  {
+    ptList.emplace_back(deformationVectors->GetTuple(i));
+  }
+  m_domain = DomainType(ptList);
 }
+
+} // namespace statismo
