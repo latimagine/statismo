@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.0</span>
+   &#160;<span id="projectnumber">0.12.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -366,9 +366,9 @@ template&lt;typename Callable &gt; </td></tr>
 <tr class="memitem:ga0f2c1cf436ee8f183b73541d3c246818"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__Core.html#ga0f2c1cf436ee8f183b73541d3c246818">statismo::CheckResultAndAssert</a> (const std::tuple&lt; Status, std::optional&lt; R &gt;&gt; &amp;res, R &amp;&amp;expected)</td></tr>
 <tr class="memdesc:ga0f2c1cf436ee8f183b73541d3c246818"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check the returned result of Translate is a success and the second field is as expected.  <a href="group__Core.html#ga0f2c1cf436ee8f183b73541d3c246818">More...</a><br /></td></tr>
 <tr class="separator:ga0f2c1cf436ee8f183b73541d3c246818"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1fc47a3acba7910f58aa28e1ad38478b"><td class="memItemLeft" align="right" valign="top">std::minstd_rand &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Core.html#ga1fc47a3acba7910f58aa28e1ad38478b">statismo::rand::RandGen</a> (unsigned seed=static_cast&lt; unsigned &gt;(std::time(nullptr)))</td></tr>
-<tr class="memdesc:ga1fc47a3acba7910f58aa28e1ad38478b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get framework random generator.  <a href="group__Core.html#ga1fc47a3acba7910f58aa28e1ad38478b">More...</a><br /></td></tr>
-<tr class="separator:ga1fc47a3acba7910f58aa28e1ad38478b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac6b0344fc63b5b53fd56135ac4ec3d7a"><td class="memItemLeft" align="right" valign="top">std::minstd_rand &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Core.html#gac6b0344fc63b5b53fd56135ac4ec3d7a">statismo::rand::RandGen</a> (unsigned seed=static_cast&lt; unsigned &gt;(std::random_device{}()))</td></tr>
+<tr class="memdesc:gac6b0344fc63b5b53fd56135ac4ec3d7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get framework random generator.  <a href="group__Core.html#gac6b0344fc63b5b53fd56135ac4ec3d7a">More...</a><br /></td></tr>
+<tr class="separator:gac6b0344fc63b5b53fd56135ac4ec3d7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6685f7889c6e6effc1e1c123110ac825"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga6685f7889c6e6effc1e1c123110ac825"></a>
 VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Core.html#ga6685f7889c6e6effc1e1c123110ac825">statismo::utils::GenerateNormalVector</a> (unsigned n)</td></tr>
 <tr class="memdesc:ga6685f7889c6e6effc1e1c123110ac825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random normal vector. <br /></td></tr>
@@ -523,7 +523,7 @@ template&lt;typename R &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ga1fc47a3acba7910f58aa28e1ad38478b"></a>
+<a class="anchor" id="gac6b0344fc63b5b53fd56135ac4ec3d7a"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -534,7 +534,7 @@ template&lt;typename R &gt; </div>
           <td class="memname">std::minstd_rand&amp; statismo::rand::RandGen </td>
           <td>(</td>
           <td class="paramtype">unsigned&#160;</td>
-          <td class="paramname"><em>seed</em> = <code>static_cast&lt;unsigned&gt;(std::time(nullptr))</code></td><td>)</td>
+          <td class="paramname"><em>seed</em> = <code>static_cast&lt;unsigned&gt;(std::random_device{}())</code></td><td>)</td>
           <td></td>
         </tr>
       </table>

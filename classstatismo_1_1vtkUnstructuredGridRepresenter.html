@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">statismo
-   &#160;<span id="projectnumber">0.11.0</span>
+   &#160;<span id="projectnumber">0.12.0</span>
    </div>
    <div id="projectbrief">Statismo doxygen documentation</div>
   </td>
@@ -129,12 +129,6 @@ Collaboration diagram for statismo::vtkUnstructuredGridRepresenter:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a72c9f9dd253c1c1d17e3de95f15247fb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72c9f9dd253c1c1d17e3de95f15247fb"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>AlignmentType</b> { <b>NONE</b> = 999, 
-<b>RIGID</b> = VTK_LANDMARK_RIGIDBODY, 
-<b>SIMILARITY</b> = VTK_LANDMARK_SIMILARITY, 
-<b>AFFINE</b> = VTK_LANDMARK_AFFINE
- }</td></tr>
-<tr class="separator:a72c9f9dd253c1c1d17e3de95f15247fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a343a990ced8d8a6e56d6a39c1a7cd481"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a343a990ced8d8a6e56d6a39c1a7cd481"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>RepresenterBaseType</b> = <a class="el" href="classstatismo_1_1RepresenterBase.html">RepresenterBase</a>&lt; vtkUnstructuredGrid, <a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html">vtkUnstructuredGridRepresenter</a> &gt;</td></tr>
 <tr class="separator:a343a990ced8d8a6e56d6a39c1a7cd481"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,58 +161,58 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>DomainType</b> = <a 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aef9f1186a3ee3de6bc6ce13355a96864"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#aef9f1186a3ee3de6bc6ce13355a96864">Load</a> (const H5::Group &amp;fg) override</td></tr>
+<tr class="memitem:aef9f1186a3ee3de6bc6ce13355a96864"><td class="memItemLeft" align="right" valign="top">STATISMO_VTK_EXPORT void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#aef9f1186a3ee3de6bc6ce13355a96864">Load</a> (const H5::Group &amp;fg) override</td></tr>
 <tr class="memdesc:aef9f1186a3ee3de6bc6ce13355a96864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new representer object, with the the information defined in the given hdf5 group.  <a href="#aef9f1186a3ee3de6bc6ce13355a96864">More...</a><br /></td></tr>
 <tr class="separator:aef9f1186a3ee3de6bc6ce13355a96864"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1efbc36869122e1bfa1fd07d4619010"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1efbc36869122e1bfa1fd07d4619010"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#ab1efbc36869122e1bfa1fd07d4619010">Save</a> (const H5::Group &amp;fg) const override</td></tr>
+STATISMO_VTK_EXPORT void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#ab1efbc36869122e1bfa1fd07d4619010">Save</a> (const H5::Group &amp;fg) const override</td></tr>
 <tr class="memdesc:ab1efbc36869122e1bfa1fd07d4619010"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the informatino that define this representer to the given hdf5 group. <br /></td></tr>
 <tr class="separator:ab1efbc36869122e1bfa1fd07d4619010"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbe72d047d0969e8011ea1b8edcd0689"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adbe72d047d0969e8011ea1b8edcd0689"></a>
-AlignmentType&#160;</td><td class="memItemRight" valign="bottom"><b>GetAlignment</b> () const </td></tr>
-<tr class="separator:adbe72d047d0969e8011ea1b8edcd0689"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98694fb7aa48543e1ac58cfa232e05f6"><td class="memItemLeft" align="right" valign="top">const DomainType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a98694fb7aa48543e1ac58cfa232e05f6">GetDomain</a> () const override</td></tr>
-<tr class="memdesc:a98694fb7aa48543e1ac58cfa232e05f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classstatismo_1_1Domain.html" title="Represents the domain on which a statistical model is defined. ">Domain</a> for this representer.  <a href="#a98694fb7aa48543e1ac58cfa232e05f6">More...</a><br /></td></tr>
-<tr class="separator:a98694fb7aa48543e1ac58cfa232e05f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64df9d10d3a2de6e17087cd35df50eb6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64df9d10d3a2de6e17087cd35df50eb6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a64df9d10d3a2de6e17087cd35df50eb6">DeleteDataset</a> (DatasetPointerType) const override</td></tr>
-<tr class="memdesc:a64df9d10d3a2de6e17087cd35df50eb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a dataset. <br /></td></tr>
-<tr class="separator:a64df9d10d3a2de6e17087cd35df50eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2847a481b95ef816f531781f0a6c231f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2847a481b95ef816f531781f0a6c231f"></a>
-DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a2847a481b95ef816f531781f0a6c231f">CloneDataset</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> d) const override</td></tr>
-<tr class="memdesc:a2847a481b95ef816f531781f0a6c231f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone a dataset. <br /></td></tr>
-<tr class="separator:a2847a481b95ef816f531781f0a6c231f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9ca3d395951ce3c94ab3e667519fd06"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9ca3d395951ce3c94ab3e667519fd06"></a>
-<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#ab9ca3d395951ce3c94ab3e667519fd06">GetReference</a> () const override</td></tr>
-<tr class="memdesc:ab9ca3d395951ce3c94ab3e667519fd06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get reference dataset. <br /></td></tr>
-<tr class="separator:ab9ca3d395951ce3c94ab3e667519fd06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92465684af8fc143f8989844014fba78"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92465684af8fc143f8989844014fba78"></a>
+STATISMO_VTK_EXPORT AlignmentType&#160;</td><td class="memItemRight" valign="bottom"><b>GetAlignment</b> () const </td></tr>
+<tr class="separator:a92465684af8fc143f8989844014fba78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a598847c0332f359f7f0bbe1b6412ce8d"><td class="memItemLeft" align="right" valign="top">STATISMO_VTK_EXPORT const DomainType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a598847c0332f359f7f0bbe1b6412ce8d">GetDomain</a> () const override</td></tr>
+<tr class="memdesc:a598847c0332f359f7f0bbe1b6412ce8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classstatismo_1_1Domain.html" title="Represents the domain on which a statistical model is defined. ">Domain</a> for this representer.  <a href="#a598847c0332f359f7f0bbe1b6412ce8d">More...</a><br /></td></tr>
+<tr class="separator:a598847c0332f359f7f0bbe1b6412ce8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab178da8fbaeaa044e8adafa8a37767ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab178da8fbaeaa044e8adafa8a37767ee"></a>
+STATISMO_VTK_EXPORT void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#ab178da8fbaeaa044e8adafa8a37767ee">DeleteDataset</a> (DatasetPointerType) const override</td></tr>
+<tr class="memdesc:ab178da8fbaeaa044e8adafa8a37767ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a dataset. <br /></td></tr>
+<tr class="separator:ab178da8fbaeaa044e8adafa8a37767ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7644b8f99ca075b5602cdd01d6faaef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7644b8f99ca075b5602cdd01d6faaef"></a>
+STATISMO_VTK_EXPORT DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#aa7644b8f99ca075b5602cdd01d6faaef">CloneDataset</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> d) const override</td></tr>
+<tr class="memdesc:aa7644b8f99ca075b5602cdd01d6faaef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone a dataset. <br /></td></tr>
+<tr class="separator:aa7644b8f99ca075b5602cdd01d6faaef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a244273d3829ff7d63295c4cc862cd0b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a244273d3829ff7d63295c4cc862cd0b2"></a>
+STATISMO_VTK_EXPORT <a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a244273d3829ff7d63295c4cc862cd0b2">GetReference</a> () const override</td></tr>
+<tr class="memdesc:a244273d3829ff7d63295c4cc862cd0b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get reference dataset. <br /></td></tr>
+<tr class="separator:a244273d3829ff7d63295c4cc862cd0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1950920f028b18d9622b411c30f42bf7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1950920f028b18d9622b411c30f42bf7"></a>
-statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a1950920f028b18d9622b411c30f42bf7">PointToVector</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;pt) const override</td></tr>
+STATISMO_VTK_EXPORT statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a1950920f028b18d9622b411c30f42bf7">PointToVector</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;pt) const override</td></tr>
 <tr class="memdesc:a1950920f028b18d9622b411c30f42bf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a dataset point to an internal vector. <br /></td></tr>
 <tr class="separator:a1950920f028b18d9622b411c30f42bf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb9babc96eecc5056e810442fd20cf07"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb9babc96eecc5056e810442fd20cf07"></a>
-statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#afb9babc96eecc5056e810442fd20cf07">SampleToSampleVector</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample) const override</td></tr>
+STATISMO_VTK_EXPORT statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#afb9babc96eecc5056e810442fd20cf07">SampleToSampleVector</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample) const override</td></tr>
 <tr class="memdesc:afb9babc96eecc5056e810442fd20cf07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vectorial representation of a sample. <br /></td></tr>
 <tr class="separator:afb9babc96eecc5056e810442fd20cf07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95c61965b183a7efa5258384740938b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95c61965b183a7efa5258384740938b8"></a>
-DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a95c61965b183a7efa5258384740938b8">SampleVectorToSample</a> (const statismo::VectorType &amp;sampleVec) const override</td></tr>
+STATISMO_VTK_EXPORT DatasetPointerType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a95c61965b183a7efa5258384740938b8">SampleVectorToSample</a> (const statismo::VectorType &amp;sampleVec) const override</td></tr>
 <tr class="memdesc:a95c61965b183a7efa5258384740938b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a sample from an internal vector. <br /></td></tr>
 <tr class="separator:a95c61965b183a7efa5258384740938b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af07032dd6d6376fb94ce7528cbdc64bf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af07032dd6d6376fb94ce7528cbdc64bf"></a>
-<a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#af07032dd6d6376fb94ce7528cbdc64bf">PointSampleFromSample</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample, unsigned ptid) const override</td></tr>
+STATISMO_VTK_EXPORT <a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#af07032dd6d6376fb94ce7528cbdc64bf">PointSampleFromSample</a> (<a class="el" href="classstatismo_1_1Representer.html#a6a9dbd60dd868bc5b6dfa286fd36256b">DatasetConstPointerType</a> sample, unsigned ptid) const override</td></tr>
 <tr class="memdesc:af07032dd6d6376fb94ce7528cbdc64bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a <em>sample</em> value at point with index <em>ptid</em>. <br /></td></tr>
 <tr class="separator:af07032dd6d6376fb94ce7528cbdc64bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6077e417fcff0ff20f1c3511a2736800"><td class="memItemLeft" align="right" valign="top">statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a6077e417fcff0ff20f1c3511a2736800">PointSampleToPointSampleVector</a> (const <a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a> &amp;v) const override</td></tr>
+<tr class="memitem:a6077e417fcff0ff20f1c3511a2736800"><td class="memItemLeft" align="right" valign="top">STATISMO_VTK_EXPORT statismo::VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a6077e417fcff0ff20f1c3511a2736800">PointSampleToPointSampleVector</a> (const <a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a> &amp;v) const override</td></tr>
 <tr class="memdesc:a6077e417fcff0ff20f1c3511a2736800"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the given vector representation of a pointSample back to its ValueType.  <a href="#a6077e417fcff0ff20f1c3511a2736800">More...</a><br /></td></tr>
 <tr class="separator:a6077e417fcff0ff20f1c3511a2736800"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c6431ce72147b8c8ae8b33d97c0f06c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a2c6431ce72147b8c8ae8b33d97c0f06c">PointSampleVectorToPointSample</a> (const statismo::VectorType &amp;v) const override</td></tr>
+<tr class="memitem:a2c6431ce72147b8c8ae8b33d97c0f06c"><td class="memItemLeft" align="right" valign="top">STATISMO_VTK_EXPORT <a class="el" href="classstatismo_1_1Representer.html#a8875fbbf34ccc4f4322cdf21d94637b7">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a2c6431ce72147b8c8ae8b33d97c0f06c">PointSampleVectorToPointSample</a> (const statismo::VectorType &amp;v) const override</td></tr>
 <tr class="memdesc:a2c6431ce72147b8c8ae8b33d97c0f06c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a point sample (i.e. the value of a sample at a given point) and converts it to its vector representation.  <a href="#a2c6431ce72147b8c8ae8b33d97c0f06c">More...</a><br /></td></tr>
 <tr class="separator:a2c6431ce72147b8c8ae8b33d97c0f06c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cd772ba04c5825613a5205417655b44"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5cd772ba04c5825613a5205417655b44"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>GetNumberOfPoints</b> () const </td></tr>
+STATISMO_VTK_EXPORT unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>GetNumberOfPoints</b> () const </td></tr>
 <tr class="separator:a5cd772ba04c5825613a5205417655b44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a940815cd65af6342066dfba40f061196"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a940815cd65af6342066dfba40f061196"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a940815cd65af6342066dfba40f061196">GetPointIdForPoint</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;pt) const override</td></tr>
+STATISMO_VTK_EXPORT unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html#a940815cd65af6342066dfba40f061196">GetPointIdForPoint</a> (const <a class="el" href="classstatismo_1_1Representer.html#ac28d64ce3e4f6ba2fd01f8eb8c73f568">PointType</a> &amp;pt) const override</td></tr>
 <tr class="memdesc:a940815cd65af6342066dfba40f061196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a point (the coordinates) return the pointId of this point. <br /></td></tr>
 <tr class="separator:a940815cd65af6342066dfba40f061196"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classstatismo_1_1RepresenterBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classstatismo_1_1RepresenterBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classstatismo_1_1RepresenterBase.html">statismo::RepresenterBase&lt; vtkUnstructuredGrid, vtkUnstructuredGridRepresenter &gt;</a></td></tr>
@@ -323,7 +317,7 @@ static <a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html"
 <dl class="section note"><dt>Note</dt><dd>In order to use GPA alignment, simply set the Procrustes Mean as the reference. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This class does currently not provide any registration, which implies that the dataset that are read by the class need to be aligned. </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a98694fb7aa48543e1ac58cfa232e05f6"></a>
+<a class="anchor" id="a598847c0332f359f7f0bbe1b6412ce8d"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -331,7 +325,7 @@ static <a class="el" href="classstatismo_1_1vtkUnstructuredGridRepresenter.html"
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const DomainType&amp; statismo::vtkUnstructuredGridRepresenter::GetDomain </td>
+          <td class="memname">STATISMO_VTK_EXPORT const DomainType&amp; statismo::vtkUnstructuredGridRepresenter::GetDomain </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
