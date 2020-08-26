@@ -21,8 +21,8 @@ The install and run is tested with the following dependencies versions:
 | CMake                             | >= 3.13.4                       |
 | HDF5                              | 1.10.2 -> 1.10.6                |
 | Eigen                             | 3.3.5 -> 3.3.7                  |
-| VTK                               | 8.0.0 -> 8.2.0                  |
-| ITK                               | 5.0 -> 5.0.1                    |
+| VTK                               | 8.0.0 -> 9.0.1                  |
+| ITK                               | 5.0 -> 5.1.1                    |
 
 Packaging/deployment is tested against the following tools versions:
 
