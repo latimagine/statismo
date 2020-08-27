@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.13.4)
-project(statismo VERSION 0.12.0 LANGUAGES C CXX)
+project(statismo VERSION 0.12.1 LANGUAGES C CXX)
 
 # ----------------------------------------
 # Project options

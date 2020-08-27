@@ -10,7 +10,7 @@ from conans.errors import ConanInvalidConfiguration
 
 class LibStatismoConan(ConanFile):
     name = "statismo"
-    version = "0.12.0"
+    version = "0.12.1"
     version_split = version.split('.')
     description = "Framework for building Statistical Image And Shape Models"
     url = "https://github.com/kenavolic/statismo"
