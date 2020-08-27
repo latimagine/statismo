@@ -1,3 +1,13 @@
+# [0.12.1](https://github.com/kenavolic/statismo/compare/v0.12.0...v0.12.1)
+
+### Notes
+
+Just minor dependencies upgrade.
+
+### Bug Fixes
+
+* Out-of-date eigen package url
+
 # [0.12.0](https://github.com/kenavolic/statismo/compare/v0.11.0...v0.12.0)
 
 ### Notes
