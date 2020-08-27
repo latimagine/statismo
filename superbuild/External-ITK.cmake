@@ -23,7 +23,7 @@ endif()
 ExternalProject_Add(ITK
   DEPENDS ${_itk_deps}
   GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITK.git
-  GIT_TAG v5.0.1 # If you modify this, update the ITK_DIR at the end of the file
+  GIT_TAG v5.1.1 # If you modify this, update the ITK_DIR at the end of the file
   SOURCE_DIR ITK
   BINARY_DIR ITK-build
   UPDATE_COMMAND ""
@@ -39,7 +39,7 @@ ExternalProject_Add(ITK
     -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
     #-DITK_WRAP_PYTHON:BOOL=${BUILD_WRAPPING}
     -DModule_ITKReview:BOOL=ON
-    -DITK_LEGACY_REMOVE:BOOL=ON
+    -DITK_LEGACY_REMOVE:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DEPENDENCIES_DIR}
     -DITK_USE_SYSTEM_HDF5:BOOL=${USE_SYSTEM_HDF5}
     -DITK_USE_SYSTEM_EIGEN:BOOL=${USE_SYSTEM_EIGEN}
@@ -50,4 +50,4 @@ ExternalProject_Add(ITK
 )
 
 # This is passed to Statismo so it is able to find it in priority
-set(ITK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/ITK-5.0/)
+set(ITK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/ITK-5.1/)

@@ -11,8 +11,8 @@ RUN apt-get install -y git cmake tar valgrind pandoc doxygen mesa-common-dev fre
 
 # Eigen system deployed with cmake
 WORKDIR "/usr/src/"
-RUN wget http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz
-RUN tar -xvzf 3.3.5.tar.gz --one-top-level=eigen --strip-components 1
+RUN wget https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz
+RUN tar -xvzf eigen-3.3.5.tar.gz --one-top-level=eigen --strip-components 1
 WORKDIR "/usr/src/eigen"
 RUN mkdir build
 WORKDIR "/usr/src/eigen/build"

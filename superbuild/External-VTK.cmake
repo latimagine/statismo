@@ -4,7 +4,7 @@ set(_vtkOptions ${VTK_EXTRA_OPTIONS})
 
 ExternalProject_Add(VTK
   GIT_REPOSITORY https://github.com/Kitware/VTK.git
-  GIT_TAG v8.2.0 # If you modify this, update the VTK_DIR at the end of the file
+  GIT_TAG v9.0.1 # If you modify this, update the VTK_DIR at the end of the file
   SOURCE_DIR VTK
   BINARY_DIR VTK-build
   UPDATE_COMMAND ""
@@ -25,4 +25,4 @@ ExternalProject_Add(VTK
 )
 
 # This is passed to Statismo so it is able to find it in priority
-set(VTK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/vtk-8.2/)
+set(VTK_DIR ${INSTALL_DEPENDENCIES_DIR}/lib/cmake/vtk-9.0/)

@@ -147,7 +147,7 @@ If ($install_type -eq "full" -Or $install_type -eq "full-nochoco"){
     Remove-Item -ErrorAction Ignore -force -Recurse $install_dir/hdf5 | Out-Null
     New-Item -ItemType Directory -Force -Path $install_dir/eigen
     New-Item -ItemType Directory -Force -Path $install_dir/hdf5
-    DownloadDeps "https://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz" "$install_dir/eigen/3.3.5.tar.gz"
+    DownloadDeps "https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz" "$install_dir/eigen/3.3.5.tar.gz"
     DownloadDeps "https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.2/src/hdf5-1.10.2.tar.gz" "$install_dir/hdf5/hdf5-1.10.2.tar.gz"
     Set-Location $install_dir/eigen
     Invoke-Expression "7z e 3.3.5.tar.gz"

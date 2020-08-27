@@ -5,7 +5,7 @@ set(Eigen3_VERSION "3.3.7")
 ExternalProject_Add(Eigen3
   SOURCE_DIR ${CMAKE_BINARY_DIR}/Eigen3
   BINARY_DIR ${CMAKE_BINARY_DIR}/Eigen3-build
-  URL "http://bitbucket.org/eigen/eigen/get/${Eigen3_VERSION}.tar.gz"
+  URL "https://gitlab.com/libeigen/eigen/-/archive/${Eigen3_VERSION}/eigen-${Eigen3_VERSION}.tar.gz"
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
