@@ -1,3 +1,8 @@
+***Due to lack of time and funding, this fork is unfortunately no longer maintained.***
+
+---
+
+
 [![Latest Release](https://img.shields.io/badge/release-statismo%2F0.12.1-blue.svg)](https://github.com/kenavolic/statismo/releases)
 [![Build Status](https://api.travis-ci.org/kenavolic/statismo.svg?branch=master)](https://travis-ci.org/kenavolic/statismo)
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://kenavolic.github.io/statismo/)
