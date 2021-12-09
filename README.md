@@ -1,4 +1,12 @@
-***Due to lack of time and funding, this fork is unfortunately no longer maintained.***
+***Due to lack of time and fundings, this fork is unfortunately no longer actively maintained.***
+
+Major bug fixes might be addressed but new algorithms won't be transferred back from [Scalismo](https://github.com/unibas-gravis/scalismo). If you need Scalismo features from C++, here are some
+tips:
+
+* Extend [scalismo-ui](https://github.com/latimagine/statismo-ui) to fill your needs
+* Call Scalismo as an external process from C++
+  + Scalismo can be run in docker file (see [Dockerfile](./deploy/docker/Dockerfile-scalismo))
+
 
 ---
 
