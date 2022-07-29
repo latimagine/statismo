@@ -57,18 +57,6 @@ HashCombine(std::size_t & seed, const T & v)
 
 template <typename T>
 inline auto
-HashImpl(const T & v) -> std::enable_if_t<HasSize(gk_type<T>), std::size_t>
-{
-  size_t value = 0;
-  for (unsigned i = 0; i < v.size(); i++)
-  {
-    HashCombine(value, v(i));
-  }
-  return value;
-}
-
-template <typename T>
-inline auto
 HashImpl(const T & v) -> std::enable_if_t<HasGetPointDimension(gk_type<T>), size_t>
 {
   size_t value = 0;
@@ -78,6 +66,19 @@ HashImpl(const T & v) -> std::enable_if_t<HasGetPointDimension(gk_type<T>), size
   }
   return value;
 }
+
+template <typename T>
+inline auto
+HashImpl(const T & v) -> std::enable_if_t<!HasGetPointDimension(gk_type<T>) && HasSize(gk_type<T>), size_t>
+{
+  size_t value = 0;
+  for (unsigned i = 0; i < v.size(); i++)
+  {
+    HashCombine(value, v(i));
+  }
+  return value;
+}
+
 } // namespace details
 
 /**
